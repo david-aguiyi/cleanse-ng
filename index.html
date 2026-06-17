@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>cleanse.ng — For those who know what their time is worth</title>
+<meta name="description" content="Premium, hassle-free residential cleaning services in Ibadan. Flat monthly rates, trained teams, dedicated supervisors, and 100% reliable scheduling.">
+<meta name="keywords" content="cleanse, cleanse.ng, cleaning service ibadan, house cleaning, akobo, bodija, jericho, iyaganku, oluyole, ibadan cleaners">
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cleanse.ng/">
+<meta property="og:title" content="cleanse.ng — Premium House Cleaning in Ibadan">
+<meta property="og:description" content="For those who know what their time is worth. Trained cleaners, flat rates, and dedicated supervisors in Bodija, Jericho, Akobo, Oluyole, and GRA.">
+<meta property="og:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://cleanse.ng/">
+<meta property="twitter:title" content="cleanse.ng — Premium House Cleaning in Ibadan">
+<meta property="twitter:description" content="For those who know what their time is worth. Trained cleaners, flat rates, and dedicated supervisors in Bodija, Jericho, Akobo, Oluyole, and GRA.">
+<meta property="twitter:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -1392,12 +1406,12 @@
         <div class="success-icon">✓</div>
         <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 28px;">Booking Requested!</h2>
         <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; max-width: 400px; margin: 0 auto;">
-          We have prefilled your details in WhatsApp to finalize. Please send the message on WhatsApp to complete your booking.
+          Please send the prefilled WhatsApp message to finalize your booking. If it didn't open automatically, click the button below.
         </p>
-        <p style="font-size: 13px; color: var(--primary-purple); font-weight: 600; margin-top: 16px;">
-          We'll reach out within 1 hour to confirm your plan.
-        </p>
-        <button class="btn-primary" id="success-close-btn" style="border: none; padding: 12px 24px; margin-top: 16px; font-family: var(--font-header);">Back to Home</button>
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; margin-top: 16px;">
+          <a class="btn-primary" id="success-whatsapp-btn" target="_blank" style="width: 100%; max-width: 320px; text-decoration: none; text-align: center; justify-content: center; font-family: var(--font-header); display: flex;">Send WhatsApp Message</a>
+          <button class="btn-ghost" id="success-close-btn" style="border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--mid-gray); font-family: var(--font-header);">Back to Home</button>
+        </div>
       </div>
     </div>
     
@@ -1676,7 +1690,10 @@
                       
     const whatsappUrl = `https://wa.me/2349130663739?text=${encodeURIComponent(waMessage)}`;
     
-    // Open WhatsApp in a new tab
+    // Set the backup WhatsApp link on the thank you page
+    document.getElementById('success-whatsapp-btn').href = whatsappUrl;
+    
+    // Open WhatsApp in a new tab (automatic redirect)
     window.open(whatsappUrl, '_blank');
     
     // Transition modal to success view
