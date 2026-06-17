@@ -129,10 +129,10 @@
   .nav-cta {
     background: var(--primary-purple);
     color: #fff;
-    padding: 10px 22px;
+    padding: 8px 16px;
     border: none;
     font-family: var(--font-header);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     text-decoration: none;
@@ -431,6 +431,7 @@
   }
   .pricing-header .stacked-heading span {
     display: block;
+    white-space: nowrap;
   }
   .pricing-header .stacked-heading em {
     font-style: italic;
@@ -645,13 +646,11 @@
     line-height: 1.25;
     letter-spacing: -0.025em;
   }
-  @media (max-width: 768px) {
-    .trust-heading {
-      font-size: clamp(20px, 5.5vw, 26px);
-    }
+  .trust-line {
+    display: block;
+    white-space: nowrap;
   }
   .trust-heading .trust-green {
-    display: block;
     color: var(--neon-green) !important;
     margin-top: 12px;
   }
@@ -1055,6 +1054,18 @@
       gap: 8px;
     }
   }
+  
+  @media (max-width: 768px) {
+    .trust {
+      padding: 56px 16px;
+    }
+    .trust-heading {
+      font-size: clamp(24px, 7.5vw, 32px);
+    }
+    .pricing-header .stacked-heading {
+      font-size: clamp(24px, 7.5vw, 32px);
+    }
+  }
 </style>
 </head>
 <body>
@@ -1068,7 +1079,7 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="https://wa.me/2349130663739">Contact</a></li>
   </ul>
-  <a class="nav-cta" href="https://wa.me/2349130663739">Book Appointment</a>
+  <a class="nav-cta" href="https://wa.me/2349130663739">Book Now</a>
 </nav>
 
 <!-- HERO -->
@@ -1228,7 +1239,7 @@
 <!-- TRUST SECTION -->
 <section class="trust">
   <div class="trust-content">
-    <h2 class="trust-heading">Your home is personal.<br><span class="trust-green">We treat it that way.</span></h2>
+    <h2 class="trust-heading"><span class="trust-line">Your home is personal.</span><span class="trust-green trust-line">We treat it that way.</span></h2>
     <p>Every cleanse.ng worker is screened, referenced, and trained before entering a client's home. You'll have a dedicated supervisor and direct WhatsApp contact from day one.</p>
     <p>If something goes wrong, we speak to you directly and fix it.</p>
     <a class="btn-ghost" href="https://wa.me/2349130663739">Get in touch →</a>
