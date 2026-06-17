@@ -645,6 +645,11 @@
     line-height: 1.25;
     letter-spacing: -0.025em;
   }
+  @media (max-width: 768px) {
+    .trust-heading {
+      font-size: clamp(20px, 5.5vw, 26px);
+    }
+  }
   .trust-heading .trust-green {
     display: block;
     color: var(--neon-green) !important;
@@ -1054,10 +1059,6 @@
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  Working hours: 8am–6pm. WhatsApp us: <a href="https://wa.me/2349130663739">+234 913 066 3739</a>
-</div>
 
 <!-- NAV -->
 <nav>
@@ -1699,6 +1700,17 @@
     // Transition modal to success view
     formContainer.style.display = 'none';
     successContainer.classList.add('active');
+  });
+
+  // Automatically open booking modal on page load for tablet and desktop screens (tabs and above)
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth >= 768) {
+      setTimeout(() => {
+        if (!modal.classList.contains('active')) {
+          openBookingModal("");
+        }
+      }, 1000);
+    }
   });
 </script>
 </body>
