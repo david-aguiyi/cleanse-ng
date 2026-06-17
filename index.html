@@ -1626,10 +1626,46 @@
     const visits = visitsSelect.value || 'Not selected';
     const preferences = document.getElementById('booking-preferences').value || 'None';
     
+    // Calculate pricing details dynamically
+    const planPrices = {
+      "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+      "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
+      "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+      "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
+      "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+      "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
+    };
+
+    const priceInfo = planPrices[selectedPlan];
+    let priceDetailsText = "";
+    if (priceInfo) {
+      if (priceInfo.type === "fixed") {
+        priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / month`;
+      } else {
+        let multiplier = 0;
+        if (visits.includes("1 visit")) multiplier = 1;
+        else if (visits.includes("2 visits")) multiplier = 2;
+        else if (visits.includes("4 visits")) multiplier = 4;
+        else if (visits.includes("8 visits")) multiplier = 8;
+        
+        if (multiplier > 0) {
+          const total = priceInfo.rate * multiplier;
+          priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / visit (Total: ₦${total.toLocaleString()} / month)`;
+        } else {
+          priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / visit (Total: Custom based on frequency)`;
+        }
+      }
+    } else {
+      priceDetailsText = "Custom Plan (pricing to be confirmed)";
+    }
+    
     // Construct WhatsApp message template
     const waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n` +
                       `• *Plan:* ${selectedPlan}\n` +
                       `• *Visits per Month:* ${visits}\n` +
+                      `• *Pricing:* ${priceDetailsText}\n` +
                       `• *Name:* ${fullName}\n` +
                       `• *Email:* ${email}\n` +
                       `• *Phone:* ${phone}\n` +
