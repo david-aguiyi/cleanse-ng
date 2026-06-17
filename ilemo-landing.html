@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cleanse.ng — For those who know what their time is worth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Brand Colors */
+    --primary-purple: #3A1D6D;
+    --deep-purple: #1A0D33;
+    --neon-green: #7CFC00;
+    --lavender: #B5BCFF;
+    --light-gray-brand: #EDEDF2;
+    --white: #FFFFFF;
+
+    /* Theme overrides & neutrals */
+    --off-white: #FAF9FC;
+    --off-white-dark: #F1EFF4;
+    --black: #0F0E14;
+    --charcoal: #1D1B22;
+    --mid-gray: #5C5866;
+    --light-gray: #9D99A6;
+    --border: rgba(58, 29, 109, 0.12);
+    --green: var(--primary-purple);
+    --green-light: var(--primary-purple);
+    
+    /* Fonts */
+    --font-header: 'Lexend', system-ui, sans-serif;
+    --font-body: 'Nunito', system-ui, sans-serif;
+    
+    --serif: var(--font-header);
+    --sans: var(--font-body);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--black);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── BRAND LOGO CLASS ── */
+  .brand-logo {
+    font-family: var(--font-header);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: inherit;
+    text-transform: lowercase;
+    text-decoration: none;
+  }
+  .brand-logo .dot-ng {
+    color: var(--neon-green);
+  }
+  .text-green {
+    color: var(--neon-green) !important;
+  }
+
+  /* ── ANNOUNCEMENT BAR ── */
+  .topbar {
+    background: var(--deep-purple);
+    color: #fff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-family: var(--font-header);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar a { color: var(--neon-green); text-decoration: underline; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--off-white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-size: 24px;
+    color: var(--deep-purple);
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--mid-gray);
+    font-size: 14px;
+    font-family: var(--font-header);
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--primary-purple); }
+  .nav-cta {
+    background: var(--primary-purple);
+    color: #fff;
+    padding: 10px 22px;
+    border: none;
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .nav-cta:hover { background: var(--deep-purple); }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    overflow: hidden;
+    background: var(--deep-purple);
+    color: var(--white);
+  }
+  .hero-left {
+    padding: 80px 60px 80px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    font-family: var(--font-header);
+  }
+  .hero h1 {
+    font-family: var(--font-header);
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    font-weight: 700;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--neon-green);
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--lavender);
+    max-width: 440px;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    padding: 14px 30px;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    background: var(--white);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    color: var(--deep-purple);
+    font-size: 14px;
+    font-family: var(--font-header);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 2px;
+    transition: color 0.2s, gap 0.2s;
+    cursor: pointer;
+  }
+  .btn-ghost:hover {
+    color: var(--primary-purple);
+    gap: 10px;
+  }
+  .hero .btn-ghost {
+    color: var(--white);
+    border-bottom-color: var(--lavender);
+    transition: color 0.2s, border-color 0.2s, gap 0.2s;
+  }
+  .hero .btn-ghost:hover {
+    color: var(--neon-green);
+    border-bottom-color: var(--neon-green);
+    gap: 10px;
+  }
+  .hero-areas {
+    font-size: 12px;
+    color: var(--lavender);
+    opacity: 0.8;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+    font-family: var(--font-header);
+  }
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: var(--deep-purple);
+  }
+  .hero-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.85) brightness(0.8);
+  }
+  .hero-right-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(26, 13, 51, 0.4) 100%);
+  }
+
+  /* ── PROBLEM SECTION ── */
+  .problem {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+    background: var(--off-white);
+  }
+  .problem-left {
+    padding: 80px 60px 80px 48px;
+    border-right: 1px solid var(--border);
+  }
+  .problem-left h2 {
+    font-family: var(--font-header);
+    font-weight: 700;
+    font-size: clamp(32px, 3.5vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--deep-purple);
+    margin-bottom: 40px;
+  }
+  .problem-left h2 em {
+    font-style: italic;
+    color: var(--primary-purple);
+  }
+  .problem-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .problem-point {
+    padding: 22px 0;
+    border-top: 1px solid var(--border);
+    font-size: 15px;
+    color: var(--mid-gray);
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  .problem-point strong {
+    color: var(--deep-purple);
+    font-family: var(--font-header);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 16px;
+  }
+  .problem-right {
+    padding: 80px 48px 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+    font-family: var(--font-header);
+  }
+  .problem-right p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--mid-gray);
+    font-weight: 400;
+    max-width: 420px;
+  }
+  .problem-right p em {
+    font-style: italic;
+    color: var(--deep-purple);
+    font-weight: 600;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    background: var(--deep-purple);
+    color: #fff;
+    padding: 80px 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  .testimonials-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .testimonial-track {
+    position: relative;
+    min-height: 200px;
+  }
+  .testimonial-slide {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .testimonial-slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .testimonial-quote {
+    font-family: var(--font-body);
+    font-size: clamp(22px, 2.8vw, 36px);
+    line-height: 1.35;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--lavender);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+  .testimonial-quote::before { content: '\201C'; }
+  .testimonial-quote::after { content: '\201D'; }
+  .testimonial-author {
+    font-size: 13px;
+    color: var(--neon-green);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: var(--font-header);
+  }
+  .testimonial-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .t-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .t-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--neon-green); color: var(--neon-green); }
+  .t-dots { display: flex; gap: 8px; }
+  .t-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .t-dot.active { background: var(--neon-green); }
+
+  /* ── PRICING ── */
+  #pricing {
+    padding: 80px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--off-white);
+  }
+  .pricing-header {
+    margin-bottom: 64px;
+  }
+  .pricing-header .stacked-heading {
+    font-family: var(--font-header);
+    font-size: clamp(36px, 4.5vw, 60px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    color: var(--deep-purple);
+  }
+  .pricing-header .stacked-heading span {
+    display: block;
+  }
+  .pricing-header .stacked-heading em {
+    font-style: italic;
+    color: var(--primary-purple);
+    font-weight: 700;
+  }
+  .pricing-sub {
+    font-size: 15px;
+    color: var(--mid-gray);
+    margin-top: 16px;
+    font-weight: 400;
+  }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+  .pricing-card {
+    border-right: 1px solid var(--border);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transition: background 0.2s;
+    background: var(--off-white);
+  }
+  .pricing-card:last-child { border-right: none; }
+  .pricing-card:hover { background: var(--off-white-dark); }
+  .pricing-card.featured {
+    background: var(--deep-purple);
+    color: #fff;
+    border-right: 1px solid var(--deep-purple);
+  }
+  .pricing-card.featured:hover { background: var(--charcoal); }
+  .pc-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+    font-family: var(--font-header);
+  }
+  .pricing-card.featured .pc-label { color: var(--lavender); }
+  .badge-most-booked {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    padding: 3px 8px;
+    font-family: var(--font-header);
+    line-height: 1;
+  }
+  /* ── PRICING TOGGLE ── */
+  .pricing-toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+  .toggle-label {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    cursor: pointer;
+    transition: color 0.2s;
+    user-select: none;
+  }
+  .toggle-label.active {
+    color: var(--primary-purple);
+  }
+  .toggle-switch-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 64px;
+    height: 34px;
+  }
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--off-white-dark);
+    border: 1px solid var(--border);
+    transition: .3s;
+    border-radius: 34px;
+  }
+  .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--primary-purple);
+    transition: .3s;
+    border-radius: 50%;
+  }
+  input:checked + .toggle-slider {
+    background-color: var(--deep-purple);
+    border-color: var(--deep-purple);
+  }
+  input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+    background-color: var(--neon-green);
+  }
+
+  /* ── PRICE BLOCKS ── */
+  .pc-price-display {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+  }
+  .pc-price-primary {
+    font-family: var(--font-header);
+    font-size: 34px;
+    color: var(--deep-purple);
+    font-weight: 700;
+    line-height: 1.1;
+    transition: all 0.2s;
+  }
+  .pricing-card.featured .pc-price-primary {
+    color: var(--white);
+  }
+  .pc-price-primary .price-unit {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--light-gray);
+  }
+  .pricing-card.featured .pc-price-primary .price-unit {
+    color: var(--lavender);
+  }
+  .pc-price-secondary {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--mid-gray);
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .pricing-card.featured .pc-price-secondary {
+    color: var(--lavender);
+  }
+  .pc-savings {
+    display: inline-block;
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    font-size: 11px;
+    padding: 4px 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    align-self: flex-start;
+    font-family: var(--font-header);
+  }
+  .pc-btn {
+    padding: 12px 20px;
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--deep-purple);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .pc-btn:hover { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
+  .pricing-card.featured .pc-btn {
+    background: transparent;
+    color: var(--neon-green);
+    border: 1px solid var(--neon-green);
+  }
+  .pricing-card.featured .pc-btn:hover {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    border-color: var(--neon-green);
+  }
+
+  /* ── TRUST SECTION ── */
+  .trust {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 100px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--off-white);
+  }
+  .trust-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  .trust-heading {
+    font-family: var(--font-header);
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 700;
+    color: var(--primary-purple);
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+  .trust-heading .trust-green {
+    display: block;
+    color: var(--neon-green) !important;
+    margin-top: 12px;
+  }
+  .trust-content p {
+    font-size: 18px;
+    color: var(--mid-gray);
+    line-height: 1.7;
+    max-width: 620px;
+    font-weight: 400;
+  }
+  .trust-content .btn-ghost {
+    margin-top: 12px;
+    color: var(--deep-purple);
+  }
+  .trust-content .btn-ghost:hover {
+    color: var(--primary-purple);
+  }
+
+  /* ── FAQ ── */
+  .faq {
+    padding: 80px 48px;
+    border-bottom: 1px solid var(--border);
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--off-white);
+  }
+  .faq-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+    margin-bottom: 40px;
+    font-family: var(--font-header);
+  }
+  .faq h2 {
+    font-family: var(--font-header);
+    font-size: clamp(28px, 3vw, 44px);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin-bottom: 48px;
+    line-height: 1.1;
+    color: var(--deep-purple);
+  }
+  .faq-item {
+    border-top: 1px solid var(--border);
+  }
+  .faq-item:last-child { border-bottom: 1px solid var(--border); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 22px 0;
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-q:hover { color: var(--primary-purple); }
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--primary-purple);
+    transition: transform 0.25s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .faq-a-inner {
+    padding-bottom: 22px;
+    font-size: 15px;
+    color: var(--mid-gray);
+    line-height: 1.7;
+    font-weight: 400;
+    max-width: 680px;
+  }
+  .faq-item.open .faq-a { max-height: 300px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--deep-purple);
+    color: var(--lavender);
+    padding: 64px 48px 40px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 32px;
+  }
+  .footer-brand {
+    font-size: 26px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--lavender);
+    opacity: 0.8;
+    max-width: 240px;
+  }
+  .footer-contact {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--lavender);
+    opacity: 0.8;
+  }
+  .footer-contact a { color: var(--neon-green); text-decoration: none; }
+  .footer-contact a:hover { color: #fff; text-decoration: underline; }
+  .footer-col h4 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.5;
+    margin-bottom: 20px;
+    font-family: var(--font-header);
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a {
+    font-size: 14px;
+    color: var(--lavender);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col ul a:hover { color: #fff; }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--lavender);
+    opacity: 0.4;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero, .problem, .trust {
+      grid-template-columns: 1fr;
+    }
+    .hero-right { min-height: 280px; }
+    .hero-left, .problem-left, .problem-right, .trust-left, .trust-right {
+      padding: 56px 24px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .problem-right { border-bottom: none; }
+    .trust-right { border-bottom: none; }
+    #pricing { padding: 56px 24px; }
+    .pricing-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .pricing-card:nth-child(2) { border-right: none; }
+    .testimonials { padding: 56px 24px; }
+    .faq { padding: 56px 24px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+    footer { padding: 48px 24px 32px; }
+    .footer-bottom { flex-direction: column; gap: 8px; }
+  }
+  @media (max-width: 560px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .footer-top { grid-template-columns: 1fr; }
+  }
+
+  /* ── BOOKING MODAL OVERLAY ── */
+  .booking-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 13, 51, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 20px;
+  }
+  .booking-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .booking-modal-content {
+    width: 100%;
+    max-width: 1000px;
+    height: 90vh;
+    max-height: 720px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 48px rgba(26, 13, 51, 0.18);
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  .booking-modal-overlay.active .booking-modal-content {
+    transform: scale(1);
+  }
+  .booking-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--deep-purple);
+    color: var(--white);
+    border: none;
+    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: background 0.2s, color 0.2s;
+  }
+  .booking-modal-close:hover {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+  }
+  .booking-modal-left {
+    padding: 24px 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  @media (min-width: 769px) and (min-height: 600px) {
+    .booking-modal-left {
+      justify-content: center;
+    }
+  }
+  .booking-modal-left h2 {
+    font-family: var(--font-header);
+    font-weight: 700;
+    color: var(--deep-purple);
+    font-size: 24px;
+    line-height: 1.1;
+  }
+  .booking-modal-left .subheadline {
+    font-size: 13px;
+    color: var(--mid-gray);
+    line-height: 1.4;
+  }
+  .booking-modal-right {
+    position: relative;
+    background: var(--deep-purple);
+  }
+  .booking-modal-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* ── FORM ELEMENTS ── */
+  .booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .form-group.full-width {
+    grid-column: span 2;
+  }
+  .form-group label {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--deep-purple);
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--black);
+    font-family: var(--font-body);
+    font-size: 13px;
+    border-radius: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08);
+  }
+  .form-group input[readonly],
+  .form-group select:disabled {
+    background: var(--off-white-dark);
+    font-weight: 600;
+    color: var(--primary-purple);
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  .form-group textarea {
+    resize: vertical;
+    min-height: 54px;
+  }
+  
+  /* ── SUCCESS STATE ── */
+  .booking-success-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 24px;
+    height: 100%;
+    padding: 40px 20px;
+    animation: fadeIn 0.4s ease;
+  }
+  .booking-success-state.active {
+    display: flex;
+  }
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    box-shadow: 0 8px 16px rgba(124, 252, 0, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .booking-modal-content {
+      grid-template-columns: 1fr;
+      height: 95vh;
+      max-height: none;
+    }
+    .booking-modal-right {
+      display: none;
+    }
+    .booking-modal-left {
+      padding: 56px 16px 20px 16px;
+      gap: 12px;
+    }
+    .booking-modal-close {
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      font-size: 20px;
+    }
+    .form-group.full-width {
+      grid-column: span 1;
+    }
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  Working hours: 8am–6pm. WhatsApp us: <a href="https://wa.me/2349130663739">+234 913 066 3739</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo brand-logo" href="#">cleanse<span class="dot-ng">.ng</span></a>
+  <ul class="nav-links">
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="https://wa.me/2349130663739">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="https://wa.me/2349130663739">Book Appointment</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Gain your time back</p>
+    <h1>Your time is better<br>spent <em>elsewhere.</em></h1>
+    <p class="hero-sub">Work. Family. Life…<br>Cleaning your home is not your job anymore.<br>Let us handle it.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#pricing">Explore Our Plans & Pricing →</a>
+    </div>
+    <p class="hero-areas">GRA · Bodija · Jericho · Iyaganku · Akobo · Oluyole</p>
+  </div>
+  <div class="hero-right">
+    <img src="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png" alt="Clean, bright living room interior" onerror="this.style.display='none'">
+    <div class="hero-right-overlay"></div>
+    <!-- Fallback background pattern if image fails -->
+    <style>
+      .hero-right:not(:has(img[style*="none"])) { background: linear-gradient(135deg, var(--deep-purple) 0%, var(--primary-purple) 100%); }
+    </style>
+  </div>
+</section>
+
+<!-- PROBLEM SECTION -->
+<section class="problem">
+  <div class="problem-left">
+    <h2>The cleaning isn't the problem… <em>managing it is.</em></h2>
+    <div class="problem-points">
+      <div class="problem-point">
+        <strong>No chasing.</strong>
+        No weekly phone calls, explaining instructions, or negotiating times.
+      </div>
+      <div class="problem-point">
+        <strong>No cancellations.</strong>
+        No last-minute disappearances. We show up, guaranteed.
+      </div>
+      <div class="problem-point">
+        <strong>No managing.</strong>
+        You hired help to save time, not manage another person.
+      </div>
+    </div>
+  </div>
+  <div class="problem-right">
+    <p class="eyebrow">How it's different</p>
+    <p>Full-time, trained employees provide a spotless home for a flat monthly fee, so you never have to chase down or manage a cleaner again.</p>
+    <a class="btn-ghost" href="#pricing">See how cleanse.ng works →</a>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <p class="eyebrow text-green" style="margin-bottom: 8px; text-align: center;">Testimonials</p>
+    <h2 style="font-family: var(--font-header); font-weight: 700; text-align: center; color: #fff; margin-bottom: 48px; font-size: clamp(28px, 3.5vw, 44px);">What our clients say</h2>
+    <div class="testimonial-track">
+      <div class="testimonial-slide active">
+        <p class="testimonial-quote">The cleanse.ng team is always on time, professional, and their supervisors are truly responsive. Worth every naira. I stopped worrying about reminders or supplies. My home just gets cleaned and I never have to manage a thing.</p>
+        <p class="testimonial-author">Chidinma · GRA, Ibadan</p>
+      </div>
+      <div class="testimonial-slide">
+        <p class="testimonial-quote">I never realized how much time I spent managing the cleaning until I stopped having to. This service is a genuine game changer. The supervisor is always reachable and problems get fixed fast.</p>
+        <p class="testimonial-author">Tunde · Bodija, Ibadan</p>
+      </div>
+      <div class="testimonial-slide">
+        <p class="testimonial-quote">One price, everything handled. No back and forth, no explaining myself, no chasing anyone. The cleaners are thorough and show up every single time. I can't recommend it enough.</p>
+        <p class="testimonial-author">Uche · Jericho, Ibadan</p>
+      </div>
+    </div>
+    <div class="testimonial-controls">
+      <button class="t-btn" id="prev-btn" aria-label="Previous">←</button>
+      <button class="t-btn" id="next-btn" aria-label="Next">→</button>
+      <div class="t-dots">
+        <div class="t-dot active" data-index="0"></div>
+        <div class="t-dot" data-index="1"></div>
+        <div class="t-dot" data-index="2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-header">
+    <div class="stacked-heading">
+      <span>One price.</span>
+      <span><em>Eight Visits.</em></span>
+      <span>Everything included.</span>
+    </div>
+    <p class="pricing-sub">All packages include a trained team, supplies, and a dedicated supervisor.</p>
+    
+    <!-- Dynamic Billing Toggle Slider -->
+    <div class="pricing-toggle-container">
+      <span class="toggle-label active" id="label-pay-per-visit">Pay Per Visit</span>
+      <label class="toggle-switch-wrapper">
+        <input type="checkbox" id="pricing-toggle-checkbox" style="display: none;">
+        <div class="toggle-slider"></div>
+      </label>
+      <span class="toggle-label" id="label-monthly">Monthly</span>
+    </div>
+  </div>
+  
+  <div class="pricing-grid">
+    <!-- 1 Bedroom -->
+    <div class="pricing-card">
+      <p class="pc-label">1 Bedroom</p>
+      <div class="pc-price-display">
+        <div class="pc-price-primary">
+          <span class="price-val">₦9,999</span><span class="price-unit"> / visit</span>
+        </div>
+        <div class="pc-price-secondary">₦60,000 / month (8 visits)</div>
+      </div>
+      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦19,992/mo</div>
+      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+    </div>
+    <!-- 2 Bedroom FEATURED -->
+    <div class="pricing-card featured">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: -4px;">
+        <p class="pc-label" style="margin: 0;">2 Bedroom</p>
+        <span class="badge-most-booked">Most Booked</span>
+      </div>
+      <div class="pc-price-display">
+        <div class="pc-price-primary">
+          <span class="price-val">₦11,999</span><span class="price-unit"> / visit</span>
+        </div>
+        <div class="pc-price-secondary">₦100,000 / month (8 visits)</div>
+      </div>
+      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦4,008/mo</div>
+      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+    </div>
+    <!-- 3 Bedroom -->
+    <div class="pricing-card">
+      <p class="pc-label">3 Bedroom</p>
+      <div class="pc-price-display">
+        <div class="pc-price-primary">
+          <span class="price-val">₦13,999</span><span class="price-unit"> / visit</span>
+        </div>
+        <div class="pc-price-secondary">₦150,000 / month (8 visits)</div>
+      </div>
+      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦38,008/mo</div>
+      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+    </div>
+    <!-- 4 Bedroom -->
+    <div class="pricing-card">
+      <p class="pc-label">4 Bedroom</p>
+      <div class="pc-price-display">
+        <div class="pc-price-primary">
+          <span class="price-val">₦19,999</span><span class="price-unit"> / visit</span>
+        </div>
+        <div class="pc-price-secondary">₦200,000 / month (8 visits)</div>
+      </div>
+      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦40,008/mo</div>
+      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST SECTION -->
+<section class="trust">
+  <div class="trust-content">
+    <h2 class="trust-heading">Your home is personal.<br><span class="trust-green">We treat it that way.</span></h2>
+    <p>Every cleanse.ng worker is screened, referenced, and trained before entering a client's home. You'll have a dedicated supervisor and direct WhatsApp contact from day one.</p>
+    <p>If something goes wrong, we speak to you directly and fix it.</p>
+    <a class="btn-ghost" href="https://wa.me/2349130663739">Get in touch →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="faq">
+    <p class="faq-eyebrow">FAQ</p>
+    <h2>Questions we get asked.</h2>
+
+    <div class="faq-item">
+      <button class="faq-q">What if I need to reschedule a visit? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Message your supervisor. It gets sorted. No forms, no penalties, no three-day notice requirement.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What do your cleaners actually clean? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Everything inside the home — bedrooms, bathrooms, kitchen, living areas, floors, surfaces, appliances. We bring all supplies. You provide nothing except access.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What if I'm not home during the visit? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Most of our clients are not. Your supervisor messages before entering and sends a confirmation when everything is done and locked.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What if I'm not happy with a visit? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Tell your supervisor. They call you within the day and the issue is addressed on the next visit — or sooner if you prefer.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I cancel anytime? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Yes. We ask for one month's notice so we can manage the team schedule. No long contracts, no penalties.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand brand-logo">cleanse<span class="dot-ng">.ng</span></div>
+      <p class="footer-tagline">For those who know what their time is worth. Ibadan, Oyo State — serving GRA, Bodija, Jericho, Iyaganku, Akobo & Oluyole.</p>
+      <div class="footer-contact">
+        <span>WhatsApp: <a href="https://wa.me/2349130663739">+234 913 066 3739</a></span>
+        <span>Instagram: <a href="#">@cleanse.ng</a></span>
+        <span>Working hours: 8am – 6pm daily</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Residential Cleaning</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="https://wa.me/2349130663739">Contact</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 cleanse.ng. All rights reserved.</span>
+    <span>Ibadan, Oyo State, Nigeria</span>
+  </div>
+</footer>
+
+<!-- BOOKING MODAL -->
+<div class="booking-modal-overlay" id="booking-modal">
+  <div class="booking-modal-content">
+    <button class="booking-modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
+    <div class="booking-modal-left">
+      <div id="booking-form-container">
+        <h2>Book Your Cleaning Plan</h2>
+        <p class="subheadline">Tell us a little about your space and preferences. We'll handle the rest.</p>
+        
+        <form class="booking-form" id="booking-plan-form" style="margin-top: 16px;">
+          <!-- Selected Plan & Visits per Month -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-selected-plan">Selected Plan *</label>
+              <select id="booking-selected-plan" required>
+                <option value="" disabled selected>Select plan</option>
+                <option value="1 Bedroom — Pay Per Visit">1 Bedroom — Pay Per Visit</option>
+                <option value="1 Bedroom — Monthly Subscription (8 visits)">1 Bedroom — Monthly Subscription (8 visits)</option>
+                <option value="2 Bedroom — Pay Per Visit">2 Bedroom — Pay Per Visit</option>
+                <option value="2 Bedroom — Monthly Subscription (8 visits)">2 Bedroom — Monthly Subscription (8 visits)</option>
+                <option value="3 Bedroom — Pay Per Visit">3 Bedroom — Pay Per Visit</option>
+                <option value="3 Bedroom — Monthly Subscription (8 visits)">3 Bedroom — Monthly Subscription (8 visits)</option>
+                <option value="4 Bedroom — Pay Per Visit">4 Bedroom — Pay Per Visit</option>
+                <option value="4 Bedroom — Monthly Subscription (8 visits)">4 Bedroom — Monthly Subscription (8 visits)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="booking-visits">Visits Per Month *</label>
+              <select id="booking-visits" required>
+                <option value="" disabled selected>Select frequency</option>
+                <option value="1 visit per month">1 visit per month</option>
+                <option value="2 visits per month">2 visits per month</option>
+                <option value="4 visits per month (Weekly)">4 visits per month (Weekly)</option>
+                <option value="8 visits per month (2x per week)">8 visits per month (2x per week)</option>
+                <option value="Custom (specify in preferences)">Custom frequency</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Full Name & Email -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-name">Full Name *</label>
+              <input type="text" id="booking-name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+              <label for="booking-email">Email Address *</label>
+              <input type="email" id="booking-email" required placeholder="yourname@gmail.com">
+            </div>
+          </div>
+          
+          <!-- Phone Number & Location -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-phone">Phone Number *</label>
+              <input type="tel" id="booking-phone" required placeholder="+234 801 234 5678">
+            </div>
+            <div class="form-group">
+              <label for="booking-location">Location *</label>
+              <input type="text" id="booking-location" required placeholder="Bodija, Jericho, Akobo, Oluyole...">
+            </div>
+          </div>
+          
+          <!-- Property Type & Preferred Schedule -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-property">Property Type *</label>
+              <select id="booking-property" required>
+                <option value="" disabled selected>Select property type</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Duplex">Duplex</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="booking-schedule">Preferred Schedule *</label>
+              <select id="booking-schedule" required>
+                <option value="" disabled selected>Select preferred schedule</option>
+                <option value="Morning (8am - 11am)">Morning (8am - 11am)</option>
+                <option value="Mid-day (11am - 2pm)">Mid-day (11am - 2pm)</option>
+                <option value="Afternoon (2pm - 5pm)">Afternoon (2pm - 5pm)</option>
+                <option value="Flexible (Anytime)">Flexible (Anytime)</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Cleaning Preferences -->
+          <div class="form-group full-width">
+            <label for="booking-preferences">Cleaning Preferences</label>
+            <textarea id="booking-preferences" placeholder="Tell us anything you'd like us to know.&#10;&#10;• Focus on bathrooms&#10;• Pet-friendly products only&#10;• Morning visits preferred&#10;• Extra attention to kitchen surfaces"></textarea>
+          </div>
+          
+          <!-- CTA and Footers -->
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 11px; text-align: center; justify-content: center; font-family: var(--font-header);">Book My Cleaning</button>
+            <p style="font-size: 12px; color: var(--mid-gray); text-align: center; font-weight: 500;">
+              We'll reach out on WhatsApp within 1 hour · Serving Ibadan residents
+            </p>
+            <p style="font-size: 11px; color: var(--light-gray); text-align: center; margin-top: 2px;">
+              ✓ Verified professionals · ✓ Flexible scheduling · ✓ Satisfaction guaranteed
+            </p>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Thank You Success Screen -->
+      <div class="booking-success-state" id="booking-success-container">
+        <div class="success-icon">✓</div>
+        <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 28px;">Booking Requested!</h2>
+        <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; max-width: 400px; margin: 0 auto;">
+          We have prefilled your details in WhatsApp to finalize. Please send the message on WhatsApp to complete your booking.
+        </p>
+        <p style="font-size: 13px; color: var(--primary-purple); font-weight: 600; margin-top: 16px;">
+          We'll reach out within 1 hour to confirm your plan.
+        </p>
+        <button class="btn-primary" id="success-close-btn" style="border: none; padding: 12px 24px; margin-top: 16px; font-family: var(--font-header);">Back to Home</button>
+      </div>
+    </div>
+    
+    <div class="booking-modal-right">
+      <img src="./booking_lifestyle_image.png" alt="Clean minimalist luxury bedroom outcome">
+    </div>
+  </div>
+</div>
+
+<script>
+  // Testimonial slider
+  const slides = document.querySelectorAll('.testimonial-slide');
+  const dots = document.querySelectorAll('.t-dot');
+  let current = 0;
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  document.getElementById('next-btn').addEventListener('click', () => showSlide(current + 1));
+  document.getElementById('prev-btn').addEventListener('click', () => showSlide(current - 1));
+  dots.forEach(dot => dot.addEventListener('click', () => showSlide(+dot.dataset.index)));
+
+  setInterval(() => showSlide(current + 1), 6000);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Dynamic Pricing Toggle Script
+  const pricingCheckbox = document.getElementById('pricing-toggle-checkbox');
+  const labelPayPerVisit = document.getElementById('label-pay-per-visit');
+  const labelMonthly = document.getElementById('label-monthly');
+  
+  const pricingData = {
+    oneTime: [
+      { primary: '₦9,999', unit: ' / visit', secondary: '₦60,000 / month (8 visits)', rawPrice: 9999, monthlyPrice: 60000 },
+      { primary: '₦11,999', unit: ' / visit', secondary: '₦100,000 / month (8 visits)', rawPrice: 11999, monthlyPrice: 100000 },
+      { primary: '₦13,999', unit: ' / visit', secondary: '₦150,000 / month (8 visits)', rawPrice: 13999, monthlyPrice: 150000 },
+      { primary: '₦19,999', unit: ' / visit', secondary: '₦200,000 / month (8 visits)', rawPrice: 19999, monthlyPrice: 200000 }
+    ],
+    monthly: [
+      { primary: '₦60,000', unit: ' / month', secondary: '₦9,999 / visit' },
+      { primary: '₦100,000', unit: ' / month', secondary: '₦11,999 / visit' },
+      { primary: '₦150,000', unit: ' / month', secondary: '₦13,999 / visit' },
+      { primary: '₦200,000', unit: ' / month', secondary: '₦19,999 / visit' }
+    ]
+  };
+
+  const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
+  const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
+  const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
+  const savingsElements = document.querySelectorAll('.pc-savings');
+
+  function updatePricing(isMonthly) {
+    const data = isMonthly ? pricingData.monthly : pricingData.oneTime;
+    
+    primaryPriceElements.forEach((el, index) => {
+      el.textContent = data[index].primary;
+    });
+    
+    primaryUnitElements.forEach((el, index) => {
+      el.textContent = data[index].unit;
+    });
+
+    secondaryPriceElements.forEach((el, index) => {
+      el.textContent = data[index].secondary;
+    });
+
+    savingsElements.forEach((el, index) => {
+      const item = pricingData.oneTime[index];
+      const oneTimeTotal = item.rawPrice * 8;
+      const monthlyTotal = item.monthlyPrice;
+      const difference = oneTimeTotal - monthlyTotal;
+      
+      if (!isMonthly) {
+        if (difference > 0) {
+          el.textContent = `Saves ₦${difference.toLocaleString()}/mo`;
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        } else if (difference < 0) {
+          const savings = Math.abs(difference);
+          el.textContent = `Saves ₦${savings.toLocaleString()}/mo`;
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        } else {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(5px)';
+        }
+      } else {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(5px)';
+      }
+    });
+
+    if (isMonthly) {
+      labelMonthly.classList.add('active');
+      labelPayPerVisit.classList.remove('active');
+    } else {
+      labelPayPerVisit.classList.add('active');
+      labelMonthly.classList.remove('active');
+    }
+  }
+
+  pricingCheckbox.addEventListener('change', () => {
+    updatePricing(pricingCheckbox.checked);
+  });
+
+  // Clicking labels toggles checkbox
+  labelPayPerVisit.addEventListener('click', () => {
+    if (pricingCheckbox.checked) {
+      pricingCheckbox.checked = false;
+      updatePricing(false);
+    }
+  });
+
+  labelMonthly.addEventListener('click', () => {
+    if (!pricingCheckbox.checked) {
+      pricingCheckbox.checked = true;
+      updatePricing(true);
+    }
+  });
+
+  // Booking Modal Logic
+  const modal = document.getElementById('booking-modal');
+  const closeBtn = document.getElementById('modal-close-btn');
+  const successCloseBtn = document.getElementById('success-close-btn');
+  const formContainer = document.getElementById('booking-form-container');
+  const successContainer = document.getElementById('booking-success-container');
+  const bookingForm = document.getElementById('booking-plan-form');
+  const planInput = document.getElementById('booking-selected-plan');
+  const visitsSelect = document.getElementById('booking-visits');
+
+  function openBookingModal(planName) {
+    if (planName) {
+      planInput.value = planName;
+    } else {
+      planInput.value = "";
+    }
+    
+    handlePlanChange();
+    
+    formContainer.style.display = 'block';
+    successContainer.classList.remove('active');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+
+  function handlePlanChange() {
+    const planName = planInput.value;
+    
+    // Dynamically set Visits Per Month dropdown behavior based on subscription type
+    if (planName.includes('Monthly Subscription')) {
+      visitsSelect.value = "8 visits per month (2x per week)";
+      visitsSelect.disabled = true;
+    } else {
+      // If it was disabled, reset it so they can choose
+      if (visitsSelect.disabled) {
+        visitsSelect.value = "";
+      }
+      visitsSelect.disabled = false;
+    }
+  }
+
+  planInput.addEventListener('change', handlePlanChange);
+
+  function closeBookingModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeBookingModal);
+  successCloseBtn.addEventListener('click', closeBookingModal);
+  
+  // Close modal when clicking outside content
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeBookingModal();
+    }
+  });
+
+  // Intercept click on all Book Appointment buttons
+  document.querySelectorAll('a[href*="wa.me"]').forEach(btn => {
+    // Only intercept buttons that are styled to book appointments (excluding text links in topbar / footer)
+    if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta') || btn.classList.contains('btn-primary')) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        let planName = '';
+        const card = btn.closest('.pricing-card');
+        if (card) {
+          const bedroomLabel = card.querySelector('.pc-label').textContent.trim();
+          const isMonthly = pricingCheckbox.checked;
+          planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (8 visits)' : 'Pay Per Visit'}`;
+          openBookingModal(planName);
+        } else {
+          // Nav or Hero buttons open the modal with no plan selected, allowing choice
+          openBookingModal("");
+        }
+      });
+    }
+  });
+
+  // Handle Form Submission
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Extract values
+    const selectedPlan = planInput.value;
+    const fullName = document.getElementById('booking-name').value;
+    const email = document.getElementById('booking-email').value;
+    const phone = document.getElementById('booking-phone').value;
+    const location = document.getElementById('booking-location').value;
+    const propertyType = document.getElementById('booking-property').value;
+    const schedule = document.getElementById('booking-schedule').value;
+    const visits = visitsSelect.value || 'Not selected';
+    const preferences = document.getElementById('booking-preferences').value || 'None';
+    
+    // Construct WhatsApp message template
+    const waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n` +
+                      `• *Plan:* ${selectedPlan}\n` +
+                      `• *Visits per Month:* ${visits}\n` +
+                      `• *Name:* ${fullName}\n` +
+                      `• *Email:* ${email}\n` +
+                      `• *Phone:* ${phone}\n` +
+                      `• *Location:* ${location}\n` +
+                      `• *Property Type:* ${propertyType}\n` +
+                      `• *Preferred Schedule:* ${schedule}\n` +
+                      `• *Preferences:* ${preferences}`;
+                      
+    const whatsappUrl = `https://wa.me/2349130663739?text=${encodeURIComponent(waMessage)}`;
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+    
+    // Transition modal to success view
+    formContainer.style.display = 'none';
+    successContainer.classList.add('active');
+  });
+</script>
+</body>
+</html>
