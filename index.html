@@ -18,6 +18,103 @@
 <meta property="twitter:title" content="cleanse.ng — Premium House Cleaning in Ibadan">
 <meta property="twitter:description" content="For those who know what their time is worth. Trained cleaners, flat rates, and dedicated supervisors in Bodija, Jericho, Akobo, Oluyole, and GRA.">
 <meta property="twitter:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+<link rel="canonical" href="https://cleanse.ng/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta property="og:site_name" content="cleanse.ng">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "cleanse.ng",
+  "image": "https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png",
+  "@id": "https://cleanse.ng/#localbusiness",
+  "url": "https://cleanse.ng/",
+  "telephone": "+2349130663739",
+  "priceRange": "₦₦",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "GRA, Bodija, Jericho, Akobo, Oluyole",
+    "addressLocality": "Ibadan",
+    "addressRegion": "Oyo State",
+    "addressCountry": "NG"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 7.3775,
+    "longitude": 3.9470
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "08:00",
+    "closes": "18:00"
+  },
+  "sameAs": [
+    "https://www.instagram.com/cleanse.ng"
+  ],
+  "description": "Premium, hassle-free residential cleaning services in Ibadan. Flat monthly rates, trained teams, dedicated supervisors, and 100% reliable scheduling."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What if I need to reschedule a visit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Message your supervisor. It gets sorted. No forms, no penalties, no three-day notice requirement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do your cleaners actually clean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Everything inside the home — bedrooms, bathrooms, kitchen, living areas, floors, surfaces, appliances. We bring all supplies. You provide nothing except access."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I'm not home during the visit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most of our clients are not. Your supervisor messages before entering and sends a confirmation when everything is done and locked."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I'm not happy with a visit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tell your supervisor. They call you within the day and the issue is addressed on the next visit — or sooner if you prefer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I cancel anytime?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We ask for one month's notice so we can manage the team schedule. No long contracts, no penalties."
+      }
+    }
+  ]
+}
+</script>
+<link rel="preload" href="./hero_lifestyle_image.png" as="image" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -180,6 +277,10 @@
     font-weight: 700;
     color: var(--neon-green);
   }
+  .hero-line {
+    display: inline-block;
+    white-space: nowrap;
+  }
   .hero-sub {
     font-size: 18px;
     color: var(--lavender);
@@ -206,6 +307,7 @@
     display: inline-block;
     transition: background 0.2s, transform 0.2s;
     letter-spacing: 0.01em;
+    white-space: nowrap;
   }
   .btn-primary:hover {
     background: var(--white);
@@ -507,6 +609,22 @@
   }
   .toggle-label.active {
     color: var(--primary-purple);
+  }
+  /* Visually hidden but accessible checkbox */
+  .sr-only-checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  /* Show outline on slider when checkbox is focused via keyboard */
+  input:focus-visible + .toggle-slider {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 3px;
   }
   .toggle-switch-wrapper {
     position: relative;
@@ -815,9 +933,25 @@
     .hero, .problem, .trust {
       grid-template-columns: 1fr;
     }
+    .hero h1 {
+      font-size: clamp(28px, 9.2vw, 58px);
+    }
+    .btn-primary {
+      padding: 10px 18px;
+      font-size: 13px;
+    }
+    .hero-sub {
+      font-size: 15px;
+      line-height: 1.5;
+    }
     .hero-right { min-height: 280px; }
-    .hero-left, .problem-left, .problem-right, .trust-left, .trust-right {
+    .hero-left {
+      padding: 56px 16px;
+    }
+    .problem-left, .problem-right, .trust-left, .trust-right {
       padding: 56px 24px;
+    }
+    .hero-left, .problem-left, .problem-right, .trust-left, .trust-right {
       border-right: none;
       border-bottom: 1px solid var(--border);
     }
@@ -865,14 +999,15 @@
   }
   .booking-modal-content {
     width: 100%;
-    max-width: 1000px;
-    height: 90vh;
-    max-height: 720px;
+    max-width: 760px;
+    height: auto;
+    max-height: 90vh;
     background: var(--off-white);
     border: 1px solid var(--border);
+    border-radius: 16px;
     box-shadow: 0 24px 48px rgba(26, 13, 51, 0.18);
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: 1.15fr 1.05fr;
     position: relative;
     transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -903,11 +1038,11 @@
     color: var(--deep-purple);
   }
   .booking-modal-left {
-    padding: 24px 32px;
+    padding: 20px 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   @media (min-width: 769px) and (min-height: 600px) {
     .booking-modal-left {
@@ -928,13 +1063,7 @@
   }
   .booking-modal-right {
     position: relative;
-    background: var(--deep-purple);
-  }
-  .booking-modal-right img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    background: var(--white);
   }
   
   /* ── FORM ELEMENTS ── */
@@ -977,6 +1106,17 @@
     border-radius: 0;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
+  .form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5866' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
   .form-group input:focus,
   .form-group select:focus,
   .form-group textarea:focus {
@@ -993,10 +1133,521 @@
     opacity: 0.8;
   }
   .form-group textarea {
-    resize: vertical;
-    min-height: 54px;
+    resize: none;
+    min-height: 100px;
   }
   
+  .custom-visits-container {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: -12px;
+  }
+  .custom-visits-container.active {
+    max-height: 70px;
+    opacity: 1;
+    margin-top: 0;
+  }
+  
+  /* ── WIZARD MULTI-STEP FLOW ── */
+  .booking-wizard-step {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(0);
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .booking-wizard-step.active {
+    display: flex;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .booking-wizard-step.leaving-left {
+    display: flex;
+    opacity: 0;
+    transform: translateX(-15px);
+    pointer-events: none;
+  }
+  
+  .booking-wizard-step.entering-right {
+    display: flex;
+    opacity: 0;
+    transform: translateX(15px);
+  }
+  
+  .booking-wizard-step.leaving-right {
+    display: flex;
+    opacity: 0;
+    transform: translateX(15px);
+    pointer-events: none;
+  }
+  
+  .booking-wizard-step.entering-left {
+    display: flex;
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+
+  /* Wizard Progress Tracker */
+  .wizard-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .progress-step {
+    font-family: var(--font-header);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--light-gray);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.3s ease;
+  }
+  .progress-step.active {
+    color: var(--primary-purple);
+  }
+  .progress-step.completed {
+    color: var(--neon-green);
+  }
+  .progress-divider {
+    width: 20px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Wizard navigation buttons */
+  .wizard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    padding-bottom: 8px;
+  }
+  .btn-wizard-back {
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0;
+    transition: color 0.2s ease;
+  }
+  .btn-wizard-back:hover {
+    color: var(--deep-purple);
+  }
+
+  /* Clickable Slot Pills */
+  .schedule-pills {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .schedule-pill {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--black);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 24px;
+    box-shadow: 0 2px 4px rgba(26, 13, 51, 0.04);
+    white-space: nowrap;
+  }
+  .schedule-pill:hover:not(.active) {
+    border-color: var(--primary-purple);
+    background: rgba(58, 29, 109, 0.04);
+  }
+  .schedule-pill.active {
+    border-color: var(--primary-purple);
+    background: var(--primary-purple);
+    color: var(--white);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(58, 29, 109, 0.25);
+  }
+
+  /* ── CUSTOM INLINE CALENDAR WIDGET ── */
+  .calendar-widget {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 14px;
+    font-family: var(--font-body);
+    width: 100%;
+    margin-top: 4px;
+  }
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .calendar-month-year {
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+  }
+  .calendar-month-year span {
+    font-size: 13px;
+    color: var(--light-gray);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .calendar-nav-btns {
+    display: flex;
+    gap: 12px;
+  }
+  .calendar-nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--primary-purple);
+    font-weight: bold;
+    padding: 2px 6px;
+    transition: opacity 0.2s;
+  }
+  .calendar-nav-btn:hover {
+    opacity: 0.7;
+  }
+  .calendar-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--light-gray);
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.02);
+    padding-bottom: 4px;
+  }
+  .calendar-grid-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 6px;
+  }
+  .calendar-day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .calendar-day-cell.empty {
+    cursor: default;
+  }
+  .calendar-day-cell.disabled {
+    color: var(--light-gray);
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .calendar-day-cell.today {
+    background: #fef08a; /* yellow highlight today */
+    color: var(--light-gray) !important;
+    border-radius: 4px;
+    cursor: not-allowed;
+  }
+  .calendar-day-cell.selectable {
+    color: var(--black);
+    font-weight: 700;
+  }
+  .calendar-day-cell.selectable::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--neon-green);
+    border-radius: 1px;
+    opacity: 0.85;
+    transition: all 0.2s ease;
+  }
+  .calendar-day-cell.selectable:hover::after {
+    height: 4px;
+    left: 10%;
+    right: 10%;
+    bottom: 1px;
+  }
+  .calendar-day-cell[data-tooltip] {
+    position: relative;
+  }
+  .calendar-day-cell[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(15, 14, 20, 0.95);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .calendar-day-cell[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .calendar-day-cell.selected {
+    background: var(--primary-purple) !important;
+    color: var(--white) !important;
+    border-radius: 4px;
+  }
+  .calendar-day-cell.selected::after {
+    display: none;
+  }
+  .calendar-day-cell.partially-booked::after {
+    background: #f97316; /* orange indicator */
+  }
+  .calendar-day-cell.fully-booked {
+    background: #fef2f2 !important;
+    color: #ef4444 !important;
+    border-radius: 4px;
+    cursor: not-allowed;
+  }
+  .calendar-day-cell.fully-booked::after {
+    display: none;
+  }
+  .calendar-booking-message {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 0 0;
+    min-height: 20px;
+    color: #ef4444;
+    transition: opacity 0.25s ease;
+  }
+  .inline-validation-msg {
+    color: #ef4444;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+  .inline-success-msg {
+    color: var(--neon-green);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+  .schedule-pill.disabled {
+    background: var(--off-white-dark) !important;
+    color: var(--light-gray) !important;
+    border-color: var(--border) !important;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+    box-shadow: none !important;
+    pointer-events: none;
+  }
+
+  /* Dynamic Summary Panel (Right Column) */
+  .summary-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border-left: 1px solid var(--border);
+    font-family: var(--font-body);
+  }
+  .summary-header {
+    background-image: radial-gradient(#d1d1d6 1.2px, transparent 1.2px);
+    background-size: 6px 6px;
+    padding: 24px 20px;
+    border-bottom: 1px solid #e5e5ea;
+    text-align: center;
+    background-color: #faf9fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .summary-header h3 {
+    display: inline-block;
+    background: var(--white);
+    padding: 6px 24px;
+    margin: 0;
+    font-family: var(--font-header);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--black);
+    letter-spacing: -0.015em;
+    border: 1px solid #e5e5ea;
+  }
+  .summary-plan-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: auto;
+  }
+  .summary-plan-title {
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    margin: 0;
+  }
+  .summary-meta-item {
+    font-size: 13px;
+    color: var(--mid-gray);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .summary-breakdown {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .summary-breakdown-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8e8e93;
+    margin-bottom: 4px;
+  }
+  .summary-breakdown-title::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background: #e5e5ea;
+  }
+  .summary-breakdown-solid-line {
+    border-top: 2px solid var(--black);
+    margin: 8px 0;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--black);
+  }
+  .summary-row.total {
+    font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+  }
+  .summary-savings {
+    color: var(--neon-green);
+    font-weight: 600;
+  }
+
+  /* Frequency cards */
+  .frequency-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .frequency-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .frequency-card:hover {
+    border-color: var(--primary-purple);
+    background: rgba(58, 29, 109, 0.01);
+  }
+  .frequency-card.active {
+    border-color: var(--primary-purple);
+    background: rgba(58, 29, 109, 0.03);
+    box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08);
+  }
+  .frequency-card-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .frequency-radio-circle {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 11px;
+    color: transparent;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .frequency-card.active .frequency-radio-circle {
+    border-color: var(--primary-purple);
+    background: var(--primary-purple);
+    color: var(--white);
+  }
+  .frequency-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .frequency-card-title {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--deep-purple);
+  }
+  .frequency-card-subtitle {
+    font-size: 12px;
+    color: var(--mid-gray);
+  }
+  .frequency-card-price {
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary-purple);
+  }
+
   /* ── SUCCESS STATE ── */
   .booking-success-state {
     display: none;
@@ -1025,33 +1676,61 @@
     font-weight: bold;
     box-shadow: 0 8px 16px rgba(124, 252, 0, 0.2);
   }
+  .mobile-confirm-btn {
+    display: none;
+  }
   
   @media (max-width: 768px) {
     .booking-modal-content {
       grid-template-columns: 1fr;
-      height: 95vh;
-      max-height: none;
+      height: auto;
+      max-height: 90vh;
+      overflow-y: auto;
     }
-    .booking-modal-right {
-      display: none;
+    .summary-panel {
+      display: none !important;
     }
     .booking-modal-left {
-      padding: 56px 16px 20px 16px;
-      gap: 12px;
+      padding: 44px 16px 16px 16px;
+      gap: 8px;
+      overflow-y: visible;
     }
     .booking-modal-close {
-      top: 12px;
-      right: 12px;
-      width: 32px;
-      height: 32px;
-      font-size: 20px;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+    }
+    .booking-form {
+      gap: 8px;
     }
     .form-group.full-width {
-      grid-column: span 1;
+      grid-column: span 2;
     }
     .form-row {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
+    }
+    .form-group textarea {
+      min-height: 60px;
+    }
+    /* Show summary panel on mobile during checkout (step 4) */
+    .booking-modal-content.mobile-show-summary {
+      grid-template-columns: 1fr;
+    }
+    .booking-modal-content.mobile-show-summary .summary-panel {
+      display: flex !important;
+      border-top: none;
+    }
+    .booking-modal-content.mobile-show-summary .booking-modal-left {
+      display: none !important;
+    }
+    .booking-modal-content.mobile-show-summary .mobile-confirm-btn {
+      display: block !important;
+    }
+    .booking-modal-content.mobile-show-summary .verify-actions-container {
+      display: none !important;
     }
   }
   
@@ -1060,10 +1739,12 @@
       padding: 56px 16px;
     }
     .trust-heading {
-      font-size: clamp(24px, 7.5vw, 32px);
+      font-size: clamp(28px, 8.2vw, 40px);
+      letter-spacing: -0.04em;
     }
     .pricing-header .stacked-heading {
-      font-size: clamp(24px, 7.5vw, 32px);
+      font-size: clamp(28px, 8.2vw, 40px);
+      letter-spacing: -0.04em;
     }
   }
 </style>
@@ -1077,16 +1758,16 @@
   <ul class="nav-links">
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#faq">FAQ</a></li>
-    <li><a href="https://wa.me/2349130663739">Contact</a></li>
+    <li><a href="#" data-wa-link>Contact</a></li>
   </ul>
-  <a class="nav-cta" href="https://wa.me/2349130663739">Book Now</a>
+  <a class="nav-cta" href="#" data-wa-link>Book Now</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
     <p class="hero-eyebrow">Gain your time back</p>
-    <h1>Your time is better<br>spent <em>elsewhere.</em></h1>
+    <h1><span class="hero-line">Your time is better</span><br><span class="hero-line">spent <em>elsewhere.</em></span></h1>
     <p class="hero-sub">Work. Family. Life…<br>Cleaning your home is not your job anymore.<br>Let us handle it.</p>
     <div class="hero-actions">
       <a class="btn-primary" href="#pricing">Explore Our Plans & Pricing →</a>
@@ -1094,7 +1775,7 @@
     <p class="hero-areas">GRA · Bodija · Jericho · Iyaganku · Akobo · Oluyole</p>
   </div>
   <div class="hero-right">
-    <img src="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png" alt="Clean, bright living room interior" onerror="this.style.display='none'">
+    <img src="./hero_lifestyle_image.png" alt="Clean, bright living room interior" fetchpriority="high" loading="eager" onerror="this.style.display='none'">
     <div class="hero-right-overlay"></div>
     <!-- Fallback background pattern if image fails -->
     <style>
@@ -1174,7 +1855,7 @@
     <div class="pricing-toggle-container">
       <span class="toggle-label active" id="label-pay-per-visit">Pay Per Visit</span>
       <label class="toggle-switch-wrapper">
-        <input type="checkbox" id="pricing-toggle-checkbox" style="display: none;">
+        <input type="checkbox" id="pricing-toggle-checkbox" class="sr-only-checkbox" role="switch" aria-labelledby="label-pay-per-visit label-monthly" aria-checked="false">
         <div class="toggle-slider"></div>
       </label>
       <span class="toggle-label" id="label-monthly">Monthly</span>
@@ -1191,8 +1872,8 @@
         </div>
         <div class="pc-price-secondary">₦60,000 / month (8 visits)</div>
       </div>
-      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦19,992/mo</div>
-      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+      <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Saves ₦19,992/mo</div>
+      <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
     </div>
     <!-- 2 Bedroom FEATURED -->
     <div class="pricing-card featured">
@@ -1206,8 +1887,8 @@
         </div>
         <div class="pc-price-secondary">₦100,000 / month (8 visits)</div>
       </div>
-      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦4,008/mo</div>
-      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+      <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Saves ₦4,008/mo</div>
+      <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
     </div>
     <!-- 3 Bedroom -->
     <div class="pricing-card">
@@ -1218,8 +1899,8 @@
         </div>
         <div class="pc-price-secondary">₦150,000 / month (8 visits)</div>
       </div>
-      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦38,008/mo</div>
-      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+      <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Saves ₦38,008/mo</div>
+      <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
     </div>
     <!-- 4 Bedroom -->
     <div class="pricing-card">
@@ -1230,9 +1911,16 @@
         </div>
         <div class="pc-price-secondary">₦200,000 / month (8 visits)</div>
       </div>
-      <div class="pc-savings" style="opacity: 1; transform: translateY(0); transition: all 0.3s;">Saves ₦40,008/mo</div>
-      <a href="https://wa.me/2349130663739" class="pc-btn">Book Appointment</a>
+      <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Saves ₦40,008/mo</div>
+      <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
     </div>
+  </div>
+  
+  <div class="pricing-custom-prompt" style="text-align: center; margin-top: 40px; font-family: var(--font-header);">
+    <p style="font-size: 15px; color: var(--mid-gray); font-weight: 500; margin-bottom: 8px;">
+      Need cleaning for more than 4 bedrooms? 
+    </p>
+    <a href="#" id="custom-bedrooms-link" class="btn-ghost" style="font-size: 15px; color: var(--primary-purple); border-bottom-color: var(--primary-purple); display: inline-flex;">Get custom pricing →</a>
   </div>
 </section>
 
@@ -1242,7 +1930,7 @@
     <h2 class="trust-heading"><span class="trust-line">Your home is personal.</span><span class="trust-green trust-line">We treat it that way.</span></h2>
     <p>Every cleanse.ng worker is screened, referenced, and trained before entering a client's home. You'll have a dedicated supervisor and direct WhatsApp contact from day one.</p>
     <p>If something goes wrong, we speak to you directly and fix it.</p>
-    <a class="btn-ghost" href="https://wa.me/2349130663739">Get in touch →</a>
+    <a class="btn-ghost" href="#" data-wa-link>Get in touch →</a>
   </div>
 </section>
 
@@ -1253,24 +1941,24 @@
     <h2>Questions we get asked.</h2>
 
     <div class="faq-item">
-      <button class="faq-q">What if I need to reschedule a visit? <span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Message your supervisor. It gets sorted. No forms, no penalties, no three-day notice requirement.</div></div>
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1" id="faq-q-1">What if I need to reschedule a visit? <span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-a" id="faq-a-1" role="region" aria-labelledby="faq-q-1"><div class="faq-a-inner">Message your supervisor. It gets sorted. No forms, no penalties, no three-day notice requirement.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">What do your cleaners actually clean? <span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Everything inside the home — bedrooms, bathrooms, kitchen, living areas, floors, surfaces, appliances. We bring all supplies. You provide nothing except access.</div></div>
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">What do your cleaners actually clean? <span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-a" id="faq-a-2" role="region" aria-labelledby="faq-q-2"><div class="faq-a-inner">Everything inside the home — bedrooms, bathrooms, kitchen, living areas, floors, surfaces, appliances. We bring all supplies. You provide nothing except access.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">What if I'm not home during the visit? <span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Most of our clients are not. Your supervisor messages before entering and sends a confirmation when everything is done and locked.</div></div>
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">What if I'm not home during the visit? <span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-a" id="faq-a-3" role="region" aria-labelledby="faq-q-3"><div class="faq-a-inner">Most of our clients are not. Your supervisor messages before entering and sends a confirmation when everything is done and locked.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">What if I'm not happy with a visit? <span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Tell your supervisor. They call you within the day and the issue is addressed on the next visit — or sooner if you prefer.</div></div>
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-4" id="faq-q-4">What if I'm not happy with a visit? <span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-a" id="faq-a-4" role="region" aria-labelledby="faq-q-4"><div class="faq-a-inner">Tell your supervisor. They call you within the day and the issue is addressed on the next visit — or sooner if you prefer.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Can I cancel anytime? <span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Yes. We ask for one month's notice so we can manage the team schedule. No long contracts, no penalties.</div></div>
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-5" id="faq-q-5">Can I cancel anytime? <span class="faq-icon" aria-hidden="true">+</span></button>
+      <div class="faq-a" id="faq-a-5" role="region" aria-labelledby="faq-q-5"><div class="faq-a-inner">Yes. We ask for one month's notice so we can manage the team schedule. No long contracts, no penalties.</div></div>
     </div>
   </div>
 </section>
@@ -1282,7 +1970,7 @@
       <div class="footer-brand brand-logo">cleanse<span class="dot-ng">.ng</span></div>
       <p class="footer-tagline">For those who know what their time is worth. Ibadan, Oyo State — serving GRA, Bodija, Jericho, Iyaganku, Akobo & Oluyole.</p>
       <div class="footer-contact">
-        <span>WhatsApp: <a href="https://wa.me/2349130663739">+234 913 066 3739</a></span>
+        <span>WhatsApp: <a href="#" id="wa-display-num" data-wa-link>+234 913 066 3739</a></span>
         <span>Instagram: <a href="#">@cleanse.ng</a></span>
         <span>Working hours: 8am – 6pm daily</span>
       </div>
@@ -1297,7 +1985,7 @@
       <h4>Support</h4>
       <ul>
         <li><a href="#faq">FAQ</a></li>
-        <li><a href="https://wa.me/2349130663739">Contact</a></li>
+        <li><a href="#" data-wa-link>Contact</a></li>
         <li><a href="#pricing">Pricing</a></li>
       </ul>
     </div>
@@ -1315,100 +2003,149 @@
     <button class="booking-modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
     <div class="booking-modal-left">
       <div id="booking-form-container">
-        <h2>Book Your Cleaning Plan</h2>
-        <p class="subheadline">Tell us a little about your space and preferences. We'll handle the rest.</p>
+        <h2 id="wizard-title">Book Your Cleaning Plan</h2>
+        <p class="subheadline" id="wizard-subtitle" style="margin-bottom: 16px;">Tell us a little about your space and preferences. We'll handle the rest.</p>
         
-        <form class="booking-form" id="booking-plan-form" style="margin-top: 16px;">
-          <!-- Selected Plan & Visits per Month -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking-selected-plan">Selected Plan *</label>
-              <select id="booking-selected-plan" required>
-                <option value="" disabled selected>Select plan</option>
-                <option value="1 Bedroom — Pay Per Visit">1 Bedroom — Pay Per Visit</option>
-                <option value="1 Bedroom — Monthly Subscription (8 visits)">1 Bedroom — Monthly Subscription (8 visits)</option>
-                <option value="2 Bedroom — Pay Per Visit">2 Bedroom — Pay Per Visit</option>
-                <option value="2 Bedroom — Monthly Subscription (8 visits)">2 Bedroom — Monthly Subscription (8 visits)</option>
-                <option value="3 Bedroom — Pay Per Visit">3 Bedroom — Pay Per Visit</option>
-                <option value="3 Bedroom — Monthly Subscription (8 visits)">3 Bedroom — Monthly Subscription (8 visits)</option>
-                <option value="4 Bedroom — Pay Per Visit">4 Bedroom — Pay Per Visit</option>
-                <option value="4 Bedroom — Monthly Subscription (8 visits)">4 Bedroom — Monthly Subscription (8 visits)</option>
-              </select>
+        <!-- Progress Tracker -->
+        <div class="wizard-progress" id="wizard-progress-bar" style="display: none;">
+          <div class="progress-step active" id="p-step-1">1. Plan</div>
+          <div class="progress-divider" id="p-div-1"></div>
+          <div class="progress-step" id="p-step-2">2. Schedule</div>
+          <div class="progress-divider" id="p-div-2"></div>
+          <div class="progress-step" id="p-step-3">3. Details</div>
+        </div>
+        
+        <form class="booking-form" id="booking-plan-form" style="margin-top: 8px;">
+          <!-- Security: Honeypot field — invisible to users, catches bots -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;">
+            <label for="booking-website">Website</label>
+            <input type="text" id="booking-website" name="website" tabindex="-1" autocomplete="off" value="">
+          </div>
+
+          <!-- STEP 1: PLAN SELECTION -->
+          <div class="booking-wizard-step active" id="wizard-step-plan">
+            <!-- Selected Plan Selection (Hidden visually, active programmatically) -->
+            <div class="form-row" id="plan-row" style="display: none;">
+              <div class="form-group full-width">
+                <label for="booking-selected-plan">Selected Plan *</label>
+                <select id="booking-selected-plan" required>
+                  <option value="" disabled selected>Select plan</option>
+                  <option value="1 Bedroom — Pay Per Visit">1 Bedroom — Pay Per Visit</option>
+                  <option value="1 Bedroom — Monthly Subscription (8 visits)">1 Bedroom — Monthly Subscription (8 visits)</option>
+                  <option value="2 Bedroom — Pay Per Visit">2 Bedroom — Pay Per Visit</option>
+                  <option value="2 Bedroom — Monthly Subscription (8 visits)">2 Bedroom — Monthly Subscription (8 visits)</option>
+                  <option value="3 Bedroom — Pay Per Visit">3 Bedroom — Pay Per Visit</option>
+                  <option value="3 Bedroom — Monthly Subscription (8 visits)">3 Bedroom — Monthly Subscription (8 visits)</option>
+                  <option value="4 Bedroom — Pay Per Visit">4 Bedroom — Pay Per Visit</option>
+                  <option value="4 Bedroom — Monthly Subscription (8 visits)">4 Bedroom — Monthly Subscription (8 visits)</option>
+                </select>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="booking-visits">Visits Per Month *</label>
-              <select id="booking-visits" required>
-                <option value="" disabled selected>Select frequency</option>
-                <option value="1 visit per month">1 visit per month</option>
-                <option value="2 visits per month">2 visits per month</option>
-                <option value="4 visits per month (Weekly)">4 visits per month (Weekly)</option>
-                <option value="8 visits per month (2x per week)">8 visits per month (2x per week)</option>
-                <option value="Custom (specify in preferences)">Custom frequency</option>
-              </select>
+
+            <!-- Frequency Selection Section -->
+            <div class="form-group full-width" id="frequency-section" style="margin-top: 0; display: none;">
+              <label style="display: none;">Select Frequency *</label>
+              <div class="frequency-cards" id="frequency-cards-container">
+                <!-- Dynamically Populated -->
+              </div>
+              <input type="hidden" id="booking-visits" required>
+              <div class="inline-validation-msg" id="step1-validation-msg"></div>
             </div>
           </div>
-          
-          <!-- Full Name & Email -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking-name">Full Name *</label>
-              <input type="text" id="booking-name" required placeholder="Enter your full name">
+
+          <!-- STEP 2: DATE & SCHEDULE -->
+          <div class="booking-wizard-step" id="wizard-step-schedule">
+            <div class="form-row">
+              <div class="form-group full-width">
+                <div id="calendar-widget-container">
+                  <!-- Custom Calendar Widget will render here -->
+                </div>
+                <input type="hidden" id="booking-date" required>
+                <input type="hidden" id="booking-date-display" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="booking-email">Email Address *</label>
-              <input type="email" id="booking-email" required placeholder="yourname@gmail.com">
-            </div>
-          </div>
-          
-          <!-- Phone Number & Location -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking-phone">Phone Number *</label>
-              <input type="tel" id="booking-phone" required placeholder="+234 801 234 5678">
-            </div>
-            <div class="form-group">
-              <label for="booking-location">Location *</label>
-              <input type="text" id="booking-location" required placeholder="Bodija, Jericho, Akobo, Oluyole...">
-            </div>
-          </div>
-          
-          <!-- Property Type & Preferred Schedule -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking-property">Property Type *</label>
-              <select id="booking-property" required>
-                <option value="" disabled selected>Select property type</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Duplex">Duplex</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="booking-schedule">Preferred Schedule *</label>
-              <select id="booking-schedule" required>
-                <option value="" disabled selected>Select preferred schedule</option>
-                <option value="Morning (8am - 11am)">Morning (8am - 11am)</option>
-                <option value="Mid-day (11am - 2pm)">Mid-day (11am - 2pm)</option>
-                <option value="Afternoon (2pm - 5pm)">Afternoon (2pm - 5pm)</option>
-                <option value="Flexible (Anytime)">Flexible (Anytime)</option>
-              </select>
+            
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Pick a Slot</label>
+                <div class="schedule-pills" id="booking-schedule-pills">
+                  <!-- Generated Dynamically -->
+                </div>
+                <input type="hidden" id="booking-schedule" required>
+                <div class="inline-validation-msg" id="step2-validation-msg"></div>
+              </div>
             </div>
           </div>
-          
-          <!-- Cleaning Preferences -->
-          <div class="form-group full-width">
-            <label for="booking-preferences">Cleaning Preferences</label>
-            <textarea id="booking-preferences" placeholder="Tell us anything you'd like us to know.&#10;&#10;• Focus on bathrooms&#10;• Pet-friendly products only&#10;• Morning visits preferred&#10;• Extra attention to kitchen surfaces"></textarea>
+
+          <!-- STEP 3: CONTACT & PREFERENCES -->
+          <div class="booking-wizard-step" id="wizard-step-contact">
+            <!-- Full Name & Email -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="booking-name">Full Name *</label>
+                <input type="text" id="booking-name" required placeholder="Jane Doe">
+              </div>
+              <div class="form-group">
+                <label for="booking-email">Email Address *</label>
+                <input type="email" id="booking-email" required placeholder="yourname@gmail.com">
+              </div>
+            </div>
+            
+            <!-- Phone Number & Home Address -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="booking-phone">Phone Number *</label>
+                <input type="tel" id="booking-phone" required placeholder="+234 801 234 5678">
+              </div>
+              <div class="form-group">
+                <label for="booking-location">Home Address *</label>
+                <input type="text" id="booking-location" required placeholder="e.g. 15 Bodija Road, Bodija, Ibadan">
+              </div>
+            </div>
+            
+            <!-- Cleaning Preferences -->
+            <div class="form-group full-width">
+              <label for="booking-preferences">Cleaning Preferences</label>
+              <textarea id="booking-preferences" placeholder="Tell us anything you'd like us to know.&#10;&#10;• Focus on bathrooms&#10;• Pet-friendly products only&#10;• Morning visits preferred&#10;• Extra attention to kitchen surfaces"></textarea>
+            </div>
+
+            <!-- Customer Policy Agree Box -->
+            <div class="policy-agree-container" style="grid-column: span 2; margin-top: 8px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="booking-agree-policy" required style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary-purple); margin: 0; display: inline-block;">
+              <label for="booking-agree-policy" style="font-size: 14px; font-weight: 600; color: var(--black); margin: 0; cursor: pointer; user-select: none; line-height: 1.4; font-family: var(--font-body);">
+                I agree with your <a href="#" id="policy-link" style="color: var(--primary-purple); text-decoration: underline; font-weight: 600;">Customer Policy</a>
+              </label>
+            </div>
+            <div class="inline-validation-msg" id="step3-validation-msg" style="grid-column: span 2; margin-bottom: 8px;"></div>
           </div>
-          
-          <!-- CTA and Footers -->
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-            <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 11px; text-align: center; justify-content: center; font-family: var(--font-header);">Book My Cleaning</button>
-            <p style="font-size: 12px; color: var(--mid-gray); text-align: center; font-weight: 500;">
-              We'll reach out on WhatsApp within 1 hour · Serving Ibadan residents
-            </p>
-            <p style="font-size: 11px; color: var(--light-gray); text-align: center; margin-top: 2px;">
-              ✓ Verified professionals · ✓ Flexible scheduling · ✓ Satisfaction guaranteed
-            </p>
+
+          <!-- STEP 4: VERIFY DETAILS (LEFT COLUMN content) -->
+          <div class="booking-wizard-step" id="wizard-step-verify-left">
+            <div class="verify-left-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; gap: 20px; padding: 10px 0;">
+              <!-- Document + Magnifying Glass SVG Icon -->
+              <div class="verify-icon-container" style="width: 80px; height: 80px; background: rgba(58, 29, 109, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-purple); margin-top: 10px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <circle cx="11" cy="14" r="3"></circle>
+                  <line x1="13.2" y1="16.2" x2="16.5" y2="19.5"></line>
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 22px; margin: 0;">Verify Order Details</h2>
+                <p style="font-size: 13px; color: var(--mid-gray); line-height: 1.5; max-width: 260px; margin: 0 auto;">
+                  Click "submit" to complete your booking by making payment.
+                </p>
+              </div>
+              <div class="inline-validation-msg" id="step4-validation-msg" style="text-align: center;"></div>
+            </div>
+          </div>
+
+          <!-- Wizard Footer Controls -->
+          <div class="wizard-footer">
+            <button type="button" class="btn-wizard-back" id="wizard-back-btn" style="visibility: hidden;">&larr; Back</button>
+            <button type="button" class="btn-primary" id="wizard-next-btn" style="padding: 10px 24px; font-family: var(--font-header); border: none;">Next &rarr;</button>
+            <button type="submit" class="btn-primary" id="booking-submit-btn" style="display: none; padding: 10px 24px; font-family: var(--font-header); border: none;">Book My Cleaning</button>
           </div>
         </form>
       </div>
@@ -1418,7 +2155,7 @@
         <div class="success-icon">✓</div>
         <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 28px;">Booking Requested!</h2>
         <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; max-width: 400px; margin: 0 auto;">
-          Please send the prefilled WhatsApp message to finalize your booking. If it didn't open automatically, click the button below.
+          Please click the button below to send your prefilled WhatsApp message and finalize your booking.
         </p>
         <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; margin-top: 16px;">
           <a class="btn-primary" id="success-whatsapp-btn" target="_blank" style="width: 100%; max-width: 320px; text-decoration: none; text-align: center; justify-content: center; font-family: var(--font-header); display: flex;">Send WhatsApp Message</a>
@@ -1427,13 +2164,306 @@
       </div>
     </div>
     
-    <div class="booking-modal-right">
-      <img src="./booking_lifestyle_image.png" alt="Clean minimalist luxury bedroom outcome">
+      <!-- Standard Summary Panel -->
+      <div class="summary-panel" id="standard-summary-panel">
+        <div class="summary-header">
+          <h3>Summary</h3>
+        </div>
+        <div class="summary-content" style="padding: 24px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1;">
+          <div class="summary-plan-section" style="display: flex; flex-direction: column; gap: 6px;">
+            <h4 class="summary-plan-title" id="summary-plan-name" style="font-family: var(--font-header); font-size: 20px; font-weight: 600; color: var(--black); margin: 0;">No Plan Selected</h4>
+            <div id="summary-plan-extras" style="font-size: 13px; color: var(--mid-gray); display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+              <span id="summary-extras-text">Extras: -</span>
+              <span id="summary-frequency-text" style="font-style: normal;">-</span>
+            </div>
+            <div id="summary-meta-schedule" style="font-size: 13px; color: var(--primary-purple); display: none; align-items: center; gap: 8px; margin-top: 10px; background: rgba(58, 29, 109, 0.06); padding: 6px 12px; border-radius: 20px; align-self: flex-start; font-weight: 600; font-family: var(--font-body);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-purple); flex-shrink: 0;">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span id="summary-schedule-text">Select date & schedule</span>
+            </div>
+          </div>
+          
+          <div class="summary-breakdown" id="summary-breakdown-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+            <div class="summary-breakdown-title">COST BREAKDOWN</div>
+            
+            <div class="summary-row" style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black);">
+              <span id="summary-breakdown-item-name">Plan Room Base</span>
+              <span id="summary-breakdown-item-price">₦0.00</span>
+            </div>
+            
+            <div class="summary-row-service" style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black);">
+                <span id="summary-breakdown-service-name">Service</span>
+                <span id="summary-breakdown-service-price">₦0.00</span>
+              </div>
+              <div id="summary-breakdown-service-freq" style="font-size: 13px; color: var(--mid-gray);"></div>
+            </div>
+            
+            <div class="summary-breakdown-solid-line"></div>
+            
+            <div class="summary-row total">
+              <span>Total Price</span>
+              <span id="summary-total-price">₦0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Summary Panel (Step 4 only) -->
+      <div id="wizard-step-verify-right" class="summary-panel" style="display: none; height: 100%; flex-direction: column; background: var(--white); font-family: var(--font-body);">
+        <div class="summary-header">
+          <h3 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 18px; margin: 0; background: none; padding: 0;">Let's double check your booking</h3>
+        </div>
+        <div class="summary-content" style="padding: 24px; display: flex; flex-direction: column; gap: 20px; flex-grow: 1; overflow-y: auto;">
+          <!-- Details block -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <h4 id="verify-plan-name" style="font-family: var(--font-header); font-size: 20px; font-weight: 600; color: var(--black); margin: 0;">1 Bedroom Flat</h4>
+            <span id="verify-date-time" style="font-size: 13px; color: var(--mid-gray);">26 Jun, 2026, 10:00 am</span>
+            <span id="verify-extras" style="font-size: 13px; color: var(--mid-gray);">Extras: cleanse.ng 1 Bedroom (Twice monthly)</span>
+          </div>
+
+          <!-- Home Address and Customer info rows side-by-side -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 12px 0;">
+            <!-- Home Address column -->
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--light-gray); letter-spacing: 0.05em; font-family: var(--font-header);">Home Address</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 28px; height: 28px; background: rgba(58, 29, 109, 0.06); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px;">📍</div>
+                <span id="verify-location" style="font-size: 13px; font-weight: 600; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Lagos</span>
+              </div>
+            </div>
+            
+            <!-- Customer column -->
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--light-gray); letter-spacing: 0.05em; font-family: var(--font-header);">Customer</span>
+              <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                <div id="verify-avatar" style="width: 28px; height: 28px; background: var(--off-white-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--mid-gray); font-size: 11px; font-weight: 700;">JD</div>
+                <div style="display: flex; flex-direction: column; min-width: 0; flex-grow: 1;">
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <span id="verify-customer-name" style="font-size: 13px; font-weight: 600; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jane Doe</span>
+                    <span id="verify-edit-pencil" style="cursor: pointer; font-size: 11px;" title="Edit Contact Details">✏️</span>
+                  </div>
+                  <span id="verify-customer-email" style="font-size: 11px; color: var(--light-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">jane@example.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cost Breakdown Section -->
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+            <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--light-gray); letter-spacing: 0.05em; font-family: var(--font-header);">Cost Breakdown</span>
+            
+            <!-- Base Plan Row -->
+            <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black); font-family: var(--font-body);">
+              <span id="verify-breakdown-base-name">1 Bedroom Flat</span>
+              <span style="font-weight: 500;">₦0.00</span>
+            </div>
+            
+            <!-- Service Frequency Row -->
+            <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black); font-family: var(--font-body);">
+              <span id="verify-breakdown-service-name">└ cleanse.ng 1 Bedroom (Twice monthly)</span>
+              <span id="verify-breakdown-service-price" style="font-weight: 600; color: var(--black);">₦17,736.43</span>
+            </div>
+            
+            <div style="height: 1px; background: var(--border); margin: 4px 0 0 0;"></div>
+            
+            <!-- Total Row -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-family: var(--font-header); font-size: 16px; font-weight: 700; color: var(--deep-purple);">Total Price</span>
+              <span id="verify-total-price" style="font-family: var(--font-header); font-size: 18px; font-weight: 700; color: var(--primary-purple);">₦17,736.43</span>
+            </div>
+          </div>
+
+
+          <button type="submit" form="booking-plan-form" class="btn-primary mobile-confirm-btn" style="width: 100%; margin-top: 16px; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); display: none;">Confirm Booking</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- DISCOUNT MODAL -->
+<div class="booking-modal-overlay" id="discount-modal">
+  <div class="booking-modal-content" style="max-width: 500px; height: auto; max-height: none; padding: 40px 32px; display: flex; flex-direction: column; gap: 20px; border-radius: 0; box-shadow: 0 24px 48px rgba(26, 13, 51, 0.25);">
+    <button class="booking-modal-close" id="discount-modal-close-btn" aria-label="Close modal">&times;</button>
+    
+    <div id="discount-form-container" style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
+        <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: clamp(26px, 4vw, 32px); line-height: 1.15; margin: 0; letter-spacing: -0.02em;">Get 10% off Your First Booking</h2>
+        <p style="font-size: 14px; color: var(--primary-purple); line-height: 1.55; font-weight: 500; margin: 0;">
+          Join the circle of space lovers & be the first to know about exclusive offers, new cleaning product techniques, and how we are formalising the informal market.
+        </p>
+      </div>
+      
+      <form class="booking-form" id="discount-form" style="margin-top: 4px;">
+        <!-- Security: Honeypot field -->
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;">
+          <label for="discount-website">Website</label>
+          <input type="text" id="discount-website" name="website" tabindex="-1" autocomplete="off" value="">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="discount-name">Full Name *</label>
+            <input type="text" id="discount-name" required placeholder="Jane Doe">
+          </div>
+          <div class="form-group">
+            <label for="discount-email">Email *</label>
+            <input type="email" id="discount-email" required placeholder="jane.doe@gmail.com">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="discount-birthday">Birthday *</label>
+            <div style="position: relative; width: 100%;">
+              <input type="text" id="discount-birthday-display" placeholder="Select birthday" readonly required style="padding-right: 36px;">
+              <input type="date" id="discount-birthday" required style="position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
+              <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mid-gray); font-size: 14px;">📅</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="discount-location">Location *</label>
+            <select id="discount-location" required>
+              <option value="" disabled selected>Select location</option>
+              <option value="GRA">GRA</option>
+              <option value="Bodija">Bodija</option>
+              <option value="Jericho">Jericho</option>
+              <option value="Iyaganku">Iyaganku</option>
+              <option value="Akobo">Akobo</option>
+              <option value="Oluyole">Oluyole</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="inline-validation-msg" id="discount-validation-msg" style="margin-top: 8px;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+          <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header);">Claim My 10% Discount</button>
+          <p style="font-size: 11px; color: var(--light-gray); text-align: center; margin-top: 4px;">
+            Your discount code will be sent to your email immediately
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Discount Success State -->
+    <div class="booking-success-state" id="discount-success-container" style="padding: 24px 0 0 0;">
+      <div class="success-icon">✓</div>
+      <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 28px;">You're In!</h2>
+      <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; max-width: 400px; margin: 0 auto;">
+        Welcome to the circle. We've sent your 10% discount code to your email.
+      </p>
+      <button class="btn-ghost" id="discount-success-close-btn" style="border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--mid-gray); font-family: var(--font-header); margin-top: 16px;">Close Window</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM BEDROOMS MODAL -->
+<div class="booking-modal-overlay" id="custom-bedrooms-modal">
+  <div class="booking-modal-content" style="max-width: 450px; height: auto; max-height: none; padding: 32px; display: flex; flex-direction: column; gap: 20px; text-align: center; justify-content: center; align-items: center;">
+    <button class="booking-modal-close" id="custom-modal-close-btn" aria-label="Close modal">&times;</button>
+    <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 24px; margin-top: 8px;">Custom Bedroom Quote</h2>
+    <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5;">
+      Tell us how many bedrooms your home has, and we'll generate a custom pricing package for you.
+    </p>
+    
+    <div class="form-group" style="width: 100%; text-align: left;">
+      <label for="custom-bedrooms-count" style="margin-bottom: 6px; display: block;">Number of Bedrooms *</label>
+      <input type="number" id="custom-bedrooms-count" min="5" value="5" required style="font-size: 16px; padding: 10px 14px;">
+    </div>
+    
+    <button id="custom-bedrooms-submit-btn" class="btn-primary" style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header);">Request Custom Quote →</button>
+  </div>
+</div>
+
+<!-- CUSTOMER POLICY MODAL -->
+<div class="booking-modal-overlay" id="customer-policy-modal" style="z-index: 2100;">
+  <div class="booking-modal-content" style="max-width: 500px; height: auto; max-height: 85vh; padding: 32px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; text-align: left;">
+    <button class="booking-modal-close" id="policy-modal-close-btn" aria-label="Close modal">&times;</button>
+    <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 24px; margin-top: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">Customer Policy</h2>
+    <div style="font-size: 14px; color: var(--mid-gray); line-height: 1.6; display: flex; flex-direction: column; gap: 14px; font-family: var(--font-body);">
+      <p>Welcome to <strong>cleanse.ng</strong>. Please review our service policy guidelines below:</p>
+      <div>
+        <strong style="color: var(--deep-purple); font-family: var(--font-header); font-size: 15px; display: block; margin-bottom: 4px;">1. Service Standard</strong>
+        We bring all professional cleaning supplies. If you are not satisfied with any area cleaned, notify your supervisor within 24 hours and we will address it.
+      </div>
+      <div>
+        <strong style="color: var(--deep-purple); font-family: var(--font-header); font-size: 15px; display: block; margin-bottom: 4px;">2. Access & Lockouts</strong>
+        Please ensure our team has access to your premises at the scheduled time. If we cannot gain entry, your supervisor will contact you immediately.
+      </div>
+      <div>
+        <strong style="color: var(--deep-purple); font-family: var(--font-header); font-size: 15px; display: block; margin-bottom: 4px;">3. Cancellation & Rescheduling</strong>
+        Rescheduling or cancellations must be made at least 24 hours prior to your scheduled cleaning slot.
+      </div>
+      <div>
+        <strong style="color: var(--deep-purple); font-family: var(--font-header); font-size: 15px; display: block; margin-bottom: 4px;">4. Vetting & Safety</strong>
+        All our team members are fully trained, background-checked, and accompanied by an on-site supervisor for quality control and security.
+      </div>
+    </div>
+    <button id="policy-modal-agree-btn" class="btn-primary" style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); margin-top: 10px;">I Understand & Agree</button>
+  </div>
+</div>
+
 <script>
+  // ═══════════════════════════════════════
+  // SECURITY MODULE
+  // ═══════════════════════════════════════
+  const _sc = {
+    // WhatsApp number — encoded and split for obfuscation
+    // To change your number: update these base64 segments
+    // Current: 234 + 913066 + 3739 = 2349130663739
+    _p: ['MjM0', 'OTEzMDY2', 'MzczOQ=='],
+    maxSubmissions: 3,      // Max form submissions per window
+    windowMs: 300000,       // Rate limit window (5 minutes)
+    minFormTimeMs: 3000,    // Minimum time to fill form (3 seconds)
+  };
+
+  function _getWaNum() {
+    return _sc._p.map(function(p) { return atob(p); }).join('');
+  }
+
+  function _getWaUrl(message) {
+    return 'https://wa.me/' + _getWaNum() + (message ? '?text=' + encodeURIComponent(message) : '');
+  }
+
+  function _sanitize(str, maxLen) {
+    if (!str) return '';
+    return str.replace(/<[^>]*>/g, '').replace(/[<>"'`]/g, '').trim().substring(0, maxLen || 500);
+  }
+
+  function _validatePhone(phone) {
+    var digits = phone.replace(/[^\d]/g, '');
+    return digits.length >= 7 && digits.length <= 15;
+  }
+
+  function _validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function _checkRateLimit() {
+    try {
+      var now = Date.now();
+      var submissions = JSON.parse(sessionStorage.getItem('_cl_subs') || '[]');
+      submissions = submissions.filter(function(t) { return now - t < _sc.windowMs; });
+      if (submissions.length >= _sc.maxSubmissions) return false;
+      submissions.push(now);
+      sessionStorage.setItem('_cl_subs', JSON.stringify(submissions));
+      return true;
+    } catch(e) { return true; }
+  }
+
+  var _modalOpenTime = 0;
+
+  // Initialize all obfuscated WhatsApp links at runtime
+  document.querySelectorAll('[data-wa-link]').forEach(function(el) {
+    el.href = _getWaUrl();
+  });
+
   // Testimonial slider
   const slides = document.querySelectorAll('.testimonial-slide');
   const dots = document.querySelectorAll('.t-dot');
@@ -1458,8 +2488,22 @@
     btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
       const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
+      
+      // Close all other items and set their aria-expanded to false
+      document.querySelectorAll('.faq-item.open').forEach(i => {
+        i.classList.remove('open');
+        const qBtn = i.querySelector('.faq-q');
+        if (qBtn) qBtn.setAttribute('aria-expanded', 'false');
+      });
+      
+      // Toggle current item
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
     });
   });
 
@@ -1509,7 +2553,7 @@
       const monthlyTotal = item.monthlyPrice;
       const difference = oneTimeTotal - monthlyTotal;
       
-      if (!isMonthly) {
+      if (isMonthly) {
         if (difference > 0) {
           el.textContent = `Saves ₦${difference.toLocaleString()}/mo`;
           el.style.opacity = '1';
@@ -1536,6 +2580,7 @@
       labelPayPerVisit.classList.add('active');
       labelMonthly.classList.remove('active');
     }
+    pricingCheckbox.setAttribute('aria-checked', isMonthly ? 'true' : 'false');
   }
 
   pricingCheckbox.addEventListener('change', () => {
@@ -1566,42 +2611,956 @@
   const bookingForm = document.getElementById('booking-plan-form');
   const planInput = document.getElementById('booking-selected-plan');
   const visitsSelect = document.getElementById('booking-visits');
+  const planRow = document.getElementById('plan-row');
+  const propertyRow = document.getElementById('property-row');
+  const planSummary = document.getElementById('booking-plan-summary');
+  const planSummaryText = document.getElementById('booking-plan-summary-text');
+  const frequencySection = document.getElementById('frequency-section');
+  const frequencyCardsContainer = document.getElementById('frequency-cards-container');
+
+  // Calendar and dynamic schedule options
+  const bookingDateInput = document.getElementById('booking-date');
+  const bookingScheduleSelect = document.getElementById('booking-schedule');
+
+  // Set the minimum selectable date to tomorrow (1-day lead time)
+  const localTomorrow = new Date();
+  localTomorrow.setDate(localTomorrow.getDate() + 1);
+  const yyyyTomorrow = localTomorrow.getFullYear();
+  const mmTomorrow = String(localTomorrow.getMonth() + 1).padStart(2, '0');
+  const ddTomorrow = String(localTomorrow.getDate()).padStart(2, '0');
+  const tomorrowStr = `${yyyyTomorrow}-${mmTomorrow}-${ddTomorrow}`;
+  bookingDateInput.min = tomorrowStr;
+
+  // Trigger calendar open when clicking anywhere on the input container
+  bookingDateInput.addEventListener('click', () => {
+    try {
+      bookingDateInput.showPicker();
+    } catch (err) {
+      console.log("showPicker failed: ", err);
+    }
+  });
+
+  const scheduleOptions = {
+    weekday: [
+      { value: "8am - 11am", text: "8am - 11am" },
+      { value: "11am - 2pm", text: "11am - 2pm" },
+      { value: "2pm - 5pm", text: "2pm - 5pm" }
+    ],
+    sunday: [
+      { value: "12pm - 2pm", text: "12pm - 2pm" },
+      { value: "2pm - 5pm", text: "2pm - 5pm" }
+    ]
+  };
+
+  const bookingSchedulePillsContainer = document.getElementById('booking-schedule-pills');
+  const wizardStepPlan = document.getElementById('wizard-step-plan');
+  const wizardStepSchedule = document.getElementById('wizard-step-schedule');
+  const wizardStepContact = document.getElementById('wizard-step-contact');
+  const wizardStepVerifyLeft = document.getElementById('wizard-step-verify-left');
+  const wizardBackBtn = document.getElementById('wizard-back-btn');
+  const wizardNextBtn = document.getElementById('wizard-next-btn');
+  const bookingSubmitBtn = document.getElementById('booking-submit-btn');
+
+  const pStep1 = document.getElementById('p-step-1');
+  const pStep2 = document.getElementById('p-step-2');
+  const pStep3 = document.getElementById('p-step-3');
+  const pDiv1 = document.getElementById('p-div-1');
+  const pDiv2 = document.getElementById('p-div-2');
+
+  let _isPlanPreSelected = false;
+  let _currentWizardStep = 1;
+
+  function updateSchedulePills(dayOfWeek) {
+    if (!bookingSchedulePillsContainer) return;
+    bookingSchedulePillsContainer.innerHTML = '';
+    const currentVal = bookingScheduleSelect.value;
+    const options = dayOfWeek === 0 ? scheduleOptions.sunday : scheduleOptions.weekday;
+    const selectedDate = bookingDateInput.value;
+    const booked = bookedSlots[selectedDate] || [];
+    
+    // Clear current value if not matching the new list or if it is booked
+    const isValid = options.some(opt => opt.value === currentVal && !booked.includes(opt.value));
+    if (!isValid) {
+      bookingScheduleSelect.value = '';
+    }
+
+    options.forEach(opt => {
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = 'schedule-pill';
+      
+      const isBooked = booked.includes(opt.value);
+      if (isBooked) {
+        pill.classList.add('disabled');
+        pill.disabled = true;
+      } else {
+        if (opt.value === bookingScheduleSelect.value) {
+          pill.classList.add('active');
+        }
+        pill.addEventListener('click', () => {
+          bookingSchedulePillsContainer.querySelectorAll('.schedule-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          bookingScheduleSelect.value = opt.value;
+          const step2ValMsg = document.getElementById('step2-validation-msg');
+          if (step2ValMsg) step2ValMsg.textContent = '';
+          updateBookingSummary();
+        });
+      }
+      pill.textContent = opt.text;
+      bookingSchedulePillsContainer.appendChild(pill);
+    });
+  }
+
+  function updateFrequencyCards() {
+    if (!frequencyCardsContainer) return;
+    frequencyCardsContainer.innerHTML = '';
+    
+    const selectedPlan = planInput.value;
+    if (!selectedPlan || selectedPlan.includes('Monthly Subscription')) {
+      if (frequencySection) frequencySection.style.display = 'none';
+      visitsSelect.required = false;
+      return;
+    }
+    
+    if (frequencySection) frequencySection.style.display = 'block';
+    visitsSelect.required = true;
+    
+    // Determine base rate based on selected plan
+    let baseRate = 9999;
+    if (selectedPlan.includes('2 Bedroom')) baseRate = 11999;
+    else if (selectedPlan.includes('3 Bedroom')) baseRate = 13999;
+    else if (selectedPlan.includes('4 Bedroom')) baseRate = 19999;
+    
+    // Parse room size name
+    let bedrooms = "1 Bedroom";
+    if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
+    else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
+    else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
+    
+    const frequencies = [
+      {
+        value: '1 visit per month',
+        title: 'Once monthly',
+        subtitle: '1 visit / month (touch-ups)',
+        rate: baseRate,
+        multiplier: 1
+      },
+      {
+        value: '2 visits per month (Twice monthly)',
+        title: 'Twice monthly',
+        subtitle: '2 visits / month (Saves ₦800/visit)',
+        rate: baseRate - 800,
+        multiplier: 2
+      },
+      {
+        value: '4 visits per month (4 times monthly)',
+        title: 'Weekly',
+        subtitle: '4 visits / month (Saves ₦1,600/visit)',
+        rate: baseRate - 1600,
+        multiplier: 4
+      }
+    ];
+    
+    // Default to 1 visit if nothing selected yet
+    if (!visitsSelect.value) {
+      visitsSelect.value = '1 visit per month';
+    }
+    
+    frequencies.forEach(freq => {
+      const totalCost = freq.rate * freq.multiplier;
+      const card = document.createElement('div');
+      card.className = 'frequency-card';
+      if (visitsSelect.value === freq.value) {
+        card.classList.add('active');
+      }
+      
+      card.innerHTML = `
+        <div class="frequency-card-left">
+          <div class="frequency-radio-circle">
+            ✓
+          </div>
+          <div class="frequency-card-details">
+            <span class="frequency-card-title">${freq.title}</span>
+            <span class="frequency-card-subtitle">${freq.subtitle}</span>
+          </div>
+        </div>
+        <span class="frequency-card-price">₦${totalCost.toLocaleString()}</span>
+      `;
+      
+      card.addEventListener('click', () => {
+        frequencyCardsContainer.querySelectorAll('.frequency-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        visitsSelect.value = freq.value;
+        const step1ValMsg = document.getElementById('step1-validation-msg');
+        if (step1ValMsg) step1ValMsg.textContent = '';
+        updateBookingSummary();
+      });
+      
+      frequencyCardsContainer.appendChild(card);
+    });
+  }
+
+  function updateBookingSummary() {
+    const selectedPlan = planInput.value;
+    const visits = visitsSelect.value;
+    const preferredDate = document.getElementById('booking-date-display').value;
+    const schedule = bookingScheduleSelect.value;
+    const propertyTypeVal = document.getElementById('booking-property') ? document.getElementById('booking-property').value : 'Flat';
+
+    const summaryPlanName = document.getElementById('summary-plan-name');
+    const summaryExtrasText = document.getElementById('summary-extras-text');
+    const summaryFrequencyText = document.getElementById('summary-frequency-text');
+    const summaryMetaSched = document.getElementById('summary-meta-schedule');
+    const summarySchedText = document.getElementById('summary-schedule-text');
+    const summaryBreakdown = document.getElementById('summary-breakdown-container');
+    const summaryBreakdownItemName = document.getElementById('summary-breakdown-item-name');
+    const summaryBreakdownItemPrice = document.getElementById('summary-breakdown-item-price');
+    const summaryBreakdownServiceName = document.getElementById('summary-breakdown-service-name');
+    const summaryBreakdownServicePrice = document.getElementById('summary-breakdown-service-price');
+    const summaryBreakdownServiceFreq = document.getElementById('summary-breakdown-service-freq');
+    const summaryTotal = document.getElementById('summary-total-price');
+
+    if (!selectedPlan) {
+      summaryPlanName.textContent = "No Plan Selected";
+      summaryExtrasText.textContent = "Extras: -";
+      summaryFrequencyText.textContent = "-";
+      summaryMetaSched.style.display = 'none';
+      summaryBreakdown.style.display = 'none';
+      summaryTotal.textContent = "₦0.00";
+      return;
+    }
+
+    // Parse room size name and property type
+    let bedrooms = "1 Bedroom";
+    if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
+    else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
+    else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
+
+    let propertyType = propertyTypeVal || "Flat";
+    if (propertyType === "Apartment") propertyType = "Apartment";
+    else if (propertyType === "Duplex") propertyType = "Duplex";
+    
+    summaryPlanName.textContent = `${bedrooms} ${propertyType}`;
+    summaryBreakdownItemName.textContent = `${bedrooms} ${propertyType}`;
+    summaryBreakdownItemPrice.textContent = "₦0.00";
+
+    // Schedule text
+    if (preferredDate && schedule) {
+      summarySchedText.textContent = `${preferredDate} (${schedule})`;
+      summaryMetaSched.style.display = 'flex';
+    } else if (preferredDate) {
+      summarySchedText.textContent = `${preferredDate}`;
+      summaryMetaSched.style.display = 'flex';
+    } else {
+      summaryMetaSched.style.display = 'none';
+    }
+
+    // Pricing calculation
+    const planPrices = {
+      "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+      "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
+      "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+      "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
+      "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+      "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
+    };
+
+    const priceInfo = planPrices[selectedPlan];
+    if (priceInfo) {
+      summaryBreakdown.style.display = 'flex';
+      
+      if (priceInfo.type === "fixed") {
+        summaryExtrasText.textContent = `Extras: ${bedrooms}`;
+        summaryFrequencyText.textContent = "(8 times monthly)";
+        
+        summaryBreakdownServiceName.textContent = `cleanse.ng Monthly Subscription`;
+        summaryBreakdownServicePrice.textContent = `₦${priceInfo.rate.toLocaleString()}`;
+        summaryBreakdownServiceFreq.textContent = "(8 times monthly)";
+        summaryTotal.textContent = `₦${priceInfo.rate.toLocaleString()}`;
+      } else {
+        let multiplier = 2; // default
+        let ratePerVisit = priceInfo.rate;
+        let freqLabel = "(Twice monthly)";
+        
+        if (visits === "1 visit per month" || visits.includes("Once")) {
+          multiplier = 1;
+          freqLabel = "(Once monthly)";
+        } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
+          multiplier = 2;
+          ratePerVisit = priceInfo.rate - 800;
+          freqLabel = "(Twice monthly)";
+        } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
+          multiplier = 4;
+          ratePerVisit = priceInfo.rate - 1600;
+          freqLabel = "(Weekly)";
+        }
+        
+        summaryExtrasText.textContent = `Extras: ${bedrooms}`;
+        summaryFrequencyText.textContent = freqLabel;
+        
+        const subtotal = ratePerVisit * multiplier;
+        summaryBreakdownServiceName.textContent = `cleanse.ng Pay Per Visit`;
+        summaryBreakdownServicePrice.textContent = `₦${subtotal.toLocaleString()}`;
+        summaryBreakdownServiceFreq.textContent = freqLabel;
+        summaryTotal.textContent = `₦${subtotal.toLocaleString()}`;
+      }
+    } else {
+      summaryBreakdown.style.display = 'none';
+    }
+  }
+
+  function updateWizardUI() {
+    wizardStepPlan.classList.remove('active');
+    wizardStepSchedule.classList.remove('active');
+    wizardStepContact.classList.remove('active');
+    
+    const wizardStepVerifyLeft = document.getElementById('wizard-step-verify-left');
+    if (wizardStepVerifyLeft) wizardStepVerifyLeft.classList.remove('active');
+
+    pStep1.className = 'progress-step';
+    pStep2.className = 'progress-step';
+    pStep3.className = 'progress-step';
+    pDiv1.style.background = 'var(--border)';
+    pDiv2.style.background = 'var(--border)';
+
+    const wizardTitle = document.getElementById('wizard-title');
+    const wizardSubtitle = document.getElementById('wizard-subtitle');
+    const modalLeft = document.querySelector('.booking-modal-left');
+    
+    const standardSummary = document.getElementById('standard-summary-panel');
+    const verifySummary = document.getElementById('wizard-step-verify-right');
+
+    if (_currentWizardStep === 1) {
+      wizardStepPlan.classList.add('active');
+      pStep1.classList.add('active');
+      
+      if (wizardTitle) wizardTitle.textContent = "Select a Service";
+      if (wizardSubtitle) wizardSubtitle.textContent = "";
+
+      if (standardSummary) standardSummary.style.display = 'flex';
+      if (verifySummary) verifySummary.style.display = 'none';
+      if (modalLeft) modalLeft.style.background = '';
+      document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+      
+      wizardBackBtn.style.visibility = 'visible'; // Back button on step 1 to close modal
+      wizardNextBtn.style.display = 'block';
+      bookingSubmitBtn.style.display = 'none';
+    } else if (_currentWizardStep === 2) {
+      wizardStepSchedule.classList.add('active');
+      pStep1.classList.add('completed');
+      pDiv1.style.background = 'var(--neon-green)';
+      pStep2.classList.add('active');
+
+      if (wizardTitle) wizardTitle.textContent = "Select Date & Time";
+      if (wizardSubtitle) wizardSubtitle.textContent = "Choose when you'd like our team to arrive.";
+
+      if (standardSummary) standardSummary.style.display = 'flex';
+      if (verifySummary) verifySummary.style.display = 'none';
+      if (modalLeft) modalLeft.style.background = '';
+      document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+
+      wizardBackBtn.style.visibility = 'visible';
+      wizardNextBtn.style.display = 'block';
+      bookingSubmitBtn.style.display = 'none';
+    } else if (_currentWizardStep === 3) {
+      wizardStepContact.classList.add('active');
+      pStep1.classList.add('completed');
+      pDiv1.style.background = 'var(--neon-green)';
+      pStep2.classList.add('completed');
+      pDiv2.style.background = 'var(--neon-green)';
+      pStep3.classList.add('active');
+
+      if (wizardTitle) wizardTitle.textContent = "Your Contact Details";
+      if (wizardSubtitle) wizardSubtitle.textContent = "Let us know how to contact you and any preferences.";
+
+      if (standardSummary) standardSummary.style.display = 'flex';
+      if (verifySummary) verifySummary.style.display = 'none';
+      if (modalLeft) modalLeft.style.background = '';
+      document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+
+      wizardBackBtn.style.visibility = 'visible';
+      wizardNextBtn.style.display = 'block';
+      bookingSubmitBtn.style.display = 'none';
+    } else if (_currentWizardStep === 4) {
+      if (wizardStepVerifyLeft) wizardStepVerifyLeft.classList.add('active');
+      pStep1.classList.add('completed');
+      pDiv1.style.background = 'var(--neon-green)';
+      pStep2.classList.add('completed');
+      pDiv2.style.background = 'var(--neon-green)';
+      pStep3.classList.add('completed');
+
+      if (wizardTitle) wizardTitle.textContent = "";
+      if (wizardSubtitle) wizardSubtitle.textContent = "";
+
+      if (standardSummary) standardSummary.style.display = 'none';
+      if (verifySummary) verifySummary.style.display = 'flex';
+      if (modalLeft) modalLeft.style.background = '#f2f6ff';
+      document.querySelector('.booking-modal-content').classList.add('mobile-show-summary');
+
+      updateVerifyStepDetails();
+
+      wizardBackBtn.style.visibility = 'visible';
+      wizardNextBtn.style.display = 'none';
+      bookingSubmitBtn.style.display = 'block';
+      bookingSubmitBtn.textContent = "Confirm Booking";
+    }
+  }
+
+  function updateVerifyStepDetails() {
+    const nameVal = (document.getElementById('booking-name').value || '').trim() || 'Jane Doe';
+    const emailVal = (document.getElementById('booking-email').value || '').trim() || 'jane@example.com';
+    const locationVal = (document.getElementById('booking-location').value || '').trim() || 'Bodija';
+    
+    document.getElementById('verify-customer-name').textContent = nameVal;
+    document.getElementById('verify-customer-email').textContent = emailVal;
+    document.getElementById('verify-location').textContent = locationVal;
+
+    // Avatar initials
+    const initials = nameVal.split(' ').map(n => n[0]).filter(Boolean).join('').substring(0, 2).toUpperCase() || 'JD';
+    document.getElementById('verify-avatar').textContent = initials;
+
+    // Plan details
+    const selectedPlan = planInput.value;
+    let bedroomLabel = "2 Bedroom Flat";
+    if (selectedPlan.includes("1 Bedroom")) bedroomLabel = "1 Bedroom Flat";
+    else if (selectedPlan.includes("2 Bedroom")) bedroomLabel = "2 Bedroom Flat";
+    else if (selectedPlan.includes("3 Bedroom")) bedroomLabel = "3 Bedroom Flat";
+    else if (selectedPlan.includes("4 Bedroom")) bedroomLabel = "4 Bedroom Flat";
+
+    document.getElementById('verify-plan-name').textContent = bedroomLabel;
+    document.getElementById('verify-breakdown-base-name').textContent = bedroomLabel;
+
+    // Date & Time
+    const dateVal = document.getElementById('booking-date-display').value || 'Select Date';
+    const scheduleVal = document.getElementById('booking-schedule').value || '';
+    let timeStr = "";
+    if (scheduleVal) {
+      if (scheduleVal.includes("8am - 11am")) timeStr = "10:00 am";
+      else if (scheduleVal.includes("11am - 2pm")) timeStr = "12:30 pm";
+      else if (scheduleVal.includes("12pm - 2pm")) timeStr = "1:00 pm";
+      else if (scheduleVal.includes("2pm - 5pm")) timeStr = "3:00 pm";
+      else timeStr = scheduleVal;
+    }
+    document.getElementById('verify-date-time').textContent = `${dateVal}${timeStr ? ', ' + timeStr : ''}`;
+
+    // Extras & Service details
+    const visits = visitsSelect.value;
+    const isMonthly = selectedPlan.includes('Monthly Subscription');
+    let freqText = "";
+    if (isMonthly) {
+      freqText = "Monthly Subscription (8 visits)";
+    } else {
+      let freqLabel = "Twice monthly";
+      if (visits === "1 visit per month" || visits.includes("Once")) {
+        freqLabel = "Once monthly";
+      } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
+        freqLabel = "Twice monthly";
+      } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
+        freqLabel = "Weekly";
+      }
+      freqText = `${bedroomLabel.replace(' Flat', '')} (${freqLabel})`;
+    }
+    
+    document.getElementById('verify-extras').textContent = `Extras: cleanse.ng ${freqText}`;
+    document.getElementById('verify-breakdown-service-name').textContent = `└ cleanse.ng ${freqText}`;
+
+    // Total Price calculation
+    const planPrices = {
+      "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+      "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
+      "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+      "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
+      "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+      "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
+    };
+    
+    const priceInfo = planPrices[selectedPlan];
+    let totalVal = 0;
+    if (priceInfo) {
+      if (priceInfo.type === "fixed") {
+        totalVal = priceInfo.rate;
+      } else {
+        let multiplier = 2; // default
+        let ratePerVisit = priceInfo.rate;
+        if (visits === "1 visit per month" || visits.includes("Once")) {
+          multiplier = 1;
+        } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
+          multiplier = 2;
+          ratePerVisit = priceInfo.rate - 800;
+        } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
+          multiplier = 4;
+          ratePerVisit = priceInfo.rate - 1600;
+        }
+        totalVal = ratePerVisit * multiplier;
+      }
+    }
+    
+    const formattedPrice = `₦${totalVal.toLocaleString()}`;
+    document.getElementById('verify-breakdown-service-price').textContent = formattedPrice;
+    document.getElementById('verify-total-price').textContent = formattedPrice;
+  }
+
+  // ── CUSTOM INLINE CALENDAR STATE & LOGIC ──
+  let calendarYear, calendarMonth;
+  const calendarMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  // Local fallback / mock database for booked slots
+  let bookedSlots = {
+    "2026-06-25": ["8am - 11am"], // 1 slot booked -> Orange underline, disables 8am-11am
+    "2026-06-26": ["8am - 11am", "11am - 2pm", "2pm - 5pm"] // 3 slots booked -> Red underline, disabled day
+  };
+
+  // Google Sheet ID for manual booking sync
+  const GOOGLE_SHEET_ID = "YOUR_SPREADSHEET_ID_HERE"; 
+
+  async function syncBookingsFromSpreadsheet() {
+    if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.includes("YOUR_SPREADSHEET_ID")) {
+      console.log("No Google Sheet ID configured. Using local/fallback bookedSlots data.");
+      return;
+    }
+
+    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
+      
+      const csvText = await response.text();
+      parseSpreadsheetCSV(csvText);
+      
+      // Refresh the calendar view if it is currently displayed
+      renderCalendar();
+    } catch (err) {
+      console.error("Failed to sync bookings from Google Sheet:", err);
+    }
+  }
+
+  function parseSpreadsheetCSV(csvText) {
+    const lines = csvText.split(/\r?\n/);
+    if (lines.length <= 1) return; // Header only or empty
+
+    // Reset local bookedSlots before merging
+    bookedSlots = {};
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line.trim()) continue;
+
+      const cols = line.split(',').map(cell => {
+        return cell.replace(/^["']|["']$/g, '').trim();
+      });
+
+      if (cols.length >= 2) {
+        const dateVal = cols[0]; // e.g. "2026-06-25"
+        const slotVal = cols[1]; // e.g. "8am - 11am"
+        const statusVal = cols[2] ? cols[2].toLowerCase() : "";
+
+        if (dateVal && slotVal && (statusVal === "booked" || statusVal === "yes" || statusVal === "")) {
+          const normalizedDate = dateVal.replace(/\//g, '-');
+          
+          if (!bookedSlots[normalizedDate]) {
+            bookedSlots[normalizedDate] = [];
+          }
+          if (!bookedSlots[normalizedDate].includes(slotVal)) {
+            bookedSlots[normalizedDate].push(slotVal);
+          }
+        }
+      }
+    }
+    console.log("Bookings synced successfully. Updated bookedSlots database:", bookedSlots);
+  }
+
+  function initCustomCalendar() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    calendarYear = tomorrow.getFullYear();
+    calendarMonth = tomorrow.getMonth();
+    
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const container = document.getElementById('calendar-widget-container');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="calendar-widget">
+        <div class="calendar-header">
+          <div class="calendar-month-year" id="calendar-month-year-label">${calendarMonths[calendarMonth]} <span>${calendarYear}</span></div>
+          <div class="calendar-nav-btns">
+            <button type="button" class="calendar-nav-btn" id="calendar-prev-month">&lt;</button>
+            <button type="button" class="calendar-nav-btn" id="calendar-next-month">&gt;</button>
+          </div>
+        </div>
+        <div class="calendar-grid-header">
+          <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+        </div>
+        <div class="calendar-grid-days" id="calendar-grid-days-container"></div>
+        <div class="calendar-booking-message" id="calendar-booking-message"></div>
+      </div>
+    `;
+
+    const daysContainer = document.getElementById('calendar-grid-days-container');
+    const prevBtn = document.getElementById('calendar-prev-month');
+    const nextBtn = document.getElementById('calendar-next-month');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Disable prev month button if showing current month
+    const isCurrentMonth = (calendarYear === today.getFullYear() && calendarMonth === today.getMonth());
+    if (isCurrentMonth) {
+      prevBtn.disabled = true;
+      prevBtn.style.opacity = '0.3';
+      prevBtn.style.cursor = 'not-allowed';
+    } else {
+      prevBtn.addEventListener('click', () => {
+        calendarMonth--;
+        if (calendarMonth < 0) {
+          calendarMonth = 11;
+          calendarYear--;
+        }
+        renderCalendar();
+      });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      calendarMonth++;
+      if (calendarMonth > 11) {
+        calendarMonth = 0;
+        calendarYear++;
+      }
+      renderCalendar();
+    });
+
+    // Generate grid days
+    // First day index (Mon-Sun: 0-6)
+    let firstDayIndex = new Date(calendarYear, calendarMonth, 1).getDay();
+    if (firstDayIndex === 0) {
+      firstDayIndex = 6; // Sunday is 6
+    } else {
+      firstDayIndex = firstDayIndex - 1; // Mon-Sat: 0-5
+    }
+
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+
+    // Fill initial empty cells
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day-cell empty';
+      daysContainer.appendChild(emptyCell);
+    }
+
+    // Fill actual day cells
+    const activeDateVal = bookingDateInput.value; // yyyy-mm-dd format
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cellDate = new Date(calendarYear, calendarMonth, day);
+      cellDate.setHours(0, 0, 0, 0);
+
+      const cellDateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      
+      const isCellToday = cellDate.getTime() === today.getTime();
+      const isCellPast = cellDate < today;
+      const isCellSunday = cellDate.getDay() === 0;
+
+      const cell = document.createElement('div');
+      cell.className = 'calendar-day-cell';
+      cell.textContent = day;
+
+      const slotsBooked = bookedSlots[cellDateStr] || [];
+      const isFullyBooked = slotsBooked.length >= 3;
+      const isPartiallyBooked = slotsBooked.length > 0 && slotsBooked.length < 3;
+      const isSelectable = !isCellPast && !isCellToday && !isCellSunday;
+
+      if (isCellToday) {
+        cell.classList.add('today');
+      } else if (isCellPast || isCellSunday) {
+        cell.classList.add('disabled');
+      } else if (isSelectable) {
+        if (isFullyBooked) {
+          cell.classList.add('fully-booked');
+          cell.setAttribute('data-tooltip', '0 Available');
+          cell.addEventListener('click', () => {
+            const msgEl = document.getElementById('calendar-booking-message');
+            if (msgEl) msgEl.textContent = 'This date is fully booked. Please select another date.';
+          });
+        } else {
+          cell.classList.add('selectable');
+          const slotsLeft = 3 - slotsBooked.length;
+          cell.setAttribute('data-tooltip', `${slotsLeft} Available`);
+          if (isPartiallyBooked) {
+            cell.classList.add('partially-booked');
+          }
+          
+          if (activeDateVal === cellDateStr) {
+            cell.classList.add('selected');
+          }
+
+          cell.addEventListener('click', () => {
+            bookingDateInput.value = cellDateStr;
+            
+            const formattedDate = cellDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            document.getElementById('booking-date-display').value = formattedDate;
+
+            // Clear any fully-booked message
+            const msgEl = document.getElementById('calendar-booking-message');
+            if (msgEl) msgEl.textContent = '';
+            const step2ValMsg = document.getElementById('step2-validation-msg');
+            if (step2ValMsg) step2ValMsg.textContent = '';
+
+            const dayOfWeek = cellDate.getDay();
+            updateSchedulePills(dayOfWeek);
+            updateBookingSummary();
+            
+            // Re-render to update selected highlight
+            renderCalendar();
+          });
+        }
+      }
+
+      daysContainer.appendChild(cell);
+    }
+  }
 
   function openBookingModal(planName) {
+    _modalOpenTime = Date.now();
+    
+    // Clear previously selected dates, display, and policy checkbox
+    bookingDateInput.value = "";
+    document.getElementById('booking-date-display').value = "";
+    const agreeCheckbox = document.getElementById('booking-agree-policy');
+    if (agreeCheckbox) agreeCheckbox.checked = false;
+    
+    // Clear validation messages
+    ['step1-validation-msg', 'step2-validation-msg', 'step3-validation-msg', 'step4-validation-msg', 'coupon-validation-msg', 'calendar-booking-message'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = '';
+        if (id === 'coupon-validation-msg') el.style.display = 'none';
+      }
+    });
+    
     if (planName) {
       planInput.value = planName;
+      _isPlanPreSelected = true;
+      if (planName.includes('Monthly Subscription')) {
+        _currentWizardStep = 2; // Skip step 1 since frequency is fixed
+      } else {
+        _currentWizardStep = 1; // Pay-Per-Visit must select frequency
+      }
     } else {
-      planInput.value = "";
+      planInput.value = "2 Bedroom — Pay Per Visit"; // Default to 2 Bed Pay Per Visit so step 1 renders cards
+      _isPlanPreSelected = false;
+      _currentWizardStep = 1;
     }
     
     handlePlanChange();
+    updateWizardUI();
+    updateBookingSummary();
+    
+    // Render custom calendar
+    initCustomCalendar();
     
     formContainer.style.display = 'block';
     successContainer.classList.remove('active');
     modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
   }
 
   function handlePlanChange() {
     const planName = planInput.value;
+    const step1ValMsg = document.getElementById('step1-validation-msg');
+    if (step1ValMsg) step1ValMsg.textContent = '';
     
-    // Dynamically set Visits Per Month dropdown behavior based on subscription type
     if (planName.includes('Monthly Subscription')) {
       visitsSelect.value = "8 visits per month (2x per week)";
-      visitsSelect.disabled = true;
-    } else {
-      // If it was disabled, reset it so they can choose
-      if (visitsSelect.disabled) {
-        visitsSelect.value = "";
+      
+      if (planSummary) {
+        planSummaryText.textContent = planName;
+        planSummary.style.display = 'block';
       }
-      visitsSelect.disabled = false;
+    } else {
+      if (visitsSelect.value.includes("8 visits")) {
+        visitsSelect.value = "1 visit per month";
+      }
+      
+      if (planSummary) {
+        planSummary.style.display = 'none';
+      }
     }
+    
+    updateFrequencyCards();
+    updateBookingSummary();
   }
+
+  function changeWizardStep(nextStep, direction) {
+    const steps = {
+      1: wizardStepPlan,
+      2: wizardStepSchedule,
+      3: wizardStepContact,
+      4: wizardStepVerifyLeft
+    };
+    
+    const currentStepEl = steps[_currentWizardStep];
+    const nextStepEl = steps[nextStep];
+    
+    if (!currentStepEl || !nextStepEl) return;
+    
+    wizardNextBtn.disabled = true;
+    wizardBackBtn.disabled = true;
+    
+    if (direction === 'next') {
+      currentStepEl.classList.add('leaving-left');
+    } else {
+      currentStepEl.classList.add('leaving-right');
+    }
+    
+    setTimeout(() => {
+      currentStepEl.classList.remove('active', 'leaving-left', 'leaving-right');
+      
+      _currentWizardStep = nextStep;
+      
+      if (direction === 'next') {
+        nextStepEl.classList.add('entering-right');
+      } else {
+        nextStepEl.classList.add('entering-left');
+      }
+      nextStepEl.classList.add('active');
+      
+      void nextStepEl.offsetWidth;
+      
+      nextStepEl.classList.remove('entering-right', 'entering-left');
+      
+      updateWizardUI();
+      
+      wizardNextBtn.disabled = false;
+      wizardBackBtn.disabled = false;
+    }, 220);
+  }
+
+  wizardNextBtn.addEventListener('click', () => {
+    if (_currentWizardStep === 1) {
+      if (!planInput.checkValidity()) {
+        planInput.reportValidity();
+        return;
+      }
+      if (!planInput.value.includes('Monthly Subscription') && !visitsSelect.value) {
+        const step1ValMsg = document.getElementById('step1-validation-msg');
+        if (step1ValMsg) step1ValMsg.textContent = "Please select a frequency option.";
+        return;
+      }
+      const propSelect = document.getElementById('booking-property');
+      if (propSelect && propSelect.required && !propSelect.value) {
+        propSelect.reportValidity();
+        return;
+      }
+      
+      changeWizardStep(2, 'next');
+    } else if (_currentWizardStep === 2) {
+      // Validate date selected
+      const dateVal = bookingDateInput.value;
+      if (!dateVal) {
+        const step2ValMsg = document.getElementById('step2-validation-msg');
+        if (step2ValMsg) step2ValMsg.textContent = "Please select a preferred date on the calendar.";
+        return;
+      }
+      
+      // Safety block for same-day
+      const selectedD = new Date(dateVal);
+      selectedD.setHours(0,0,0,0);
+      const todayD = new Date();
+      todayD.setHours(0,0,0,0);
+      if (selectedD.getTime() === todayD.getTime()) {
+        const step2ValMsg = document.getElementById('step2-validation-msg');
+        if (step2ValMsg) step2ValMsg.textContent = "Same-day bookings are not allowed. Please select a future date.";
+        return;
+      }
+
+      if (!bookingScheduleSelect.value) {
+        const step2ValMsg = document.getElementById('step2-validation-msg');
+        if (step2ValMsg) step2ValMsg.textContent = "Please select a preferred schedule slot.";
+        return;
+      }
+      
+      changeWizardStep(3, 'next');
+    } else if (_currentWizardStep === 3) {
+      // Validate step 3 fields: Name, Email, Phone, Location
+      const nameInput = document.getElementById('booking-name');
+      const emailInput = document.getElementById('booking-email');
+      const phoneInput = document.getElementById('booking-phone');
+      const locationInput = document.getElementById('booking-location');
+      const policyCheckbox = document.getElementById('booking-agree-policy');
+
+      if (!nameInput.checkValidity()) {
+        nameInput.reportValidity();
+        return;
+      }
+      if (!emailInput.checkValidity()) {
+        emailInput.reportValidity();
+        return;
+      }
+      if (!phoneInput.checkValidity()) {
+        phoneInput.reportValidity();
+        return;
+      }
+      if (!locationInput.checkValidity()) {
+        locationInput.reportValidity();
+        return;
+      }
+      
+      // Explicit format validation
+      if (nameInput.value.trim().length < 2) {
+        const step3ValMsg = document.getElementById('step3-validation-msg');
+        if (step3ValMsg) step3ValMsg.textContent = 'Please enter a valid name (at least 2 characters).';
+        return;
+      }
+      if (!_validateEmail(emailInput.value.trim())) {
+        const step3ValMsg = document.getElementById('step3-validation-msg');
+        if (step3ValMsg) step3ValMsg.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      if (!_validatePhone(phoneInput.value.trim())) {
+        const step3ValMsg = document.getElementById('step3-validation-msg');
+        if (step3ValMsg) step3ValMsg.textContent = 'Please enter a valid phone number (7-15 digits).';
+        return;
+      }
+
+      if (policyCheckbox && !policyCheckbox.checked) {
+        const step3ValMsg = document.getElementById('step3-validation-msg');
+        if (step3ValMsg) step3ValMsg.textContent = "Please agree to the Customer Policy to proceed.";
+        return;
+      }
+
+      changeWizardStep(4, 'next');
+    }
+  });
+
+  wizardBackBtn.addEventListener('click', () => {
+    if (_currentWizardStep === 1) {
+      closeBookingModal();
+    } else {
+      const minStep = _isPlanPreSelected && planInput.value.includes('Monthly Subscription') ? 2 : 1;
+      if (_currentWizardStep > minStep) {
+        changeWizardStep(_currentWizardStep - 1, 'back');
+      }
+    }
+  });
 
   planInput.addEventListener('change', handlePlanChange);
 
   function closeBookingModal() {
     modal.classList.remove('active');
+    
+    // reset policy checkbox & close policy overlay if open
+    const policyModal = document.getElementById('customer-policy-modal');
+    if (policyModal) policyModal.classList.remove('active');
+    
+    const agreeCheckbox = document.getElementById('booking-agree-policy');
+    if (agreeCheckbox) agreeCheckbox.checked = false;
+    
     document.body.style.overflow = '';
   }
 
@@ -1615,8 +3574,81 @@
     }
   });
 
+  // Step 4 micro-interactions
+  const editPencil = document.getElementById('verify-edit-pencil');
+  if (editPencil) {
+    editPencil.addEventListener('click', () => {
+      changeWizardStep(3, 'back');
+    });
+  }
+
+  const addMoreBtn = document.getElementById('verify-add-more-btn');
+  if (addMoreBtn) {
+    addMoreBtn.addEventListener('click', () => {
+      changeWizardStep(1, 'back');
+    });
+  }
+
+  const couponLink = document.getElementById('verify-coupon-link');
+  if (couponLink) {
+    couponLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const code = prompt("Enter your Coupon Code:");
+      const couponMsg = document.getElementById('coupon-validation-msg');
+      if (couponMsg) {
+        couponMsg.textContent = '';
+        couponMsg.style.display = 'none';
+      }
+      if (code) {
+        if (couponMsg) {
+          couponMsg.textContent = `Coupon "${code}" applied! (Discount applied on WhatsApp)`;
+          couponMsg.style.color = '#008080';
+          couponMsg.style.display = 'block';
+        }
+      }
+    });
+  }
+
+  // Customer Policy Modal Logic
+  const policyModal = document.getElementById('customer-policy-modal');
+  const policyLink = document.getElementById('policy-link');
+  const policyCloseBtn = document.getElementById('policy-modal-close-btn');
+  const policyAgreeBtn = document.getElementById('policy-modal-agree-btn');
+
+  if (policyLink && policyModal) {
+    policyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      policyModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (policyCloseBtn && policyModal) {
+    policyCloseBtn.addEventListener('click', () => {
+      policyModal.classList.remove('active');
+    });
+  }
+
+  if (policyAgreeBtn && policyModal) {
+    policyAgreeBtn.addEventListener('click', () => {
+      const agreeCheckbox = document.getElementById('booking-agree-policy');
+      if (agreeCheckbox) {
+        agreeCheckbox.checked = true;
+      }
+      policyModal.classList.remove('active');
+    });
+  }
+
+  if (policyModal) {
+    policyModal.addEventListener('click', (e) => {
+      if (e.target === policyModal) {
+        policyModal.classList.remove('active');
+      }
+    });
+  }
+
   // Intercept click on all Book Appointment buttons
-  document.querySelectorAll('a[href*="wa.me"]').forEach(btn => {
+  document.querySelectorAll('a[data-wa-link]').forEach(btn => {
     // Only intercept buttons that are styled to book appointments (excluding text links in topbar / footer)
     if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta') || btn.classList.contains('btn-primary')) {
       btn.addEventListener('click', (e) => {
@@ -1641,16 +3673,70 @@
   bookingForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    // Extract values
-    const selectedPlan = planInput.value;
-    const fullName = document.getElementById('booking-name').value;
-    const email = document.getElementById('booking-email').value;
-    const phone = document.getElementById('booking-phone').value;
-    const location = document.getElementById('booking-location').value;
-    const propertyType = document.getElementById('booking-property').value;
-    const schedule = document.getElementById('booking-schedule').value;
-    const visits = visitsSelect.value || 'Not selected';
-    const preferences = document.getElementById('booking-preferences').value || 'None';
+    // Clear any previous submit validation message
+    const step4Val = document.getElementById('step4-validation-msg');
+    if (step4Val) step4Val.textContent = '';
+    
+    // Validate policy checkbox
+    const agreeCheckbox = document.getElementById('booking-agree-policy');
+    if (agreeCheckbox && !agreeCheckbox.checked) {
+      if (step4Val) step4Val.textContent = "Please agree to the Customer Policy before submitting.";
+      return;
+    }
+
+    // ─── Security: Honeypot check ───
+    const honeypot = document.getElementById('booking-website');
+    if (honeypot && honeypot.value) {
+      // Bot detected — show fake success, don't actually send
+      formContainer.style.display = 'none';
+      successContainer.classList.add('active');
+      document.getElementById('success-whatsapp-btn').href = '#';
+      return;
+    }
+
+    // ─── Security: Timing guard ───
+    if (_modalOpenTime && (Date.now() - _modalOpenTime < _sc.minFormTimeMs)) {
+      if (step4Val) step4Val.textContent = 'Please take a moment to review your details before submitting.';
+      return;
+    }
+
+    // ─── Security: Rate limiting ───
+    if (!_checkRateLimit()) {
+      if (step4Val) step4Val.textContent = "You've submitted multiple bookings recently. Please wait a few minutes before trying again.";
+      return;
+    }
+
+    // Extract and sanitize values
+    const selectedPlan = _sanitize(planInput.value, 100);
+    const fullName = _sanitize(document.getElementById('booking-name').value, 100);
+    const email = document.getElementById('booking-email').value.trim();
+    const phone = document.getElementById('booking-phone').value.trim();
+    const location = _sanitize(document.getElementById('booking-location').value, 200);
+    
+    const propertyTypeVal = document.getElementById('booking-property') ? document.getElementById('booking-property').value : 'Flat';
+    const propertyType = selectedPlan.includes('Monthly Subscription') 
+      ? 'Monthly Subscription' 
+      : (_sanitize(propertyTypeVal, 50) || 'Flat');
+    const preferredDate = _sanitize(document.getElementById('booking-date-display').value, 50);
+    const schedule = _sanitize(document.getElementById('booking-schedule').value, 100);
+    const visits = _sanitize(visitsSelect.value || 'Not selected', 100);
+    const preferences = _sanitize(document.getElementById('booking-preferences').value || 'None', 1000);
+
+    // ─── Security: Input validation ───
+    if (fullName.length < 2) {
+      if (step4Val) step4Val.textContent = 'Please enter a valid name (at least 2 characters).';
+      return;
+    }
+    if (!_validateEmail(email)) {
+      if (step4Val) step4Val.textContent = 'Please enter a valid email address.';
+      return;
+    }
+    if (!_validatePhone(phone)) {
+      if (step4Val) step4Val.textContent = 'Please enter a valid phone number (7-15 digits).';
+      return;
+    }
+    
+    const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
     
     // Calculate pricing details dynamically
     const planPrices = {
@@ -1666,22 +3752,26 @@
 
     const priceInfo = planPrices[selectedPlan];
     let priceDetailsText = "";
+    let visitsText = visits;
     if (priceInfo) {
       if (priceInfo.type === "fixed") {
         priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / month`;
+        visitsText = "8 visits per month";
       } else {
-        let multiplier = 0;
-        if (visits.includes("1 visit")) multiplier = 1;
-        else if (visits.includes("2 visits")) multiplier = 2;
-        else if (visits.includes("4 visits")) multiplier = 4;
-        else if (visits.includes("8 visits")) multiplier = 8;
-        
-        if (multiplier > 0) {
-          const total = priceInfo.rate * multiplier;
-          priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / visit (Total: ₦${total.toLocaleString()} / month)`;
-        } else {
-          priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / visit (Total: Custom based on frequency)`;
+        let multiplier = 2; // default
+        let ratePerVisit = priceInfo.rate;
+        if (visits === "1 visit per month") {
+          multiplier = 1;
+        } else if (visits && visits.includes("2 visits")) {
+          multiplier = 2;
+          ratePerVisit = priceInfo.rate - 800;
+        } else if (visits && visits.includes("4 visits")) {
+          multiplier = 4;
+          ratePerVisit = priceInfo.rate - 1600;
         }
+        
+        const total = ratePerVisit * multiplier;
+        priceDetailsText = `₦${ratePerVisit.toLocaleString()} / visit (Total: ₦${total.toLocaleString()} / month)`;
       }
     } else {
       priceDetailsText = "Custom Plan (pricing to be confirmed)";
@@ -1690,22 +3780,23 @@
     // Construct WhatsApp message template
     const waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n` +
                       `• *Plan:* ${selectedPlan}\n` +
-                      `• *Visits per Month:* ${visits}\n` +
+                      `• *Visits per Month:* ${visitsText}\n` +
                       `• *Pricing:* ${priceDetailsText}\n` +
                       `• *Name:* ${fullName}\n` +
                       `• *Email:* ${email}\n` +
-                      `• *Phone:* ${phone}\n` +
-                      `• *Location:* ${location}\n` +
+                      `• *Phone:* ${sanitizedPhone}\n` +
+                      `• *Home Address:* ${location}\n` +
                       `• *Property Type:* ${propertyType}\n` +
+                      `• *Preferred Date:* ${preferredDate}\n` +
                       `• *Preferred Schedule:* ${schedule}\n` +
                       `• *Preferences:* ${preferences}`;
                       
-    const whatsappUrl = `https://wa.me/2349130663739?text=${encodeURIComponent(waMessage)}`;
+    const whatsappUrl = _getWaUrl(waMessage);
     
-    // Set the backup WhatsApp link on the thank you page
+    // Set the WhatsApp link on the thank you page
     document.getElementById('success-whatsapp-btn').href = whatsappUrl;
     
-    // Open WhatsApp in a new tab (automatic redirect)
+    // Immediately open WhatsApp URL in a new window/tab
     window.open(whatsappUrl, '_blank');
     
     // Transition modal to success view
@@ -1713,15 +3804,210 @@
     successContainer.classList.add('active');
   });
 
-  // Automatically open booking modal on page load for tablet and desktop screens (tabs and above)
-  window.addEventListener('DOMContentLoaded', () => {
-    if (window.innerWidth >= 768) {
-      setTimeout(() => {
-        if (!modal.classList.contains('active')) {
-          openBookingModal("");
-        }
-      }, 1000);
+  // Custom Pricing Modal Logic for >4 Bedrooms
+  const customPricingLink = document.getElementById('custom-bedrooms-link');
+  const customModal = document.getElementById('custom-bedrooms-modal');
+  const customCloseBtn = document.getElementById('custom-modal-close-btn');
+  const customSubmitBtn = document.getElementById('custom-bedrooms-submit-btn');
+  const customInput = document.getElementById('custom-bedrooms-count');
+
+  if (customPricingLink) {
+    customPricingLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      customModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (customCloseBtn) {
+    customCloseBtn.addEventListener('click', () => {
+      customModal.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+
+  // Close when clicking outside content
+  customModal.addEventListener('click', (e) => {
+    if (e.target === customModal) {
+      customModal.classList.remove('active');
+      document.body.style.overflow = '';
     }
+  });
+
+  if (customSubmitBtn) {
+    customSubmitBtn.addEventListener('click', () => {
+      const numRooms = _sanitize(customInput.value, 10).replace(/[^\d]/g, '');
+      if (numRooms && numRooms.trim() !== "") {
+        const waMessage = `Hello cleanse.ng! I need custom pricing because my home has ${numRooms} bedrooms.`;
+        const whatsappUrl = _getWaUrl(waMessage);
+        window.open(whatsappUrl, '_blank');
+        customModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
+  // Discount Modal logic
+  const discountModal = document.getElementById('discount-modal');
+  const discountCloseBtn = document.getElementById('discount-modal-close-btn');
+  const discountSuccessCloseBtn = document.getElementById('discount-success-close-btn');
+  const discountFormContainer = document.getElementById('discount-form-container');
+  const discountSuccessContainer = document.getElementById('discount-success-container');
+  const discountForm = document.getElementById('discount-form');
+  const discountBirthdayInput = document.getElementById('discount-birthday');
+  const discountBirthdayDisplay = document.getElementById('discount-birthday-display');
+
+  let _discountModalOpenTime = 0;
+
+  function openDiscountModal() {
+    _discountModalOpenTime = Date.now();
+    discountFormContainer.style.display = 'flex';
+    discountSuccessContainer.classList.remove('active');
+    discountModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiscountModal() {
+    discountModal.classList.remove('active');
+    document.body.style.overflow = '';
+    localStorage.setItem('discount_popup_dismissed', 'true');
+  }
+
+  if (discountCloseBtn) discountCloseBtn.addEventListener('click', closeDiscountModal);
+  if (discountSuccessCloseBtn) discountSuccessCloseBtn.addEventListener('click', closeDiscountModal);
+
+  discountModal.addEventListener('click', (e) => {
+    if (e.target === discountModal) {
+      closeDiscountModal();
+    }
+  });
+
+  if (discountBirthdayInput) {
+    // Set max date to today
+    const bToday = new Date();
+    const bYyyy = bToday.getFullYear();
+    const bMm = String(bToday.getMonth() + 1).padStart(2, '0');
+    const bDd = String(bToday.getDate()).padStart(2, '0');
+    discountBirthdayInput.max = `${bYyyy}-${bMm}-${bDd}`;
+
+    discountBirthdayInput.addEventListener('click', () => {
+      try {
+        discountBirthdayInput.showPicker();
+      } catch (err) {
+        console.log("showPicker failed: ", err);
+      }
+    });
+
+    discountBirthdayInput.addEventListener('change', () => {
+      if (!discountBirthdayInput.value) {
+        discountBirthdayDisplay.value = "";
+        return;
+      }
+      const parts = discountBirthdayInput.value.split('-');
+      const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      const formatted = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      discountBirthdayDisplay.value = formatted;
+    });
+  }
+
+  if (discountForm) {
+    discountForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const discValMsg = document.getElementById('discount-validation-msg');
+      if (discValMsg) discValMsg.textContent = '';
+      
+      const honeypot = document.getElementById('discount-website');
+      if (honeypot && honeypot.value) {
+        discountFormContainer.style.display = 'none';
+        discountSuccessContainer.classList.add('active');
+        return;
+      }
+
+      if (_discountModalOpenTime && (Date.now() - _discountModalOpenTime < 2000)) {
+        if (discValMsg) discValMsg.textContent = 'Please take a moment to review your details before submitting.';
+        return;
+      }
+
+      const name = _sanitize(document.getElementById('discount-name').value, 100);
+      const email = document.getElementById('discount-email').value.trim();
+      const birthday = _sanitize(discountBirthdayDisplay.value, 100);
+      const location = _sanitize(document.getElementById('discount-location').value, 100);
+
+      if (name.length < 2) {
+        if (discValMsg) discValMsg.textContent = 'Please enter a valid name (at least 2 characters).';
+        return;
+      }
+      if (!_validateEmail(email)) {
+        if (discValMsg) discValMsg.textContent = 'Please enter a valid email address.';
+        return;
+      }
+
+      localStorage.setItem('discount_popup_dismissed', 'true');
+      discountFormContainer.style.display = 'none';
+      discountSuccessContainer.classList.add('active');
+    });
+  }
+
+  // Clear step3 / step4 validation errors on input changes
+  ['booking-name', 'booking-email', 'booking-phone', 'booking-location', 'booking-agree-policy'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const clearMsg = () => {
+        const step3ValMsg = document.getElementById('step3-validation-msg');
+        if (step3ValMsg) step3ValMsg.textContent = '';
+        const step4ValMsg = document.getElementById('step4-validation-msg');
+        if (step4ValMsg) step4ValMsg.textContent = '';
+      };
+      el.addEventListener('input', clearMsg);
+      el.addEventListener('change', clearMsg);
+    }
+  });
+
+  // Clear discount validation errors on input changes
+  ['discount-name', 'discount-email', 'discount-birthday', 'discount-location'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const clearMsg = () => {
+        const discValMsg = document.getElementById('discount-validation-msg');
+        if (discValMsg) discValMsg.textContent = '';
+      };
+      el.addEventListener('input', clearMsg);
+      el.addEventListener('change', clearMsg);
+    }
+  });
+
+  // Automatically open discount modal on page load for all screen sizes
+  window.addEventListener('DOMContentLoaded', () => {
+    syncBookingsFromSpreadsheet();
+
+    if (localStorage.getItem('discount_popup_dismissed') === 'true') {
+      return;
+    }
+
+    let popupOpened = false;
+    function triggerPopup() {
+      if (popupOpened) return;
+      popupOpened = true;
+      if (!discountModal.classList.contains('active') && !modal.classList.contains('active')) {
+        openDiscountModal();
+      }
+      window.removeEventListener('scroll', handleScrollTrigger);
+    }
+
+    // Trigger on scroll past 20% page height
+    function handleScrollTrigger() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0 && (scrollTop / docHeight) >= 0.20) {
+        triggerPopup();
+      }
+    }
+
+    window.addEventListener('scroll', handleScrollTrigger);
+
+    // Backup timer: trigger after 5 seconds
+    setTimeout(triggerPopup, 5000);
   });
 </script>
 </body>
