@@ -3,7 +3,7 @@
 <head>
 <script>
   (function() {
-    var allowed = ['cleanse.ng', 'localhost', '127.0.0.1', '::1'];
+    var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
     var isLocal = window.location.protocol === 'file:';
     var host = window.location.hostname;
     var isAllowed = allowed.some(function(d) { return host === d || host.endsWith('.' + d); });
