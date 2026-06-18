@@ -584,7 +584,11 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
     if (modalLeft) modalLeft.style.background = '';
-    document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+    const modalContent = document.querySelector('.booking-modal-content');
+    if (modalContent) {
+      modalContent.classList.remove('mobile-show-summary');
+      modalContent.classList.remove('verify-step-active');
+    }
     
     wizardBackBtn.style.visibility = 'visible'; // Back button on step 1 to close modal
     wizardNextBtn.style.display = 'block';
@@ -601,7 +605,11 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
     if (modalLeft) modalLeft.style.background = '';
-    document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+    const modalContent = document.querySelector('.booking-modal-content');
+    if (modalContent) {
+      modalContent.classList.remove('mobile-show-summary');
+      modalContent.classList.remove('verify-step-active');
+    }
 
     wizardBackBtn.style.visibility = 'visible';
     wizardNextBtn.style.display = 'block';
@@ -620,7 +628,11 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
     if (modalLeft) modalLeft.style.background = '';
-    document.querySelector('.booking-modal-content').classList.remove('mobile-show-summary');
+    const modalContent = document.querySelector('.booking-modal-content');
+    if (modalContent) {
+      modalContent.classList.remove('mobile-show-summary');
+      modalContent.classList.remove('verify-step-active');
+    }
 
     wizardBackBtn.style.visibility = 'visible';
     wizardNextBtn.style.display = 'block';
@@ -639,7 +651,12 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'none';
     if (verifySummary) verifySummary.style.display = 'flex';
     if (modalLeft) modalLeft.style.background = '#f2f6ff';
-    document.querySelector('.booking-modal-content').classList.add('mobile-show-summary');
+    
+    const modalContent = document.querySelector('.booking-modal-content');
+    if (modalContent) {
+      modalContent.classList.add('mobile-show-summary');
+      modalContent.classList.add('verify-step-active');
+    }
 
     updateVerifyStepDetails();
 
@@ -973,6 +990,14 @@ function renderCalendar() {
             if (slotsContainer) slotsContainer.style.display = 'block';
             updateSchedulePills(dayOfWeek);
             updateBookingSummary();
+            if (typeof saveSessionState === 'function') saveSessionState();
+            
+            // Auto-scroll to slots container
+            setTimeout(() => {
+              if (slotsContainer) {
+                slotsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            }, 380);
           });
           
           // Re-render to update selected highlight
@@ -988,15 +1013,6 @@ function renderCalendar() {
 function openBookingModal(planName) {
   _modalOpenTime = Date.now();
   
-  // Clear previously selected dates, display, and policy checkbox
-  bookingDateInput.value = "";
-  document.getElementById('booking-date-display').value = "";
-  const slotsContainer = document.getElementById('schedule-slots-container');
-  if (slotsContainer) slotsContainer.style.display = 'none';
-  
-  const agreeCheckbox = document.getElementById('booking-agree-policy');
-  if (agreeCheckbox) agreeCheckbox.checked = false;
-  
   // Clear validation messages
   ['step1-validation-msg', 'step2-validation-msg', 'step3-validation-msg', 'step4-validation-msg', 'coupon-validation-msg', 'calendar-booking-message'].forEach(id => {
     const el = document.getElementById(id);
@@ -1009,7 +1025,22 @@ function openBookingModal(planName) {
   const content = document.querySelector('.booking-modal-content');
   if (content) {
     content.classList.remove('confirmed');
+    content.classList.remove('verify-step-active');
     content.style.height = 'auto';
+  }
+
+  // Clear defaults
+  bookingDateInput.value = "";
+  document.getElementById('booking-date-display').value = "";
+  const slotsContainer = document.getElementById('schedule-slots-container');
+  if (slotsContainer) slotsContainer.style.display = 'none';
+  
+  const agreeCheckbox = document.getElementById('booking-agree-policy');
+  if (agreeCheckbox) agreeCheckbox.checked = false;
+
+  // Restore session state
+  if (typeof restoreSessionState === 'function') {
+    restoreSessionState(planName);
   }
   
   if (planName) {
@@ -1031,9 +1062,11 @@ function openBookingModal(planName) {
       _currentWizardStep = 1; // Pay-Per-Visit must select frequency
     }
   } else {
-    planInput.value = "2 Bedroom — Pay Per Visit"; // Default
-    _isPlanPreSelected = false;
-    _currentWizardStep = 1;
+    if (!planInput.value) {
+      planInput.value = "2 Bedroom — Pay Per Visit"; // Default
+      _isPlanPreSelected = false;
+      _currentWizardStep = 1;
+    }
   }
   
   handlePlanChange();
@@ -1531,12 +1564,17 @@ if (bookingForm) {
     // Immediately open WhatsApp URL in a new window/tab
     window.open(whatsappUrl, '_blank');
     
+    // Clear saved session state so a new booking starts fresh
+    sessionStorage.removeItem('cleanse_booking_state');
+
     // Transition modal to success view
     transitionModalSize(() => {
       formContainer.style.display = 'none';
       successContainer.classList.add('active');
       const content = document.querySelector('.booking-modal-content');
       if (content) {
+        content.classList.remove('verify-step-active');
+        content.classList.remove('mobile-show-summary');
         content.classList.add('confirmed');
       }
     });
@@ -1750,3 +1788,238 @@ window.addEventListener('DOMContentLoaded', () => {
   // Backup timer: trigger after 5 seconds
   setTimeout(triggerPopup, 5000);
 });
+
+// ═══════════════════════════════════════
+// UX ENHANCEMENTS & PERSISTENCE MODULE
+// ═══════════════════════════════════════
+
+function validateStep3Field(id, validatorFn, errorMsg) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  const formGroup = el.closest('.form-group');
+  if (!formGroup) return false;
+  const errorEl = formGroup.querySelector('.field-error-msg');
+  const val = el.value.trim();
+
+  // Clear states
+  formGroup.classList.remove('invalid', 'valid');
+  if (errorEl) errorEl.textContent = '';
+
+  if (el.required && !val) {
+    formGroup.classList.add('invalid');
+    if (errorEl) errorEl.textContent = 'This field is required.';
+    return false;
+  }
+
+  if (val && validatorFn && !validatorFn(val)) {
+    formGroup.classList.add('invalid');
+    if (errorEl) errorEl.textContent = errorMsg;
+    return false;
+  }
+
+  formGroup.classList.add('valid');
+  return true;
+}
+
+function runRealtimeValidation() {
+  const nameInput = document.getElementById('booking-name');
+  const emailInput = document.getElementById('booking-email');
+  const phoneInput = document.getElementById('booking-phone');
+  const locationInput = document.getElementById('booking-location');
+
+  if (nameInput) {
+    nameInput.addEventListener('input', () => {
+      validateStep3Field('booking-name', (v) => v.length >= 2, 'Please enter at least 2 characters.');
+    });
+  }
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      validateStep3Field('booking-email', _validateEmail, 'Please enter a valid email address.');
+    });
+  }
+  if (phoneInput) {
+    phoneInput.addEventListener('input', () => {
+      validateStep3Field('booking-phone', _validatePhone, 'Please enter a valid phone number (7-15 digits).');
+    });
+  }
+  if (locationInput) {
+    locationInput.addEventListener('input', () => {
+      validateStep3Field('booking-location', (v) => v.length > 0, 'This field is required.');
+    });
+  }
+}
+
+function saveSessionState() {
+  const state = {
+    plan: planInput.value || '',
+    visits: visitsSelect.value || '',
+    date: bookingDateInput.value || '',
+    dateDisplay: document.getElementById('booking-date-display').value || '',
+    schedule: bookingScheduleSelect.value || '',
+    name: document.getElementById('booking-name').value || '',
+    email: document.getElementById('booking-email').value || '',
+    phone: document.getElementById('booking-phone').value || '',
+    location: document.getElementById('booking-location').value || '',
+    preferences: document.getElementById('booking-preferences').value || '',
+    currentStep: _currentWizardStep || 1
+  };
+  sessionStorage.setItem('cleanse_booking_state', JSON.stringify(state));
+}
+
+function restoreSessionState(forcePlanName) {
+  try {
+    const raw = sessionStorage.getItem('cleanse_booking_state');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    
+    // Restore inputs
+    if (state.name) document.getElementById('booking-name').value = state.name;
+    if (state.email) document.getElementById('booking-email').value = state.email;
+    if (state.phone) document.getElementById('booking-phone').value = state.phone;
+    if (state.location) document.getElementById('booking-location').value = state.location;
+    if (state.preferences) document.getElementById('booking-preferences').value = state.preferences;
+    
+    if (state.date) {
+      bookingDateInput.value = state.date;
+      const parts = state.date.split('-');
+      if (parts.length === 3) {
+        _selectedDateObject = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      }
+    }
+    if (state.dateDisplay) document.getElementById('booking-date-display').value = state.dateDisplay;
+    if (state.schedule) bookingScheduleSelect.value = state.schedule;
+    
+    if (!forcePlanName) {
+      if (state.plan) {
+        let optionExists = Array.from(planInput.options).some(opt => opt.value === state.plan);
+        if (!optionExists) {
+          const tempOpt = document.createElement('option');
+          tempOpt.value = state.plan;
+          tempOpt.textContent = state.plan;
+          planInput.appendChild(tempOpt);
+        }
+        planInput.value = state.plan;
+      }
+      if (state.visits) visitsSelect.value = state.visits;
+      if (state.currentStep) _currentWizardStep = state.currentStep;
+    } else {
+      _currentWizardStep = forcePlanName.includes('Monthly Subscription') ? 2 : 1;
+    }
+
+    handlePlanChange();
+    updateBookingSummary();
+  } catch(e) {
+    console.error('Error restoring session state:', e);
+  }
+}
+
+function setupStep4InlineEditing() {
+  const editPencil = document.getElementById('verify-edit-pencil');
+  const viewState = document.getElementById('verify-customer-view-state');
+  const editState = document.getElementById('verify-customer-edit-state');
+  const inputName = document.getElementById('verify-input-name');
+  const inputEmail = document.getElementById('verify-input-email');
+  const saveBtn = document.getElementById('verify-save-btn');
+  const cancelBtn = document.getElementById('verify-cancel-btn');
+
+  if (editPencil && viewState && editState) {
+    // Cloning to clear previous click listeners
+    const newEditPencil = editPencil.cloneNode(true);
+    editPencil.replaceWith(newEditPencil);
+    
+    newEditPencil.addEventListener('click', (e) => {
+      e.preventDefault();
+      viewState.style.display = 'none';
+      editState.style.display = 'flex';
+      if (inputName) inputName.value = document.getElementById('booking-name').value;
+      if (inputEmail) inputEmail.value = document.getElementById('booking-email').value;
+    });
+  }
+
+  if (saveBtn && viewState && editState) {
+    saveBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const nameVal = inputName.value.trim();
+      const emailVal = inputEmail.value.trim();
+      let isValid = true;
+      
+      inputName.classList.remove('invalid');
+      inputEmail.classList.remove('invalid');
+      
+      if (nameVal.length < 2) {
+        inputName.classList.add('invalid');
+        isValid = false;
+      }
+      if (!_validateEmail(emailVal)) {
+        inputEmail.classList.add('invalid');
+        isValid = false;
+      }
+      
+      if (!isValid) return;
+
+      document.getElementById('booking-name').value = nameVal;
+      document.getElementById('booking-email').value = emailVal;
+      
+      saveSessionState();
+      updateVerifyStepDetails();
+      
+      viewState.style.display = 'flex';
+      editState.style.display = 'none';
+    });
+  }
+
+  if (cancelBtn && viewState && editState) {
+    cancelBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      viewState.style.display = 'flex';
+      editState.style.display = 'none';
+    });
+  }
+}
+
+// Safari/iOS outside-form submit workaround
+function setupSafariFormSubmitWorkaround() {
+  const mobileConfirmBtn = document.querySelector('.mobile-confirm-btn');
+  if (mobileConfirmBtn) {
+    mobileConfirmBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const bookingForm = document.getElementById('booking-plan-form');
+      if (bookingForm) {
+        const step4Val = document.getElementById('step4-validation-msg');
+        if (step4Val) step4Val.textContent = '';
+
+        if (typeof bookingForm.requestSubmit === 'function') {
+          bookingForm.requestSubmit();
+        } else {
+          const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+          bookingForm.dispatchEvent(submitEvent);
+        }
+      }
+    });
+  }
+}
+
+// Initialize all features on load
+window.addEventListener('DOMContentLoaded', () => {
+  runRealtimeValidation();
+  setupStep4InlineEditing();
+  setupSafariFormSubmitWorkaround();
+  restoreSessionState();
+
+  // Watch inputs for autosave
+  const persistFields = [
+    'booking-selected-plan', 'booking-visits', 'booking-date', 
+    'booking-date-display', 'booking-schedule', 'booking-name', 
+    'booking-email', 'booking-phone', 'booking-location', 
+    'booking-preferences'
+  ];
+  persistFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', saveSessionState);
+      el.addEventListener('change', saveSessionState);
+    }
+  });
+});
+

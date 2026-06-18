@@ -1625,7 +1625,10 @@
     .booking-modal-content.mobile-show-summary {
       grid-template-columns: 1fr;
     }
-    .booking-modal-content.mobile-show-summary .summary-panel {
+    .booking-modal-content.mobile-show-summary #standard-summary-panel {
+      display: none !important;
+    }
+    .booking-modal-content.mobile-show-summary #wizard-step-verify-right {
       display: flex !important;
       border-top: none;
     }
@@ -1653,3 +1656,42 @@
       letter-spacing: -0.04em;
     }
   }
+
+  /* Inline Validation Styles */
+  .field-error-msg {
+    display: none !important;
+  }
+  .form-group.invalid input,
+  .form-group.invalid select,
+  .form-group.invalid textarea {
+    border-color: #ff3b30 !important;
+  }
+  #verify-customer-edit-state input.invalid {
+    border-color: #ff3b30 !important;
+  }
+
+  /* Show only verification card in Step 4 */
+  .booking-modal-content.verify-step-active {
+    grid-template-columns: 1fr !important;
+    max-width: 480px !important;
+    height: auto !important;
+  }
+  .booking-modal-content.verify-step-active .booking-modal-left {
+    display: none !important;
+  }
+  .booking-modal-content.verify-step-active #standard-summary-panel {
+    display: none !important;
+  }
+  .booking-modal-content.verify-step-active #wizard-step-verify-right {
+    display: flex !important;
+    border-left: none !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .booking-modal-content.verify-step-active .mobile-confirm-btn {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 24px !important;
+  }
+
+
