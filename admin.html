@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cleanse.ng — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-purple: #3A1D6D;
+      --deep-purple: #1A0D33;
+      --neon-green: #7CFC00;
+      --white: #FFFFFF;
+      --off-white: #FAF9FC;
+      --black: #0F0E14;
+      --mid-gray: #A29EB3;
+      --light-gray: #D1CFDB;
+      --red: #ff4d4d;
+      --green: #2ec4b6;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--deep-purple);
+      color: var(--white);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 1000px;
+      width: 100%;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+      margin: 20px auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: var(--neon-green);
+    }
+
+    /* Toggle Sections */
+    .collapsible-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light-gray);
+      padding: 8px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Lexend', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .collapsible-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+
+    .panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, margin 0.3s ease-out;
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 8px;
+      margin-bottom: 0;
+    }
+
+    .panel.active {
+      max-height: 500px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    /* Instructions Panel */
+    .instructions-list {
+      list-style-type: none;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--light-gray);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .instructions-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .instructions-list span.num {
+      background: var(--neon-green);
+      color: var(--deep-purple);
+      font-weight: bold;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+
+    /* Grid Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 32px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-family: 'Lexend', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--neon-green);
+    }
+
+    textarea {
+      background: rgba(15, 14, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--white);
+      padding: 14px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 180px;
+      outline: none;
+      width: 100%;
+    }
+
+    input[type="text"], input[type="password"], select {
+      background: rgba(15, 14, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--white);
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    button {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background: var(--neon-green);
+      color: var(--deep-purple);
+    }
+
+    .btn-primary:hover {
+      background: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Result Section */
+    .result-section {
+      display: none;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .result-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .result-card h3 {
+      margin: 0 0 6px 0;
+      font-family: 'Lexend', sans-serif;
+      font-size: 11px;
+      color: var(--mid-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .result-card p {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Recurrence rows */
+    .recurrence-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .recurrence-item.clash {
+      border-color: var(--red);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .recurrence-item input[type="date"], .recurrence-item select {
+      background: rgba(15, 14, 20, 0.8);
+      border: 1px solid var(--border);
+      color: var(--white);
+      padding: 8px;
+      font-size: 13px;
+      border-radius: 4px;
+      width: 100%;
+    }
+
+    .clash-warning {
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      grid-column: span 2;
+      margin-top: -4px;
+    }
+
+    /* History list */
+    .history-section {
+      margin-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 32px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+      min-width: 600px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    th {
+      font-family: 'Lexend', sans-serif;
+      color: var(--mid-gray);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .badge {
+      background: var(--neon-green);
+      color: var(--deep-purple);
+      padding: 2px 6px;
+      font-weight: 700;
+      font-size: 10px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    /* CUSTOM ALERTS POPUPS */
+    .alert-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 14, 20, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .alert-modal {
+      background: var(--deep-purple);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.6);
+      animation: scaleUp 0.25s ease-out;
+    }
+
+    .alert-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+
+    .alert-title {
+      font-family: 'Lexend';
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--neon-green);
+    }
+
+    .alert-message {
+      font-size: 14px;
+      color: var(--light-gray);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ======= LOGIN GATE STYLES ======= */
+    .login-gate {
+      position: fixed;
+      inset: 0;
+      background: var(--deep-purple);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .login-gate::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(58, 29, 109, 0.4) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(124, 252, 0, 0.05) 0%, transparent 40%);
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-2%, -2%); }
+    }
+
+    .login-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .login-logo {
+      font-family: 'Lexend', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .login-logo span {
+      color: var(--neon-green);
+    }
+
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--mid-gray);
+      margin-bottom: 32px;
+    }
+
+    .login-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .login-input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .login-input-group input {
+      background: rgba(15, 14, 20, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--white);
+      padding: 14px 16px 14px 44px;
+      font-size: 15px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-input-group input:focus {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 0 3px rgba(124, 252, 0, 0.1);
+    }
+
+    .login-input-group .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0.5;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: var(--neon-green);
+      color: var(--deep-purple);
+      font-family: 'Lexend', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 48px;
+    }
+
+    .login-btn:hover {
+      background: var(--white);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(124, 252, 0, 0.2);
+    }
+
+    .login-error {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+      min-height: 18px;
+      transition: opacity 0.2s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .login-card.shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .login-gate.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    /* Dashboard hidden until authenticated */
+    .app-content {
+      display: none;
+    }
+
+    .app-content.visible {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    /* Logout button */
+    .btn-logout {
+      background: rgba(255, 77, 77, 0.1);
+      border: 1px solid rgba(255, 77, 77, 0.25);
+      color: #ff6b6b;
+      padding: 8px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Lexend', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      min-height: auto;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff4d4d;
+      border-color: rgba(255, 77, 77, 0.4);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .grid-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+
+      .recurrence-item {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+
+      .clash-warning {
+        grid-column: span 1;
+      }
+
+      .login-card {
+        padding: 36px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======= LOGIN GATE ======= -->
+  <div class="login-gate" id="login-gate">
+    <div class="login-card" id="login-card">
+      <span class="login-icon">🛡️</span>
+      <h1 class="login-logo">cleanse<span>.ng</span></h1>
+      <p class="login-subtitle">Admin Dashboard — Authorized Access Only</p>
+      <div class="login-input-group">
+        <span class="input-icon">🔑</span>
+        <input type="password" id="login-password" placeholder="Enter admin password" autocomplete="off">
+      </div>
+      <button class="login-btn" onclick="attemptLogin()">Unlock Dashboard</button>
+      <p class="login-error" id="login-error"></p>
+    </div>
+  </div>
+
+  <!-- ======= APP CONTENT (hidden until authenticated) ======= -->
+  <div class="app-content" id="app-content">
+
+  <!-- CUSTOM MODAL POPUP -->
+  <div class="alert-overlay" id="custom-alert">
+    <div class="alert-modal">
+      <div class="alert-icon" id="alert-icon">💡</div>
+      <h3 class="alert-title" id="alert-title">Notification</h3>
+      <p class="alert-message" id="alert-message">Message details.</p>
+      <button class="btn-primary" style="width: 100%; min-height: 40px;" onclick="closeCustomAlert()">Got it</button>
+    </div>
+  </div>
+
+  <!-- CUSTOM CONFIRMATION POPUP -->
+  <div class="alert-overlay" id="custom-confirm">
+    <div class="alert-modal">
+      <div class="alert-icon" id="confirm-icon">❓</div>
+      <h3 class="alert-title" id="confirm-title">Are you sure?</h3>
+      <p class="alert-message" id="confirm-message">This action cannot be undone.</p>
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button class="btn-secondary" style="flex: 1; min-height: 40px;" onclick="resolveConfirm(false)">Cancel</button>
+        <button class="btn-primary" style="flex: 1; min-height: 40px;" onclick="resolveConfirm(true)">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM MASTER KEY PASSWORD POPUP -->
+  <div class="alert-overlay" id="custom-password-modal">
+    <div class="alert-modal" style="max-width: 400px;">
+      <div class="alert-icon">🔒</div>
+      <h3 class="alert-title" style="color: var(--neon-green);">Master Key Required</h3>
+      <p class="alert-message" style="margin-bottom: 16px;">Please enter your admin password to clear the history list.</p>
+      <input type="password" id="admin-password-input" placeholder="Enter password" style="text-align: center; margin-bottom: 20px; font-size: 16px;">
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary" style="flex: 1; min-height: 40px;" onclick="resolvePassword(false)">Cancel</button>
+        <button class="btn-primary" style="flex: 1; min-height: 40px;" onclick="resolvePassword(true)">Verify</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>cleanse<span>.ng</span> Scheduler</h1>
+      <div style="display: flex; gap: 8px;">
+        <button class="collapsible-btn" onclick="togglePanel('instructions-panel')">💡 Guide</button>
+        <button class="collapsible-btn" onclick="togglePanel('settings-panel')">⚙️ Settings</button>
+        <button class="btn-logout" onclick="adminLogout()">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- Collapsible Instructions Guide -->
+    <div class="panel" id="instructions-panel">
+      <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:12px;">Simple How-To Guide</h3>
+      <ul class="instructions-list">
+        <li><span class="num">1</span> <div><strong>Copy & Paste:</strong> Copy the text order you received on WhatsApp, paste it into the large box on the left, and click <strong>Parse & Schedule</strong>.</div></li>
+        <li><span class="num">2</span> <div><strong>Check for Conflicts:</strong> The tool automatically creates the dates. If a date has a timing conflict, it turns <strong style="color:var(--red);">Red</strong>. Change the date or time slot right inside the box to fix it.</div></li>
+        <li><span class="num">3</span> <div><strong>Save:</strong> Click the green <strong>Save All Visits</strong> button to sync them straight to the Google Sheet.</div></li>
+      </ul>
+    </div>
+
+    <!-- Collapsible Settings Panel -->
+    <div class="panel" id="settings-panel">
+      <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:12px;">Google Sheets Connections</h3>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group" style="margin: 0;">
+          <label for="script-url-input">Google Apps Script Web App URL</label>
+          <input type="text" id="script-url-input" placeholder="Paste Web App URL here...">
+        </div>
+        <div class="form-group" style="margin: 0;">
+          <label for="spreadsheet-id-input">Google Spreadsheet ID</label>
+          <input type="text" id="spreadsheet-id-input" placeholder="Paste Spreadsheet ID here...">
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn-primary" style="min-height: 36px; padding: 6px 14px;" onclick="saveSettings()">Save & Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-container">
+      <!-- Left Column: Input and Details -->
+      <div>
+        <div class="form-group">
+          <label for="order-input">Paste WhatsApp Order Message Here</label>
+          <textarea id="order-input" placeholder="Paste the client's message here..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" onclick="parseOrder()">Parse & Schedule</button>
+          <button class="btn-secondary" onclick="clearInput()">Clear Form</button>
+        </div>
+
+        <!-- General Info Summary -->
+        <div class="result-section" id="general-info-card">
+          <div class="result-card">
+            <label style="color: var(--neon-green); font-size: 12px; margin-bottom: 12px; display: block;">Client Information</label>
+            <div style="font-size: 14px; display: flex; flex-direction: column; gap: 8px; color: var(--light-gray);">
+              <div><strong style="color: var(--white);">Name:</strong> <span id="info-name">-</span></div>
+              <div><strong style="color: var(--white);">Email:</strong> <span id="info-email">-</span></div>
+              <div><strong style="color: var(--white);">Phone:</strong> <span id="info-phone">-</span></div>
+              <div><strong style="color: var(--white);">Selected Plan:</strong> <span id="info-plan">-</span></div>
+              <div><strong style="color: var(--white);">Frequency:</strong> <span id="info-visits">-</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Scheduled Visits & Conflict Resolver -->
+      <div>
+        <div class="result-section" id="results">
+          <label>Visit Schedule Details</label>
+          <p style="font-size: 12px; color: var(--mid-gray); margin: 6px 0 16px 0;">
+            Adjust dates/times below if needed. Red indicates a booking clash.
+          </p>
+
+          <div id="recurrence-list-container">
+            <!-- Dynamic Recurrence Rows -->
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
+            <button class="btn-primary" id="btn-auto-submit" style="width: 100%;" onclick="submitAllToSheet()">
+              ⚡ Save All Visits to Google Sheet
+            </button>
+            <button class="btn-secondary" style="width: 100%;" onclick="addAllToHistory()">
+              Add to History List
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section: History and CSV Export -->
+    <div class="history-section">
+      <div class="history-header">
+        <label>List of Bookings (Ready to export)</label>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px;" onclick="downloadCSV()">
+            📥 Download CSV
+          </button>
+          <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px; color: #ff5e5e;" onclick="clearHistory()">
+            Clear List
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time Slot</th>
+              <th>Status</th>
+              <th>Name</th>
+              <th>Plan</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Dynamic items -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  </div> <!-- /app-content -->
+
+  <script>
+    // MASTER KEY PASSWORD CONFIGURATION
+    // Change "cleanseadmin" to your preferred personal password
+    const ADMIN_PASSWORD = "cleanseadmin";
+
+    let currentCustomer = null;
+    let scheduledVisits = [];
+    let liveBookedSlots = {}; // Loaded from Sheet
+    let historyList = [];
+    let confirmResolver = null;
+    let passwordResolver = null;
+
+    // ======= LOGIN GATE SYSTEM =======
+    function attemptLogin() {
+      const input = document.getElementById('login-password');
+      const errorEl = document.getElementById('login-error');
+      const card = document.getElementById('login-card');
+      const password = input.value;
+
+      if (password === ADMIN_PASSWORD) {
+        // Grant access
+        sessionStorage.setItem('cleanse_admin_auth', 'true');
+        unlockDashboard();
+      } else {
+        // Shake + error
+        errorEl.textContent = '❌ Incorrect password. Try again.';
+        card.classList.remove('shake');
+        void card.offsetWidth; // force reflow to restart animation
+        card.classList.add('shake');
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function unlockDashboard() {
+      const gate = document.getElementById('login-gate');
+      const content = document.getElementById('app-content');
+      gate.classList.add('hidden');
+      content.classList.add('visible');
+      // Remove gate from DOM after transition
+      setTimeout(() => { gate.style.display = 'none'; }, 400);
+      // Now initialize the dashboard
+      initDashboard();
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('cleanse_admin_auth');
+      location.reload();
+    }
+
+    // Listen for Enter key on login input
+    document.getElementById('login-password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') attemptLogin();
+    });
+
+    // ======= DASHBOARD INITIALIZATION =======
+    function initDashboard() {
+      // Load settings defaults
+      const defaultUrl = 'https://script.google.com/macros/s/AKfycbxgsjcS_1duYPlS4RP3O9gwrNSLA0tCqHzR4-hkzv6wwggMiLGKMAkR8uozNnhhFRvo3A/exec';
+      const defaultId = '14IMdMV4R_SsgJ2fQ6JmDOpGZynSgCZt4Z31QaGRzD7M';
+
+      if (!localStorage.getItem('cleanse_script_url')) {
+        localStorage.setItem('cleanse_script_url', defaultUrl);
+      }
+      if (!localStorage.getItem('cleanse_sheet_id')) {
+        localStorage.setItem('cleanse_sheet_id', defaultId);
+      }
+
+      document.getElementById('script-url-input').value = localStorage.getItem('cleanse_script_url');
+      document.getElementById('spreadsheet-id-input').value = localStorage.getItem('cleanse_sheet_id');
+
+      const savedHistory = localStorage.getItem('cleanse_booking_history');
+      if (savedHistory) {
+        historyList = JSON.parse(savedHistory);
+      }
+      renderHistory();
+
+      fetchLiveBookedSlots();
+    }
+
+    window.addEventListener('load', () => {
+      // Check if already authenticated this session
+      if (sessionStorage.getItem('cleanse_admin_auth') === 'true') {
+        unlockDashboard();
+      } else {
+        // Focus the password input
+        document.getElementById('login-password').focus();
+      }
+    });
+
+    // CUSTOM MODAL ALERTS SYSTEM
+    function showCustomAlert(title, message, icon = '💡') {
+      document.getElementById('alert-title').textContent = title;
+      document.getElementById('alert-message').textContent = message;
+      document.getElementById('alert-icon').textContent = icon;
+      document.getElementById('custom-alert').style.display = 'flex';
+    }
+
+    function closeCustomAlert() {
+      document.getElementById('custom-alert').style.display = 'none';
+    }
+
+    // CUSTOM CONFIRMATION MODAL SYSTEM
+    function showCustomConfirm(title, message, icon = '❓') {
+      return new Promise((resolve) => {
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-message').textContent = message;
+        document.getElementById('confirm-icon').textContent = icon;
+        document.getElementById('custom-confirm').style.display = 'flex';
+        confirmResolver = resolve;
+      });
+    }
+
+    function resolveConfirm(val) {
+      document.getElementById('custom-confirm').style.display = 'none';
+      if (confirmResolver) {
+        confirmResolver(val);
+        confirmResolver = null;
+      }
+    }
+
+    // CUSTOM PASSWORD MODAL SYSTEM
+    function showPasswordPrompt() {
+      return new Promise((resolve) => {
+        document.getElementById('admin-password-input').value = '';
+        document.getElementById('custom-password-modal').style.display = 'flex';
+        passwordResolver = resolve;
+      });
+    }
+
+    function resolvePassword(success) {
+      const inputVal = document.getElementById('admin-password-input').value;
+      document.getElementById('custom-password-modal').style.display = 'none';
+      if (passwordResolver) {
+        if (success) {
+          if (inputVal === ADMIN_PASSWORD) {
+            passwordResolver(true);
+          } else {
+            showCustomAlert("Access Denied", "Incorrect master key password!", "❌");
+            passwordResolver(false);
+          }
+        } else {
+          passwordResolver(false);
+        }
+        passwordResolver = null;
+      }
+    }
+
+    function togglePanel(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('active');
+    }
+
+    function saveSettings() {
+      const url = document.getElementById('script-url-input').value.trim();
+      const id = document.getElementById('spreadsheet-id-input').value.trim();
+      localStorage.setItem('cleanse_script_url', url);
+      localStorage.setItem('cleanse_sheet_id', id);
+      
+      showCustomAlert("Settings Saved", "Connection settings connected and saved successfully!", "⚙️");
+      document.getElementById('settings-panel').classList.remove('active');
+      fetchLiveBookedSlots();
+    }
+
+    async function fetchLiveBookedSlots() {
+      const sheetId = localStorage.getItem('cleanse_sheet_id') || document.getElementById('spreadsheet-id-input').value.trim();
+      if (!sheetId) return;
+
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error();
+        const csvText = await response.text();
+        
+        liveBookedSlots = {};
+        const lines = csvText.split(/\r?\n/);
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (!line.trim()) continue;
+          const cols = line.split(',').map(cell => cell.replace(/^["']|["']$/g, '').trim());
+          if (cols.length >= 2) {
+            const dateStr = cols[0].replace(/\//g, '-');
+            const slotStr = cols[1];
+            if (!liveBookedSlots[dateStr]) liveBookedSlots[dateStr] = [];
+            if (!liveBookedSlots[dateStr].includes(slotStr)) {
+              liveBookedSlots[dateStr].push(slotStr);
+            }
+          }
+        }
+        console.log("Loaded live booked slots database:", liveBookedSlots);
+      } catch (err) {
+        console.error("Could not fetch live booked slots for conflict checking.");
+      }
+    }
+
+    function parseOrder() {
+      const text = document.getElementById('order-input').value;
+      if (!text.trim()) {
+        showCustomAlert("Input Required", "Please paste an order message first!", "⚠️");
+        return;
+      }
+
+      // Parser regexes
+      const planMatch = text.match(/Plan:\*?\s*([^\n]+)/i);
+      const nameMatch = text.match(/Name:\*?\s*([^\n]+)/i);
+      const emailMatch = text.match(/Email:\*?\s*([^\n]+)/i);
+      const phoneMatch = text.match(/Phone:\*?\s*([^\n]+)/i);
+      const visitsMatch = text.match(/Visits per Month:\*?\s*([^\n]+)/i);
+      const dateMatch = text.match(/Preferred Date:\*?\s*([^\n]+)/i);
+      const slotMatch = text.match(/Preferred Schedule:\*?\s*([^\n]+)/i);
+
+      const plan = planMatch ? planMatch[1].trim() : "Unknown Plan";
+      const name = nameMatch ? nameMatch[1].trim() : "Unknown Name";
+      const email = emailMatch ? emailMatch[1].trim() : "Unknown Email";
+      const phone = phoneMatch ? phoneMatch[1].trim() : "Unknown Phone";
+      const visitsText = visitsMatch ? visitsMatch[1].trim() : "1 visit per month";
+      const rawDate = dateMatch ? dateMatch[1].trim() : "";
+      const slot = slotMatch ? slotMatch[1].trim() : "8am - 11am";
+
+      let startDate = new Date();
+      if (rawDate) {
+        const cleanDateStr = rawDate.replace(/\*/g, '').trim();
+        const d = new Date(cleanDateStr);
+        if (!isNaN(d.getTime())) startDate = d;
+      }
+
+      currentCustomer = { name, email, phone, plan, visits: visitsText };
+
+      // Fill summary cards
+      document.getElementById('info-name').textContent = name;
+      document.getElementById('info-email').textContent = email;
+      document.getElementById('info-phone').textContent = phone;
+      document.getElementById('info-plan').textContent = plan;
+      document.getElementById('info-visits').textContent = visitsText;
+
+      // Determine frequency and generate recurring dates
+      let recurrenceCount = 1;
+      if (visitsText.includes("2 visits")) recurrenceCount = 2;
+      else if (visitsText.includes("4 visits")) recurrenceCount = 4;
+      else if (visitsText.includes("8 visits")) recurrenceCount = 8;
+
+      scheduledVisits = [];
+      let nextDate = new Date(startDate);
+
+      for (let i = 0; i < recurrenceCount; i++) {
+        if (i > 0) {
+          if (recurrenceCount === 2) {
+            nextDate.setDate(nextDate.getDate() + 14);
+          } else if (recurrenceCount === 4) {
+            nextDate.setDate(nextDate.getDate() + 7);
+          } else if (recurrenceCount === 8) {
+            const dayOfWeek = nextDate.getDay();
+            const addDays = (dayOfWeek >= 1 && dayOfWeek <= 3) ? 3 : 4; 
+            nextDate.setDate(nextDate.getDate() + addDays);
+          }
+        }
+        
+        scheduledVisits.push({
+          id: i,
+          date: formatDate(nextDate),
+          slot: slot
+        });
+      }
+
+      renderScheduledVisits();
+      document.getElementById('general-info-card').style.display = 'block';
+      document.getElementById('results').style.display = 'block';
+    }
+
+    function formatDate(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function renderScheduledVisits() {
+      const container = document.getElementById('recurrence-list-container');
+      container.innerHTML = '';
+
+      scheduledVisits.forEach((visit, index) => {
+        const isClash = checkClash(visit.date, visit.slot);
+        
+        const row = document.createElement('div');
+        row.className = `recurrence-item${isClash ? ' clash' : ''}`;
+        row.id = `visit-row-${visit.id}`;
+
+        row.innerHTML = `
+          <div>
+            <label style="font-size:10px; color: var(--light-gray);">Visit #${index + 1}</label>
+            <input type="date" value="${visit.date}" onchange="updateVisitDate(${visit.id}, this.value)">
+          </div>
+          <div>
+            <label style="font-size:10px; color: var(--light-gray);">Time Slot</label>
+            <select onchange="updateVisitSlot(${visit.id}, this.value)">
+              <option value="8am - 11am" ${visit.slot === '8am - 11am' ? 'selected' : ''}>8am - 11am</option>
+              <option value="11am - 2pm" ${visit.slot === '11am - 2pm' ? 'selected' : ''}>11am - 2pm</option>
+              <option value="2pm - 5pm" ${visit.slot === '2pm - 5pm' ? 'selected' : ''}>2pm - 5pm</option>
+            </select>
+          </div>
+          ${isClash ? `<div class="clash-warning">⚠️ Clash Alert! Time slot already booked in Google Sheets.</div>` : ''}
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function checkClash(dateStr, slotStr) {
+      const slots = liveBookedSlots[dateStr] || [];
+      const count = slots.filter(s => s === slotStr).length;
+      return count >= 1;
+    }
+
+    function updateVisitDate(id, value) {
+      const visit = scheduledVisits.find(v => v.id === id);
+      if (visit) {
+        visit.date = value;
+        renderScheduledVisits();
+      }
+    }
+
+    function updateVisitSlot(id, value) {
+      const visit = scheduledVisits.find(v => v.id === id);
+      if (visit) {
+        visit.slot = value;
+        renderScheduledVisits();
+      }
+    }
+
+    async function submitAllToSheet() {
+      const scriptUrl = localStorage.getItem('cleanse_script_url') || document.getElementById('script-url-input').value.trim();
+      if (!scriptUrl) {
+        showCustomAlert("Configuration Missing", "Please save a Google Apps Script Web App URL first under settings!", "⚙️");
+        return;
+      }
+
+      const hasClashes = scheduledVisits.some(v => checkClash(v.date, v.slot));
+      if (hasClashes) {
+        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: Some dates still have timing conflicts. Submit anyway?", "⚠️");
+        if (!confirmed) return;
+      }
+
+      const btn = document.getElementById('btn-auto-submit');
+      const originalText = btn.textContent;
+      btn.textContent = "⌛ Saving visits...";
+      btn.disabled = true;
+
+      try {
+        let successCount = 0;
+        for (const visit of scheduledVisits) {
+          const payload = new URLSearchParams({
+            date: visit.date,
+            slot: visit.slot,
+            status: 'booked'
+          });
+
+          const response = await fetch(scriptUrl, {
+            method: 'POST',
+            body: payload,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+
+          if (response.ok) {
+            successCount++;
+          }
+        }
+
+        showCustomAlert("Success", `Successfully saved ${successCount} visits to your Google Sheet!`, "🎉");
+        addAllToHistory();
+        fetchLiveBookedSlots();
+      } catch (err) {
+        console.error(err);
+        showCustomAlert("Submission Error", "Failed to sync automatically. Ensure Web App URL is correct.", "❌");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    function addAllToHistory() {
+      if (!currentCustomer) return;
+
+      scheduledVisits.forEach(visit => {
+        const exists = historyList.some(item => item.date === visit.date && item.slot === visit.slot);
+        if (!exists) {
+          historyList.push({
+            date: visit.date,
+            slot: visit.slot,
+            status: 'booked',
+            name: currentCustomer.name,
+            plan: currentCustomer.plan
+          });
+        }
+      });
+
+      localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const tbody = document.getElementById('history-tbody');
+      
+      tbody.innerHTML = '';
+      if (historyList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 32px; color: var(--mid-gray); font-weight: 600;">No bookings in history list yet.</td></tr>';
+        return;
+      }
+
+      // Sort history list by date descending (most recent first)
+      const sortedHistory = [...historyList].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedHistory.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${item.date}</strong></td>
+          <td>${item.slot}</td>
+          <td><span class="badge">${item.status}</span></td>
+          <td>${item.name}</td>
+          <td>${item.plan}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function downloadCSV() {
+      if (historyList.length === 0) {
+        showCustomAlert("Export Empty", "No bookings in list to export!", "⚠️");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,Date,Slot,Status\n";
+      historyList.forEach(item => {
+        csvContent += `"${item.date}","${item.slot}","${item.status}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `cleanse_bookings_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function clearHistory() {
+      // 1. Prompt for password verification
+      const verified = await showPasswordPrompt();
+      if (verified) {
+        // 2. Double-check confirmation
+        const confirmed = await showCustomConfirm("Clear List", "Are you sure you want to clear the list?", "🗑️");
+        if (confirmed) {
+          historyList = [];
+          localStorage.removeItem('cleanse_booking_history');
+          renderHistory();
+          showCustomAlert("History Cleared", "The booking list has been cleared successfully.", "✅");
+        }
+      }
+    }
+
+    function clearInput() {
+      document.getElementById('order-input').value = '';
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('general-info-card').style.display = 'none';
+      currentCustomer = null;
+      scheduledVisits = [];
+    }
+  </script>
+</body>
+</html>

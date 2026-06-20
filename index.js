@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════
 // CLONE & SECURITY PROTECTION
 // ═══════════════════════════════════════
-(function() {
+(function () {
   var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
   var isLocal = window.location.protocol === 'file:';
   var host = window.location.hostname;
-  var isAllowed = allowed.some(function(d) { return host === d || host.endsWith('.' + d); });
+  var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
   if (isLocal || (host && !isAllowed)) {
     document.documentElement.style.display = 'none';
     window.location.href = 'https://cleanse.ng';
@@ -14,12 +14,12 @@
 })();
 
 // Disable Context Menu (Right Click)
-document.addEventListener('contextmenu', function(e) {
+document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
 });
 
 // Disable common save / view-source keyboard shortcuts
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
   if (
     e.key === 'F12' ||
     (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
@@ -43,7 +43,7 @@ const _sc = {
 };
 
 function _getWaNum() {
-  return _sc._p.map(function(p) { return atob(p); }).join('');
+  return _sc._p.map(function (p) { return atob(p); }).join('');
 }
 
 function _getWaUrl(message) {
@@ -68,43 +68,71 @@ function _checkRateLimit() {
   try {
     var now = Date.now();
     var submissions = JSON.parse(sessionStorage.getItem('_cl_subs') || '[]');
-    submissions = submissions.filter(function(t) { return now - t < _sc.windowMs; });
+    submissions = submissions.filter(function (t) { return now - t < _sc.windowMs; });
     if (submissions.length >= _sc.maxSubmissions) return false;
     submissions.push(now);
     sessionStorage.setItem('_cl_subs', JSON.stringify(submissions));
     return true;
-  } catch(e) { return true; }
+  } catch (e) { return true; }
 }
 
 var _modalOpenTime = 0;
 
 // Initialize all obfuscated WhatsApp links at runtime
-document.querySelectorAll('[data-wa-link]').forEach(function(el) {
+document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   el.href = _getWaUrl();
 });
 
 // Testimonial slider
-const slides = document.querySelectorAll('.testimonial-slide');
-const dots = document.querySelectorAll('.t-dot');
-let current = 0;
+let testimonialInterval;
+let activeSlides = [];
+let activeDots = [];
+let currentTestimonial = 0;
 
 function showSlide(n) {
-  if (slides.length === 0 || dots.length === 0) return;
-  slides[current].classList.remove('active');
-  dots[current].classList.remove('active');
-  current = (n + slides.length) % slides.length;
-  slides[current].classList.add('active');
-  dots[current].classList.add('active');
+  if (activeSlides.length === 0 || activeDots.length === 0) return;
+  activeSlides[currentTestimonial].classList.remove('active');
+  activeDots[currentTestimonial].classList.remove('active');
+  currentTestimonial = (n + activeSlides.length) % activeSlides.length;
+  activeSlides[currentTestimonial].classList.add('active');
+  activeDots[currentTestimonial].classList.add('active');
 }
 
-const nextBtn = document.getElementById('next-btn');
-const prevBtn = document.getElementById('prev-btn');
-if (nextBtn) nextBtn.addEventListener('click', () => showSlide(current + 1));
-if (prevBtn) prevBtn.addEventListener('click', () => showSlide(current - 1));
-dots.forEach(dot => dot.addEventListener('click', () => showSlide(+dot.dataset.index)));
+function initTestimonialSlider() {
+  activeSlides = Array.from(document.querySelectorAll('.testimonial-slide'));
+  activeDots = Array.from(document.querySelectorAll('.t-dot'));
+  currentTestimonial = 0;
 
-if (slides.length > 0) {
-  setInterval(() => showSlide(current + 1), 6000);
+  if (testimonialInterval) {
+    clearInterval(testimonialInterval);
+  }
+
+  const nextBtn = document.getElementById('next-btn');
+  const prevBtn = document.getElementById('prev-btn');
+
+  if (nextBtn) {
+    const newNext = nextBtn.cloneNode(true);
+    nextBtn.replaceWith(newNext);
+    newNext.addEventListener('click', () => showSlide(currentTestimonial + 1));
+  }
+  if (prevBtn) {
+    const newPrev = prevBtn.cloneNode(true);
+    prevBtn.replaceWith(newPrev);
+    newPrev.addEventListener('click', () => showSlide(currentTestimonial - 1));
+  }
+
+  activeDots.forEach(dot => {
+    const newDot = dot.cloneNode(true);
+    dot.replaceWith(newDot);
+    newDot.addEventListener('click', () => showSlide(+newDot.dataset.index));
+  });
+
+  // Re-query dots to have references to the new elements
+  activeDots = Array.from(document.querySelectorAll('.t-dot'));
+
+  if (activeSlides.length > 0) {
+    testimonialInterval = setInterval(() => showSlide(currentTestimonial + 1), 6000);
+  }
 }
 
 // FAQ accordion
@@ -112,14 +140,14 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
     const isOpen = item.classList.contains('open');
-    
+
     // Close all other items and set their aria-expanded to false
     document.querySelectorAll('.faq-item.open').forEach(i => {
       i.classList.remove('open');
       const qBtn = i.querySelector('.faq-q');
       if (qBtn) qBtn.setAttribute('aria-expanded', 'false');
     });
-    
+
     // Toggle current item
     if (!isOpen) {
       item.classList.add('open');
@@ -158,11 +186,11 @@ const savingsElements = document.querySelectorAll('.pc-savings');
 
 function updatePricing(isMonthly) {
   const data = isMonthly ? pricingData.monthly : pricingData.oneTime;
-  
+
   primaryPriceElements.forEach((el, index) => {
     el.textContent = data[index].primary;
   });
-  
+
   primaryUnitElements.forEach((el, index) => {
     el.textContent = data[index].unit;
   });
@@ -176,7 +204,7 @@ function updatePricing(isMonthly) {
     const oneTimeTotal = item.rawPrice * 8;
     const monthlyTotal = item.monthlyPrice;
     const difference = oneTimeTotal - monthlyTotal;
-    
+
     if (isMonthly) {
       if (difference > 0) {
         el.textContent = `Saves ₦${difference.toLocaleString()}/mo`;
@@ -309,7 +337,7 @@ function updateSchedulePills(dayOfWeek) {
   const options = dayOfWeek === 0 ? scheduleOptions.sunday : scheduleOptions.weekday;
   const selectedDate = bookingDateInput.value;
   const booked = bookedSlots[selectedDate] || [];
-  
+
   // Clear current value if not matching the new list or if it is booked
   const isValid = options.some(opt => opt.value === currentVal && !booked.includes(opt.value));
   if (!isValid) {
@@ -320,7 +348,7 @@ function updateSchedulePills(dayOfWeek) {
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'schedule-pill';
-    
+
     const isBooked = booked.includes(opt.value);
     if (isBooked) {
       pill.classList.add('disabled');
@@ -346,29 +374,29 @@ function updateSchedulePills(dayOfWeek) {
 function updateFrequencyCards() {
   if (!frequencyCardsContainer) return;
   frequencyCardsContainer.innerHTML = '';
-  
+
   const selectedPlan = planInput.value;
   if (!selectedPlan || selectedPlan.includes('Monthly Subscription') || selectedPlan.includes('Custom Plan')) {
     if (frequencySection) frequencySection.style.display = 'none';
     visitsSelect.required = false;
     return;
   }
-  
+
   if (frequencySection) frequencySection.style.display = 'block';
   visitsSelect.required = true;
-  
+
   // Determine base rate based on selected plan
   let baseRate = 9999;
   if (selectedPlan.includes('2 Bedroom')) baseRate = 11999;
   else if (selectedPlan.includes('3 Bedroom')) baseRate = 13999;
   else if (selectedPlan.includes('4 Bedroom')) baseRate = 19999;
-  
+
   // Parse room size name
   let bedrooms = "1 Bedroom";
   if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
   else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
   else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
-  
+
   const frequencies = [
     {
       value: '1 visit per month',
@@ -392,12 +420,12 @@ function updateFrequencyCards() {
       multiplier: 4
     }
   ];
-  
+
   // Default to 1 visit if nothing selected yet
   if (!visitsSelect.value) {
     visitsSelect.value = '1 visit per month';
   }
-  
+
   frequencies.forEach(freq => {
     const totalCost = freq.rate * freq.multiplier;
     const card = document.createElement('div');
@@ -405,7 +433,7 @@ function updateFrequencyCards() {
     if (visitsSelect.value === freq.value) {
       card.classList.add('active');
     }
-    
+
     card.innerHTML = `
       <div class="frequency-card-left">
         <div class="frequency-radio-circle">
@@ -418,7 +446,7 @@ function updateFrequencyCards() {
       </div>
       <span class="frequency-card-price">₦${totalCost.toLocaleString()}</span>
     `;
-    
+
     card.addEventListener('click', () => {
       frequencyCardsContainer.querySelectorAll('.frequency-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
@@ -427,7 +455,7 @@ function updateFrequencyCards() {
       if (step1ValMsg) step1ValMsg.textContent = '';
       updateBookingSummary();
     });
-    
+
     frequencyCardsContainer.appendChild(card);
   });
 }
@@ -474,7 +502,7 @@ function updateBookingSummary() {
   let propertyType = propertyTypeVal || "Flat";
   if (propertyType === "Apartment") propertyType = "Apartment";
   else if (propertyType === "Duplex") propertyType = "Duplex";
-  
+
   summaryPlanName.textContent = `${bedrooms} ${propertyType}`;
   summaryBreakdownItemName.textContent = `${bedrooms} ${propertyType}`;
   summaryBreakdownItemPrice.textContent = "₦0.00";
@@ -505,11 +533,11 @@ function updateBookingSummary() {
   const priceInfo = planPrices[selectedPlan];
   if (priceInfo) {
     summaryBreakdown.style.display = 'flex';
-    
+
     if (priceInfo.type === "fixed") {
       summaryExtrasText.textContent = `Extras: ${bedrooms}`;
       summaryFrequencyText.textContent = "(8 times monthly)";
-      
+
       summaryBreakdownServiceName.textContent = `cleanse.ng Monthly Subscription`;
       summaryBreakdownServicePrice.textContent = `₦${priceInfo.rate.toLocaleString()}`;
       summaryBreakdownServiceFreq.textContent = "(8 times monthly)";
@@ -518,7 +546,7 @@ function updateBookingSummary() {
       let multiplier = 2; // default
       let ratePerVisit = priceInfo.rate;
       let freqLabel = "(Twice monthly)";
-      
+
       if (visits === "1 visit per month" || visits.includes("Once")) {
         multiplier = 1;
         freqLabel = "(Once monthly)";
@@ -531,10 +559,10 @@ function updateBookingSummary() {
         ratePerVisit = priceInfo.rate - 1600;
         freqLabel = "(Weekly)";
       }
-      
+
       summaryExtrasText.textContent = `Extras: ${bedrooms}`;
       summaryFrequencyText.textContent = freqLabel;
-      
+
       const subtotal = ratePerVisit * multiplier;
       summaryBreakdownServiceName.textContent = `cleanse.ng Pay Per Visit`;
       summaryBreakdownServicePrice.textContent = `₦${subtotal.toLocaleString()}`;
@@ -545,7 +573,7 @@ function updateBookingSummary() {
     summaryBreakdown.style.display = 'flex';
     summaryExtrasText.textContent = `Extras: ${bedrooms} (Custom Plan)`;
     summaryFrequencyText.textContent = "(Pricing to be confirmed)";
-    
+
     summaryBreakdownServiceName.textContent = `cleanse.ng Custom Plan`;
     summaryBreakdownServicePrice.textContent = `TBD`;
     summaryBreakdownServiceFreq.textContent = "(Pricing to be confirmed)";
@@ -557,7 +585,7 @@ function updateWizardUI() {
   wizardStepPlan.classList.remove('active');
   wizardStepSchedule.classList.remove('active');
   wizardStepContact.classList.remove('active');
-  
+
   const wizardStepVerifyLeft = document.getElementById('wizard-step-verify-left');
   if (wizardStepVerifyLeft) wizardStepVerifyLeft.classList.remove('active');
 
@@ -570,14 +598,14 @@ function updateWizardUI() {
   const wizardTitle = document.getElementById('wizard-title');
   const wizardSubtitle = document.getElementById('wizard-subtitle');
   const modalLeft = document.querySelector('.booking-modal-left');
-  
+
   const standardSummary = document.getElementById('standard-summary-panel');
   const verifySummary = document.getElementById('wizard-step-verify-right');
 
   if (_currentWizardStep === 1) {
     wizardStepPlan.classList.add('active');
     pStep1.classList.add('active');
-    
+
     if (wizardTitle) wizardTitle.textContent = "Select a Service";
     if (wizardSubtitle) wizardSubtitle.textContent = "";
 
@@ -589,7 +617,7 @@ function updateWizardUI() {
       modalContent.classList.remove('mobile-show-summary');
       modalContent.classList.remove('verify-step-active');
     }
-    
+
     wizardBackBtn.style.visibility = 'visible'; // Back button on step 1 to close modal
     wizardNextBtn.style.display = 'block';
     bookingSubmitBtn.style.display = 'none';
@@ -651,7 +679,7 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'none';
     if (verifySummary) verifySummary.style.display = 'flex';
     if (modalLeft) modalLeft.style.background = '#f2f6ff';
-    
+
     const modalContent = document.querySelector('.booking-modal-content');
     if (modalContent) {
       modalContent.classList.add('mobile-show-summary');
@@ -670,7 +698,7 @@ function updateWizardUI() {
 function updateVerifyStepDetails() {
   const nameVal = (document.getElementById('booking-name').value || '').trim() || 'Jane Doe';
   const emailVal = (document.getElementById('booking-email').value || '').trim() || 'jane@example.com';
-  
+
   document.getElementById('verify-customer-name').textContent = nameVal;
   document.getElementById('verify-customer-email').textContent = emailVal;
   document.getElementById('verify-location').textContent = 'Ibadan';
@@ -725,7 +753,7 @@ function updateVerifyStepDetails() {
     }
     freqText = `${bedroomLabel.replace(' Flat', '')} (${freqLabel})`;
   }
-  
+
   document.getElementById('verify-extras').textContent = `Extras: cleanse.ng ${freqText}`;
   document.getElementById('verify-breakdown-service-name').textContent = `└ cleanse.ng ${freqText}`;
 
@@ -740,7 +768,7 @@ function updateVerifyStepDetails() {
     "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
     "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
   };
-  
+
   const priceInfo = planPrices[selectedPlan];
   if (priceInfo) {
     let totalVal = 0;
@@ -773,13 +801,10 @@ function updateVerifyStepDetails() {
 let calendarYear, calendarMonth;
 const calendarMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 // Local fallback / mock database for booked slots
-let bookedSlots = {
-  "2026-06-25": ["8am - 11am"], // 1 slot booked -> Orange underline, disables 8am-11am
-  "2026-06-26": ["8am - 11am", "11am - 2pm", "2pm - 5pm"] // 3 slots booked -> Red underline, disabled day
-};
+let bookedSlots = {};
 
 // Google Sheet ID for manual booking sync
-const GOOGLE_SHEET_ID = "YOUR_SPREADSHEET_ID_HERE"; 
+const GOOGLE_SHEET_ID = "14IMdMV4R_SsgJ2fQ6JmDOpGZynSgCZt4Z31QaGRzD7M";
 
 async function syncBookingsFromSpreadsheet() {
   if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.includes("YOUR_SPREADSHEET_ID")) {
@@ -791,15 +816,109 @@ async function syncBookingsFromSpreadsheet() {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Network response was not ok");
-    
+
     const csvText = await response.text();
     parseSpreadsheetCSV(csvText);
-    
+
     // Refresh the calendar view if it is currently displayed
     renderCalendar();
   } catch (err) {
     console.error("Failed to sync bookings from Google Sheet:", err);
   }
+}
+
+async function syncTestimonialsFromSpreadsheet() {
+  if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.includes("YOUR_SPREADSHEET_ID")) {
+    return;
+  }
+
+  const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Testimonials`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const csvText = await response.text();
+    const testimonials = parseTestimonialsCSV(csvText);
+
+    if (testimonials.length > 0) {
+      renderTestimonials(testimonials);
+    }
+  } catch (err) {
+    console.error("Failed to sync testimonials from Google Sheet:", err);
+  }
+}
+
+function parseTestimonialsCSV(csvText) {
+  const lines = csvText.split(/\r?\n/);
+  if (lines.length <= 1) return []; // Header only or empty
+
+  const list = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+
+    // Split CSV correctly respecting potential quotes
+    const cols = [];
+    let currentCell = '';
+    let inQuotes = false;
+    for (let charIndex = 0; charIndex < line.length; charIndex++) {
+      const char = line[charIndex];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        cols.push(currentCell.trim());
+        currentCell = '';
+      } else {
+        currentCell += char;
+      }
+    }
+    cols.push(currentCell.trim());
+
+    // Clean columns
+    const cleanCols = cols.map(cell => cell.replace(/^["']|["']$/g, '').trim());
+
+    if (cleanCols.length >= 2) {
+      const quoteVal = cleanCols[0];
+      const authorVal = cleanCols[1];
+      if (quoteVal && authorVal) {
+        list.push({ quote: quoteVal, author: authorVal });
+      }
+    }
+  }
+  return list;
+}
+
+function renderTestimonials(list) {
+  const track = document.querySelector('.testimonial-track');
+  const dotsContainer = document.querySelector('.t-dots');
+  if (!track || !dotsContainer) return;
+
+  track.innerHTML = '';
+  dotsContainer.innerHTML = '';
+
+  list.forEach((item, index) => {
+    const slide = document.createElement('div');
+    slide.className = `testimonial-slide${index === 0 ? ' active' : ''}`;
+
+    const quoteEl = document.createElement('p');
+    quoteEl.className = 'testimonial-quote';
+    quoteEl.textContent = item.quote;
+
+    const authorEl = document.createElement('p');
+    authorEl.className = 'testimonial-author';
+    authorEl.textContent = item.author;
+
+    slide.appendChild(quoteEl);
+    slide.appendChild(authorEl);
+    track.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = `t-dot${index === 0 ? ' active' : ''}`;
+    dot.setAttribute('data-index', index);
+    dotsContainer.appendChild(dot);
+  });
+
+  initTestimonialSlider();
 }
 
 function parseSpreadsheetCSV(csvText) {
@@ -824,7 +943,7 @@ function parseSpreadsheetCSV(csvText) {
 
       if (dateVal && slotVal && (statusVal === "booked" || statusVal === "yes" || statusVal === "")) {
         const normalizedDate = dateVal.replace(/\//g, '-');
-        
+
         if (!bookedSlots[normalizedDate]) {
           bookedSlots[normalizedDate] = [];
         }
@@ -842,14 +961,14 @@ function initCustomCalendar() {
   tomorrow.setDate(tomorrow.getDate() + 1);
   calendarYear = tomorrow.getFullYear();
   calendarMonth = tomorrow.getMonth();
-  
+
   renderCalendar();
 }
 
 function renderCalendar() {
   const container = document.getElementById('calendar-widget-container');
   if (!container) return;
-  
+
   container.innerHTML = `
     <div class="calendar-widget">
       <div class="calendar-header">
@@ -932,7 +1051,7 @@ function renderCalendar() {
     cellDate.setHours(0, 0, 0, 0);
 
     const cellDateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    
+
     const isCellToday = cellDate.getTime() === today.getTime();
     const isCellPast = cellDate < today;
     const isCellSunday = cellDate.getDay() === 0;
@@ -966,14 +1085,14 @@ function renderCalendar() {
         if (isPartiallyBooked) {
           cell.classList.add('partially-booked');
         }
-        
+
         if (activeDateVal === cellDateStr) {
           cell.classList.add('selected');
         }
 
         cell.addEventListener('click', () => {
           bookingDateInput.value = cellDateStr;
-          
+
           const formattedDate = cellDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
           document.getElementById('booking-date-display').value = formattedDate;
 
@@ -984,14 +1103,14 @@ function renderCalendar() {
           if (step2ValMsg) step2ValMsg.textContent = '';
 
           const dayOfWeek = cellDate.getDay();
-          
+
           transitionModalSize(() => {
             const slotsContainer = document.getElementById('schedule-slots-container');
             if (slotsContainer) slotsContainer.style.display = 'block';
             updateSchedulePills(dayOfWeek);
             updateBookingSummary();
             if (typeof saveSessionState === 'function') saveSessionState();
-            
+
             // Auto-scroll to slots container
             setTimeout(() => {
               if (slotsContainer) {
@@ -999,7 +1118,7 @@ function renderCalendar() {
               }
             }, 380);
           });
-          
+
           // Re-render to update selected highlight
           renderCalendar();
         });
@@ -1012,7 +1131,7 @@ function renderCalendar() {
 
 function openBookingModal(planName) {
   _modalOpenTime = Date.now();
-  
+
   // Clear validation messages
   ['step1-validation-msg', 'step2-validation-msg', 'step3-validation-msg', 'step4-validation-msg', 'coupon-validation-msg', 'calendar-booking-message'].forEach(id => {
     const el = document.getElementById(id);
@@ -1034,7 +1153,7 @@ function openBookingModal(planName) {
   document.getElementById('booking-date-display').value = "";
   const slotsContainer = document.getElementById('schedule-slots-container');
   if (slotsContainer) slotsContainer.style.display = 'none';
-  
+
   const agreeCheckbox = document.getElementById('booking-agree-policy');
   if (agreeCheckbox) agreeCheckbox.checked = false;
 
@@ -1042,7 +1161,7 @@ function openBookingModal(planName) {
   if (typeof restoreSessionState === 'function') {
     restoreSessionState(planName);
   }
-  
+
   if (planName) {
     // Check if option exists in select
     let optionExists = Array.from(planInput.options).some(opt => opt.value === planName);
@@ -1068,14 +1187,14 @@ function openBookingModal(planName) {
       _currentWizardStep = 1;
     }
   }
-  
+
   handlePlanChange();
   updateWizardUI();
   updateBookingSummary();
-  
+
   // Render custom calendar
   initCustomCalendar();
-  
+
   formContainer.style.display = 'block';
   successContainer.classList.remove('active');
   modal.classList.add('active');
@@ -1086,10 +1205,10 @@ function handlePlanChange() {
   const planName = planInput.value;
   const step1ValMsg = document.getElementById('step1-validation-msg');
   if (step1ValMsg) step1ValMsg.textContent = '';
-  
+
   if (planName.includes('Monthly Subscription')) {
     visitsSelect.value = "8 visits per month (2x per week)";
-    
+
     if (planSummary) {
       planSummaryText.textContent = planName;
       planSummary.style.display = 'block';
@@ -1098,12 +1217,12 @@ function handlePlanChange() {
     if (visitsSelect.value.includes("8 visits")) {
       visitsSelect.value = "1 visit per month";
     }
-    
+
     if (planSummary) {
       planSummary.style.display = 'none';
     }
   }
-  
+
   updateFrequencyCards();
   updateBookingSummary();
 }
@@ -1129,7 +1248,7 @@ function transitionModalSize(actionCallback) {
   // Reset styles temporarily to get auto layout calculations
   content.style.height = 'auto';
   content.style.width = '';
-  
+
   const newHeight = content.offsetHeight;
   const newWidth = content.offsetWidth;
 
@@ -1157,41 +1276,41 @@ function changeWizardStep(nextStep, direction) {
     3: wizardStepContact,
     4: wizardStepVerifyLeft
   };
-  
+
   const currentStepEl = steps[_currentWizardStep];
   const nextStepEl = steps[nextStep];
-  
+
   if (!currentStepEl || !nextStepEl) return;
-  
+
   wizardNextBtn.disabled = true;
   wizardBackBtn.disabled = true;
-  
+
   if (direction === 'next') {
     currentStepEl.classList.add('leaving-left');
   } else {
     currentStepEl.classList.add('leaving-right');
   }
-  
+
   setTimeout(() => {
     transitionModalSize(() => {
       currentStepEl.classList.remove('active', 'leaving-left', 'leaving-right');
-      
+
       _currentWizardStep = nextStep;
-      
+
       if (direction === 'next') {
         nextStepEl.classList.add('entering-right');
       } else {
         nextStepEl.classList.add('entering-left');
       }
       nextStepEl.classList.add('active');
-      
+
       void nextStepEl.offsetWidth;
-      
+
       nextStepEl.classList.remove('entering-right', 'entering-left');
-      
+
       updateWizardUI();
     });
-    
+
     wizardNextBtn.disabled = false;
     wizardBackBtn.disabled = false;
   }, 220);
@@ -1214,7 +1333,7 @@ if (wizardNextBtn) {
         propSelect.reportValidity();
         return;
       }
-      
+
       changeWizardStep(2, 'next');
     } else if (_currentWizardStep === 2) {
       // Validate date selected
@@ -1224,12 +1343,12 @@ if (wizardNextBtn) {
         if (step2ValMsg) step2ValMsg.textContent = "Please select a preferred date on the calendar.";
         return;
       }
-      
+
       // Safety block for same-day
       const selectedD = new Date(dateVal);
-      selectedD.setHours(0,0,0,0);
+      selectedD.setHours(0, 0, 0, 0);
       const todayD = new Date();
-      todayD.setHours(0,0,0,0);
+      todayD.setHours(0, 0, 0, 0);
       if (selectedD.getTime() === todayD.getTime()) {
         const step2ValMsg = document.getElementById('step2-validation-msg');
         if (step2ValMsg) step2ValMsg.textContent = "Same-day bookings are not allowed. Please select a future date.";
@@ -1241,7 +1360,7 @@ if (wizardNextBtn) {
         if (step2ValMsg) step2ValMsg.textContent = "Please select a preferred schedule slot.";
         return;
       }
-      
+
       changeWizardStep(3, 'next');
     } else if (_currentWizardStep === 3) {
       // Validate step 3 fields: Name, Email, Phone, Location
@@ -1267,7 +1386,7 @@ if (wizardNextBtn) {
         locationInput.reportValidity();
         return;
       }
-      
+
       // Explicit format validation
       if (nameInput.value.trim().length < 2) {
         const step3ValMsg = document.getElementById('step3-validation-msg');
@@ -1315,14 +1434,14 @@ if (planInput) {
 
 function closeBookingModal() {
   if (modal) modal.classList.remove('active');
-  
+
   // reset policy checkbox & close policy overlay if open
   const policyModal = document.getElementById('customer-policy-modal');
   if (policyModal) policyModal.classList.remove('active');
-  
+
   const agreeCheckbox = document.getElementById('booking-agree-policy');
   if (agreeCheckbox) agreeCheckbox.checked = false;
-  
+
   document.body.style.overflow = '';
 }
 
@@ -1417,7 +1536,7 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
   if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta') || btn.classList.contains('btn-primary')) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      
+
       let planName = '';
       const card = btn.closest('.pricing-card');
       if (card) {
@@ -1437,11 +1556,11 @@ if (bookingForm) {
   // Handle Form Submission
   bookingForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     // Clear any previous submit validation message
     const step4Val = document.getElementById('step4-validation-msg');
     if (step4Val) step4Val.textContent = '';
-    
+
     // Validate policy checkbox
     const agreeCheckbox = document.getElementById('booking-agree-policy');
     if (agreeCheckbox && !agreeCheckbox.checked) {
@@ -1477,10 +1596,10 @@ if (bookingForm) {
     const email = document.getElementById('booking-email').value.trim();
     const phone = document.getElementById('booking-phone').value.trim();
     const location = _sanitize(document.getElementById('booking-location').value, 200);
-    
+
     const propertyTypeVal = document.getElementById('booking-property') ? document.getElementById('booking-property').value : 'Flat';
-    const propertyType = selectedPlan.includes('Monthly Subscription') 
-      ? 'Monthly Subscription' 
+    const propertyType = selectedPlan.includes('Monthly Subscription')
+      ? 'Monthly Subscription'
       : (_sanitize(propertyTypeVal, 50) || 'Flat');
     const preferredDate = _sanitize(document.getElementById('booking-date-display').value, 50);
     const schedule = _sanitize(document.getElementById('booking-schedule').value, 100);
@@ -1500,9 +1619,9 @@ if (bookingForm) {
       if (step4Val) step4Val.textContent = 'Please enter a valid phone number (7-15 digits).';
       return;
     }
-    
+
     const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
-    
+
     // Calculate pricing details dynamically
     const planPrices = {
       "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
@@ -1534,36 +1653,36 @@ if (bookingForm) {
           multiplier = 4;
           ratePerVisit = priceInfo.rate - 1600;
         }
-        
+
         const total = ratePerVisit * multiplier;
         priceDetailsText = `₦${ratePerVisit.toLocaleString()} / visit (Total: ₦${total.toLocaleString()} / month)`;
       }
     } else {
       priceDetailsText = "Custom Plan (pricing to be confirmed)";
     }
-    
+
     // Construct WhatsApp message template
     const waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n` +
-                      `• *Plan:* ${selectedPlan}\n` +
-                      `• *Visits per Month:* ${visitsText}\n` +
-                      `• *Pricing:* ${priceDetailsText}\n` +
-                      `• *Name:* ${fullName}\n` +
-                      `• *Email:* ${email}\n` +
-                      `• *Phone:* ${sanitizedPhone}\n` +
-                      `• *Home Address:* ${location}\n` +
-                      `• *Property Type:* ${propertyType}\n` +
-                      `• *Preferred Date:* ${preferredDate}\n` +
-                      `• *Preferred Schedule:* ${schedule}\n` +
-                      `• *Preferences:* ${preferences}`;
-                      
+      `• *Plan:* ${selectedPlan}\n` +
+      `• *Visits per Month:* ${visitsText}\n` +
+      `• *Pricing:* ${priceDetailsText}\n` +
+      `• *Name:* ${fullName}\n` +
+      `• *Email:* ${email}\n` +
+      `• *Phone:* ${sanitizedPhone}\n` +
+      `• *Home Address:* ${location}\n` +
+      `• *Property Type:* ${propertyType}\n` +
+      `• *Preferred Date:* ${preferredDate}\n` +
+      `• *Preferred Schedule:* ${schedule}\n` +
+      `• *Preferences:* ${preferences}`;
+
     const whatsappUrl = _getWaUrl(waMessage);
-    
+
     // Set the WhatsApp link on the thank you page
     document.getElementById('success-whatsapp-btn').href = whatsappUrl;
-    
+
     // Immediately open WhatsApp URL in a new window/tab
     window.open(whatsappUrl, '_blank');
-    
+
     // Clear saved session state so a new booking starts fresh
     sessionStorage.removeItem('cleanse_booking_state');
 
@@ -1692,10 +1811,10 @@ if (discountBirthdayInput) {
 if (discountForm) {
   discountForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     const discValMsg = document.getElementById('discount-validation-msg');
     if (discValMsg) discValMsg.textContent = '';
-    
+
     const honeypot = document.getElementById('discount-website');
     if (honeypot && honeypot.value) {
       discountFormContainer.style.display = 'none';
@@ -1758,8 +1877,6 @@ if (discountForm) {
 
 // Automatically open discount modal on page load for all screen sizes
 window.addEventListener('DOMContentLoaded', () => {
-  syncBookingsFromSpreadsheet();
-
   if (localStorage.getItem('discount_popup_dismissed') === 'true') {
     return;
   }
@@ -1871,14 +1988,14 @@ function restoreSessionState(forcePlanName) {
     const raw = sessionStorage.getItem('cleanse_booking_state');
     if (!raw) return;
     const state = JSON.parse(raw);
-    
+
     // Restore inputs
     if (state.name) document.getElementById('booking-name').value = state.name;
     if (state.email) document.getElementById('booking-email').value = state.email;
     if (state.phone) document.getElementById('booking-phone').value = state.phone;
     if (state.location) document.getElementById('booking-location').value = state.location;
     if (state.preferences) document.getElementById('booking-preferences').value = state.preferences;
-    
+
     if (state.date) {
       bookingDateInput.value = state.date;
       const parts = state.date.split('-');
@@ -1888,7 +2005,7 @@ function restoreSessionState(forcePlanName) {
     }
     if (state.dateDisplay) document.getElementById('booking-date-display').value = state.dateDisplay;
     if (state.schedule) bookingScheduleSelect.value = state.schedule;
-    
+
     if (!forcePlanName) {
       if (state.plan) {
         let optionExists = Array.from(planInput.options).some(opt => opt.value === state.plan);
@@ -1908,7 +2025,7 @@ function restoreSessionState(forcePlanName) {
 
     handlePlanChange();
     updateBookingSummary();
-  } catch(e) {
+  } catch (e) {
     console.error('Error restoring session state:', e);
   }
 }
@@ -1926,7 +2043,7 @@ function setupStep4InlineEditing() {
     // Cloning to clear previous click listeners
     const newEditPencil = editPencil.cloneNode(true);
     editPencil.replaceWith(newEditPencil);
-    
+
     newEditPencil.addEventListener('click', (e) => {
       e.preventDefault();
       viewState.style.display = 'none';
@@ -1939,14 +2056,14 @@ function setupStep4InlineEditing() {
   if (saveBtn && viewState && editState) {
     saveBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      
+
       const nameVal = inputName.value.trim();
       const emailVal = inputEmail.value.trim();
       let isValid = true;
-      
+
       inputName.classList.remove('invalid');
       inputEmail.classList.remove('invalid');
-      
+
       if (nameVal.length < 2) {
         inputName.classList.add('invalid');
         isValid = false;
@@ -1955,15 +2072,15 @@ function setupStep4InlineEditing() {
         inputEmail.classList.add('invalid');
         isValid = false;
       }
-      
+
       if (!isValid) return;
 
       document.getElementById('booking-name').value = nameVal;
       document.getElementById('booking-email').value = emailVal;
-      
+
       saveSessionState();
       updateVerifyStepDetails();
-      
+
       viewState.style.display = 'flex';
       editState.style.display = 'none';
     });
@@ -2007,11 +2124,22 @@ window.addEventListener('DOMContentLoaded', () => {
   setupSafariFormSubmitWorkaround();
   restoreSessionState();
 
+  // Initialize testimonial slider & fetch Google Sheet data
+  initTestimonialSlider();
+  syncBookingsFromSpreadsheet();
+  syncTestimonialsFromSpreadsheet();
+
+  // Periodically fetch updates every 5 minutes (300,000 ms)
+  setInterval(() => {
+    syncBookingsFromSpreadsheet();
+    syncTestimonialsFromSpreadsheet();
+  }, 300000);
+
   // Watch inputs for autosave
   const persistFields = [
-    'booking-selected-plan', 'booking-visits', 'booking-date', 
-    'booking-date-display', 'booking-schedule', 'booking-name', 
-    'booking-email', 'booking-phone', 'booking-location', 
+    'booking-selected-plan', 'booking-visits', 'booking-date',
+    'booking-date-display', 'booking-schedule', 'booking-name',
+    'booking-email', 'booking-phone', 'booking-location',
     'booking-preferences'
   ];
   persistFields.forEach(id => {
