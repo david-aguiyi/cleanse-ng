@@ -1337,7 +1337,7 @@
   .calendar-day-cell.selected::after {
     display: none;
   }
-  .calendar-day-cell.partially-booked::after {
+  .calendar-day-cell.selectable.partially-booked::after {
     background: #f97316; /* orange indicator */
   }
   .calendar-day-cell.fully-booked {
