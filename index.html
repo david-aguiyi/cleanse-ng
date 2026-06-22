@@ -38,7 +38,7 @@
   <link rel="canonical" href="https://cleanse.ng/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self';">
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://docs.google.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta property="og:site_name" content="cleanse.ng">
   <meta property="og:locale" content="en_US">
@@ -154,7 +154,6 @@
     <ul class="nav-links">
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#faq">FAQ</a></li>
-      <li><a href="#" id="nav-reschedule-btn">Reschedule / Cancel</a></li>
       <li><a href="#" data-wa-link>Contact</a></li>
     </ul>
     <a class="nav-cta" href="#" data-wa-link>Book Now</a>
@@ -426,7 +425,6 @@
         <h4>Support</h4>
         <ul>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="#" id="footer-reschedule-btn">Reschedule / Cancel</a></li>
           <li><a href="#" data-wa-link>Contact</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
@@ -808,12 +806,10 @@
               <span id="verify-total-price"
                 style="font-family: var(--font-header); font-size: 18px; font-weight: 700; color: var(--primary-purple);">₦17,736.43</span>
             </div>
+            <button type="submit" form="booking-plan-form" class="btn-primary mobile-confirm-btn"
+              style="width: 100%; margin-top: 16px; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); display: none;">Confirm
+              Booking</button>
           </div>
-
-
-          <button type="submit" form="booking-plan-form" class="btn-primary mobile-confirm-btn"
-            style="width: 100%; margin-top: 16px; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); display: none;">Confirm
-            Booking</button>
         </div>
       </div>
     </div>
@@ -822,89 +818,95 @@
 
   <!-- DISCOUNT MODAL -->
   <div class="booking-modal-overlay" id="discount-modal">
-    <div class="booking-modal-content"
-      style="max-width: 500px; height: auto; max-height: none; padding: 40px 32px; display: flex; flex-direction: column; gap: 20px; border-radius: 0; box-shadow: 0 24px 48px rgba(26, 13, 51, 0.25);">
+    <div class="booking-modal-content" id="discount-modal-content"
+      style="max-width: 900px; height: 90vh; max-height: 520px; display: grid; grid-template-columns: 1fr 1.2fr; border-radius: 0; box-shadow: 0 24px 48px rgba(26, 13, 51, 0.25); overflow: hidden;">
       <button class="booking-modal-close" id="discount-modal-close-btn" aria-label="Close modal">&times;</button>
-
-      <div id="discount-form-container" style="display: flex; flex-direction: column; gap: 20px;">
-        <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
-          <h2
-            style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: clamp(26px, 4vw, 32px); line-height: 1.15; margin: 0; letter-spacing: -0.02em;">
-            Get 10% off Your First Booking</h2>
-          <p style="font-size: 14px; color: var(--primary-purple); line-height: 1.55; font-weight: 500; margin: 0;">
-            Join the circle of space lovers & be the first to know about exclusive offers, new cleaning product
-            techniques, and how we are formalising the informal market.
-          </p>
-        </div>
-
-        <form class="booking-form" id="discount-form" style="margin-top: 4px;">
-          <!-- Security: Honeypot field -->
-          <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;">
-            <label for="discount-website">Website</label>
-            <input type="text" id="discount-website" name="website" tabindex="-1" autocomplete="off" value="">
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="discount-name">Full Name *</label>
-              <input type="text" id="discount-name" required placeholder="Jane Doe">
-            </div>
-            <div class="form-group">
-              <label for="discount-email">Email *</label>
-              <input type="email" id="discount-email" required placeholder="jane.doe@gmail.com">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="discount-birthday">Birthday *</label>
-              <div style="position: relative; width: 100%;">
-                <input type="text" id="discount-birthday-display" placeholder="Select birthday" readonly required
-                  style="padding-right: 36px;">
-                <input type="date" id="discount-birthday" required
-                  style="position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
-                <span
-                  style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mid-gray); font-size: 14px;">📅</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="discount-location">Location *</label>
-              <select id="discount-location" required>
-                <option value="" disabled selected>Select location</option>
-                <option value="GRA">GRA</option>
-                <option value="Bodija">Bodija</option>
-                <option value="Jericho">Jericho</option>
-                <option value="Iyaganku">Iyaganku</option>
-                <option value="Akobo">Akobo</option>
-                <option value="Oluyole">Oluyole</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="inline-validation-msg" id="discount-validation-msg" style="margin-top: 8px;"></div>
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
-            <button type="submit" class="btn-primary"
-              style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header);">Claim
-              My 10% Discount</button>
-            <p style="font-size: 11px; color: var(--light-gray); text-align: center; margin-top: 4px;">
-              Your discount code will be sent to your email immediately
+ 
+      <!-- Left Column: Booking Lifestyle Image -->
+      <div class="discount-modal-left" style="position: relative; background: var(--deep-purple); overflow: hidden;">
+        <img src="./booking_lifestyle_image.png" alt="Clean bedroom lifestyle" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(0.8);">
+        <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(26, 13, 51, 0.6) 100%);"></div>
+      </div>
+ 
+      <!-- Right Column: Content Form -->
+      <div class="discount-modal-right" style="padding: 40px 32px; display: flex; flex-direction: column; gap: 20px; background: var(--white); justify-content: center; overflow-y: auto;">
+        <div id="discount-form-container" style="display: flex; flex-direction: column; gap: 20px;">
+          <div style="text-align: left; display: flex; flex-direction: column; gap: 8px;">
+            <h2
+              style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: clamp(24px, 3.5vw, 28px); line-height: 1.15; margin: 0; letter-spacing: -0.02em;">
+              Get 10% off Your First Booking</h2>
+            <p style="font-size: 13px; color: var(--mid-gray); line-height: 1.5; font-weight: 500; margin: 0;">
+              Join the circle of space lovers & be the first to know about exclusive offers, new cleaning techniques, and how we are formalising the informal market.
             </p>
           </div>
-        </form>
-      </div>
-
-      <!-- Discount Success State -->
-      <div class="booking-success-state" id="discount-success-container" style="padding: 24px 0 0 0;">
-        <div class="success-icon">✓</div>
-        <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 28px;">
-          You're In!</h2>
-        <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; max-width: 400px; margin: 0 auto;">
-          Welcome to the circle. We've sent your 10% discount code to your email.
-        </p>
-        <button class="btn-ghost" id="discount-success-close-btn"
-          style="border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--mid-gray); font-family: var(--font-header); margin-top: 16px;">Close
-          Window</button>
+ 
+          <form class="booking-form" id="discount-form" style="margin-top: 4px; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Security: Honeypot field -->
+            <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;">
+              <label for="discount-website">Website</label>
+              <input type="text" id="discount-website" name="website" tabindex="-1" autocomplete="off" value="">
+            </div>
+ 
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group" style="margin: 0;">
+                <label for="discount-name">Full Name *</label>
+                <input type="text" id="discount-name" required placeholder="Jane Doe" style="width: 100%;">
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label for="discount-email">Email *</label>
+                <input type="email" id="discount-email" required placeholder="jane.doe@gmail.com" style="width: 100%;">
+              </div>
+            </div>
+ 
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group" style="margin: 0;">
+                <label for="discount-birthday">Birthday *</label>
+                <div style="position: relative; width: 100%;">
+                  <input type="text" id="discount-birthday-display" placeholder="Select birthday" readonly required
+                    style="padding-right: 36px; width: 100%;">
+                  <input type="date" id="discount-birthday" required
+                    style="position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
+                  <span
+                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mid-gray); font-size: 14px;">📅</span>
+                </div>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label for="discount-location">Location *</label>
+                <select id="discount-location" required style="width: 100%;">
+                  <option value="" disabled selected>Select location</option>
+                  <option value="GRA">GRA</option>
+                  <option value="Bodija">Bodija</option>
+                  <option value="Jericho">Jericho</option>
+                  <option value="Iyaganku">Iyaganku</option>
+                  <option value="Akobo">Akobo</option>
+                  <option value="Oluyole">Oluyole</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+ 
+            <div class="inline-validation-msg" id="discount-validation-msg" style="margin-top: 4px;"></div>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+              <button type="submit" class="btn-primary"
+                style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header);">Claim My 10% Discount</button>
+              <p style="font-size: 11px; color: var(--light-gray); text-align: center; margin-top: 4px; margin-bottom: 0;">
+                Your discount code will be sent to your email immediately
+              </p>
+            </div>
+          </form>
+        </div>
+ 
+        <!-- Discount Success State -->
+        <div class="booking-success-state" id="discount-success-container" style="padding: 0; display: none;">
+          <div class="success-icon">✓</div>
+          <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 26px; margin-top: 10px;">
+            You're In!</h2>
+          <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5; max-width: 320px; margin: 0 auto;">
+            Welcome to the circle. We've sent your 10% discount code to your email.
+          </p>
+          <button class="btn-ghost" id="discount-success-close-btn"
+            style="border: none; padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--mid-gray); font-family: var(--font-header); margin-top: 16px;">Close Window</button>
+        </div>
       </div>
     </div>
   </div>
@@ -975,105 +977,6 @@
       <button id="policy-modal-agree-btn" class="btn-primary"
         style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); margin-top: 10px;">I
         Understand & Agree</button>
-    </div>
-  </div>
-
-  <!-- RESCHEDULE & CANCEL MODAL -->
-  <div class="booking-modal-overlay" id="reschedule-modal">
-    <div class="booking-modal-content" style="max-width: 500px; height: auto; max-height: 90vh; overflow-y: auto; padding: 32px; display: flex; flex-direction: column; gap: 20px; border-radius: 0; box-shadow: 0 24px 48px rgba(26, 13, 51, 0.25);">
-      <button class="booking-modal-close" id="reschedule-modal-close-btn" aria-label="Close modal">&times;</button>
-      
-      <div style="text-align: left; display: flex; flex-direction: column; gap: 8px;">
-        <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 24px; margin: 0; letter-spacing: -0.02em;">Reschedule or Cancel</h2>
-        <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5; margin: 0; font-weight: 500;">
-          Let us know what changes you want to make. We will generate your WhatsApp message to update your booking.
-        </p>
-      </div>
-
-      <form class="booking-form" id="reschedule-form" style="margin-top: 4px; display: flex; flex-direction: column; gap: 16px;">
-        <!-- Option: Cancel or Reschedule -->
-        <div class="form-group full-width" style="margin: 0;">
-          <label style="margin-bottom: 8px; display: block; font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple);">What would you like to do? *</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <label style="border: 1px solid var(--border); padding: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--off-white);" id="label-action-reschedule">
-              <input type="radio" name="reschedule-action" value="reschedule" checked style="accent-color: var(--primary-purple); cursor: pointer; width: 18px; height: 18px; margin: 0;">
-              <span style="font-size: 14px; font-weight: 600; font-family: var(--font-header); color: var(--deep-purple);">Reschedule</span>
-            </label>
-            <label style="border: 1px solid var(--border); padding: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--off-white);" id="label-action-cancel">
-              <input type="radio" name="reschedule-action" value="cancel" style="accent-color: var(--primary-purple); cursor: pointer; width: 18px; height: 18px; margin: 0;">
-              <span style="font-size: 14px; font-weight: 600; font-family: var(--font-header); color: var(--deep-purple);">Cancel Booking</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Contact Details -->
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group" style="margin: 0;">
-            <label for="reschedule-name" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Full Name *</label>
-            <input type="text" id="reschedule-name" required placeholder="Jane Doe" style="width: 100%;">
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label for="reschedule-phone" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Phone Number *</label>
-            <input type="tel" id="reschedule-phone" required placeholder="+234 801 234 5678" style="width: 100%;">
-          </div>
-        </div>
-
-        <!-- Original Booking Details -->
-        <div style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px;">
-          <h4 style="font-family: var(--font-header); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--primary-purple); margin: 0;">Original Booking Details</h4>
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="form-group" style="margin: 0;">
-              <label for="reschedule-orig-date" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Original Date *</label>
-              <input type="date" id="reschedule-orig-date" required style="width: 100%;">
-            </div>
-            <div class="form-group" style="margin: 0;">
-              <label for="reschedule-orig-slot" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Original Time Slot *</label>
-              <select id="reschedule-orig-slot" required style="width: 100%;">
-                <option value="" disabled selected>Select slot</option>
-                <option value="8am - 11am">8am - 11am</option>
-                <option value="11am - 2pm">11am - 2pm</option>
-                <option value="2pm - 5pm">2pm - 5pm</option>
-                <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
-                <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- New Booking Details (Shown only for rescheduling) -->
-        <div id="reschedule-new-details-section" style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px;">
-          <h4 style="font-family: var(--font-header); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--primary-purple); margin: 0;">New Booking Details</h4>
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="form-group" style="margin: 0;">
-              <label for="reschedule-new-date" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">New Date *</label>
-              <input type="date" id="reschedule-new-date" required style="width: 100%;">
-            </div>
-            <div class="form-group" style="margin: 0;">
-              <label for="reschedule-new-slot" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">New Time Slot *</label>
-              <select id="reschedule-new-slot" required style="width: 100%;">
-                <option value="" disabled selected>Select slot</option>
-                <option value="8am - 11am">8am - 11am</option>
-                <option value="11am - 2pm">11am - 2pm</option>
-                <option value="2pm - 5pm">2pm - 5pm</option>
-                <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
-                <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Reason -->
-        <div class="form-group full-width" style="margin: 0;">
-          <label for="reschedule-reason" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Reason (Optional)</label>
-          <textarea id="reschedule-reason" placeholder="e.g. Moving to another day due to work travel..." style="min-height: 80px; width: 100%;"></textarea>
-        </div>
-
-        <div class="inline-validation-msg" id="reschedule-validation-msg" style="margin-top: 4px;"></div>
-
-        <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); margin-top: 8px;">
-          Send Request via WhatsApp →
-        </button>
-      </form>
     </div>
   </div>
 

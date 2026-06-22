@@ -465,6 +465,85 @@
       padding-top: 32px;
     }
 
+    /* Refined Filter and Tab styles */
+    .search-filter-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      align-items: flex-end;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .filter-group.search-group {
+      flex: 2;
+      min-width: 250px;
+    }
+
+    .filter-input {
+      background: rgba(15, 14, 20, 0.6);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      color: white;
+      width: 100%;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .filter-input:focus {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 0 2px rgba(124, 252, 0, 0.15);
+      background: rgba(15, 14, 20, 0.85);
+    }
+
+    .status-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .status-tab {
+      background: none;
+      border: none;
+      color: var(--mid-gray);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Lexend', sans-serif;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: auto;
+    }
+
+    .status-tab:hover {
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .status-tab.active {
+      background: var(--neon-green);
+      color: var(--deep-purple);
+    }
+
+
     .history-header {
       display: flex;
       justify-content: space-between;
@@ -522,6 +601,16 @@
     .badge.badge-cancelled {
       background: var(--red);
       color: var(--white);
+    }
+
+    .badge.badge-done {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--light-gray);
+    }
+
+    tr.row-done {
+      color: var(--mid-gray);
+      opacity: 0.6;
     }
 
     /* CUSTOM ALERTS POPUPS */
@@ -791,6 +880,200 @@
         padding: 36px 24px;
       }
     }
+    /* Revenue Tracker Styles */
+    .revenue-summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .revenue-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .revenue-card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+    .revenue-card-amount {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--neon-green);
+      font-family: 'Lexend';
+    }
+    .revenue-card-meta {
+      font-size: 12px;
+      color: var(--light-gray);
+    }
+
+    /* Quick Stats Bar Styling */
+    .quick-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .stat-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      font-family: 'Lexend', sans-serif;
+    }
+
+    .stat-meta {
+      font-size: 11px;
+      color: var(--neon-green);
+    }
+
+    /* Redesigned Glowing Status Badges */
+    .badge {
+      padding: 4px 10px;
+      font-weight: 700;
+      font-size: 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge.badge-booked {
+      background: rgba(124, 252, 0, 0.08);
+      color: var(--neon-green);
+      border-color: rgba(124, 252, 0, 0.3);
+      box-shadow: 0 0 8px rgba(124, 252, 0, 0.1);
+    }
+
+    .badge.badge-done {
+      background: rgba(59, 130, 246, 0.08);
+      color: #58a6ff;
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.1);
+    }
+
+    .badge.badge-cancelled {
+      background: rgba(239, 68, 68, 0.08);
+      color: #ffa1a1;
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Dashboard Right Column Empty State Guide */
+    .empty-state-guide {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      height: 100%;
+      justify-content: center;
+      min-height: 380px;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      opacity: 0.85;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .empty-state-title {
+      font-family: 'Lexend', sans-serif;
+      font-size: 16px;
+      color: var(--neon-green);
+    }
+
+    .empty-state-desc {
+      font-size: 13px;
+      color: var(--light-gray);
+      line-height: 1.6;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .quick-guide-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .quick-step {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      color: var(--light-gray);
+    }
+
+    .quick-step-num {
+      background: rgba(124, 252, 0, 0.15);
+      color: var(--neon-green);
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .quick-stats-bar {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -872,8 +1155,6 @@
           <option value="8am - 11am">8am - 11am</option>
           <option value="11am - 2pm">11am - 2pm</option>
           <option value="2pm - 5pm">2pm - 5pm</option>
-          <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
-          <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
         </select>
       </div>
 
@@ -960,6 +1241,8 @@
     <header>
       <h1>cleanse<span>.ng</span> Scheduler</h1>
       <div style="display: flex; gap: 8px; align-items: center;">
+        <!-- Revenue Tracker Collapsible -->
+        <button class="collapsible-btn" onclick="togglePanel('revenue-panel')">📊 Revenue</button>
         <!-- Notification Bell -->
         <button class="collapsible-btn" id="bell-btn" onclick="togglePanel('reminders-panel')">
           🔔 Reminders <span id="bell-badge" class="bell-badge" style="display: none;">0</span>
@@ -974,6 +1257,14 @@
     <div class="reminder-banner" id="sticky-reminder-banner">
       <span id="banner-text"></span>
       <button class="reminder-banner-close" onclick="dismissBanner()">✕</button>
+    </div>
+
+    <!-- Collapsible Revenue Panel -->
+    <div class="panel" id="revenue-panel">
+      <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:12px;">Financial Summary & Revenue</h3>
+      <div id="revenue-grid-container">
+        <!-- Monthly earnings render here -->
+      </div>
     </div>
 
     <!-- Collapsible Reminders List Panel -->
@@ -1010,9 +1301,29 @@
           <label for="gcal-client-id-input">Google Calendar OAuth Client ID</label>
           <input type="text" id="gcal-client-id-input" placeholder="Paste Google Calendar Client ID (for OAuth)...">
         </div>
-        <div style="display: flex; justify-content: flex-end;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn-secondary" style="min-height: 36px; padding: 6px 14px;" onclick="syncAllLocalCodesToSheet()">📋 Sync Database to Sheet</button>
           <button class="btn-primary" style="min-height: 36px; padding: 6px 14px;" onclick="saveSettings()">Save & Connect</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="quick-stats-bar">
+      <div class="stat-card">
+        <span class="stat-title">📅 Active Bookings</span>
+        <span class="stat-value" id="stats-active-count">0</span>
+        <span class="stat-meta">Upcoming visits</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">💰 Est. Monthly Revenue</span>
+        <span class="stat-value" id="stats-monthly-revenue">₦0</span>
+        <span class="stat-meta" id="stats-monthly-label">This month</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">🔔 Pending Alerts</span>
+        <span class="stat-value" id="stats-pending-alerts">0</span>
+        <span class="stat-meta" id="stats-alerts-meta" style="color: var(--mid-gray);">Active reminders</span>
       </div>
     </div>
 
@@ -1025,6 +1336,7 @@
         </div>
 
         <div class="actions">
+          <button class="btn-secondary" onclick="pasteFromClipboard()">📋 Paste Message</button>
           <button class="btn-primary" onclick="parseOrder()">Parse & Schedule</button>
           <button class="btn-secondary" onclick="clearInput()">Clear Form</button>
         </div>
@@ -1051,6 +1363,29 @@
 
       <!-- Right Column: Scheduled Visits & Conflict Resolver -->
       <div>
+        <!-- Empty State Dashboard Guide (visible when no order parsed) -->
+        <div class="empty-state-guide" id="parser-empty-state">
+          <div class="empty-state-icon">🤖</div>
+          <h3 class="empty-state-title">WhatsApp Order Scheduler</h3>
+          <p class="empty-state-desc">
+            No booking message parsed yet. Copy a client's WhatsApp order and paste it on the left to automatically construct dates.
+          </p>
+          <div class="quick-guide-steps">
+            <div class="quick-step">
+              <span class="quick-step-num">1</span>
+              <span>Paste WhatsApp text & click <strong>Parse & Schedule</strong>.</span>
+            </div>
+            <div class="quick-step">
+              <span class="quick-step-num">2</span>
+              <span>Review dates & resolve conflicts (indicated in <strong style="color:var(--red);">red</strong>).</span>
+            </div>
+            <div class="quick-step">
+              <span class="quick-step-num">3</span>
+              <span>Click <strong>Save All Visits</strong> to sync with Google Sheets.</span>
+            </div>
+          </div>
+        </div>
+
         <div class="result-section" id="results">
           <label>Visit Schedule Details</label>
           <p style="font-size: 12px; color: var(--mid-gray); margin: 6px 0 16px 0;">
@@ -1081,10 +1416,6 @@
       <div class="history-header">
         <div style="display: flex; flex-direction: column; gap: 4px;">
           <label>List of Bookings (Ready to export)</label>
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mid-gray);">
-            <input type="checkbox" id="toggle-cancelled-checkbox" onchange="renderHistory()" checked>
-            <label for="toggle-cancelled-checkbox" style="color: var(--mid-gray); text-transform: none; font-size: 12px; font-weight: normal; cursor: pointer; letter-spacing: 0;">Show cancelled bookings</label>
-          </div>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
           <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px;" onclick="downloadCSV()">
@@ -1093,6 +1424,27 @@
           <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px; color: #ff5e5e;" onclick="clearHistory()">
             Clear List
           </button>
+        </div>
+      </div>
+
+      <!-- Search & Filters Bar -->
+      <div class="search-filter-bar">
+        <div class="filter-group search-group">
+          <label style="color: var(--mid-gray); font-size: 10px; margin-bottom: 2px;">Search Bookings</label>
+          <input type="text" id="search-input" class="filter-input" placeholder="🔍 Search name, code, or plan..." oninput="renderHistory()">
+        </div>
+        <div class="filter-group">
+          <label style="color: var(--mid-gray); font-size: 10px; margin-bottom: 2px;">Filter Date</label>
+          <input type="date" id="filter-date-input" class="filter-input" onchange="renderHistory()">
+        </div>
+        <div class="filter-group" style="flex: 2; min-width: 250px;">
+          <label style="color: var(--mid-gray); font-size: 10px; margin-bottom: 2px;">Status Filter</label>
+          <div class="status-tabs">
+            <button class="status-tab active" id="tab-active" onclick="setStatusFilter('active')">Active</button>
+            <button class="status-tab" id="tab-completed" onclick="setStatusFilter('done')">Completed</button>
+            <button class="status-tab" id="tab-cancelled" onclick="setStatusFilter('cancelled')">Cancelled</button>
+            <button class="status-tab" id="tab-all" onclick="setStatusFilter('all')">All History</button>
+          </div>
         </div>
       </div>
 
@@ -1124,6 +1476,14 @@
     // Change "cleanseadmin" to your preferred personal password
     const ADMIN_PASSWORD = "cleanseadmin";
 
+    function normalizeSlot(sVal) {
+      if (!sVal) return "";
+      const s = sVal.toString().toLowerCase().trim();
+      if (s.includes("8am") || s.includes("morning")) return "8am - 11am";
+      if (s.includes("11am") || s.includes("afternoon")) return "11am - 2pm";
+      return "2pm - 5pm";
+    }
+
     let currentCustomer = null;
     let scheduledVisits = [];
     let liveBookedSlots = {}; // Loaded from Sheet
@@ -1137,7 +1497,7 @@
         for (let slotIdx = 1; slotIdx <= 10; slotIdx++) {
           const slotStr = String(slotIdx).padStart(2, '0');
           const testCode = `CNGT${team}${slotStr}`;
-          const inUse = historyList.some(hl => hl.code === testCode && hl.status !== 'cancelled');
+          const inUse = historyList.some(hl => hl.code === testCode);
           if (!inUse) {
             return testCode;
           }
@@ -1163,6 +1523,12 @@
       const getNextUnusedCode = () => {
         let team = 1;
         const assignedCodes = new Set(Object.values(nameToCodeMap));
+        // Also add any codes that exist in historyList so we never duplicate
+        historyList.forEach(item => {
+          if (item.code && item.code !== '-') {
+            assignedCodes.add(item.code);
+          }
+        });
         while (true) {
           for (let slotIdx = 1; slotIdx <= 10; slotIdx++) {
             const slotStr = String(slotIdx).padStart(2, '0');
@@ -1175,7 +1541,7 @@
         }
       };
 
-      // Assign codes to items that don't have one
+      // Assign codes and prices to items that don't have one
       let updated = false;
       historyList.forEach(item => {
         if (item.name && (!item.code || item.code === '-')) {
@@ -1186,11 +1552,220 @@
           item.code = nameToCodeMap[key];
           updated = true;
         }
+        if (item.name && !item.price) {
+          item.price = calculateVisitPrice(item.plan || '', item.visits || '');
+          updated = true;
+        }
       });
 
       if (updated) {
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
       }
+    }
+
+    function calculateVisitPrice(plan, visitsText) {
+      const planPrices = {
+        "1 Bedroom Flat": 9999,
+        "2 Bedroom Flat": 11999,
+        "3 Bedroom Flat": 13999,
+        "4 Bedroom Flat": 19999,
+        "1 Bedroom": 9999,
+        "2 Bedroom": 11999,
+        "3 Bedroom": 13999,
+        "4 Bedroom": 19999
+      };
+
+      // Find which plan rate matches
+      let baseRate = 11999; // default 2 bedroom
+      for (const key in planPrices) {
+        if (plan.toLowerCase().includes(key.toLowerCase())) {
+          baseRate = planPrices[key];
+          break;
+        }
+      }
+
+      if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
+        // Monthly subscriptions:
+        // 1 Bedroom: 60000 / 8 = 7500
+        // 2 Bedroom: 100000 / 8 = 12500
+        // 3 Bedroom: 150000 / 8 = 18750
+        // 4 Bedroom: 200000 / 8 = 25000
+        if (plan.toLowerCase().includes("1 bedroom")) return 7500;
+        if (plan.toLowerCase().includes("2 bedroom")) return 12500;
+        if (plan.toLowerCase().includes("3 bedroom")) return 18750;
+        if (plan.toLowerCase().includes("4 bedroom")) return 25000;
+        return baseRate; // fallback
+      }
+
+      // Pay Per Visit discounts:
+      let ratePerVisit = baseRate;
+      if (visitsText.includes("1 visit") || visitsText.includes("once")) {
+        ratePerVisit = baseRate;
+      } else if (visitsText.includes("2 visits") || visitsText.includes("twice")) {
+        ratePerVisit = baseRate - 800;
+      } else if (visitsText.includes("4 visits") || visitsText.includes("weekly")) {
+        ratePerVisit = baseRate - 1600;
+      } else if (visitsText.includes("8 visits")) {
+        ratePerVisit = baseRate - 2000;
+      }
+      return ratePerVisit;
+    }
+
+    function updateRevenueTracker() {
+      const container = document.getElementById('revenue-grid-container');
+      if (!container) return;
+
+      let totalActiveRevenue = 0;
+      let totalActiveVisits = 0;
+      
+      let totalMonthlySubCount = 0;
+      let totalMonthlySubRevenue = 0;
+      
+      let totalPayPerVisitCount = 0;
+      let totalPayPerVisitRevenue = 0;
+      
+      let canceledVisitsCount = 0;
+      let canceledRevenue = 0;
+
+      const activeClients = {}; 
+      const monthlyClients = {};
+
+      historyList.forEach(item => {
+        if (item.status === 'cancelled') {
+          canceledVisitsCount++;
+          canceledRevenue += Number(item.price) || 0;
+          return;
+        }
+
+        const price = Number(item.price) || 0;
+        totalActiveRevenue += price;
+        totalActiveVisits++;
+
+        const isMonthlySub = (item.plan || '').toLowerCase().includes('subscription') || 
+                            (item.plan || '').toLowerCase().includes('monthly');
+        const bookingType = isMonthlySub ? 'monthly' : 'pay-per-visit';
+
+        const clientKey = (item.code && item.code !== '-') ? item.code.trim().toUpperCase() : (item.name || 'unknown').trim().toLowerCase();
+
+        // Global grouping
+        if (!activeClients[clientKey]) {
+          activeClients[clientKey] = {
+            type: bookingType,
+            revenue: 0,
+            visits: 0
+          };
+        }
+        activeClients[clientKey].revenue += price;
+        activeClients[clientKey].visits++;
+
+        // Monthly grouping
+        if (item.date) {
+          const parts = item.date.split('-');
+          if (parts.length >= 2) {
+            const monthKey = `${parts[0]}-${parts[1]}`; // YYYY-MM
+            if (!monthlyClients[monthKey]) {
+              monthlyClients[monthKey] = {};
+            }
+            if (!monthlyClients[monthKey][clientKey]) {
+              monthlyClients[monthKey][clientKey] = {
+                type: bookingType,
+                revenue: 0,
+                visits: 0
+              };
+            }
+            monthlyClients[monthKey][clientKey].revenue += price;
+            monthlyClients[monthKey][clientKey].visits++;
+          }
+        }
+      });
+
+      // Calculate global counts
+      Object.keys(activeClients).forEach(key => {
+        const client = activeClients[key];
+        if (client.type === 'monthly') {
+          totalMonthlySubCount++;
+          totalMonthlySubRevenue += client.revenue;
+        } else {
+          totalPayPerVisitCount++;
+          totalPayPerVisitRevenue += client.revenue;
+        }
+      });
+
+      // Sort months chronologically
+      const sortedMonths = Object.keys(monthlyClients).sort();
+
+      let html = `
+        <div class="revenue-summary-cards">
+          <div class="revenue-card" style="background: rgba(124, 252, 0, 0.04); border-color: rgba(124, 252, 0, 0.15);">
+            <span class="revenue-card-title" style="color: var(--neon-green);">Total Active Revenue</span>
+            <span class="revenue-card-amount">₦${totalActiveRevenue.toLocaleString()}</span>
+            <span class="revenue-card-meta">${totalActiveVisits} active visits total</span>
+          </div>
+          <div class="revenue-card" style="background: rgba(0, 191, 255, 0.04); border-color: rgba(0, 191, 255, 0.15);">
+            <span class="revenue-card-title" style="color: #00bfff;">Monthly Subscriptions</span>
+            <span class="revenue-card-amount">₦${totalMonthlySubRevenue.toLocaleString()}</span>
+            <span class="revenue-card-meta">${totalMonthlySubCount} active client subscription${totalMonthlySubCount !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="revenue-card" style="background: rgba(238, 130, 238, 0.04); border-color: rgba(238, 130, 238, 0.15);">
+            <span class="revenue-card-title" style="color: #ee82ee;">Pay Per Visit</span>
+            <span class="revenue-card-amount">₦${totalPayPerVisitRevenue.toLocaleString()}</span>
+            <span class="revenue-card-meta">${totalPayPerVisitCount} active client booking${totalPayPerVisitCount !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="revenue-card" style="background: rgba(255, 69, 58, 0.04); border-color: rgba(255, 69, 58, 0.15);">
+            <span class="revenue-card-title" style="color: #ff453a;">Canceled Bookings</span>
+            <span class="revenue-card-amount">₦${canceledVisitsCount}</span>
+            <span class="revenue-card-meta">₦${canceledRevenue.toLocaleString()} lost potential revenue</span>
+          </div>
+        </div>
+      `;
+
+      if (sortedMonths.length === 0) {
+        html += `<div style="color: var(--mid-gray); font-size: 13px; text-align: center; padding: 20px;">No revenue data available yet. Add active bookings to see breakdown.</div>`;
+      } else {
+        html += `<div style="font-size: 12px; text-transform: uppercase; color: var(--mid-gray); margin-bottom: 12px; font-weight: bold; letter-spacing: 0.05em;">Monthly Breakdown</div>`;
+        html += `<div class="revenue-summary-cards">`;
+        
+        sortedMonths.forEach(m => {
+          const [year, month] = m.split('-');
+          const monthName = new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+          
+          const clientsInMonth = monthlyClients[m];
+          let mMonthlyCount = 0;
+          let mMonthlyRevenue = 0;
+          let mPayPerVisitCount = 0;
+          let mPayPerVisitRevenue = 0;
+          let mTotalVisits = 0;
+          let mTotalRevenue = 0;
+
+          Object.keys(clientsInMonth).forEach(cKey => {
+            const c = clientsInMonth[cKey];
+            mTotalVisits += c.visits;
+            mTotalRevenue += c.revenue;
+            if (c.type === 'monthly') {
+              mMonthlyCount++;
+              mMonthlyRevenue += c.revenue;
+            } else {
+              mPayPerVisitCount++;
+              mPayPerVisitRevenue += c.revenue;
+            }
+          });
+          
+          html += `
+            <div class="revenue-card">
+              <span class="revenue-card-title" style="font-size: 12px; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; margin-bottom: 4px;">${monthName}</span>
+              <span class="revenue-card-amount">₦${mTotalRevenue.toLocaleString()}</span>
+              <div style="font-size: 11px; color: var(--light-gray); margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                <div><span style="color: #00bfff; font-weight: bold;">Monthly Subs:</span> ${mMonthlyCount} (${mMonthlyCount !== 1 ? 's' : ''}) — ₦${mMonthlyRevenue.toLocaleString()}</div>
+                <div><span style="color: #ee82ee; font-weight: bold;">Pay Per Visit:</span> ${mPayPerVisitCount} (${mPayPerVisitCount !== 1 ? 's' : ''}) — ₦${mPayPerVisitRevenue.toLocaleString()}</div>
+                <div style="color: var(--mid-gray); font-size: 10px; text-transform: uppercase; margin-top: 4px; font-weight: 600; letter-spacing: 0.05em;">${mTotalVisits} visits scheduled</div>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      container.innerHTML = html;
     }
 
     // Reminder system state
@@ -1252,10 +1827,11 @@
     // ======= DASHBOARD INITIALIZATION =======
     function initDashboard() {
       // Load settings defaults
-      const defaultUrl = 'https://script.google.com/macros/s/AKfycbxgsjcS_1duYPlS4RP3O9gwrNSLA0tCqHzR4-hkzv6wwggMiLGKMAkR8uozNnhhFRvo3A/exec';
+      const defaultUrl = 'https://script.google.com/macros/s/AKfycbxwufAH1eCu-hSD5OZogSqG7NRI053CyQyRU4x5pMt7To_bQpY_LKHrtOfZiRj2-C42JA/exec';
       const defaultId = '14IMdMV4R_SsgJ2fQ6JmDOpGZynSgCZt4Z31QaGRzD7M';
 
-      if (!localStorage.getItem('cleanse_script_url')) {
+      const savedUrl = localStorage.getItem('cleanse_script_url');
+      if (!savedUrl || savedUrl === 'https://script.google.com/macros/s/AKfycbxgsjcS_1duYPlS4RP3O9gwrNSLA0tCqHzR4-hkzv6wwggMiLGKMAkR8uozNnhhFRvo3A/exec') {
         localStorage.setItem('cleanse_script_url', defaultUrl);
       }
       if (!localStorage.getItem('cleanse_sheet_id')) {
@@ -1360,8 +1936,17 @@
     }
 
     function togglePanel(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle('active');
+      const panels = ['revenue-panel', 'reminders-panel', 'instructions-panel', 'settings-panel'];
+      panels.forEach(pId => {
+        const el = document.getElementById(pId);
+        if (el) {
+          if (pId === id) {
+            el.classList.toggle('active');
+          } else {
+            el.classList.remove('active');
+          }
+        }
+      });
     }
 
     function saveSettings() {
@@ -1421,10 +2006,11 @@
           const cols = parseCSVLine(line);
           if (cols.length >= 2) {
             const dateStr = cols[0].replace(/\//g, '-');
-            const slotStr = cols[1];
+            const slotStr = normalizeSlot(cols[1]);
             const statusStr = cols[2] ? cols[2].toLowerCase() : 'booked';
             const nameStr = cols[3] || 'Unknown Client';
             const planStr = cols[4] || 'Cleanse Plan';
+            const codeStr = cols[5] || '';
 
             // Only register active bookings for clashes
             if (statusStr !== 'cancelled') {
@@ -1439,7 +2025,8 @@
               slot: slotStr,
               status: statusStr,
               name: nameStr,
-              plan: planStr
+              plan: planStr,
+              code: codeStr
             });
           }
         }
@@ -1457,9 +2044,16 @@
       sheetBookings.forEach(sb => {
         const existingIdx = historyList.findIndex(hl => hl.date === sb.date && hl.slot === sb.slot);
         if (existingIdx !== -1) {
-          // If status differs, align local status with sheet status
+          let localChanged = false;
           if (historyList[existingIdx].status !== sb.status) {
             historyList[existingIdx].status = sb.status;
+            localChanged = true;
+          }
+          if (sb.code && historyList[existingIdx].code !== sb.code) {
+            historyList[existingIdx].code = sb.code;
+            localChanged = true;
+          }
+          if (localChanged) {
             updated = true;
           }
         } else {
@@ -1474,6 +2068,7 @@
         renderHistory();
       }
       runReminderEngine();
+      autoCompletePassedBookings();
     }
 
     // Legacy function support
@@ -1487,6 +2082,10 @@
       if (!text) {
         showCustomAlert("Input Required", "Please paste an order message first!", "⚠️");
         return;
+      }
+
+      if (document.getElementById('parser-empty-state')) {
+        document.getElementById('parser-empty-state').style.display = 'none';
       }
 
       // Check if message is a code-based action: CNGT[Team][Slot]
@@ -1664,7 +2263,7 @@
       const phone = phoneMatch ? phoneMatch[1].trim() : "Unknown Phone";
       const visitsText = visitsMatch ? visitsMatch[1].trim() : "1 visit per month";
       const rawDate = dateMatch ? dateMatch[1].trim() : "";
-      const slot = slotMatch ? slotMatch[1].trim() : "8am - 11am";
+      const slot = normalizeSlot(slotMatch ? slotMatch[1].trim() : "8am - 11am");
       const address = addressMatch ? addressMatch[1].trim() : "";
 
       let startDate = new Date();
@@ -1745,7 +2344,7 @@
       container.innerHTML = '';
 
       scheduledVisits.forEach((visit, index) => {
-        const isClash = checkClash(visit.date, visit.slot);
+        const isClash = checkClash(visit.date, visit.slot, visit.id);
         
         const row = document.createElement('div');
         row.className = `recurrence-item${isClash ? ' clash' : ''}`;
@@ -1770,9 +2369,24 @@
       });
     }
 
-    function checkClash(dateStr, slotStr) {
+    function checkClash(dateStr, slotStr, currentVisitId) {
+      if (!dateStr || !slotStr) return false;
+      
+      // 1. Check against sheet/history
       const slots = liveBookedSlots[dateStr] || [];
-      const count = slots.filter(s => s === slotStr).length;
+      let count = slots.filter(s => s === slotStr).length;
+      
+      // 2. Check against other visits in the current scheduled list (internal duplicates)
+      if (scheduledVisits) {
+        const internalCount = scheduledVisits.filter(v => 
+          v.date === dateStr && 
+          v.slot === slotStr && 
+          v.id !== currentVisitId &&
+          v.action !== 'cancel'
+        ).length;
+        count += internalCount;
+      }
+      
       return count >= 1;
     }
 
@@ -1799,10 +2413,10 @@
         return;
       }
 
-      const hasClashes = scheduledVisits.some(v => checkClash(v.date, v.slot));
+      const hasClashes = scheduledVisits.some(v => checkClash(v.date, v.slot, v.id));
       if (hasClashes) {
-        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: Some dates still have timing conflicts. Submit anyway?", "⚠️");
-        if (!confirmed) return;
+        showCustomAlert("Schedule Conflict", "Cannot save: One or more dates have timing conflicts or duplicates for the day. Please resolve them first.", "❌");
+        return;
       }
 
       const btn = document.getElementById('btn-auto-submit');
@@ -1811,30 +2425,34 @@
       btn.disabled = true;
 
       try {
-        let successCount = 0;
-        for (const visit of scheduledVisits) {
-          const payload = new URLSearchParams({
-            date: visit.date,
-            slot: visit.slot,
-            status: 'booked',
-            name: currentCustomer.name,
-            plan: currentCustomer.plan
-          });
-
-          const response = await fetch(scriptUrl, {
-            method: 'POST',
-            body: payload,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          });
-
-          if (response.ok) {
-            successCount++;
-          }
-        }
-
-        showCustomAlert("Success", `Successfully saved ${successCount} visits to your Google Sheet!`, "🎉");
+        // 1. Add to local history first
         addAllToHistory();
-        syncBookingsFromSheet();
+
+        // 2. Perform a single batch sync request to push the new database state
+        const payload = new URLSearchParams({
+          action: 'sync',
+          bookings: JSON.stringify(historyList),
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+        });
+
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          body: payload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (response.ok) {
+          const resText = await response.text();
+          if (resText.toLowerCase().includes("success")) {
+            showCustomAlert("Success", `Successfully saved all visits to Google Sheet!`, "🎉");
+            clearInput();
+            syncBookingsFromSheet();
+          } else {
+            throw new Error(resText);
+          }
+        } else {
+          throw new Error("HTTP error " + response.status);
+        }
       } catch (err) {
         console.error(err);
         showCustomAlert("Submission Error", "Failed to sync automatically. Ensure Web App URL is correct.", "❌");
@@ -1871,18 +2489,72 @@
       runReminderEngine();
     }
 
+    let currentStatusFilter = 'active'; // Default status tab filter
+
+    function setStatusFilter(status) {
+      currentStatusFilter = status;
+      
+      const tabs = {
+        'active': 'tab-active',
+        'done': 'tab-completed',
+        'cancelled': 'tab-cancelled',
+        'all': 'tab-all'
+      };
+      
+      Object.keys(tabs).forEach(key => {
+        const btn = document.getElementById(tabs[key]);
+        if (btn) {
+          if (key === status) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
+      });
+      
+      renderHistory();
+    }
+
     function renderHistory() {
       ensureAllBookingsHaveCodes();
       const tbody = document.getElementById('history-tbody');
-      const showCancelled = document.getElementById('toggle-cancelled-checkbox').checked;
       
+      const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase().trim() : '';
+      const filterDate = document.getElementById('filter-date-input') ? document.getElementById('filter-date-input').value : '';
+
       tbody.innerHTML = '';
       
-      // Filter list based on toggle
-      const filteredHistory = historyList.filter(item => showCancelled || item.status !== 'cancelled');
+      // Filter list based on search, date, and tab status
+      const filteredHistory = historyList.filter(item => {
+        // 1. Status Filter Tab
+        if (currentStatusFilter === 'active') {
+          if (item.status !== 'booked') return false;
+        } else if (currentStatusFilter === 'done') {
+          if (item.status !== 'done') return false;
+        } else if (currentStatusFilter === 'cancelled') {
+          if (item.status !== 'cancelled') return false;
+        }
+
+        // 2. Search query filter (matches name, code, plan)
+        if (searchVal) {
+          const nameMatch = (item.name || '').toLowerCase().includes(searchVal);
+          const codeMatch = (item.code || '').toLowerCase().includes(searchVal);
+          const planMatch = (item.plan || '').toLowerCase().includes(searchVal);
+          if (!nameMatch && !codeMatch && !planMatch) return false;
+        }
+
+        // 3. Date filter
+        if (filterDate && item.date !== filterDate) {
+          return false;
+        }
+
+        return true;
+      });
 
       if (filteredHistory.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px; color: var(--mid-gray); font-weight: 600;">No bookings found.</td></tr>';
+        updateRevenueTracker();
+        updateQuickStats();
         return;
       }
 
@@ -1905,17 +2577,26 @@
       sortedHistory.forEach((item) => {
         const tr = document.createElement('tr');
         const isCancelled = item.status === 'cancelled';
+        const isDone = item.status === 'done';
         if (isCancelled) {
           tr.className = 'row-cancelled';
+        } else if (isDone) {
+          tr.className = 'row-done';
         }
 
-        const badgeClass = isCancelled ? 'badge badge-cancelled' : 'badge';
+        let badgeClass = 'badge badge-booked';
+        if (isCancelled) badgeClass = 'badge badge-cancelled';
+        else if (isDone) badgeClass = 'badge badge-done';
+
         const actionHtml = isCancelled 
           ? `<span style="font-size: 11px; color: var(--mid-gray);">Cancelled</span>`
-          : `<div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-              <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; min-height: 28px; background: var(--primary-purple); color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="openAdminRescheduleModal('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}', '${item.plan.replace(/'/g, "\\'")}')">📅 Reschedule</button>
-              <button class="btn-cancel" style="padding: 4px 8px; font-size: 11px; min-height: 28px;" onclick="cancelBooking('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}')">❌ Cancel</button>
-             </div>`;
+          : (isDone 
+              ? `<span style="font-size: 11px; color: var(--mid-gray);">✔️ Done</span>`
+              : `<div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                  <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; min-height: 28px; background: var(--primary-purple); color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="openAdminRescheduleModal('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}', '${item.plan.replace(/'/g, "\\'")}')">📅 Reschedule</button>
+                  <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; min-height: 28px; background: var(--green); color: var(--deep-purple); border: none; border-radius: 4px; cursor: pointer; font-weight: 700;" onclick="completeBookingManually('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}')">✔️ Done</button>
+                  <button class="btn-cancel" style="padding: 4px 8px; font-size: 11px; min-height: 28px;" onclick="cancelBooking('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}')">❌ Cancel</button>
+                 </div>`);
 
         tr.innerHTML = `
           <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')"><strong>${item.date}</strong></td>
@@ -1928,6 +2609,112 @@
         `;
         tbody.appendChild(tr);
       });
+
+      // Update financial summary and dashboard stats
+      updateRevenueTracker();
+      updateQuickStats();
+    }
+
+    function clearFilters() {
+      const search = document.getElementById('search-input');
+      const date = document.getElementById('filter-date-input');
+      if (search) search.value = '';
+      if (date) date.value = '';
+      setStatusFilter('active');
+    }
+
+    async function completeBookingManually(dateStr, slotStr, nameStr) {
+      const confirmed = await showCustomConfirm(
+        "Complete Booking", 
+        `Mark booking for ${nameStr} on ${dateStr} (${slotStr}) as completed (Done)?`, 
+        "✅"
+      );
+      
+      if (!confirmed) return;
+
+      // 1. Update locally
+      const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr);
+      let targetCode = '';
+      if (idx !== -1) {
+        targetCode = historyList[idx].code || '';
+        historyList[idx].status = 'done';
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+        renderHistory();
+      }
+
+      // 2. Sync to Sheets
+      const scriptUrl = localStorage.getItem('cleanse_script_url');
+      if (scriptUrl) {
+        try {
+          const payload = new URLSearchParams({
+            action: 'complete',
+            date: dateStr,
+            slot: slotStr,
+            code: targetCode,
+            sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+          });
+
+          const response = await fetch(scriptUrl, {
+            method: 'POST',
+            body: payload,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+
+          if (response.ok) {
+            const resText = await response.text();
+            if (resText.toLowerCase().includes("success")) {
+              showCustomAlert("Booking Completed", `The booking has been marked completed in your Google Sheet.`, "✅");
+            }
+          }
+          syncBookingsFromSheet();
+        } catch (err) {
+          console.error("Network error trying to complete sheet booking:", err);
+          showCustomAlert("Sheet Sync Issue", "Booking completed locally. Sheet sync failed.", "⚠️");
+        }
+      } else {
+        showCustomAlert("Local Complete", "Marked completed locally only. Apps Script URL missing.", "⚠️");
+      }
+    }
+
+    function updateQuickStats() {
+      if (!document.getElementById('stats-active-count')) return;
+
+      // 1. Active count
+      const activeCount = historyList.filter(item => item.status === 'booked').length;
+      document.getElementById('stats-active-count').textContent = activeCount;
+
+      // 2. Est. Monthly Revenue (for the current month)
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const targetMonthStr = `${currentYear}-${currentMonth}`;
+      
+      let monthlyRevenue = 0;
+      
+      historyList.forEach(item => {
+        if (item.status !== 'cancelled' && item.date && item.date.startsWith(targetMonthStr)) {
+          monthlyRevenue += Number(item.price) || 0;
+        }
+      });
+      
+      document.getElementById('stats-monthly-revenue').textContent = `₦${monthlyRevenue.toLocaleString()}`;
+      
+      const monthName = now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      document.getElementById('stats-monthly-label').textContent = `For ${monthName}`;
+
+      // 3. Pending Alerts (count of active reminders)
+      const pendingAlerts = reminders.length;
+      document.getElementById('stats-pending-alerts').textContent = pendingAlerts;
+      
+      const urgentCount = reminders.filter(r => r.priority === 'urgent').length;
+      const alertMeta = document.getElementById('stats-alerts-meta');
+      if (urgentCount > 0) {
+        alertMeta.textContent = `${urgentCount} Urgent Action Required`;
+        alertMeta.style.color = 'var(--red)';
+      } else {
+        alertMeta.textContent = `Active reminders`;
+        alertMeta.style.color = 'var(--mid-gray)';
+      }
     }
 
     // Cancel Booking Action
@@ -1942,7 +2729,9 @@
 
       // 1. Update locally
       const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr);
+      let targetCode = '';
       if (idx !== -1) {
+        targetCode = historyList[idx].code || '';
         historyList[idx].status = 'cancelled';
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
         renderHistory();
@@ -1955,7 +2744,9 @@
           const payload = new URLSearchParams({
             action: 'cancel',
             date: dateStr,
-            slot: slotStr
+            slot: slotStr,
+            code: targetCode,
+            sheetId: localStorage.getItem('cleanse_sheet_id') || ''
           });
 
           const response = await fetch(scriptUrl, {
@@ -1965,11 +2756,11 @@
           });
 
           if (response.ok) {
-            const resData = await response.json();
-            if (resData.success) {
+            const resText = await response.text();
+            if (resText.toLowerCase().includes("success")) {
               showCustomAlert("Booking Cancelled", `The slot on ${dateStr} has been freed.`, "✅");
             } else {
-              console.warn("Sheet cancellation reports failure:", resData.error);
+              console.warn("Sheet cancellation reports failure:", resText);
             }
           }
           syncBookingsFromSheet();
@@ -2038,8 +2829,8 @@
       // Clash check
       const hasClash = checkClash(newDateVal, newSlotVal);
       if (hasClash) {
-        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: This date/time has a conflict. Reschedule anyway?", "⚠️");
-        if (!confirmed) return;
+        showCustomAlert("Schedule Conflict", "Cannot reschedule: This date/time slot is already booked.", "❌");
+        return;
       }
 
       const scriptUrl = localStorage.getItem('cleanse_script_url');
@@ -2059,7 +2850,9 @@
         const cancelPayload = new URLSearchParams({
           action: 'cancel',
           date: oldTarget.date,
-          slot: oldTarget.slot
+          slot: oldTarget.slot,
+          code: oldTarget.code || '',
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
         });
         const cancelResponse = await fetch(scriptUrl, {
           method: 'POST',
@@ -2077,7 +2870,9 @@
           slot: newSlotVal,
           status: 'booked',
           name: oldTarget.name,
-          plan: oldTarget.plan
+          plan: oldTarget.plan,
+          code: oldTarget.code || '',
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
         });
         const bookResponse = await fetch(scriptUrl, {
           method: 'POST',
@@ -2212,36 +3007,40 @@
       btn.disabled = true;
 
       try {
-        let successCount = 0;
-        for (const visit of scheduledVisits) {
-          const payload = new URLSearchParams({
-            action: 'cancel',
-            date: visit.date,
-            slot: visit.slot
-          });
-
-          const response = await fetch(scriptUrl, {
-            method: 'POST',
-            body: payload,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          });
-
-          if (response.ok) {
-            successCount++;
-          }
-
-          // Update locally
+        // Update status to cancelled in local historyList
+        scheduledVisits.forEach(visit => {
           const idx = historyList.findIndex(item => item.date === visit.date && item.slot === visit.slot);
           if (idx !== -1) {
             historyList[idx].status = 'cancelled';
           }
-        }
-
+        });
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
-        showCustomAlert("Success", `Cancelled ${successCount} visits for code ${code} successfully!`, "🎉");
-        
-        clearInput();
-        syncBookingsFromSheet();
+
+        // Perform a single batch sync request to update Google Sheets
+        const payload = new URLSearchParams({
+          action: 'sync',
+          bookings: JSON.stringify(historyList),
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+        });
+
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          body: payload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (response.ok) {
+          const resText = await response.text();
+          if (resText.toLowerCase().includes("success")) {
+            showCustomAlert("Success", `Cancelled all visits for code ${code} successfully!`, "🎉");
+            clearInput();
+            syncBookingsFromSheet();
+          } else {
+            throw new Error(resText);
+          }
+        } else {
+          throw new Error("HTTP error " + response.status);
+        }
       } catch (err) {
         console.error(err);
         showCustomAlert("Cancellation Error", "Failed to process cancellation. Check connection.", "❌");
@@ -2281,8 +3080,8 @@
       // Clash check
       const hasClash = checkClash(newDate, newSlot);
       if (hasClash) {
-        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: The new reschedule date/time has a conflict. Reschedule anyway?", "⚠️");
-        if (!confirmed) return;
+        showCustomAlert("Schedule Conflict", "Cannot reschedule: The new date/time slot is already booked.", "❌");
+        return;
       }
 
       const scriptUrl = localStorage.getItem('cleanse_script_url');
@@ -2297,41 +3096,7 @@
       btn.disabled = true;
 
       try {
-        // 1. Cancel old booking
-        const cancelPayload = new URLSearchParams({
-          action: 'cancel',
-          date: oldDate,
-          slot: oldSlot
-        });
-        const cancelResponse = await fetch(scriptUrl, {
-          method: 'POST',
-          body: cancelPayload,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
-
-        if (!cancelResponse.ok) {
-          throw new Error("Old booking cancellation request failed");
-        }
-
-        // 2. Book new booking
-        const bookPayload = new URLSearchParams({
-          date: newDate,
-          slot: newSlot,
-          status: 'booked',
-          name: currentCustomer.name,
-          plan: currentCustomer.plan
-        });
-        const bookResponse = await fetch(scriptUrl, {
-          method: 'POST',
-          body: bookPayload,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
-
-        if (!bookResponse.ok) {
-          throw new Error("New booking creation request failed");
-        }
-
-        // 3. Update locally
+        // Update old booking to cancelled locally
         const idx = historyList.findIndex(item => item.date === oldDate && item.slot === oldSlot);
         let oldItem = null;
         if (idx !== -1) {
@@ -2354,12 +3119,33 @@
           preferences: oldItem ? oldItem.preferences : 'None',
           rawMessage: document.getElementById('order-input').value
         });
-
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
-        showCustomAlert("Success", `Successfully rescheduled booking to ${newDate} (${newSlot})`, "🎉");
 
-        clearInput();
-        syncBookingsFromSheet();
+        // Perform a single batch sync request to update Google Sheets
+        const payload = new URLSearchParams({
+          action: 'sync',
+          bookings: JSON.stringify(historyList),
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+        });
+
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          body: payload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (response.ok) {
+          const resText = await response.text();
+          if (resText.toLowerCase().includes("success")) {
+            showCustomAlert("Success", `Successfully rescheduled booking to ${newDate} (${newSlot})`, "🎉");
+            clearInput();
+            syncBookingsFromSheet();
+          } else {
+            throw new Error(resText);
+          }
+        } else {
+          throw new Error("HTTP error " + response.status);
+        }
       } catch (err) {
         console.error(err);
         showCustomAlert("Rescheduling Error", "Failed to process rescheduling.", "❌");
@@ -2392,12 +3178,34 @@
     async function clearHistory() {
       const verified = await showPasswordPrompt();
       if (verified) {
-        const confirmed = await showCustomConfirm("Clear List", "Are you sure you want to clear the list?", "🗑️");
+        const confirmed = await showCustomConfirm("Clear List", "Are you sure you want to clear the list? This will also delete all bookings in the Google Sheet.", "🗑️");
         if (confirmed) {
           historyList = [];
+          liveBookedSlots = {};
           localStorage.removeItem('cleanse_booking_history');
           renderHistory();
-          showCustomAlert("History Cleared", "The booking list has been cleared successfully.", "✅");
+          
+          // Clear Google Sheets by syncing an empty list
+          const scriptUrl = localStorage.getItem('cleanse_script_url');
+          if (scriptUrl) {
+            try {
+              const payload = new URLSearchParams({
+                action: 'sync',
+                bookings: '[]',
+                sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+              });
+              await fetch(scriptUrl, {
+                method: 'POST',
+                body: payload,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+              });
+            } catch (err) {
+              console.warn("Failed to clear Google Sheet during history clear:", err);
+            }
+          }
+          
+          syncBookingsFromSheet();
+          showCustomAlert("History Cleared", "Local history and Google Sheet bookings have been cleared successfully.", "✅");
           runReminderEngine();
         }
       }
@@ -2411,6 +3219,10 @@
       scheduledVisits = [];
       document.getElementById('travel-time-container').innerHTML = '';
       
+      if (document.getElementById('parser-empty-state')) {
+        document.getElementById('parser-empty-state').style.display = 'flex';
+      }
+
       // Reset submit button state
       const submitBtn = document.getElementById('btn-auto-submit');
       submitBtn.textContent = "⚡ Save All Visits to Google Sheet";
@@ -2426,20 +3238,154 @@
           .then(reg => console.log('Service Worker registered successfully:', reg.scope))
           .catch(err => console.warn('Service Worker registration failed:', err));
 
-        // Request permission if not granted
-        if (Notification.permission === 'default') {
+        // Request permission if not granted and not prompted yet
+        if (Notification.permission === 'default' && !localStorage.getItem('cleanse_notifications_prompted')) {
           setTimeout(() => {
             showCustomConfirm(
               "Enable Alerts",
               "Would you like to enable background desktop reminders for client bookings?",
               "🔔"
             ).then(confirm => {
+              localStorage.setItem('cleanse_notifications_prompted', 'true');
               if (confirm) {
                 Notification.requestPermission();
               }
             });
           }, 3000);
         }
+      }
+    }
+
+    async function pasteFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          document.getElementById('order-input').value = text;
+        } else {
+          showCustomAlert("Clipboard Empty", "No text found in clipboard.", "⚠️");
+        }
+      } catch (err) {
+        console.warn("Clipboard access denied/unsupported:", err);
+        showCustomAlert("Access Denied", "Could not read clipboard automatically. Please press Ctrl+V to paste.", "❌");
+      }
+    }
+
+    async function syncAllLocalCodesToSheet() {
+      const scriptUrl = localStorage.getItem('cleanse_script_url') || document.getElementById('script-url-input').value.trim();
+      if (!scriptUrl) {
+        showCustomAlert("Configuration Missing", "Please save a Google Apps Script Web App URL first under settings!", "⚙️");
+        return;
+      }
+
+      // Ensure all bookings have codes locally first
+      ensureAllBookingsHaveCodes();
+
+      if (historyList.length === 0) {
+        showCustomAlert("No Bookings", "No bookings found in history to sync.", "⚠️");
+        return;
+      }
+
+      // Show temporary alert/loading
+      showCustomAlert("Syncing Database", `Pushing ${historyList.length} bookings to Google Sheets...`, "⌛");
+
+      try {
+        const payload = new URLSearchParams({
+          action: 'sync',
+          bookings: JSON.stringify(historyList),
+          sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+        });
+
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          body: payload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (response.ok) {
+          const resText = await response.text();
+          if (resText.toLowerCase().includes("success")) {
+            closeCustomAlert();
+            showCustomAlert("Sync Success", `Successfully synchronized ${historyList.length} bookings to Google Sheets in one batch!`, "🎉");
+            syncBookingsFromSheet();
+          } else {
+            throw new Error(resText);
+          }
+        } else {
+          throw new Error("HTTP error " + response.status);
+        }
+      } catch (err) {
+        console.error(err);
+        closeCustomAlert();
+        showCustomAlert("Sync Error", "Failed to push database to Google Sheet. Check console logs or network settings.", "❌");
+      }
+    }
+
+    async function autoCompletePassedBookings() {
+      const now = new Date();
+      const scriptUrl = localStorage.getItem('cleanse_script_url');
+      let updated = false;
+
+      const getSlotEndHour = (slotStr) => {
+        if (!slotStr) return 11;
+        const s = slotStr.toLowerCase();
+        if (s.includes("8am")) return 11;
+        if (s.includes("11am")) return 14;
+        if (s.includes("2pm")) {
+          if (s.includes("4pm")) return 16;
+          return 17;
+        }
+        if (s.includes("4pm")) return 18;
+        if (s.includes("6pm")) return 20;
+        return 22;
+      };
+
+      for (let item of historyList) {
+        if (item.status === 'booked' && item.date) {
+          const bookingDate = new Date(item.date);
+          const endHour = getSlotEndHour(item.slot);
+          const bookingEndDateTime = new Date(
+            bookingDate.getFullYear(),
+            bookingDate.getMonth(),
+            bookingDate.getDate(),
+            endHour,
+            0,
+            0
+          );
+
+          if (now > bookingEndDateTime) {
+            item.status = 'done';
+            updated = true;
+
+            if (scriptUrl) {
+              try {
+                const payload = new URLSearchParams({
+                  action: 'complete',
+                  date: item.date,
+                  slot: item.slot,
+                  status: 'done',
+                  name: item.name,
+                  plan: item.plan,
+                  code: item.code || '',
+                  sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+                });
+                await fetch(scriptUrl, {
+                  method: 'POST',
+                  body: payload,
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                console.log(`Auto-completed and updated sheet for: ${item.name} on ${item.date}`);
+              } catch (err) {
+                console.warn("Failed to auto-update sheet status to done:", err);
+              }
+            }
+          }
+        }
+      }
+
+      if (updated) {
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+        renderHistory();
+        updateRevenueTracker();
       }
     }
 
@@ -2580,14 +3526,14 @@
             timeLabel,
             name: booking.name,
             slot: booking.slot,
-            date: booking.date
+            date: booking.date,
+            dateTime: bookingDateTime
           });
         }
       });
 
-      // Sort reminders: urgent first, then soon, then upcoming
-      const priorityOrder = { 'urgent': 1, 'soon': 2, 'upcoming': 3 };
-      reminders.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+      // Sort reminders chronologically (earliest date & slot first)
+      reminders.sort((a, b) => a.dateTime - b.dateTime);
 
       renderRemindersUI();
     }
@@ -2644,6 +3590,7 @@
       } else {
         stickyBanner.style.display = 'none';
       }
+      updateQuickStats();
     }
 
     function dismissReminder(id) {

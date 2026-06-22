@@ -258,6 +258,9 @@
     background: var(--deep-purple);
   }
   .hero-right img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1706,6 +1709,22 @@
     display: block !important;
     width: 100% !important;
     margin-top: 24px !important;
+  }
+
+  /* Responsive overrides for Discount Modal */
+  @media (max-width: 768px) {
+    #discount-modal #discount-modal-content {
+      grid-template-columns: 1fr !important;
+      height: auto !important;
+      max-height: 90vh !important;
+      max-width: 480px !important;
+    }
+    #discount-modal .discount-modal-left {
+      display: none !important;
+    }
+    #discount-modal .discount-modal-right {
+      padding: 32px 20px !important;
+    }
   }
 
 
