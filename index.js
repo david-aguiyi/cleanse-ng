@@ -2117,12 +2117,185 @@ function setupSafariFormSubmitWorkaround() {
   }
 }
 
+// ═══════════════════════════════════════
+// RESCHEDULE & CANCELLATION MODULE
+// ═══════════════════════════════════════
+function initRescheduleModule() {
+  const rescheduleModal = document.getElementById('reschedule-modal');
+  const closeBtn = document.getElementById('reschedule-modal-close-btn');
+  const form = document.getElementById('reschedule-form');
+  const radioReschedule = document.querySelector('input[name="reschedule-action"][value="reschedule"]');
+  const radioCancel = document.querySelector('input[name="reschedule-action"][value="cancel"]');
+  const newDetailsSection = document.getElementById('reschedule-new-details-section');
+  
+  const inputNewDate = document.getElementById('reschedule-new-date');
+  const selectNewSlot = document.getElementById('reschedule-new-slot');
+
+  // Set min dates
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const yyyy = tomorrow.getFullYear();
+  const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const dd = String(tomorrow.getDate()).padStart(2, '0');
+  const minDateStr = `${yyyy}-${mm}-${dd}`;
+  
+  if (inputNewDate) inputNewDate.min = minDateStr;
+
+  // Toggle sections based on action
+  function handleActionChange() {
+    const isCancel = radioCancel && radioCancel.checked;
+    if (isCancel) {
+      if (newDetailsSection) newDetailsSection.style.display = 'none';
+      if (inputNewDate) inputNewDate.required = false;
+      if (selectNewSlot) selectNewSlot.required = false;
+    } else {
+      if (newDetailsSection) newDetailsSection.style.display = 'flex';
+      if (inputNewDate) inputNewDate.required = true;
+      if (selectNewSlot) selectNewSlot.required = true;
+    }
+  }
+
+  if (radioReschedule) radioReschedule.addEventListener('change', handleActionChange);
+  if (radioCancel) radioCancel.addEventListener('change', handleActionChange);
+
+  // Open modal
+  window.openRescheduleModal = function() {
+    if (rescheduleModal) {
+      rescheduleModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // Pre-fill Name & Phone if they filled it in the booking modal already
+      const bookingName = document.getElementById('booking-name');
+      const bookingPhone = document.getElementById('booking-phone');
+      const resName = document.getElementById('reschedule-name');
+      const resPhone = document.getElementById('reschedule-phone');
+      if (bookingName && resName && bookingName.value) resName.value = bookingName.value;
+      if (bookingPhone && resPhone && bookingPhone.value) resPhone.value = bookingPhone.value;
+    }
+  };
+
+  window.closeRescheduleModal = function() {
+    if (rescheduleModal) {
+      rescheduleModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  if (closeBtn) closeBtn.addEventListener('click', closeRescheduleModal);
+
+  // Close when clicking outside content
+  if (rescheduleModal) {
+    rescheduleModal.addEventListener('click', (e) => {
+      if (e.target === rescheduleModal) {
+        closeRescheduleModal();
+      }
+    });
+  }
+
+  // Bind trigger buttons
+  const navBtn = document.getElementById('nav-reschedule-btn');
+  const footerBtn = document.getElementById('footer-reschedule-btn');
+
+  if (navBtn) {
+    navBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openRescheduleModal();
+    });
+  }
+  if (footerBtn) {
+    footerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openRescheduleModal();
+    });
+  }
+
+  // Form submission
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const valMsg = document.getElementById('reschedule-validation-msg');
+      if (valMsg) valMsg.textContent = '';
+
+      const name = _sanitize(document.getElementById('reschedule-name').value, 100);
+      const phone = document.getElementById('reschedule-phone').value.trim();
+      const origDateVal = document.getElementById('reschedule-orig-date').value;
+      const origSlot = document.getElementById('reschedule-orig-slot').value;
+      const action = document.querySelector('input[name="reschedule-action"]:checked').value;
+      const reason = _sanitize(document.getElementById('reschedule-reason').value || 'None', 500);
+
+      if (name.length < 2) {
+        if (valMsg) valMsg.textContent = 'Please enter a valid name (at least 2 characters).';
+        return;
+      }
+      if (!_validatePhone(phone)) {
+        if (valMsg) valMsg.textContent = 'Please enter a valid phone number (7-15 digits).';
+        return;
+      }
+      if (!origDateVal) {
+        if (valMsg) valMsg.textContent = 'Please select the original date.';
+        return;
+      }
+      if (!origSlot) {
+        if (valMsg) valMsg.textContent = 'Please select the original time slot.';
+        return;
+      }
+
+      const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
+      const formatDateFriendly = (dStr) => {
+        const parts = dStr.split('-');
+        if (parts.length !== 3) return dStr;
+        const dObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        return dObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      };
+
+      const friendlyOrigDate = formatDateFriendly(origDateVal);
+
+      let waMessage = "";
+      if (action === 'cancel') {
+        waMessage = `Hello cleanse.ng! I would like to cancel my scheduled cleaning:\n\n` +
+          `• *Name:* ${name}\n` +
+          `• *Phone:* ${sanitizedPhone}\n` +
+          `• *Original Date:* ${friendlyOrigDate}\n` +
+          `• *Original Slot:* ${origSlot}\n` +
+          `• *Reason:* ${reason}`;
+      } else {
+        const newDateVal = document.getElementById('reschedule-new-date').value;
+        const newSlot = document.getElementById('reschedule-new-slot').value;
+        
+        if (!newDateVal) {
+          if (valMsg) valMsg.textContent = 'Please select a new date.';
+          return;
+        }
+        if (!newSlot) {
+          if (valMsg) valMsg.textContent = 'Please select a new time slot.';
+          return;
+        }
+
+        const friendlyNewDate = formatDateFriendly(newDateVal);
+        waMessage = `Hello cleanse.ng! I would like to reschedule my scheduled cleaning:\n\n` +
+          `• *Name:* ${name}\n` +
+          `• *Phone:* ${sanitizedPhone}\n` +
+          `• *Original Date:* ${friendlyOrigDate}\n` +
+          `• *Original Slot:* ${origSlot}\n` +
+          `• *New Date:* ${friendlyNewDate}\n` +
+          `• *New Slot:* ${newSlot}\n` +
+          `• *Reason:* ${reason}`;
+      }
+
+      const whatsappUrl = _getWaUrl(waMessage);
+      window.open(whatsappUrl, '_blank');
+      closeRescheduleModal();
+    });
+  }
+}
+
 // Initialize all features on load
 window.addEventListener('DOMContentLoaded', () => {
   runRealtimeValidation();
   setupStep4InlineEditing();
   setupSafariFormSubmitWorkaround();
   restoreSessionState();
+  initRescheduleModule();
 
   // Initialize testimonial slider & fetch Google Sheet data
   initTestimonialSlider();

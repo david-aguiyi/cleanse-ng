@@ -148,10 +148,13 @@
 
   <!-- NAV -->
   <nav>
-    <a class="nav-logo brand-logo" href="#">cleanse<span class="dot-ng">.ng</span></a>
+    <a class="nav-logo brand-logo" href="#" style="text-decoration: none;">
+      <span style="font-family: var(--font-header); font-weight: 700; font-size: 24px; letter-spacing: -0.03em; color: var(--deep-purple);">cleanse<span style="color: #7CFC00;">.ng</span></span>
+    </a>
     <ul class="nav-links">
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#" id="nav-reschedule-btn">Reschedule / Cancel</a></li>
       <li><a href="#" data-wa-link>Contact</a></li>
     </ul>
     <a class="nav-cta" href="#" data-wa-link>Book Now</a>
@@ -205,7 +208,7 @@
       <p class="eyebrow">How it's different</p>
       <p>Full-time, trained employees provide a spotless home for a flat monthly fee, so you never have to chase down or
         manage a cleaner again.</p>
-      <a class="btn-ghost" href="#pricing">See how cleanse.ng works →</a>
+      <a class="btn-ghost" href="#pricing">See how <span>cleanse<span style="color: #7CFC00; font-weight: 700;">.ng</span></span> works →</a>
     </div>
   </section>
 
@@ -402,7 +405,9 @@
   <footer>
     <div class="footer-top">
       <div>
-        <div class="footer-brand brand-logo">cleanse<span class="dot-ng">.ng</span></div>
+        <div class="footer-brand brand-logo">
+          <img src="./logo.png" alt="cleanse.ng" class="logo-img">
+        </div>
         <p class="footer-tagline">For those who know what their time is worth. Ibadan, Oyo State — serving GRA, Bodija,
           Jericho, Iyaganku, Akobo & Oluyole.</p>
         <div class="footer-contact">
@@ -421,6 +426,7 @@
         <h4>Support</h4>
         <ul>
           <li><a href="#faq">FAQ</a></li>
+          <li><a href="#" id="footer-reschedule-btn">Reschedule / Cancel</a></li>
           <li><a href="#" data-wa-link>Contact</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
@@ -969,6 +975,105 @@
       <button id="policy-modal-agree-btn" class="btn-primary"
         style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); margin-top: 10px;">I
         Understand & Agree</button>
+    </div>
+  </div>
+
+  <!-- RESCHEDULE & CANCEL MODAL -->
+  <div class="booking-modal-overlay" id="reschedule-modal">
+    <div class="booking-modal-content" style="max-width: 500px; height: auto; max-height: 90vh; overflow-y: auto; padding: 32px; display: flex; flex-direction: column; gap: 20px; border-radius: 0; box-shadow: 0 24px 48px rgba(26, 13, 51, 0.25);">
+      <button class="booking-modal-close" id="reschedule-modal-close-btn" aria-label="Close modal">&times;</button>
+      
+      <div style="text-align: left; display: flex; flex-direction: column; gap: 8px;">
+        <h2 style="font-family: var(--font-header); font-weight: 700; color: var(--deep-purple); font-size: 24px; margin: 0; letter-spacing: -0.02em;">Reschedule or Cancel</h2>
+        <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5; margin: 0; font-weight: 500;">
+          Let us know what changes you want to make. We will generate your WhatsApp message to update your booking.
+        </p>
+      </div>
+
+      <form class="booking-form" id="reschedule-form" style="margin-top: 4px; display: flex; flex-direction: column; gap: 16px;">
+        <!-- Option: Cancel or Reschedule -->
+        <div class="form-group full-width" style="margin: 0;">
+          <label style="margin-bottom: 8px; display: block; font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple);">What would you like to do? *</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <label style="border: 1px solid var(--border); padding: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--off-white);" id="label-action-reschedule">
+              <input type="radio" name="reschedule-action" value="reschedule" checked style="accent-color: var(--primary-purple); cursor: pointer; width: 18px; height: 18px; margin: 0;">
+              <span style="font-size: 14px; font-weight: 600; font-family: var(--font-header); color: var(--deep-purple);">Reschedule</span>
+            </label>
+            <label style="border: 1px solid var(--border); padding: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--off-white);" id="label-action-cancel">
+              <input type="radio" name="reschedule-action" value="cancel" style="accent-color: var(--primary-purple); cursor: pointer; width: 18px; height: 18px; margin: 0;">
+              <span style="font-size: 14px; font-weight: 600; font-family: var(--font-header); color: var(--deep-purple);">Cancel Booking</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group" style="margin: 0;">
+            <label for="reschedule-name" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Full Name *</label>
+            <input type="text" id="reschedule-name" required placeholder="Jane Doe" style="width: 100%;">
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label for="reschedule-phone" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Phone Number *</label>
+            <input type="tel" id="reschedule-phone" required placeholder="+234 801 234 5678" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Original Booking Details -->
+        <div style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <h4 style="font-family: var(--font-header); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--primary-purple); margin: 0;">Original Booking Details</h4>
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group" style="margin: 0;">
+              <label for="reschedule-orig-date" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Original Date *</label>
+              <input type="date" id="reschedule-orig-date" required style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label for="reschedule-orig-slot" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Original Time Slot *</label>
+              <select id="reschedule-orig-slot" required style="width: 100%;">
+                <option value="" disabled selected>Select slot</option>
+                <option value="8am - 11am">8am - 11am</option>
+                <option value="11am - 2pm">11am - 2pm</option>
+                <option value="2pm - 5pm">2pm - 5pm</option>
+                <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
+                <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Booking Details (Shown only for rescheduling) -->
+        <div id="reschedule-new-details-section" style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <h4 style="font-family: var(--font-header); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--primary-purple); margin: 0;">New Booking Details</h4>
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group" style="margin: 0;">
+              <label for="reschedule-new-date" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">New Date *</label>
+              <input type="date" id="reschedule-new-date" required style="width: 100%;">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label for="reschedule-new-slot" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">New Time Slot *</label>
+              <select id="reschedule-new-slot" required style="width: 100%;">
+                <option value="" disabled selected>Select slot</option>
+                <option value="8am - 11am">8am - 11am</option>
+                <option value="11am - 2pm">11am - 2pm</option>
+                <option value="2pm - 5pm">2pm - 5pm</option>
+                <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
+                <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason -->
+        <div class="form-group full-width" style="margin: 0;">
+          <label for="reschedule-reason" style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Reason (Optional)</label>
+          <textarea id="reschedule-reason" placeholder="e.g. Moving to another day due to work travel..." style="min-height: 80px; width: 100%;"></textarea>
+        </div>
+
+        <div class="inline-validation-msg" id="reschedule-validation-msg" style="margin-top: 4px;"></div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 12px; text-align: center; justify-content: center; font-family: var(--font-header); margin-top: 8px;">
+          Send Request via WhatsApp →
+        </button>
+      </form>
     </div>
   </div>
 

@@ -58,15 +58,17 @@
 
   /* ── BRAND LOGO CLASS ── */
   .brand-logo {
-    font-family: var(--font-header);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: inherit;
-    text-transform: lowercase;
+    display: flex;
+    align-items: center;
     text-decoration: none;
   }
-  .brand-logo .dot-ng {
-    color: var(--neon-green);
+  .brand-logo .logo-img {
+    height: 28px;
+    width: auto;
+    display: block;
+  }
+  .footer-brand .logo-img {
+    height: 32px;
   }
   .text-green {
     color: var(--neon-green) !important;
@@ -102,7 +104,6 @@
     z-index: 100;
   }
   .nav-logo {
-    font-size: 24px;
     color: var(--deep-purple);
   }
   .nav-links {
@@ -139,7 +140,7 @@
   .hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 88vh;
+    min-height: calc(100vh - 72px);
     overflow: hidden;
     background: var(--deep-purple);
     color: var(--white);
@@ -211,7 +212,7 @@
   }
   .btn-ghost {
     color: var(--deep-purple);
-    font-size: 14px;
+    font-size: 15px;
     font-family: var(--font-header);
     font-weight: 600;
     text-decoration: none;
@@ -219,23 +220,29 @@
     align-items: center;
     gap: 6px;
     border-bottom: 1.5px solid currentColor;
-    padding-bottom: 2px;
-    transition: color 0.2s, gap 0.2s;
+    padding: 4px 12px;
+    background: linear-gradient(110deg, rgba(58, 29, 109, 0.08) 50%, transparent 50%);
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    transition: color 0.2s, background-position 0.6s ease-in-out;
     cursor: pointer;
   }
   .btn-ghost:hover {
     color: var(--primary-purple);
-    gap: 10px;
+    background-position: 0 0;
   }
   .hero .btn-ghost {
     color: var(--white);
     border-bottom-color: var(--lavender);
-    transition: color 0.2s, border-color 0.2s, gap 0.2s;
+    background: linear-gradient(110deg, rgba(255, 255, 255, 0.15) 50%, transparent 50%);
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    transition: color 0.2s, border-color 0.2s, background-position 0.6s ease-in-out;
   }
   .hero .btn-ghost:hover {
     color: var(--neon-green);
     border-bottom-color: var(--neon-green);
-    gap: 10px;
+    background-position: 0 0;
   }
   .hero-areas {
     font-size: 12px;
@@ -678,9 +685,16 @@
   .trust-content .btn-ghost {
     margin-top: 12px;
     color: var(--deep-purple);
+    border: 1.5px solid var(--deep-purple);
+    padding: 12px 24px;
+    background: transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, gap 0.2s;
   }
   .trust-content .btn-ghost:hover {
-    color: var(--primary-purple);
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border-color: var(--primary-purple);
+    gap: 10px;
   }
 
   /* ── FAQ ── */

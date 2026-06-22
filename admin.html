@@ -850,6 +850,112 @@
     </div>
   </div>
 
+  <!-- ADMIN RESCHEDULE MODAL -->
+  <div class="alert-overlay" id="admin-reschedule-modal" style="display: none;">
+    <div class="alert-modal" style="max-width: 450px; text-align: left;">
+      <div class="alert-icon" style="text-align: center; margin-bottom: 8px;">📅</div>
+      <h3 class="alert-title" style="color: var(--neon-green); text-align: center; margin-bottom: 16px;">Reschedule Booking</h3>
+      
+      <div style="font-size: 14px; margin-bottom: 16px; color: var(--light-gray); background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px;">
+        <div><strong>Client:</strong> <span id="reschedule-admin-client-name">-</span></div>
+        <div><strong>Current Slot:</strong> <span id="reschedule-admin-current-slot">-</span></div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label for="reschedule-admin-date" style="color: var(--white); font-size: 12px; margin-bottom: 4px; display: block;">New Date</label>
+        <input type="date" id="reschedule-admin-date" style="width: 100%; border: 1px solid var(--border); padding: 10px; background: rgba(255,255,255,0.05); color: white;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="reschedule-admin-slot" style="color: var(--white); font-size: 12px; margin-bottom: 4px; display: block;">New Time Slot</label>
+        <select id="reschedule-admin-slot" style="width: 100%; border: 1px solid var(--border); padding: 10px; background: #1A0D33; color: white;">
+          <option value="8am - 11am">8am - 11am</option>
+          <option value="11am - 2pm">11am - 2pm</option>
+          <option value="2pm - 5pm">2pm - 5pm</option>
+          <option value="2pm - 4pm">2pm - 4pm (Sunday)</option>
+          <option value="4pm - 6pm">4pm - 6pm (Sunday)</option>
+        </select>
+      </div>
+
+      <div id="reschedule-admin-clash-warning" style="display: none; background: rgba(255, 94, 94, 0.1); border: 1px solid #ff5e5e; color: #ff5e5e; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 16px; font-weight: 600;">
+        ⚠️ Warning: This slot is already booked!
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary" style="flex: 1; min-height: 40px;" onclick="closeAdminRescheduleModal()">Cancel</button>
+        <button class="btn-primary" style="flex: 1; min-height: 40px;" onclick="confirmAdminReschedule()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT DETAILS POPUP MODAL -->
+  <div class="alert-overlay" id="client-details-modal" style="display: none; z-index: 2200;">
+    <div class="alert-modal" style="max-width: 550px; text-align: left; padding: 28px; display: flex; flex-direction: column; gap: 16px; background: #1A0D33; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+      <h3 class="alert-title" style="color: var(--neon-green); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin: 0; display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-family: 'Lexend';">
+        <span>Client Profile Details</span>
+        <span style="font-size: 13px; color: var(--light-gray); font-family: var(--font-body); font-weight: normal;" id="client-details-status">Status: Active</span>
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px; color: var(--light-gray); font-family: var(--font-body); max-height: 60vh; overflow-y: auto; padding-right: 4px;">
+        <!-- General details -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Name</label>
+            <div id="details-client-name" style="color: white; font-weight: 600; font-size: 15px;">-</div>
+          </div>
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Plan Type</label>
+            <div id="details-client-plan" style="color: white; font-weight: 600;">-</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Phone Number</label>
+            <div id="details-client-phone" style="color: white;">-</div>
+          </div>
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Email Address</label>
+            <div id="details-client-email" style="color: white;">-</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Booking Date</label>
+            <div id="details-client-date" style="color: white; font-weight: 600;">-</div>
+          </div>
+          <div>
+            <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Time Slot</label>
+            <div id="details-client-slot" style="color: white; font-weight: 600;">-</div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Address / Location</label>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="details-client-address" style="color: white;">-</span>
+            <a href="#" id="details-client-map-link" target="_blank" style="color: var(--neon-green); font-size: 11px; text-decoration: underline; font-weight: 600; margin-left: 8px;">🗺️ Open Maps</a>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 2px;">Preferences</label>
+          <div id="details-client-preferences" style="color: white; white-space: pre-line; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 4px; font-size: 13px;">-</div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <label style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); font-weight: 600; display: block; margin-bottom: 4px;">Original WhatsApp Message</label>
+          <pre id="details-client-raw-msg" style="color: var(--light-gray); background: rgba(0,0,0,0.25); padding: 12px; border-radius: 6px; font-size: 11px; overflow-x: auto; max-height: 120px; border: 1px solid rgba(255,255,255,0.05); font-family: monospace; white-space: pre-wrap; margin: 0;"></pre>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; margin-top: 4px;">
+        <button class="btn-primary" style="width: 100%; min-height: 40px;" onclick="closeClientDetailsModal()">Close Details</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <h1>cleanse<span>.ng</span> Scheduler</h1>
@@ -1518,7 +1624,13 @@
             slot: visit.slot,
             status: 'booked',
             name: currentCustomer.name,
-            plan: currentCustomer.plan
+            plan: currentCustomer.plan,
+            email: currentCustomer.email || '',
+            phone: currentCustomer.phone || '',
+            address: currentCustomer.address || '',
+            visits: currentCustomer.visits || '1 visit per month',
+            preferences: currentCustomer.preferences || 'None',
+            rawMessage: document.getElementById('order-input').value || ''
           });
         }
       });
@@ -1555,14 +1667,17 @@
         const badgeClass = isCancelled ? 'badge badge-cancelled' : 'badge';
         const actionHtml = isCancelled 
           ? `<span style="font-size: 11px; color: var(--mid-gray);">Cancelled</span>`
-          : `<button class="btn-cancel" onclick="cancelBooking('${item.date}', '${item.slot}', '${item.name}')">❌ Cancel</button>`;
+          : `<div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+              <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; min-height: 28px; background: var(--primary-purple); color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="openAdminRescheduleModal('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}', '${item.plan.replace(/'/g, "\\'")}')">📅 Reschedule</button>
+              <button class="btn-cancel" style="padding: 4px 8px; font-size: 11px; min-height: 28px;" onclick="cancelBooking('${item.date}', '${item.slot}', '${item.name.replace(/'/g, "\\'")}')">❌ Cancel</button>
+             </div>`;
 
         tr.innerHTML = `
-          <td><strong>${item.date}</strong></td>
-          <td>${item.slot}</td>
-          <td><span class="${badgeClass}">${item.status}</span></td>
-          <td>${item.name}</td>
-          <td>${item.plan}</td>
+          <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')"><strong>${item.date}</strong></td>
+          <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.slot}</td>
+          <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')"><span class="${badgeClass}">${item.status}</span></td>
+          <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.name}</td>
+          <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.plan}</td>
           <td style="text-align: center;">${actionHtml}</td>
         `;
         tbody.appendChild(tr);
@@ -1621,6 +1736,200 @@
       }
 
       runReminderEngine();
+    }
+
+    // Admin Reschedule State
+    let rescheduleTarget = null; // { date, slot, name, plan }
+
+    function openAdminRescheduleModal(dateStr, slotStr, nameStr, planStr) {
+      rescheduleTarget = { date: dateStr, slot: slotStr, name: nameStr, plan: planStr };
+      
+      document.getElementById('reschedule-admin-client-name').textContent = nameStr;
+      document.getElementById('reschedule-admin-current-slot').textContent = `${dateStr} (${slotStr})`;
+      
+      document.getElementById('reschedule-admin-date').value = dateStr;
+      document.getElementById('reschedule-admin-slot').value = slotStr;
+      document.getElementById('reschedule-admin-clash-warning').style.display = 'none';
+
+      // Watch for changes to date/slot to show warning if there's a clash
+      const checkClashInline = () => {
+        const newD = document.getElementById('reschedule-admin-date').value;
+        const newS = document.getElementById('reschedule-admin-slot').value;
+        const isClash = checkClash(newD, newS);
+        // Don't show clash if they selected the same slot
+        const isSame = (newD === dateStr && newS === slotStr);
+        document.getElementById('reschedule-admin-clash-warning').style.display = (isClash && !isSame) ? 'block' : 'none';
+      };
+
+      document.getElementById('reschedule-admin-date').onchange = checkClashInline;
+      document.getElementById('reschedule-admin-slot').onchange = checkClashInline;
+
+      document.getElementById('admin-reschedule-modal').style.display = 'flex';
+    }
+
+    function closeAdminRescheduleModal() {
+      document.getElementById('admin-reschedule-modal').style.display = 'none';
+      rescheduleTarget = null;
+    }
+
+    async function confirmAdminReschedule() {
+      if (!rescheduleTarget) return;
+
+      const newDateVal = document.getElementById('reschedule-admin-date').value;
+      const newSlotVal = document.getElementById('reschedule-admin-slot').value;
+
+      if (!newDateVal) {
+        showCustomAlert("Input Error", "Please select a reschedule date.", "⚠️");
+        return;
+      }
+
+      // Check if it's the exact same slot
+      if (newDateVal === rescheduleTarget.date && newSlotVal === rescheduleTarget.slot) {
+        closeAdminRescheduleModal();
+        return;
+      }
+
+      // Clash check
+      const hasClash = checkClash(newDateVal, newSlotVal);
+      if (hasClash) {
+        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: This date/time has a conflict. Reschedule anyway?", "⚠️");
+        if (!confirmed) return;
+      }
+
+      const scriptUrl = localStorage.getItem('cleanse_script_url');
+      if (!scriptUrl) {
+        showCustomAlert("Configuration Missing", "Please save a Google Apps Script Web App URL under settings first!", "⚙️");
+        return;
+      }
+
+      const oldTarget = rescheduleTarget;
+      closeAdminRescheduleModal();
+
+      // Show temporary alert/loading
+      showCustomAlert("Rescheduling", "Processing change in Google Sheets...", "⌛");
+
+      try {
+        // 1. Cancel old booking
+        const cancelPayload = new URLSearchParams({
+          action: 'cancel',
+          date: oldTarget.date,
+          slot: oldTarget.slot
+        });
+        const cancelResponse = await fetch(scriptUrl, {
+          method: 'POST',
+          body: cancelPayload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (!cancelResponse.ok) {
+          throw new Error("Old booking cancellation request failed");
+        }
+
+        // 2. Book new booking
+        const bookPayload = new URLSearchParams({
+          date: newDateVal,
+          slot: newSlotVal,
+          status: 'booked',
+          name: oldTarget.name,
+          plan: oldTarget.plan
+        });
+        const bookResponse = await fetch(scriptUrl, {
+          method: 'POST',
+          body: bookPayload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (!bookResponse.ok) {
+          throw new Error("New booking creation request failed");
+        }
+
+        // 3. Update locally
+        const idx = historyList.findIndex(item => item.date === oldTarget.date && item.slot === oldTarget.slot);
+        let oldItem = null;
+        if (idx !== -1) {
+          oldItem = historyList[idx];
+          // If we find it, update it to cancelled
+          historyList[idx].status = 'cancelled';
+        }
+        
+        // Add new booking locally preserving all original details
+        historyList.push({
+          date: newDateVal,
+          slot: newSlotVal,
+          status: 'booked',
+          name: oldTarget.name,
+          plan: oldTarget.plan,
+          email: oldItem ? oldItem.email : '',
+          phone: oldItem ? oldItem.phone : '',
+          address: oldItem ? oldItem.address : '',
+          visits: oldItem ? oldItem.visits : '1 visit per month',
+          preferences: oldItem ? oldItem.preferences : 'None',
+          rawMessage: oldItem ? oldItem.rawMessage : ''
+        });
+
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+        
+        // Close the "Rescheduling..." alert
+        closeCustomAlert();
+        showCustomAlert("Rescheduled", `Successfully rescheduled booking to ${newDateVal} (${newSlotVal})`, "🎉");
+
+        // Sync & refresh everything
+        syncBookingsFromSheet();
+      } catch (err) {
+        console.error(err);
+        closeCustomAlert();
+        showCustomAlert("Rescheduling Error", "Failed to reschedule booking. Check your connection or Web App URL.", "❌");
+      }
+    }
+
+    // Client Details Modal Helpers
+    function openClientDetails(dateStr, slotStr) {
+      const item = historyList.find(hl => hl.date === dateStr && hl.slot === slotStr);
+      if (!item) return;
+
+      document.getElementById('details-client-name').textContent = item.name || 'Unknown Client';
+      document.getElementById('details-client-plan').textContent = item.plan || 'Cleanse Plan';
+      document.getElementById('details-client-phone').textContent = item.phone || 'Not provided';
+      document.getElementById('details-client-email').textContent = item.email || 'Not provided';
+      document.getElementById('details-client-date').textContent = item.date || '-';
+      document.getElementById('details-client-slot').textContent = item.slot || '-';
+      document.getElementById('details-client-address').textContent = item.address || 'Not provided';
+      
+      const statusText = item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Booked';
+      const statusEl = document.getElementById('client-details-status');
+      statusEl.textContent = `Status: ${statusText}`;
+      if (item.status === 'cancelled') {
+        statusEl.style.color = '#ff5e5e';
+      } else {
+        statusEl.style.color = 'var(--neon-green)';
+      }
+
+      // Map link
+      const mapLink = document.getElementById('details-client-map-link');
+      if (item.address && item.address !== 'Not provided') {
+        mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`;
+        mapLink.style.display = 'inline-block';
+      } else {
+        mapLink.style.display = 'none';
+      }
+
+      // Preferences
+      const prefText = item.preferences || 'None';
+      document.getElementById('details-client-preferences').textContent = prefText;
+
+      // Raw Message
+      const rawText = item.rawMessage || 'Original WhatsApp message details not saved in booking history.';
+      document.getElementById('details-client-raw-msg').textContent = rawText;
+
+      document.getElementById('client-details-modal').style.display = 'flex';
+    }
+
+    function openClientDetailsFromReminder(dateStr, slotStr) {
+      openClientDetails(dateStr, slotStr);
+    }
+
+    function closeClientDetailsModal() {
+      document.getElementById('client-details-modal').style.display = 'none';
     }
 
     function downloadCSV() {
@@ -1865,7 +2174,7 @@
           const item = document.createElement('div');
           item.className = `reminder-item ${r.priority}`;
           item.innerHTML = `
-            <div class="reminder-item-text">
+            <div class="reminder-item-text" style="cursor: pointer;" onclick="openClientDetailsFromReminder('${r.date}', '${r.slot}')">
               <strong>${r.name}</strong> — ${r.timeLabel}
             </div>
             <button class="reminder-item-dismiss" onclick="dismissReminder('${r.id}')">✕ Snooze</button>
@@ -1879,6 +2188,8 @@
         const topRem = visibleReminders[0];
         stickyBanner.className = `reminder-banner ${topRem.priority}`;
         bannerText.innerHTML = `<strong>${topRem.priority.toUpperCase()}:</strong> Booking for ${topRem.name} ${topRem.timeLabel}`;
+        bannerText.style.cursor = 'pointer';
+        bannerText.onclick = () => openClientDetailsFromReminder(topRem.date, topRem.slot);
         stickyBanner.style.display = 'flex';
 
         // Fire background browser notifications for urgent/soon alerts
