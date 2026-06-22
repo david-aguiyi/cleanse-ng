@@ -812,7 +812,7 @@ async function syncBookingsFromSpreadsheet() {
     return;
   }
 
-  const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv`;
+  const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`;
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Network response was not ok");

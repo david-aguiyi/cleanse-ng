@@ -1034,6 +1034,7 @@
           <div class="result-card">
             <label style="color: var(--neon-green); font-size: 12px; margin-bottom: 12px; display: block;">Client Information</label>
             <div style="font-size: 14px; display: flex; flex-direction: column; gap: 8px; color: var(--light-gray);">
+              <div><strong style="color: var(--white);">Unique Code:</strong> <span id="info-code" style="color: var(--neon-green); font-weight: bold;">-</span></div>
               <div><strong style="color: var(--white);">Name:</strong> <span id="info-name">-</span></div>
               <div><strong style="color: var(--white);">Email:</strong> <span id="info-email">-</span></div>
               <div><strong style="color: var(--white);">Phone:</strong> <span id="info-phone">-</span></div>
@@ -1100,6 +1101,7 @@
           <thead>
             <tr>
               <th>Date</th>
+              <th>Code</th>
               <th>Time Slot</th>
               <th>Status</th>
               <th>Name</th>
@@ -1128,6 +1130,68 @@
     let historyList = [];
     let confirmResolver = null;
     let passwordResolver = null;
+
+    function getNextAvailableCode() {
+      let team = 1;
+      while (true) {
+        for (let slotIdx = 1; slotIdx <= 10; slotIdx++) {
+          const slotStr = String(slotIdx).padStart(2, '0');
+          const testCode = `CNGT${team}${slotStr}`;
+          const inUse = historyList.some(hl => hl.code === testCode && hl.status !== 'cancelled');
+          if (!inUse) {
+            return testCode;
+          }
+        }
+        team++;
+      }
+    }
+
+    function ensureAllBookingsHaveCodes() {
+      const nameToCodeMap = {};
+      
+      // First, map existing valid codes to their client names
+      historyList.forEach(item => {
+        if (item.name && item.code && item.code !== '-') {
+          const key = item.name.trim().toLowerCase();
+          if (!nameToCodeMap[key]) {
+            nameToCodeMap[key] = item.code;
+          }
+        }
+      });
+      
+      // Helper to generate next unused code
+      const getNextUnusedCode = () => {
+        let team = 1;
+        const assignedCodes = new Set(Object.values(nameToCodeMap));
+        while (true) {
+          for (let slotIdx = 1; slotIdx <= 10; slotIdx++) {
+            const slotStr = String(slotIdx).padStart(2, '0');
+            const testCode = `CNGT${team}${slotStr}`;
+            if (!assignedCodes.has(testCode)) {
+              return testCode;
+            }
+          }
+          team++;
+        }
+      };
+
+      // Assign codes to items that don't have one
+      let updated = false;
+      historyList.forEach(item => {
+        if (item.name && (!item.code || item.code === '-')) {
+          const key = item.name.trim().toLowerCase();
+          if (!nameToCodeMap[key]) {
+            nameToCodeMap[key] = getNextUnusedCode();
+          }
+          item.code = nameToCodeMap[key];
+          updated = true;
+        }
+      });
+
+      if (updated) {
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+      }
+    }
 
     // Reminder system state
     let reminders = [];
@@ -1340,7 +1404,7 @@
       const sheetId = localStorage.getItem('cleanse_sheet_id');
       if (!sheetId) return;
 
-      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&t=${Date.now()}`;
       try {
         const response = await fetch(url);
         if (!response.ok) throw new Error();
@@ -1419,12 +1483,171 @@
 
     // Address Parsing & Order processing
     function parseOrder() {
-      const text = document.getElementById('order-input').value;
-      if (!text.trim()) {
+      const text = document.getElementById('order-input').value.trim();
+      if (!text) {
         showCustomAlert("Input Required", "Please paste an order message first!", "⚠️");
         return;
       }
 
+      // Check if message is a code-based action: CNGT[Team][Slot]
+      const codeMatch = text.match(/(CNGT\d{3})/i);
+      if (codeMatch) {
+        const code = codeMatch[1].toUpperCase();
+        const existingBooking = historyList.find(hl => hl.code === code && hl.status !== 'cancelled');
+        
+        if (existingBooking) {
+          // Found matching active booking! Let's load its profile
+          currentCustomer = {
+            name: existingBooking.name,
+            email: existingBooking.email,
+            phone: existingBooking.phone,
+            plan: existingBooking.plan,
+            visits: existingBooking.visits || '1 visit per month',
+            address: existingBooking.address,
+            code: code,
+            preferences: existingBooking.preferences || 'None'
+          };
+
+          // Fill client info card
+          document.getElementById('info-code').textContent = code;
+          document.getElementById('info-name').textContent = currentCustomer.name;
+          document.getElementById('info-email').textContent = currentCustomer.email;
+          document.getElementById('info-phone').textContent = currentCustomer.phone;
+          document.getElementById('info-plan').textContent = currentCustomer.plan;
+          document.getElementById('info-visits').textContent = currentCustomer.visits;
+          document.getElementById('info-address').textContent = currentCustomer.address || "Not provided";
+
+          if (currentCustomer.address) {
+            calculateTravelTime(currentCustomer.address);
+          } else {
+            document.getElementById('travel-time-container').innerHTML = '';
+          }
+
+          document.getElementById('general-info-card').style.display = 'block';
+
+          // Check command: Cancel or Reschedule
+          const isCancel = /cancel/i.test(text);
+          const isReschedule = /reschedule/i.test(text);
+
+          if (isCancel) {
+            // Cancellation command! Find active visits for this code
+            const activeVisits = historyList.filter(hl => hl.code === code && hl.status === 'booked');
+            
+            if (activeVisits.length === 0) {
+              showCustomAlert("No Active Bookings", `No active visit dates found for booking code ${code}.`, "⚠️");
+              return;
+            }
+
+            scheduledVisits = activeVisits.map((v, index) => ({
+              id: index,
+              date: v.date,
+              slot: v.slot,
+              action: 'cancel'
+            }));
+
+            // Render special cancellation UI
+            renderCancellationVisits();
+            document.getElementById('results').style.display = 'block';
+
+            // Change Submit Button
+            const submitBtn = document.getElementById('btn-auto-submit');
+            submitBtn.textContent = `❌ Process Cancellation for ${code}`;
+            submitBtn.style.backgroundColor = '#ff5e5e';
+            submitBtn.style.color = '#ffffff';
+            submitBtn.onclick = () => executeBatchCancellation(code);
+            return;
+          } else if (isReschedule) {
+            // Rescheduling command! Parse new date and new slot
+            // Find all dates (YYYY-MM-DD) in the text
+            const dateMatches = text.match(/\d{4}-\d{2}-\d{2}/g);
+            let oldDate = null;
+            let newDate = null;
+
+            if (dateMatches) {
+              if (dateMatches.length >= 2) {
+                oldDate = dateMatches[0];
+                newDate = dateMatches[1];
+              } else {
+                // If only one date is specified, it's the newDate. 
+                // The oldDate is the nearest upcoming active booking for this code!
+                newDate = dateMatches[0];
+                const activeVisits = historyList
+                  .filter(hl => hl.code === code && hl.status === 'booked')
+                  .sort((a, b) => new Date(a.date) - new Date(b.date));
+                if (activeVisits.length > 0) {
+                  oldDate = activeVisits[0].date;
+                }
+              }
+            }
+
+            // Find slot in the text
+            let newSlot = null;
+            const slotOptions = ["8am - 11am", "11am - 2pm", "2pm - 5pm", "2pm - 4pm", "4pm - 6pm"];
+            for (let opt of slotOptions) {
+              const regex = new RegExp(opt.replace(/\s+/g, '\\s*'), 'i');
+              if (regex.test(text)) {
+                newSlot = opt;
+                break;
+              }
+            }
+
+            // If we don't have oldDate, we can't reschedule
+            if (!oldDate) {
+              showCustomAlert("Reschedule Error", "Could not identify the visit date to reschedule. Please specify a date in YYYY-MM-DD format.", "⚠️");
+              return;
+            }
+
+            // Find the active booking visit matching oldDate
+            const matchVisit = historyList.find(hl => hl.code === code && hl.date === oldDate && hl.status === 'booked');
+            const oldSlot = matchVisit ? matchVisit.slot : "8am - 11am";
+            
+            // If newSlot is not specified, keep the original slot
+            if (!newSlot) {
+              newSlot = oldSlot;
+            }
+
+            if (!newDate) {
+              showCustomAlert("Reschedule Error", "Could not identify the new reschedule date. Please specify a new date in YYYY-MM-DD format.", "⚠️");
+              return;
+            }
+
+            // Set scheduledVisits to show the reschedule transformation
+            scheduledVisits = [
+              {
+                id: 0,
+                action: 'reschedule',
+                oldDate: oldDate,
+                oldSlot: oldSlot,
+                newDate: newDate,
+                newSlot: newSlot
+              }
+            ];
+
+            // Render special rescheduling UI
+            renderReschedulingVisits();
+            document.getElementById('results').style.display = 'block';
+
+            // Change Submit Button
+            const submitBtn = document.getElementById('btn-auto-submit');
+            submitBtn.textContent = `📅 Process Reschedule for ${code}`;
+            submitBtn.style.backgroundColor = 'var(--neon-green)';
+            submitBtn.style.color = 'var(--deep-purple)';
+            submitBtn.onclick = () => executeBatchReschedule(oldDate, oldSlot, newDate, newSlot, code);
+            return;
+          } else {
+            showCustomAlert("Command Unrecognized", "We found booking code " + code + ", but could not determine if you wanted to cancel or reschedule. Please include 'cancel' or 'reschedule' in the message.", "⚠️");
+            return;
+          }
+        } else {
+          showCustomAlert("Booking Code Not Found", "Could not find any active booking in local history matching code " + code + ". (If it was cancelled already, it cannot be modified).", "⚠️");
+          return;
+        }
+      }
+
+      // ─── If no code found: Normal booking parser flow ───
+      // Generate code for new booking
+      const codeVal = getNextAvailableCode();
+      
       // Parser regexes
       const planMatch = text.match(/Plan:\*?\s*([^\n]+)/i);
       const nameMatch = text.match(/Name:\*?\s*([^\n]+)/i);
@@ -1451,9 +1674,17 @@
         if (!isNaN(d.getTime())) startDate = d;
       }
 
-      currentCustomer = { name, email, phone, plan, visits: visitsText, address };
+      currentCustomer = { name, email, phone, plan, visits: visitsText, address, code: codeVal };
+
+      // Restore submit button state
+      const submitBtn = document.getElementById('btn-auto-submit');
+      submitBtn.textContent = "⚡ Save All Visits to Google Sheet";
+      submitBtn.style.backgroundColor = '';
+      submitBtn.style.color = '';
+      submitBtn.onclick = submitAllToSheet;
 
       // Fill summary cards
+      document.getElementById('info-code').textContent = codeVal;
       document.getElementById('info-name').textContent = name;
       document.getElementById('info-email').textContent = email;
       document.getElementById('info-phone').textContent = phone;
@@ -1641,6 +1872,7 @@
     }
 
     function renderHistory() {
+      ensureAllBookingsHaveCodes();
       const tbody = document.getElementById('history-tbody');
       const showCancelled = document.getElementById('toggle-cancelled-checkbox').checked;
       
@@ -1650,12 +1882,25 @@
       const filteredHistory = historyList.filter(item => showCancelled || item.status !== 'cancelled');
 
       if (filteredHistory.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--mid-gray); font-weight: 600;">No bookings found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px; color: var(--mid-gray); font-weight: 600;">No bookings found.</td></tr>';
         return;
       }
 
-      // Sort history list by date descending (most recent first)
-      const sortedHistory = [...filteredHistory].sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Sort history list chronologically (earliest date and slot first)
+      const getSlotStartHour = (slotStr) => {
+        if (!slotStr) return 0;
+        if (slotStr.includes("8am")) return 8;
+        if (slotStr.includes("11am")) return 11;
+        if (slotStr.includes("2pm")) return 14;
+        if (slotStr.includes("4pm")) return 16;
+        return 18;
+      };
+
+      const sortedHistory = [...filteredHistory].sort((a, b) => {
+        const dateDiff = new Date(a.date) - new Date(b.date);
+        if (dateDiff !== 0) return dateDiff;
+        return getSlotStartHour(a.slot) - getSlotStartHour(b.slot);
+      });
 
       sortedHistory.forEach((item) => {
         const tr = document.createElement('tr');
@@ -1674,6 +1919,7 @@
 
         tr.innerHTML = `
           <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')"><strong>${item.date}</strong></td>
+          <td style="cursor: pointer; font-family: monospace; font-weight: bold; color: var(--neon-green);" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.code || '-'}</td>
           <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.slot}</td>
           <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')"><span class="${badgeClass}">${item.status}</span></td>
           <td style="cursor: pointer;" onclick="openClientDetails('${item.date}', '${item.slot}')">${item.name}</td>
@@ -1932,6 +2178,197 @@
       document.getElementById('client-details-modal').style.display = 'none';
     }
 
+    // Parser Execution Helper Functions
+    function renderCancellationVisits() {
+      const container = document.getElementById('recurrence-list-container');
+      container.innerHTML = `
+        <div style="background: rgba(255,94,94,0.05); border: 1px dashed #ff5e5e; border-radius: 6px; padding: 16px; color: var(--light-gray); font-size: 13px; line-height: 1.5;">
+          <strong style="color: white; display: block; margin-bottom: 8px; font-family:'Lexend';">⚠️ Cancellation Request Details</strong>
+          The following active scheduled visit(s) will be cancelled and freed in Google Sheets:
+          <ul style="margin-top: 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+            ${scheduledVisits.map(v => `<li>Date: <strong>${v.date}</strong> &nbsp;|&nbsp; Slot: <strong>${v.slot}</strong></li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    async function executeBatchCancellation(code) {
+      const confirmed = await showCustomConfirm(
+        "Execute Cancellation", 
+        `Are you sure you want to cancel all ${scheduledVisits.length} active visits for booking code ${code}?`, 
+        "❌"
+      );
+      if (!confirmed) return;
+
+      const scriptUrl = localStorage.getItem('cleanse_script_url');
+      if (!scriptUrl) {
+        showCustomAlert("Configuration Missing", "Please save a Google Apps Script Web App URL first under settings!", "⚙️");
+        return;
+      }
+
+      const btn = document.getElementById('btn-auto-submit');
+      const originalText = btn.textContent;
+      btn.textContent = "⌛ Cancelling visits...";
+      btn.disabled = true;
+
+      try {
+        let successCount = 0;
+        for (const visit of scheduledVisits) {
+          const payload = new URLSearchParams({
+            action: 'cancel',
+            date: visit.date,
+            slot: visit.slot
+          });
+
+          const response = await fetch(scriptUrl, {
+            method: 'POST',
+            body: payload,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+
+          if (response.ok) {
+            successCount++;
+          }
+
+          // Update locally
+          const idx = historyList.findIndex(item => item.date === visit.date && item.slot === visit.slot);
+          if (idx !== -1) {
+            historyList[idx].status = 'cancelled';
+          }
+        }
+
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+        showCustomAlert("Success", `Cancelled ${successCount} visits for code ${code} successfully!`, "🎉");
+        
+        clearInput();
+        syncBookingsFromSheet();
+      } catch (err) {
+        console.error(err);
+        showCustomAlert("Cancellation Error", "Failed to process cancellation. Check connection.", "❌");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    function renderReschedulingVisits() {
+      const container = document.getElementById('recurrence-list-container');
+      const r = scheduledVisits[0];
+      const isClash = checkClash(r.newDate, r.newSlot);
+
+      container.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(58, 29, 109, 0.03); border: 1px solid var(--border); border-radius: 6px; padding: 16px; font-size: 13px;">
+          <strong style="color: var(--neon-green); font-family: 'Lexend'; font-size: 14px; margin-bottom: 4px; display: block;">🔄 Rescheduling Transformation</strong>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="background: rgba(255,94,94,0.06); padding: 8px 12px; border-left: 3px solid #ff5e5e; border-radius: 2px;">
+              <span style="font-size: 10px; text-transform: uppercase; color: #ff5e5e; display: block; font-weight: bold; margin-bottom: 2px;">Cancel Original Visit</span>
+              <strong style="color: white;">${r.oldDate}</strong> (${r.oldSlot})
+            </div>
+            
+            <div style="background: rgba(124, 252, 0, 0.06); padding: 8px 12px; border-left: 3px solid var(--neon-green); border-radius: 2px;">
+              <span style="font-size: 10px; text-transform: uppercase; color: var(--neon-green); display: block; font-weight: bold; margin-bottom: 2px;">Book New Visit</span>
+              <strong style="color: white;">${r.newDate}</strong> (${r.newSlot})
+            </div>
+          </div>
+
+          ${isClash ? `<div class="clash-warning" style="margin-top: 8px; display: block;">⚠️ Clash Alert! The new slot (${r.newDate} @ ${r.newSlot}) is already booked in Google Sheets.</div>` : ''}
+        </div>
+      `;
+    }
+
+    async function executeBatchReschedule(oldDate, oldSlot, newDate, newSlot, code) {
+      // Clash check
+      const hasClash = checkClash(newDate, newSlot);
+      if (hasClash) {
+        const confirmed = await showCustomConfirm("Schedule Conflict", "Warning: The new reschedule date/time has a conflict. Reschedule anyway?", "⚠️");
+        if (!confirmed) return;
+      }
+
+      const scriptUrl = localStorage.getItem('cleanse_script_url');
+      if (!scriptUrl) {
+        showCustomAlert("Configuration Missing", "Please save a Google Apps Script Web App URL first under settings!", "⚙️");
+        return;
+      }
+
+      const btn = document.getElementById('btn-auto-submit');
+      const originalText = btn.textContent;
+      btn.textContent = "⌛ Processing reschedule...";
+      btn.disabled = true;
+
+      try {
+        // 1. Cancel old booking
+        const cancelPayload = new URLSearchParams({
+          action: 'cancel',
+          date: oldDate,
+          slot: oldSlot
+        });
+        const cancelResponse = await fetch(scriptUrl, {
+          method: 'POST',
+          body: cancelPayload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (!cancelResponse.ok) {
+          throw new Error("Old booking cancellation request failed");
+        }
+
+        // 2. Book new booking
+        const bookPayload = new URLSearchParams({
+          date: newDate,
+          slot: newSlot,
+          status: 'booked',
+          name: currentCustomer.name,
+          plan: currentCustomer.plan
+        });
+        const bookResponse = await fetch(scriptUrl, {
+          method: 'POST',
+          body: bookPayload,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (!bookResponse.ok) {
+          throw new Error("New booking creation request failed");
+        }
+
+        // 3. Update locally
+        const idx = historyList.findIndex(item => item.date === oldDate && item.slot === oldSlot);
+        let oldItem = null;
+        if (idx !== -1) {
+          oldItem = historyList[idx];
+          historyList[idx].status = 'cancelled';
+        }
+        
+        // Add new booking locally preserving all original details
+        historyList.push({
+          date: newDate,
+          slot: newSlot,
+          status: 'booked',
+          name: currentCustomer.name,
+          plan: currentCustomer.plan,
+          code: code,
+          email: oldItem ? oldItem.email : '',
+          phone: oldItem ? oldItem.phone : '',
+          address: oldItem ? oldItem.address : '',
+          visits: oldItem ? oldItem.visits : '1 visit per month',
+          preferences: oldItem ? oldItem.preferences : 'None',
+          rawMessage: document.getElementById('order-input').value
+        });
+
+        localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
+        showCustomAlert("Success", `Successfully rescheduled booking to ${newDate} (${newSlot})`, "🎉");
+
+        clearInput();
+        syncBookingsFromSheet();
+      } catch (err) {
+        console.error(err);
+        showCustomAlert("Rescheduling Error", "Failed to process rescheduling.", "❌");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
     function downloadCSV() {
       if (historyList.length === 0) {
         showCustomAlert("Export Empty", "No bookings in list to export!", "⚠️");
@@ -1973,6 +2410,13 @@
       currentCustomer = null;
       scheduledVisits = [];
       document.getElementById('travel-time-container').innerHTML = '';
+      
+      // Reset submit button state
+      const submitBtn = document.getElementById('btn-auto-submit');
+      submitBtn.textContent = "⚡ Save All Visits to Google Sheet";
+      submitBtn.style.backgroundColor = '';
+      submitBtn.style.color = '';
+      submitBtn.onclick = submitAllToSheet;
     }
 
     // ======= NOTIFICATION & SERVICE WORKER SETUP =======
