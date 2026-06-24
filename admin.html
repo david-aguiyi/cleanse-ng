@@ -910,6 +910,11 @@
     }
 
     /* Responsive adjustments */
+    body.menu-open {
+      overflow: hidden !important;
+      height: 100vh !important;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 8px;
@@ -928,10 +933,12 @@
         align-items: center;
         text-align: left;
         gap: 12px;
+        z-index: 2105; /* keep header above overlay */
       }
 
       .hamburger-menu {
         display: flex;
+        z-index: 2110; /* keep hamburger icon above overlay */
       }
 
       /* Hamburger menu morphing into X */
@@ -948,17 +955,18 @@
       .header-nav {
         display: none;
         flex-direction: column;
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 72px; /* cover screen below header */
         left: 0;
         right: 0;
-        background: rgba(26, 13, 51, 0.98);
-        backdrop-filter: blur(16px);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 16px;
-        gap: 12px;
-        z-index: 1000;
+        bottom: 0;
+        background: rgba(26, 13, 51, 0.99);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        padding: 24px;
+        gap: 16px;
+        z-index: 1050; /* overlay all except modal alerts and header */
+        overflow-y: auto;
         box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
         animation: slideDown 0.25s ease-out forwards;
       }
@@ -2100,8 +2108,13 @@
       const menu = document.getElementById('hamburger-menu');
       const nav = document.getElementById('header-nav');
       if (menu && nav) {
+        const isOpen = nav.classList.toggle('open');
         menu.classList.toggle('open');
-        nav.classList.toggle('open');
+        if (isOpen) {
+          document.body.classList.add('menu-open');
+        } else {
+          document.body.classList.remove('menu-open');
+        }
       }
     }
 
@@ -3906,7 +3919,7 @@
       }
     }
 
-    // Close mobile nav and guide modal when clicking outside
+    // Close mobile nav, guide modal, and active panels when clicking outside
     window.addEventListener('click', (e) => {
       const menu = document.getElementById('hamburger-menu');
       const nav = document.getElementById('header-nav');
@@ -3914,6 +3927,7 @@
         if (!menu.contains(e.target)) {
           menu.classList.remove('open');
           nav.classList.remove('open');
+          document.body.classList.remove('menu-open');
         }
       }
 
@@ -3922,6 +3936,18 @@
       if (e.target === guideModal) {
         closeGuideModal();
       }
+
+      // Close active panel if clicking outside it and its toggle button
+      const panels = ['revenue-panel', 'reminders-panel', 'settings-panel'];
+      panels.forEach(pId => {
+        const el = document.getElementById(pId);
+        if (el && el.classList.contains('active')) {
+          const toggleBtn = document.querySelector(`[onclick="togglePanel('${pId}')"]`) || document.getElementById('bell-btn');
+          if (!el.contains(e.target) && (!toggleBtn || !toggleBtn.contains(e.target))) {
+            el.classList.remove('active');
+          }
+        }
+      });
     });
   </script>
 </body>
