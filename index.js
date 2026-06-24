@@ -381,7 +381,7 @@ function updateFrequencyCards() {
   frequencyCardsContainer.innerHTML = '';
 
   const selectedPlan = planInput.value;
-  if (!selectedPlan || selectedPlan.includes('Monthly Subscription') || selectedPlan.includes('Custom Plan')) {
+  if (!selectedPlan || selectedPlan.includes('Custom Plan')) {
     if (frequencySection) frequencySection.style.display = 'none';
     visitsSelect.required = false;
     return;
@@ -396,6 +396,12 @@ function updateFrequencyCards() {
   else if (selectedPlan.includes('3 Bedroom')) baseRate = 20500;
   else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
 
+  // Determine Monthly Subscription rate
+  let subscriptionRate = 60000;
+  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 100000;
+  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 140000;
+  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 200000;
+
   // Parse room size name
   let bedrooms = "1 Bedroom";
   if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
@@ -407,22 +413,29 @@ function updateFrequencyCards() {
       value: '1 visit per month',
       title: 'Once monthly',
       subtitle: '1 visit / month (touch-ups)',
-      rate: baseRate,
-      multiplier: 1
+      totalCost: baseRate,
+      isSubscription: false
     },
     {
       value: '2 visits per month (Twice monthly)',
       title: 'Twice monthly',
       subtitle: '2 visits / month (Saves ₦800/visit)',
-      rate: baseRate - 800,
-      multiplier: 2
+      totalCost: (baseRate - 800) * 2,
+      isSubscription: false
     },
     {
       value: '4 visits per month (4 times monthly)',
       title: 'Weekly',
       subtitle: '4 visits / month (Saves ₦1,600/visit)',
-      rate: baseRate - 1600,
-      multiplier: 4
+      totalCost: (baseRate - 1600) * 4,
+      isSubscription: false
+    },
+    {
+      value: '8 visits per month (2x per week)',
+      title: 'Monthly Subscription',
+      subtitle: '8 visits / month (2x per week)',
+      totalCost: subscriptionRate,
+      isSubscription: true
     }
   ];
 
@@ -432,7 +445,6 @@ function updateFrequencyCards() {
   }
 
   frequencies.forEach(freq => {
-    const totalCost = freq.rate * freq.multiplier;
     const card = document.createElement('div');
     card.className = 'frequency-card';
     if (visitsSelect.value === freq.value) {
@@ -449,16 +461,25 @@ function updateFrequencyCards() {
           <span class="frequency-card-subtitle">${freq.subtitle}</span>
         </div>
       </div>
-      <span class="frequency-card-price">₦${totalCost.toLocaleString()}</span>
+      <span class="frequency-card-price">₦${freq.totalCost.toLocaleString()}</span>
     `;
 
     card.addEventListener('click', () => {
       frequencyCardsContainer.querySelectorAll('.frequency-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
       visitsSelect.value = freq.value;
+
+      // Update planInput based on whether it is subscription or pay per visit
+      const size = apartmentSizeInput ? apartmentSizeInput.value : bedrooms;
+      if (freq.isSubscription) {
+        planInput.value = `${size} — Monthly Subscription (8 visits)`;
+      } else {
+        planInput.value = `${size} — Pay Per Visit`;
+      }
+
       const step1ValMsg = document.getElementById('step1-validation-msg');
       if (step1ValMsg) step1ValMsg.textContent = '';
-      updateBookingSummary();
+      handlePlanChange();
     });
 
     frequencyCardsContainer.appendChild(card);
@@ -1225,7 +1246,7 @@ function handlePlanChange() {
     if (planName.includes("1 Bedroom")) apartmentSize = "1 Bedroom";
     else if (planName.includes("2 Bedroom")) apartmentSize = "2 Bedroom";
     else if (planName.includes("3 Bedroom")) apartmentSize = "3 Bedroom";
-    else if (planName.includes("4 Bedroom")) apartmentSize = "4 Bedroom+";
+    else if (planName.includes("4 Bedroom")) apartmentSize = "4 Bedroom";
     apartmentSizeInput.value = apartmentSize;
   }
 
