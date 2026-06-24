@@ -281,12 +281,18 @@
       color: var(--neon-green);
     }
 
+    .textarea-container {
+      position: relative;
+      width: 100%;
+    }
+
     textarea {
       background: rgba(15, 14, 20, 0.6);
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--white);
       padding: 14px;
+      padding-bottom: 48px; /* space for floating paste button */
       font-family: inherit;
       font-size: 14px;
       line-height: 1.5;
@@ -294,6 +300,32 @@
       min-height: 180px;
       outline: none;
       width: 100%;
+    }
+
+    .btn-paste-overlay {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      min-height: 32px;
+      height: 32px;
+      padding: 4px 12px;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 5;
+      font-family: 'Lexend', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-paste-overlay:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     input[type="text"], input[type="password"], select {
@@ -1232,6 +1264,32 @@
     </div>
   </div>
 
+  <!-- GUIDE MODAL POPUP -->
+  <div class="alert-overlay" id="guide-modal" style="display: none;">
+    <div class="alert-modal" style="max-width: 450px; text-align: left; padding: 28px;">
+      <div class="alert-icon" style="text-align: center; margin-bottom: 8px;">🤖</div>
+      <h3 class="alert-title" style="color: var(--neon-green); text-align: center; margin-bottom: 16px; font-family: 'Lexend';">WhatsApp Order Scheduler</h3>
+      <p class="alert-message" style="text-align: center; margin-bottom: 20px; font-size: 13px;">
+        Follow these steps to schedule your client's WhatsApp bookings:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; width: 100%;">
+        <div style="display: flex; gap: 10px; font-size: 12.5px; background: rgba(0, 0, 0, 0.15); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.02); color: var(--light-gray);">
+          <span style="background: rgba(124, 252, 0, 0.15); color: var(--neon-green); font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px;">1</span>
+          <span>Paste WhatsApp text & click <strong>Parse & Schedule</strong>.</span>
+        </div>
+        <div style="display: flex; gap: 10px; font-size: 12.5px; background: rgba(0, 0, 0, 0.15); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.02); color: var(--light-gray);">
+          <span style="background: rgba(124, 252, 0, 0.15); color: var(--neon-green); font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px;">2</span>
+          <span>Review dates & resolve conflicts (indicated in <strong style="color:var(--red);">red</strong>).</span>
+        </div>
+        <div style="display: flex; gap: 10px; font-size: 12.5px; background: rgba(0, 0, 0, 0.15); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.02); color: var(--light-gray);">
+          <span style="background: rgba(124, 252, 0, 0.15); color: var(--neon-green); font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px;">3</span>
+          <span>Click <strong>Save All Visits</strong> to sync with Google Sheets.</span>
+        </div>
+      </div>
+      <button class="btn-primary" style="width: 100%; min-height: 40px;" onclick="closeGuideModal()">Got it</button>
+    </div>
+  </div>
+
   <!-- CUSTOM MASTER KEY PASSWORD POPUP -->
   <div class="alert-overlay" id="custom-password-modal">
     <div class="alert-modal" style="max-width: 400px;">
@@ -1368,7 +1426,7 @@
         <button class="collapsible-btn" id="bell-btn" onclick="togglePanel('reminders-panel')">
           🔔 Reminders <span id="bell-badge" class="bell-badge" style="display: none;">0</span>
         </button>
-        <button class="collapsible-btn" onclick="togglePanel('instructions-panel')">💡 Guide</button>
+        <button class="collapsible-btn" onclick="showGuideModal()">💡 Guide</button>
         <button class="collapsible-btn" onclick="togglePanel('settings-panel')">⚙️ Settings</button>
         <button class="btn-logout" onclick="adminLogout()">🚪 Logout</button>
       </div>
@@ -1396,15 +1454,7 @@
       </div>
     </div>
 
-    <!-- Collapsible Instructions Guide -->
-    <div class="panel" id="instructions-panel">
-      <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:12px;">Simple How-To Guide</h3>
-      <ul class="instructions-list">
-        <li><span class="num">1</span> <div><strong>Copy & Paste:</strong> Copy the text order you received on WhatsApp, paste it into the large box on the left, and click <strong>Parse & Schedule</strong>.</div></li>
-        <li><span class="num">2</span> <div><strong>Check for Conflicts:</strong> The tool automatically creates the dates. If a date has a timing conflict, it turns <strong style="color:var(--red);">Red</strong>. Change the date or time slot right inside the box to fix it.</div></li>
-        <li><span class="num">3</span> <div><strong>Save:</strong> Click the green <strong>Save All Visits</strong> button to sync them straight to the Google Sheet.</div></li>
-      </ul>
-    </div>
+
 
     <!-- Collapsible Settings Panel -->
     <div class="panel" id="settings-panel">
@@ -1453,13 +1503,15 @@
       <div>
         <div class="form-group">
           <label for="order-input">Paste WhatsApp Order Message Here</label>
-          <textarea id="order-input" placeholder="Paste the client's message here..."></textarea>
+          <div class="textarea-container">
+            <textarea id="order-input" placeholder="Paste the client's message here..."></textarea>
+            <button class="btn-paste-overlay" onclick="pasteFromClipboard()">📋 Paste Message</button>
+          </div>
         </div>
 
         <div class="actions">
-          <button class="btn-secondary" onclick="pasteFromClipboard()">📋 Paste Message</button>
-          <button class="btn-primary" onclick="parseOrder()">Parse & Schedule</button>
-          <button class="btn-secondary" onclick="clearInput()">Clear Form</button>
+          <button class="btn-primary" style="flex: 2;" onclick="parseOrder()">Parse & Schedule</button>
+          <button class="btn-secondary" style="flex: 1;" onclick="clearInput()">Clear Form</button>
         </div>
 
         <!-- General Info Summary -->
@@ -1485,26 +1537,13 @@
       <!-- Right Column: Scheduled Visits & Conflict Resolver -->
       <div>
         <!-- Empty State Dashboard Guide (visible when no order parsed) -->
-        <div class="empty-state-guide" id="parser-empty-state">
-          <div class="empty-state-icon">🤖</div>
-          <h3 class="empty-state-title">WhatsApp Order Scheduler</h3>
-          <p class="empty-state-desc">
-            No booking message parsed yet. Copy a client's WhatsApp order and paste it on the left to automatically construct dates.
+        <div class="empty-state-guide" id="parser-empty-state" style="min-height: 240px; padding: 24px;">
+          <div class="empty-state-icon" style="font-size: 32px;">📅</div>
+          <h3 class="empty-state-title">No visits generated yet</h3>
+          <p class="empty-state-desc" style="max-width: 280px; margin-bottom: 12px;">
+            Paste a WhatsApp booking message on the left and click "Parse & Schedule" to build the schedule.
           </p>
-          <div class="quick-guide-steps">
-            <div class="quick-step">
-              <span class="quick-step-num">1</span>
-              <span>Paste WhatsApp text & click <strong>Parse & Schedule</strong>.</span>
-            </div>
-            <div class="quick-step">
-              <span class="quick-step-num">2</span>
-              <span>Review dates & resolve conflicts (indicated in <strong style="color:var(--red);">red</strong>).</span>
-            </div>
-            <div class="quick-step">
-              <span class="quick-step-num">3</span>
-              <span>Click <strong>Save All Visits</strong> to sync with Google Sheets.</span>
-            </div>
-          </div>
+          <button class="btn-secondary" style="min-height: 32px; padding: 6px 14px; font-size: 11px;" onclick="showGuideModal()">📖 Read How-To Guide</button>
         </div>
 
         <div class="result-section" id="results">
@@ -2064,8 +2103,16 @@
       }
     }
 
+    function showGuideModal() {
+      document.getElementById('guide-modal').style.display = 'flex';
+    }
+
+    function closeGuideModal() {
+      document.getElementById('guide-modal').style.display = 'none';
+    }
+
     function togglePanel(id) {
-      const panels = ['revenue-panel', 'reminders-panel', 'instructions-panel', 'settings-panel'];
+      const panels = ['revenue-panel', 'reminders-panel', 'settings-panel'];
       panels.forEach(pId => {
         const el = document.getElementById(pId);
         if (el) {
@@ -2768,25 +2815,21 @@
       
       if (!confirmed) return;
 
-      // 1. Update locally
-      const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr);
-      let targetCode = '';
+      // 1. Update locally (match date, slot, and client name to ensure uniqueness)
+      const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr && item.name === nameStr);
       if (idx !== -1) {
-        targetCode = historyList[idx].code || '';
         historyList[idx].status = 'done';
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
         renderHistory();
       }
 
-      // 2. Sync to Sheets
+      // 2. Sync to Sheets (use action: 'sync' to perform safe batch update)
       const scriptUrl = localStorage.getItem('cleanse_script_url');
       if (scriptUrl) {
         try {
           const payload = new URLSearchParams({
-            action: 'complete',
-            date: dateStr,
-            slot: slotStr,
-            code: targetCode,
+            action: 'sync',
+            bookings: JSON.stringify(historyList),
             sheetId: localStorage.getItem('cleanse_sheet_id') || ''
           });
 
@@ -2863,25 +2906,21 @@
       
       if (!confirmed) return;
 
-      // 1. Update locally
-      const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr);
-      let targetCode = '';
+      // 1. Update locally (match date, slot, and client name to ensure uniqueness)
+      const idx = historyList.findIndex(item => item.date === dateStr && item.slot === slotStr && item.name === nameStr);
       if (idx !== -1) {
-        targetCode = historyList[idx].code || '';
         historyList[idx].status = 'cancelled';
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
         renderHistory();
       }
 
-      // 2. Sync to Sheets if config is set
+      // 2. Sync to Sheets if config is set (use action: 'sync' to perform safe batch update)
       const scriptUrl = localStorage.getItem('cleanse_script_url');
       if (scriptUrl) {
         try {
           const payload = new URLSearchParams({
-            action: 'cancel',
-            date: dateStr,
-            slot: slotStr,
-            code: targetCode,
+            action: 'sync',
+            bookings: JSON.stringify(historyList),
             sheetId: localStorage.getItem('cleanse_sheet_id') || ''
           });
 
@@ -3145,7 +3184,7 @@
       try {
         // Update status to cancelled in local historyList
         scheduledVisits.forEach(visit => {
-          const idx = historyList.findIndex(item => item.date === visit.date && item.slot === visit.slot);
+          const idx = historyList.findIndex(item => item.date === visit.date && item.slot === visit.slot && item.code === code);
           if (idx !== -1) {
             historyList[idx].status = 'cancelled';
           }
@@ -3233,7 +3272,7 @@
 
       try {
         // Update old booking to cancelled locally
-        const idx = historyList.findIndex(item => item.date === oldDate && item.slot === oldSlot);
+        const idx = historyList.findIndex(item => item.date === oldDate && item.slot === oldSlot && item.code === code);
         let oldItem = null;
         if (idx !== -1) {
           oldItem = historyList[idx];
@@ -3491,29 +3530,7 @@
           if (now > bookingEndDateTime) {
             item.status = 'done';
             updated = true;
-
-            if (scriptUrl) {
-              try {
-                const payload = new URLSearchParams({
-                  action: 'complete',
-                  date: item.date,
-                  slot: item.slot,
-                  status: 'done',
-                  name: item.name,
-                  plan: item.plan,
-                  code: item.code || '',
-                  sheetId: localStorage.getItem('cleanse_sheet_id') || ''
-                });
-                await fetch(scriptUrl, {
-                  method: 'POST',
-                  body: payload,
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                });
-                console.log(`Auto-completed and updated sheet for: ${item.name} on ${item.date}`);
-              } catch (err) {
-                console.warn("Failed to auto-update sheet status to done:", err);
-              }
-            }
+            console.log(`Locally auto-completed booking for: ${item.name} on ${item.date}`);
           }
         }
       }
@@ -3522,6 +3539,25 @@
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
         renderHistory();
         updateRevenueTracker();
+
+        // Perform a single batch sync request to update Google Sheets after local modifications
+        if (scriptUrl) {
+          try {
+            const payload = new URLSearchParams({
+              action: 'sync',
+              bookings: JSON.stringify(historyList),
+              sheetId: localStorage.getItem('cleanse_sheet_id') || ''
+            });
+            await fetch(scriptUrl, {
+              method: 'POST',
+              body: payload,
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            console.log(`Successfully synchronized auto-completions to Google Sheets.`);
+          } catch (err) {
+            console.warn("Failed to synchronize auto-completions to Google Sheets:", err);
+          }
+        }
       }
     }
 
@@ -3868,7 +3904,7 @@
       }
     }
 
-    // Close mobile nav when clicking outside of header
+    // Close mobile nav and guide modal when clicking outside
     window.addEventListener('click', (e) => {
       const menu = document.getElementById('hamburger-menu');
       const nav = document.getElementById('header-nav');
@@ -3877,6 +3913,12 @@
           menu.classList.remove('open');
           nav.classList.remove('open');
         }
+      }
+
+      // Close guide modal if clicking the outer overlay
+      const guideModal = document.getElementById('guide-modal');
+      if (e.target === guideModal) {
+        closeGuideModal();
       }
     });
   </script>
