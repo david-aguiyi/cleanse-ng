@@ -410,6 +410,13 @@ function updateFrequencyCards() {
 
   const frequencies = [
     {
+      value: '8 visits per month (2x per week)',
+      title: 'Monthly Subscription',
+      subtitle: '8 visits / month (2x per week)',
+      totalCost: subscriptionRate,
+      isSubscription: true
+    },
+    {
       value: '1 visit per month',
       title: 'Once monthly',
       subtitle: '1 visit / month (touch-ups)',
@@ -429,13 +436,6 @@ function updateFrequencyCards() {
       subtitle: '4 visits / month (Saves ₦1,600/visit)',
       totalCost: (baseRate - 1600) * 4,
       isSubscription: false
-    },
-    {
-      value: '8 visits per month (2x per week)',
-      title: 'Monthly Subscription',
-      subtitle: '8 visits / month (2x per week)',
-      totalCost: subscriptionRate,
-      isSubscription: true
     }
   ];
 
@@ -447,6 +447,9 @@ function updateFrequencyCards() {
   frequencies.forEach(freq => {
     const card = document.createElement('div');
     card.className = 'frequency-card';
+    if (freq.isSubscription) {
+      card.classList.add('subscription-card');
+    }
     if (visitsSelect.value === freq.value) {
       card.classList.add('active');
     }
@@ -2103,7 +2106,7 @@ function closeWaitlistModal() {
     waitlistModal.classList.remove('active');
     document.body.style.overflow = '';
   }
-  localStorage.setItem('waitlist_popup_dismissed', 'true');
+  sessionStorage.setItem('waitlist_popup_dismissed', 'true');
 }
 
 if (waitlistCloseBtn) waitlistCloseBtn.addEventListener('click', closeWaitlistModal);
@@ -2179,7 +2182,7 @@ if (waitlistForm) {
     waitlist.push({ name, phone, area, timestamp: new Date().toISOString() });
     localStorage.setItem('cleanse_waitlist_signups', JSON.stringify(waitlist));
 
-    localStorage.setItem('waitlist_popup_dismissed', 'true');
+    sessionStorage.setItem('waitlist_popup_dismissed', 'true');
     if (waitlistFormContainer) waitlistFormContainer.style.display = 'none';
     if (waitlistSuccessContainer) {
       waitlistSuccessContainer.style.display = 'flex';
@@ -2203,7 +2206,7 @@ if (waitlistForm) {
 
 // Automatically open waitlist modal on page load for all screen sizes
 window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('waitlist_popup_dismissed') === 'true') {
+  if (sessionStorage.getItem('waitlist_popup_dismissed') === 'true') {
     return;
   }
 

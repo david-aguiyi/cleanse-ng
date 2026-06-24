@@ -969,7 +969,7 @@
   }
   @media (min-width: 769px) and (min-height: 600px) {
     .booking-modal-left {
-      justify-content: center;
+      justify-content: flex-start;
     }
   }
   .booking-modal-left h2 {
@@ -1513,6 +1513,7 @@
     padding: 16px;
     background: var(--white);
     border: 1px solid var(--border);
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -1524,6 +1525,31 @@
     border-color: var(--primary-purple);
     background: rgba(58, 29, 109, 0.03);
     box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08);
+  }
+  .frequency-card.subscription-card {
+    border-color: rgba(95, 37, 159, 0.35);
+    background: rgba(95, 37, 159, 0.02);
+    position: relative;
+    margin-top: 8px;
+  }
+  .frequency-card.subscription-card::before {
+    content: "POPULAR • SAVE BIG";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    background: var(--primary-purple);
+    color: var(--neon-green);
+    font-size: 8px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.05em;
+    z-index: 10;
+  }
+  .frequency-card.subscription-card.active {
+    border-color: var(--primary-purple);
+    background: rgba(95, 37, 159, 0.06);
+    box-shadow: 0 0 0 2px rgba(95, 37, 159, 0.15);
   }
   .frequency-card-left {
     display: flex;
