@@ -1476,6 +1476,11 @@
           <button class="btn-secondary" style="min-height: 36px; padding: 6px 14px;" onclick="syncAllLocalCodesToSheet()">📋 Sync Database to Sheet</button>
           <button class="btn-primary" style="min-height: 36px; padding: 6px 14px;" onclick="saveSettings()">Save & Connect</button>
         </div>
+        
+        <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--mid-gray); font-size: 11px;">⚠️ Danger Zone</span>
+          <button class="btn-cancel" style="padding: 6px 12px; font-size: 11px; min-height: 32px; background: rgba(255, 77, 77, 0.05); color: #ff5e5e; border: 1px solid rgba(255, 77, 77, 0.15); margin: 0;" onclick="clearHistory()">🗑️ Clear Bookings Database</button>
+        </div>
       </div>
     </div>
 
@@ -1580,9 +1585,6 @@
         <div style="display: flex; gap: 10px; align-items: center;">
           <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px;" onclick="downloadCSV()">
             📥 Download CSV
-          </button>
-          <button class="btn-secondary" style="padding: 6px 12px; font-size: 11px; min-height: 32px; color: #ff5e5e;" onclick="clearHistory()">
-            Clear List
           </button>
         </div>
       </div>
