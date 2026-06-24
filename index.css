@@ -1711,20 +1711,48 @@
     margin-top: 24px !important;
   }
 
-  /* Responsive overrides for Discount Modal */
+  /* Responsive overrides for Waitlist Modal */
   @media (max-width: 768px) {
-    #discount-modal #discount-modal-content {
+    #waitlist-modal #waitlist-modal-content {
       grid-template-columns: 1fr !important;
       height: auto !important;
       max-height: 90vh !important;
       max-width: 480px !important;
     }
-    #discount-modal .discount-modal-left {
+    #waitlist-modal .waitlist-modal-left {
       display: none !important;
     }
-    #discount-modal .discount-modal-right {
+    #waitlist-modal .waitlist-modal-right {
       padding: 32px 20px !important;
     }
   }
 
+  .waitlist-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    box-sizing: border-box;
+    background: var(--white);
+    color: var(--black);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .waitlist-input:focus {
+    outline: none;
+    border-color: var(--primary-purple) !important;
+    box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08);
+  }
 
+  .waitlist-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5866' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }

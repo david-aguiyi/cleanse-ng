@@ -166,16 +166,16 @@ const labelMonthly = document.getElementById('label-monthly');
 
 const pricingData = {
   oneTime: [
-    { primary: '₦9,999', unit: ' / visit', secondary: '₦60,000 / month (8 visits)', rawPrice: 9999, monthlyPrice: 60000 },
-    { primary: '₦11,999', unit: ' / visit', secondary: '₦100,000 / month (8 visits)', rawPrice: 11999, monthlyPrice: 100000 },
-    { primary: '₦13,999', unit: ' / visit', secondary: '₦150,000 / month (8 visits)', rawPrice: 13999, monthlyPrice: 150000 },
-    { primary: '₦19,999', unit: ' / visit', secondary: '₦200,000 / month (8 visits)', rawPrice: 19999, monthlyPrice: 200000 }
+    { primary: '₦11,500', unit: ' / visit', secondary: '₦60,000 / month (8 visits)', rawPrice: 11500, monthlyPrice: 60000 },
+    { primary: '₦16,000', unit: ' / visit', secondary: '₦100,000 / month (8 visits)', rawPrice: 16000, monthlyPrice: 100000 },
+    { primary: '₦20,500', unit: ' / visit', secondary: '₦140,000 / month (8 visits)', rawPrice: 20500, monthlyPrice: 140000 },
+    { primary: '₦25,000', unit: ' / visit', secondary: '₦200,000 / month (8 visits)', rawPrice: 25000, monthlyPrice: 200000 }
   ],
   monthly: [
-    { primary: '₦60,000', unit: ' / month', secondary: '₦9,999 / visit' },
-    { primary: '₦100,000', unit: ' / month', secondary: '₦11,999 / visit' },
-    { primary: '₦150,000', unit: ' / month', secondary: '₦13,999 / visit' },
-    { primary: '₦200,000', unit: ' / month', secondary: '₦19,999 / visit' }
+    { primary: '₦60,000', unit: ' / month', secondary: '₦11,500 / visit' },
+    { primary: '₦100,000', unit: ' / month', secondary: '₦16,000 / visit' },
+    { primary: '₦140,000', unit: ' / month', secondary: '₦20,500 / visit' },
+    { primary: '₦200,000', unit: ' / month', secondary: '₦25,000 / visit' }
   ]
 };
 
@@ -385,10 +385,10 @@ function updateFrequencyCards() {
   visitsSelect.required = true;
 
   // Determine base rate based on selected plan
-  let baseRate = 9999;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = 11999;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = 13999;
-  else if (selectedPlan.includes('4 Bedroom')) baseRate = 19999;
+  let baseRate = 11500;
+  if (selectedPlan.includes('2 Bedroom')) baseRate = 16000;
+  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20500;
+  else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
 
   // Parse room size name
   let bedrooms = "1 Bedroom";
@@ -519,13 +519,13 @@ function updateBookingSummary() {
 
   // Pricing calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+    "1 Bedroom — Pay Per Visit": { rate: 11500, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+    "2 Bedroom — Pay Per Visit": { rate: 16000, type: "per-visit" },
     "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+    "3 Bedroom — Pay Per Visit": { rate: 20500, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (8 visits)": { rate: 140000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
     "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
   };
 
@@ -758,13 +758,13 @@ function updateVerifyStepDetails() {
 
   // Total Price calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+    "1 Bedroom — Pay Per Visit": { rate: 11500, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+    "2 Bedroom — Pay Per Visit": { rate: 16000, type: "per-visit" },
     "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+    "3 Bedroom — Pay Per Visit": { rate: 20500, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (8 visits)": { rate: 140000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
     "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
   };
 
@@ -1547,7 +1547,8 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
       let planName = '';
       const card = btn.closest('.pricing-card');
       if (card) {
-        const bedroomLabel = card.querySelector('.pc-label').textContent.trim();
+        let bedroomLabel = card.querySelector('.pc-label').textContent.trim();
+        if (bedroomLabel === "4 Bedroom+") bedroomLabel = "4 Bedroom";
         const isMonthly = pricingCheckbox ? pricingCheckbox.checked : false;
         planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (8 visits)' : 'Pay Per Visit'}`;
         openBookingModal(planName);
@@ -1631,13 +1632,13 @@ if (bookingForm) {
 
     // Calculate pricing details dynamically
     const planPrices = {
-      "1 Bedroom — Pay Per Visit": { rate: 9999, type: "per-visit" },
+      "1 Bedroom — Pay Per Visit": { rate: 11500, type: "per-visit" },
       "1 Bedroom — Monthly Subscription (8 visits)": { rate: 60000, type: "fixed" },
-      "2 Bedroom — Pay Per Visit": { rate: 11999, type: "per-visit" },
+      "2 Bedroom — Pay Per Visit": { rate: 16000, type: "per-visit" },
       "2 Bedroom — Monthly Subscription (8 visits)": { rate: 100000, type: "fixed" },
-      "3 Bedroom — Pay Per Visit": { rate: 13999, type: "per-visit" },
-      "3 Bedroom — Monthly Subscription (8 visits)": { rate: 150000, type: "fixed" },
-      "4 Bedroom — Pay Per Visit": { rate: 19999, type: "per-visit" },
+      "3 Bedroom — Pay Per Visit": { rate: 20500, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (8 visits)": { rate: 140000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
       "4 Bedroom — Monthly Subscription (8 visits)": { rate: 200000, type: "fixed" }
     };
 
@@ -1750,110 +1751,6 @@ if (customSubmitBtn) {
   });
 }
 
-// Discount Modal logic
-const discountModal = document.getElementById('discount-modal');
-const discountCloseBtn = document.getElementById('discount-modal-close-btn');
-const discountSuccessCloseBtn = document.getElementById('discount-success-close-btn');
-const discountFormContainer = document.getElementById('discount-form-container');
-const discountSuccessContainer = document.getElementById('discount-success-container');
-const discountForm = document.getElementById('discount-form');
-const discountBirthdayInput = document.getElementById('discount-birthday');
-const discountBirthdayDisplay = document.getElementById('discount-birthday-display');
-
-let _discountModalOpenTime = 0;
-
-function openDiscountModal() {
-  _discountModalOpenTime = Date.now();
-  discountFormContainer.style.display = 'flex';
-  discountSuccessContainer.classList.remove('active');
-  discountModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDiscountModal() {
-  discountModal.classList.remove('active');
-  document.body.style.overflow = '';
-  localStorage.setItem('discount_popup_dismissed', 'true');
-}
-
-if (discountCloseBtn) discountCloseBtn.addEventListener('click', closeDiscountModal);
-if (discountSuccessCloseBtn) discountSuccessCloseBtn.addEventListener('click', closeDiscountModal);
-
-if (discountModal) {
-  discountModal.addEventListener('click', (e) => {
-    if (e.target === discountModal) {
-      closeDiscountModal();
-    }
-  });
-}
-
-if (discountBirthdayInput) {
-  // Set max date to today
-  const bToday = new Date();
-  const bYyyy = bToday.getFullYear();
-  const bMm = String(bToday.getMonth() + 1).padStart(2, '0');
-  const bDd = String(bToday.getDate()).padStart(2, '0');
-  discountBirthdayInput.max = `${bYyyy}-${bMm}-${bDd}`;
-
-  discountBirthdayInput.addEventListener('click', () => {
-    try {
-      discountBirthdayInput.showPicker();
-    } catch (err) {
-      console.log("showPicker failed: ", err);
-    }
-  });
-
-  discountBirthdayInput.addEventListener('change', () => {
-    if (!discountBirthdayInput.value) {
-      discountBirthdayDisplay.value = "";
-      return;
-    }
-    const parts = discountBirthdayInput.value.split('-');
-    const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    const formatted = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    discountBirthdayDisplay.value = formatted;
-  });
-}
-
-if (discountForm) {
-  discountForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const discValMsg = document.getElementById('discount-validation-msg');
-    if (discValMsg) discValMsg.textContent = '';
-
-    const honeypot = document.getElementById('discount-website');
-    if (honeypot && honeypot.value) {
-      discountFormContainer.style.display = 'none';
-      discountSuccessContainer.classList.add('active');
-      return;
-    }
-
-    if (_discountModalOpenTime && (Date.now() - _discountModalOpenTime < 2000)) {
-      if (discValMsg) discValMsg.textContent = 'Please take a moment to review your details before submitting.';
-      return;
-    }
-
-    const name = _sanitize(document.getElementById('discount-name').value, 100);
-    const email = document.getElementById('discount-email').value.trim();
-    const birthday = _sanitize(discountBirthdayDisplay.value, 100);
-    const location = _sanitize(document.getElementById('discount-location').value, 100);
-
-    if (name.length < 2) {
-      if (discValMsg) discValMsg.textContent = 'Please enter a valid name (at least 2 characters).';
-      return;
-    }
-    if (!_validateEmail(email)) {
-      if (discValMsg) discValMsg.textContent = 'Please enter a valid email address.';
-      return;
-    }
-
-    localStorage.setItem('discount_popup_dismissed', 'true');
-    discountFormContainer.style.display = 'none';
-    discountSuccessContainer.classList.add('active');
-  });
-}
-
 // Clear step3 / step4 validation errors on input changes
 ['booking-name', 'booking-email', 'booking-phone', 'booking-location', 'booking-agree-policy'].forEach(id => {
   const el = document.getElementById(id);
@@ -1867,50 +1764,6 @@ if (discountForm) {
     el.addEventListener('input', clearMsg);
     el.addEventListener('change', clearMsg);
   }
-});
-
-// Clear discount validation errors on input changes
-['discount-name', 'discount-email', 'discount-birthday', 'discount-location'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    const clearMsg = () => {
-      const discValMsg = document.getElementById('discount-validation-msg');
-      if (discValMsg) discValMsg.textContent = '';
-    };
-    el.addEventListener('input', clearMsg);
-    el.addEventListener('change', clearMsg);
-  }
-});
-
-// Automatically open discount modal on page load for all screen sizes
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('discount_popup_dismissed') === 'true') {
-    return;
-  }
-
-  let popupOpened = false;
-  function triggerPopup() {
-    if (popupOpened) return;
-    popupOpened = true;
-    if (discountModal && !discountModal.classList.contains('active') && modal && !modal.classList.contains('active')) {
-      openDiscountModal();
-    }
-    window.removeEventListener('scroll', handleScrollTrigger);
-  }
-
-  // Trigger on scroll past 20% page height
-  function handleScrollTrigger() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (docHeight > 0 && (scrollTop / docHeight) >= 0.20) {
-      triggerPopup();
-    }
-  }
-
-  window.addEventListener('scroll', handleScrollTrigger);
-
-  // Backup timer: trigger after 5 seconds
-  setTimeout(triggerPopup, 5000);
 });
 
 // ═══════════════════════════════════════
@@ -2156,5 +2009,174 @@ window.addEventListener('DOMContentLoaded', () => {
       el.addEventListener('change', saveSessionState);
     }
   });
+});
+
+
+// Waitlist Modal logic
+const waitlistModal = document.getElementById('waitlist-modal');
+const waitlistCloseBtn = document.getElementById('waitlist-modal-close-btn');
+const waitlistSuccessCloseBtn = document.getElementById('waitlist-success-close-btn');
+const waitlistFormContainer = document.getElementById('waitlist-form-container');
+const waitlistSuccessContainer = document.getElementById('waitlist-success-container');
+const waitlistForm = document.getElementById('waitlist-form');
+
+const waitlistAreaSelect = document.getElementById('waitlist-area');
+const waitlistAreaOtherInput = document.getElementById('waitlist-area-other');
+
+let _waitlistModalOpenTime = 0;
+
+function openWaitlistModal() {
+  _waitlistModalOpenTime = Date.now();
+  if (waitlistFormContainer) waitlistFormContainer.style.display = 'flex';
+  if (waitlistSuccessContainer) {
+    waitlistSuccessContainer.style.display = 'none';
+    waitlistSuccessContainer.classList.remove('active');
+  }
+  if (waitlistAreaSelect && waitlistAreaOtherInput) {
+    waitlistAreaSelect.style.display = 'block';
+    waitlistAreaSelect.value = '';
+    waitlistAreaOtherInput.style.display = 'none';
+    waitlistAreaOtherInput.value = '';
+    waitlistAreaOtherInput.required = false;
+  }
+  if (waitlistModal) {
+    waitlistModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeWaitlistModal() {
+  if (waitlistModal) {
+    waitlistModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  localStorage.setItem('waitlist_popup_dismissed', 'true');
+}
+
+if (waitlistCloseBtn) waitlistCloseBtn.addEventListener('click', closeWaitlistModal);
+if (waitlistSuccessCloseBtn) waitlistSuccessCloseBtn.addEventListener('click', closeWaitlistModal);
+
+if (waitlistModal) {
+  waitlistModal.addEventListener('click', (e) => {
+    if (e.target === waitlistModal) {
+      closeWaitlistModal();
+    }
+  });
+}
+
+if (waitlistAreaSelect && waitlistAreaOtherInput) {
+  waitlistAreaSelect.addEventListener('change', () => {
+    if (waitlistAreaSelect.value === 'Other') {
+      waitlistAreaSelect.style.display = 'none';
+      waitlistAreaOtherInput.style.display = 'block';
+      waitlistAreaOtherInput.required = true;
+      waitlistAreaOtherInput.focus();
+    }
+  });
+}
+
+if (waitlistForm) {
+  waitlistForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const valMsg = document.getElementById('waitlist-validation-msg');
+    if (valMsg) valMsg.textContent = '';
+
+    const honeypot = document.getElementById('waitlist-website');
+    if (honeypot && honeypot.value) {
+      // Bot detected
+      if (waitlistFormContainer) waitlistFormContainer.style.display = 'none';
+      if (waitlistSuccessContainer) {
+        waitlistSuccessContainer.style.display = 'flex';
+        waitlistSuccessContainer.classList.add('active');
+      }
+      return;
+    }
+
+    if (_waitlistModalOpenTime && (Date.now() - _waitlistModalOpenTime < 2000)) {
+      if (valMsg) valMsg.textContent = 'Please take a moment to review your details before submitting.';
+      return;
+    }
+
+    const name = _sanitize(document.getElementById('waitlist-name').value, 100);
+    const phone = document.getElementById('waitlist-phone').value.trim();
+    
+    let area = "";
+    if (waitlistAreaSelect && waitlistAreaSelect.style.display === 'none' && waitlistAreaOtherInput) {
+      area = _sanitize(waitlistAreaOtherInput.value, 100);
+    } else if (waitlistAreaSelect) {
+      area = _sanitize(waitlistAreaSelect.value, 100);
+    }
+
+    if (name.length < 2) {
+      if (valMsg) valMsg.textContent = 'Please enter a valid name (at least 2 characters).';
+      return;
+    }
+    if (!_validatePhone(phone)) {
+      if (valMsg) valMsg.textContent = 'Please enter a valid phone number (7-15 digits).';
+      return;
+    }
+    if (!area || area.trim() === "") {
+      if (valMsg) valMsg.textContent = 'Please specify your estate / area.';
+      return;
+    }
+
+    // Save to local storage
+    const waitlist = JSON.parse(localStorage.getItem('cleanse_waitlist_signups') || '[]');
+    waitlist.push({ name, phone, area, timestamp: new Date().toISOString() });
+    localStorage.setItem('cleanse_waitlist_signups', JSON.stringify(waitlist));
+
+    localStorage.setItem('waitlist_popup_dismissed', 'true');
+    if (waitlistFormContainer) waitlistFormContainer.style.display = 'none';
+    if (waitlistSuccessContainer) {
+      waitlistSuccessContainer.style.display = 'flex';
+      waitlistSuccessContainer.classList.add('active');
+    }
+  });
+}
+
+// Clear waitlist validation errors on input changes
+['waitlist-name', 'waitlist-phone', 'waitlist-area', 'waitlist-area-other'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    const clearMsg = () => {
+      const valMsg = document.getElementById('waitlist-validation-msg');
+      if (valMsg) valMsg.textContent = '';
+    };
+    el.addEventListener('input', clearMsg);
+    el.addEventListener('change', clearMsg);
+  }
+});
+
+// Automatically open waitlist modal on page load for all screen sizes
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('waitlist_popup_dismissed') === 'true') {
+    return;
+  }
+
+  let popupOpened = false;
+  function triggerWaitlistPopup() {
+    if (popupOpened) return;
+    popupOpened = true;
+    const standardModalActive = modal && modal.classList.contains('active');
+    if (waitlistModal && !waitlistModal.classList.contains('active') && !standardModalActive) {
+      openWaitlistModal();
+    }
+    window.removeEventListener('scroll', handleWaitlistScrollTrigger);
+  }
+
+  // Trigger on scroll past 20% page height
+  function handleWaitlistScrollTrigger() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight > 0 && (scrollTop / docHeight) >= 0.20) {
+      triggerWaitlistPopup();
+    }
+  }
+
+  window.addEventListener('scroll', handleWaitlistScrollTrigger);
+
+  // Backup timer: trigger after 5 seconds
+  setTimeout(triggerWaitlistPopup, 5000);
 });
 
