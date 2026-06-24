@@ -910,10 +910,6 @@
     }
 
     /* Responsive adjustments */
-    body.menu-open {
-      overflow: hidden !important;
-      height: 100vh !important;
-    }
 
     @media (max-width: 768px) {
       body {
@@ -2108,13 +2104,8 @@
       const menu = document.getElementById('hamburger-menu');
       const nav = document.getElementById('header-nav');
       if (menu && nav) {
-        const isOpen = nav.classList.toggle('open');
         menu.classList.toggle('open');
-        if (isOpen) {
-          document.body.classList.add('menu-open');
-        } else {
-          document.body.classList.remove('menu-open');
-        }
+        nav.classList.toggle('open');
       }
     }
 
@@ -3927,7 +3918,6 @@
         if (!menu.contains(e.target)) {
           menu.classList.remove('open');
           nav.classList.remove('open');
-          document.body.classList.remove('menu-open');
         }
       }
 
