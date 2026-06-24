@@ -3911,7 +3911,7 @@
       const menu = document.getElementById('hamburger-menu');
       const nav = document.getElementById('header-nav');
       if (menu && nav && nav.classList.contains('open')) {
-        if (!menu.contains(e.target) && !nav.contains(e.target)) {
+        if (!menu.contains(e.target)) {
           menu.classList.remove('open');
           nav.classList.remove('open');
         }
