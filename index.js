@@ -81,6 +81,11 @@ var _modalOpenTime = 0;
 // Initialize all obfuscated WhatsApp links at runtime
 document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   el.href = _getWaUrl();
+  // Open contact/whatsapp links in a new tab (excluding modal buttons)
+  if (!el.classList.contains('pc-btn') && !el.classList.contains('nav-cta') && !el.classList.contains('btn-primary')) {
+    el.target = '_blank';
+    el.rel = 'noopener noreferrer';
+  }
 });
 
 // Testimonial slider
@@ -268,6 +273,7 @@ const formContainer = document.getElementById('booking-form-container');
 const successContainer = document.getElementById('booking-success-container');
 const bookingForm = document.getElementById('booking-plan-form');
 const planInput = document.getElementById('booking-selected-plan');
+const apartmentSizeInput = document.getElementById('booking-apartment-size');
 const visitsSelect = document.getElementById('booking-visits');
 const planRow = document.getElementById('plan-row');
 const propertyRow = document.getElementById('property-row');
@@ -1188,11 +1194,12 @@ function openBookingModal(planName) {
       _currentWizardStep = 1; // Pay-Per-Visit must select frequency
     }
   } else {
-    if (!planInput.value) {
-      planInput.value = "2 Bedroom — Pay Per Visit"; // Default
-      _isPlanPreSelected = false;
-      _currentWizardStep = 1;
+    planInput.value = "";
+    if (apartmentSizeInput) {
+      apartmentSizeInput.value = "";
     }
+    _isPlanPreSelected = false;
+    _currentWizardStep = 1;
   }
 
   handlePlanChange();
@@ -1212,6 +1219,15 @@ function handlePlanChange() {
   const planName = planInput.value;
   const step1ValMsg = document.getElementById('step1-validation-msg');
   if (step1ValMsg) step1ValMsg.textContent = '';
+
+  if (apartmentSizeInput) {
+    let apartmentSize = "";
+    if (planName.includes("1 Bedroom")) apartmentSize = "1 Bedroom";
+    else if (planName.includes("2 Bedroom")) apartmentSize = "2 Bedroom";
+    else if (planName.includes("3 Bedroom")) apartmentSize = "3 Bedroom";
+    else if (planName.includes("4 Bedroom")) apartmentSize = "4 Bedroom+";
+    apartmentSizeInput.value = apartmentSize;
+  }
 
   if (planName.includes('Monthly Subscription')) {
     visitsSelect.value = "8 visits per month (2x per week)";
@@ -1326,6 +1342,10 @@ function changeWizardStep(nextStep, direction) {
 if (wizardNextBtn) {
   wizardNextBtn.addEventListener('click', () => {
     if (_currentWizardStep === 1) {
+      if (apartmentSizeInput && !apartmentSizeInput.checkValidity()) {
+        apartmentSizeInput.reportValidity();
+        return;
+      }
       if (!planInput.checkValidity()) {
         planInput.reportValidity();
         return;
@@ -1437,6 +1457,18 @@ if (wizardBackBtn) {
 
 if (planInput) {
   planInput.addEventListener('change', handlePlanChange);
+}
+
+if (apartmentSizeInput) {
+  apartmentSizeInput.addEventListener('change', () => {
+    const size = apartmentSizeInput.value;
+    if (size) {
+      planInput.value = `${size} — Pay Per Visit`;
+    } else {
+      planInput.value = "";
+    }
+    handlePlanChange();
+  });
 }
 
 function closeBookingModal() {

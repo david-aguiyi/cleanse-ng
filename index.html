@@ -465,6 +465,18 @@
 
             <!-- STEP 1: PLAN SELECTION -->
             <div class="booking-wizard-step active" id="wizard-step-plan">
+              <!-- Apartment Size Selection -->
+              <div class="form-group full-width" id="apartment-size-group" style="margin-bottom: 20px;">
+                <label for="booking-apartment-size">Apartment Size *</label>
+                <select id="booking-apartment-size" required>
+                  <option value="" disabled selected>Select apartment size</option>
+                  <option value="1 Bedroom">1 Bedroom</option>
+                  <option value="2 Bedroom">2 Bedroom</option>
+                  <option value="3 Bedroom">3 Bedroom</option>
+                  <option value="4 Bedroom+">4 Bedroom+</option>
+                </select>
+              </div>
+
               <!-- Selected Plan Selection (Hidden visually, active programmatically) -->
               <div class="form-row" id="plan-row" style="display: none;">
                 <div class="form-group full-width">
