@@ -1443,7 +1443,6 @@
             <button class="status-tab active" id="tab-active" onclick="setStatusFilter('active')">Active</button>
             <button class="status-tab" id="tab-completed" onclick="setStatusFilter('done')">Completed</button>
             <button class="status-tab" id="tab-cancelled" onclick="setStatusFilter('cancelled')">Cancelled</button>
-            <button class="status-tab" id="tab-all" onclick="setStatusFilter('all')">All History</button>
           </div>
         </div>
       </div>
@@ -2497,8 +2496,7 @@
       const tabs = {
         'active': 'tab-active',
         'done': 'tab-completed',
-        'cancelled': 'tab-cancelled',
-        'all': 'tab-all'
+        'cancelled': 'tab-cancelled'
       };
       
       Object.keys(tabs).forEach(key => {
