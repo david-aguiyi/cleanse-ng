@@ -1562,11 +1562,7 @@ const policyCloseBtn = document.getElementById('policy-modal-close-btn');
 const policyAgreeBtn = document.getElementById('policy-modal-agree-btn');
 
 if (policyLink && policyModal) {
-  policyLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    policyModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  });
+  // policyLink navigates natively to customer.html in a new tab (via target="_blank")
 }
 
 if (policyCloseBtn && policyModal) {

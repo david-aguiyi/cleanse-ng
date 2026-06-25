@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
+      var isLocal = window.location.protocol === 'file:';
+      var host = window.location.hostname;
+      var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
+      if (isLocal || (host && !isAllowed)) {
+        document.documentElement.style.display = 'none';
+        window.location.href = 'https://cleanse.ng';
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Policy — cleanse.ng</title>
+  <meta name="description" content="Official Customer Policy and Guidelines for Cleanse.ng residential cleaning services in Ibadan, Oyo State.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+
+  <style>
+    :root {
+      --primary-purple: #3A1D6D;
+      --deep-purple: #1A0D33;
+      --neon-green: #7CFC00;
+      --lavender: #B5BCFF;
+      --light-gray-brand: #EDEDF2;
+      --white: #FFFFFF;
+      --off-white: #FAF9FC;
+      --off-white-dark: #F1EFF4;
+      --black: #0F0E14;
+      --charcoal: #1D1B22;
+      --mid-gray: #5C5866;
+      --light-gray: #9D99A6;
+      --border: rgba(58, 29, 109, 0.12);
+      
+      --accent-red: #CC3333;
+      --bg-red: #FFF5F5;
+      --border-red: rgba(204, 51, 51, 0.15);
+      
+      --font-header: 'Lexend', system-ui, sans-serif;
+      --font-body: 'Nunito', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--off-white);
+      color: var(--black);
+      line-height: 1.6;
+      user-select: text;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Policy page specific styling */
+    .policy-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .policy-header-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, var(--deep-purple) 0%, var(--primary-purple) 100%);
+      color: var(--white);
+      border-radius: 16px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(58, 29, 109, 0.08);
+    }
+
+    .policy-header-section h1 {
+      font-family: var(--font-header);
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .policy-header-section p {
+      font-size: clamp(14px, 2vw, 18px);
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    .policy-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* Sticky Sidebar Navigation */
+    .policy-sidebar {
+      position: sticky;
+      top: 100px;
+      max-height: calc(100vh - 140px);
+      overflow-y: auto;
+      background-color: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 24px 16px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(58, 29, 109, 0.2) transparent;
+    }
+
+    .policy-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .policy-sidebar::-webkit-scrollbar-thumb {
+      background-color: rgba(58, 29, 109, 0.15);
+      border-radius: 3px;
+    }
+
+    .policy-sidebar-title {
+      font-family: var(--font-header);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--deep-purple);
+      margin-bottom: 16px;
+      padding-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .policy-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .policy-nav-item a {
+      display: block;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: var(--mid-gray);
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      font-family: var(--font-header);
+    }
+
+    .policy-nav-item a:hover {
+      background-color: var(--off-white-dark);
+      color: var(--primary-purple);
+    }
+
+    .policy-nav-item.active a {
+      background-color: var(--primary-purple);
+      color: var(--white);
+    }
+
+    /* Mobile Quick Navigation Dropdown */
+    .policy-mobile-nav {
+      display: none;
+      width: 100%;
+      background-color: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      font-family: var(--font-header);
+      color: var(--deep-purple);
+      margin-bottom: 24px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    /* Content Area */
+    .policy-content {
+      background-color: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 48px;
+      box-shadow: 0 4px 20px rgba(58, 29, 109, 0.02);
+    }
+
+    .policy-search-box {
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .policy-search-input {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 16px;
+      font-family: var(--font-body);
+      color: var(--black);
+      background-color: var(--off-white);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .policy-search-input:focus {
+      border-color: var(--primary-purple);
+      background-color: var(--white);
+      box-shadow: 0 0 0 3px rgba(58, 29, 109, 0.1);
+    }
+
+    .policy-search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: var(--light-gray);
+      pointer-events: none;
+    }
+
+    .policy-no-results {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--mid-gray);
+      font-family: var(--font-header);
+    }
+
+    /* Promise / Intro Section */
+    .policy-promise {
+      background-color: rgba(58, 29, 109, 0.03);
+      border-left: 4px solid var(--primary-purple);
+      padding: 24px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 48px;
+    }
+
+    .policy-promise h2 {
+      font-family: var(--font-header);
+      color: var(--deep-purple);
+      font-size: 20px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .policy-promise p {
+      font-size: 16px;
+      color: var(--charcoal);
+      margin: 0;
+    }
+
+    /* Sections */
+    .policy-section {
+      margin-bottom: 48px;
+      scroll-margin-top: 120px;
+      transition: opacity 0.3s ease;
+    }
+
+    .policy-section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background-color: var(--deep-purple);
+      color: var(--white);
+      padding: 16px 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-family: var(--font-header);
+    }
+
+    .policy-section-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--neon-green);
+    }
+
+    .policy-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+
+    .policy-section-body {
+      font-size: 16px;
+      color: var(--charcoal);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .policy-section-body h3 {
+      font-family: var(--font-header);
+      color: var(--primary-purple);
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+
+    .policy-clause {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .policy-clause-num {
+      font-family: var(--font-header);
+      font-weight: 700;
+      color: var(--primary-purple);
+      min-width: 32px;
+      flex-shrink: 0;
+    }
+
+    .policy-clause-text {
+      margin: 0;
+    }
+
+    /* Lists */
+    .policy-bullets {
+      list-style: none;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .policy-bullets li {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .policy-bullets li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--primary-purple);
+      font-weight: bold;
+    }
+
+    .policy-numbered-list {
+      list-style: none;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .policy-numbered-list li {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .policy-numbered-list li::before {
+      counter-increment: section-counter;
+      content: counter(section-counter) ".";
+      position: absolute;
+      left: 0;
+      color: var(--primary-purple);
+      font-weight: 700;
+      font-family: var(--font-header);
+    }
+
+    /* Tables */
+    .policy-table-wrapper {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .policy-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .policy-table th {
+      background-color: var(--primary-purple);
+      color: var(--white);
+      font-family: var(--font-header);
+      font-weight: 600;
+      padding: 12px 18px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .policy-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--charcoal);
+    }
+
+    .policy-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .policy-table tr:nth-child(even) {
+      background-color: rgba(58, 29, 109, 0.02);
+    }
+
+    /* Section 4 Grid Cards Style */
+    .coverage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .coverage-card {
+      background-color: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(58, 29, 109, 0.01);
+    }
+
+    .coverage-card h3 {
+      font-family: var(--font-header);
+      color: var(--deep-purple);
+      font-size: 18px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--off-white-dark);
+      padding-bottom: 8px;
+    }
+
+    .coverage-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .coverage-list li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 14px;
+    }
+
+    .coverage-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #00B894;
+      font-weight: bold;
+    }
+
+    /* Not Covered Banner Card */
+    .not-covered-banner {
+      background-color: var(--bg-red);
+      border: 1px solid var(--border-red);
+      border-top: 4px solid var(--accent-red);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 32px;
+    }
+
+    .not-covered-banner h3 {
+      color: var(--accent-red);
+      font-family: var(--font-header);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .not-covered-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+    }
+
+    .not-covered-list li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 14px;
+      color: var(--charcoal);
+    }
+
+    .not-covered-list li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: var(--accent-red);
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .policy-layout {
+        grid-template-columns: 1fr;
+      }
+      .policy-sidebar {
+        display: none;
+      }
+      .policy-mobile-nav {
+        display: block;
+      }
+      .coverage-grid {
+        grid-template-columns: 1fr;
+      }
+      .not-covered-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .policy-container {
+        padding: 20px 16px;
+      }
+      .policy-content {
+        padding: 24px 16px;
+      }
+      .policy-clause {
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo brand-logo" href="index.html" style="text-decoration: none;">
+      <span style="font-family: var(--font-header); font-weight: 700; font-size: 24px; letter-spacing: -0.03em; color: var(--deep-purple);">cleanse<span style="color: #7CFC00;">.ng</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="https://wa.me/2349130663739" target="_blank" data-wa-link>Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="https://wa.me/2349130663739" target="_blank" data-wa-link>Book Now</a>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="policy-container">
+    
+    <!-- HEADER -->
+    <header class="policy-header-section">
+      <h1>Customer Policy</h1>
+      <p>For those who know what their time is worth. Active policy guidelines governing subscriptions and bookings with Cleanse Limited in Nigeria.</p>
+    </header>
+
+    <div class="policy-layout">
+      
+      <!-- DESKTOP SIDEBAR -->
+      <aside class="policy-sidebar">
+        <div class="policy-sidebar-title">Table of Contents</div>
+        <ul class="policy-nav-list" id="policy-toc">
+          <li class="policy-nav-item active"><a href="#promise">Our Promise</a></li>
+          <li class="policy-nav-item"><a href="#section-1">1. Service Coverage</a></li>
+          <li class="policy-nav-item"><a href="#section-2">2. Packages & Pricing</a></li>
+          <li class="policy-nav-item"><a href="#section-3">3. Payment Policy</a></li>
+          <li class="policy-nav-item"><a href="#section-4">4. Services & Scope</a></li>
+          <li class="policy-nav-item"><a href="#section-5">5. Scheduling & Visits</a></li>
+          <li class="policy-nav-item"><a href="#section-6">6. Access & Entry</a></li>
+          <li class="policy-nav-item"><a href="#section-7">7. Quality & Complaints</a></li>
+          <li class="policy-nav-item"><a href="#section-8">8. Trust, Safety & Valuables</a></li>
+          <li class="policy-nav-item"><a href="#section-9">9. Worker Conduct</a></li>
+          <li class="policy-nav-item"><a href="#section-10">10. Sexual Harassment</a></li>
+          <li class="policy-nav-item"><a href="#section-11">11. Accidental Damage</a></li>
+          <li class="policy-nav-item"><a href="#section-12">12. Insurance</a></li>
+          <li class="policy-nav-item"><a href="#section-13">13. Unauthorised Entry</a></li>
+          <li class="policy-nav-item"><a href="#section-14">14. Client Conduct</a></li>
+          <li class="policy-nav-item"><a href="#section-15">15. Termination</a></li>
+          <li class="policy-nav-item"><a href="#section-16">16. First Month Resolution</a></li>
+          <li class="policy-nav-item"><a href="#section-17">17. Force Majeure</a></li>
+          <li class="policy-nav-item"><a href="#section-18">18. Dispute Resolution</a></li>
+          <li class="policy-nav-item"><a href="#section-19">19. Age Restriction</a></li>
+          <li class="policy-nav-item"><a href="#section-20">20. Refund Policy</a></li>
+          <li class="policy-nav-item"><a href="#section-21">21. Photography & Content</a></li>
+          <li class="policy-nav-item"><a href="#section-22">22. Cancellation & Pause</a></li>
+          <li class="policy-nav-item"><a href="#section-23">23. Privacy Policy</a></li>
+          <li class="policy-nav-item"><a href="#section-24">24. Changes to Policy</a></li>
+        </ul>
+      </aside>
+
+      <!-- MOBILE NAV SELECTOR -->
+      <select class="policy-mobile-nav" id="policy-mobile-dropdown">
+        <option value="promise">Our Promise</option>
+        <option value="section-1">1. Service Coverage</option>
+        <option value="section-2">2. Packages & Pricing</option>
+        <option value="section-3">3. Payment Policy</option>
+        <option value="section-4">4. Services & What to Expect</option>
+        <option value="section-5">5. Scheduling & Visits</option>
+        <option value="section-6">6. Access & Entry</option>
+        <option value="section-7">7. Quality & Complaints</option>
+        <option value="section-8">8. Trust, Safety & Valuables</option>
+        <option value="section-9">9. Worker Conduct</option>
+        <option value="section-10">10. Sexual Harassment</option>
+        <option value="section-11">11. Accidental Damage</option>
+        <option value="section-12">12. Insurance</option>
+        <option value="section-13">13. Unauthorised Entry</option>
+        <option value="section-14">14. Client Conduct</option>
+        <option value="section-15">15. Termination by Cleanse</option>
+        <option value="section-16">16. First Month Resolution</option>
+        <option value="section-17">17. Force Majeure</option>
+        <option value="section-18">18. Dispute Resolution</option>
+        <option value="section-19">19. Age Restriction</option>
+        <option value="section-20">20. Refund Policy</option>
+        <option value="section-21">21. Photography & Content</option>
+        <option value="section-22">22. Cancellation & Pause Policy</option>
+        <option value="section-23">23. Privacy</option>
+        <option value="section-24">24. Changes to This Policy</option>
+      </select>
+
+      <!-- CONTENT BODY -->
+      <article class="policy-content">
+        
+        <!-- SEARCH BOX -->
+        <div class="policy-search-box">
+          <span class="policy-search-icon">🔍</span>
+          <input type="text" id="policy-search" class="policy-search-input" placeholder="Search sections, e.g. 'refunds', 'damages', 'rescheduling'...">
+        </div>
+
+        <div id="policy-no-results" class="policy-no-results">
+          <h3>No matching sections found</h3>
+          <p>Please try a different keyword or browse using the table of contents.</p>
+        </div>
+
+        <!-- OUR PROMISE -->
+        <section id="promise" class="policy-section">
+          <div class="policy-promise">
+            <h2>Our Promise to You</h2>
+            <p>Every client who subscribes to Cleanse is entitled to a clean home, a reliable team, and a supervisor who is reachable. We do not make promises we cannot keep. If something goes wrong, we fix it. That is the standard we hold ourselves to and the standard you should expect from us.</p>
+          </div>
+        </section>
+
+        <!-- SECTION 1 -->
+        <section id="section-1" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">1</span>
+            <h2 class="policy-section-title">Service Coverage</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>Cleanse currently serves residential households in the following zones in Ibadan, Oyo State:</p>
+            <ul class="policy-bullets">
+              <li>GRA Phase 1 & 2</li>
+              <li>Bodija Estate</li>
+              <li>Jericho</li>
+              <li>Iyaganku</li>
+            </ul>
+            <p><em>Service outside these zones is not available at this time. As we expand, new zones will be announced.</em></p>
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="section-2" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">2</span>
+            <h2 class="policy-section-title">Packages & Pricing</h2>
+          </div>
+          <div class="policy-section-body">
+            <h3>Monthly Subscription — 8 visits per month</h3>
+            <div class="policy-table-wrapper">
+              <table class="policy-table">
+                <thead>
+                  <tr>
+                    <th>Home Size</th>
+                    <th>Monthly Subscription Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1 Bedroom</strong></td>
+                    <td>₦60,000</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2 Bedroom</strong></td>
+                    <td>₦100,000</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3 Bedroom</strong></td>
+                    <td>₦140,000</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4 Bedroom+</strong></td>
+                    <td>₦200,000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>One-Time Clean</h3>
+            <div class="policy-table-wrapper">
+              <table class="policy-table">
+                <thead>
+                  <tr>
+                    <th>Home Size</th>
+                    <th>One-Time Clean Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1 Bedroom</strong></td>
+                    <td>₦11,500 per visit</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2 Bedroom</strong></td>
+                    <td>₦16,000 per visit</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3 Bedroom</strong></td>
+                    <td>₦20,500 per visit</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4 Bedroom+</strong></td>
+                    <td>₦25,000 per visit</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>All packages include a trained cleaning team, a dedicated supervisor, and all cleaning supplies. No hidden charges.</p>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="section-3" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">3</span>
+            <h2 class="policy-section-title">Payment Policy</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">3.1</span>
+              <p class="policy-clause-text">Monthly subscribers pay upfront before their service begins each month. Payment confirms the client's visits for that month. The supervisor will send a payment link when renewal is due.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">3.2</span>
+              <p class="policy-clause-text">One-time clients pay in full before the visit is confirmed.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">3.3</span>
+              <p class="policy-clause-text"><strong>Late payment</strong> — if payment is not received by the 3rd of the month, visits for that month will be paused until payment is confirmed. The supervisor will send one reminder before visits are paused.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">3.4</span>
+              <p class="policy-clause-text">No refunds are issued for completed visits. If a visit was not completed to standard, the remedy is a return visit — not a refund. See Section 7.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">3.5</span>
+              <p class="policy-clause-text">Accepted payment methods — bank transfer. Cash is not accepted.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="section-4" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">4</span>
+            <h2 class="policy-section-title">Services & Scope (What to Expect)</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>This section outlines exactly what is included and excluded in every Cleanse visit — whether one-time or subscription. Clients are encouraged to review this before their first visit.</p>
+            
+            <div class="coverage-grid">
+              
+              <!-- Living Room -->
+              <div class="coverage-card">
+                <h3>Living Room</h3>
+                <ul class="coverage-list">
+                  <li>Cobwebs removed</li>
+                  <li>All surfaces dusted and wiped</li>
+                  <li>Door knobs and door frames polished</li>
+                  <li>Light switches cleaned</li>
+                  <li>Mirrors cleaned</li>
+                  <li>Windows and blinds cleaned</li>
+                  <li>Moving heavy furniture or items to clean underneath</li>
+                </ul>
+              </div>
+
+              <!-- Bedroom -->
+              <div class="coverage-card">
+                <h3>Bedroom</h3>
+                <ul class="coverage-list">
+                  <li>Cobwebs removed</li>
+                  <li>All surfaces dusted and polished</li>
+                  <li>Hard floors swept and cleaned</li>
+                  <li>Beds arranged and laid neatly</li>
+                  <li>Trash can emptied and washed</li>
+                  <li>Cleaning under beds</li>
+                  <li>Cleaning of shoes and standing fans</li>
+                </ul>
+              </div>
+
+              <!-- Kitchen -->
+              <div class="coverage-card">
+                <h3>Kitchen</h3>
+                <ul class="coverage-list">
+                  <li>Cobwebs removed</li>
+                  <li>Dishes washed</li>
+                  <li>Kitchen counters and table tops cleaned</li>
+                  <li>Outside of appliances cleaned — fridge, stovetop, microwave and oven</li>
+                  <li>Inside of sink cleaned</li>
+                  <li>Hard floors swept and cleaned</li>
+                  <li>Trash can emptied and washed</li>
+                </ul>
+              </div>
+
+              <!-- Bathroom -->
+              <div class="coverage-card">
+                <h3>Restroom & Bathroom</h3>
+                <ul class="coverage-list">
+                  <li>Cobwebs removed</li>
+                  <li>Urinals, toilets and toilet seats washed</li>
+                  <li>Hard floors swept and cleaned</li>
+                  <li>Tiles and bathtub washed</li>
+                  <li>Mirrors cleaned</li>
+                  <li>Trash can emptied and washed</li>
+                </ul>
+              </div>
+
+            </div>
+
+            <!-- Across All Areas Exclusion banner -->
+            <div class="not-covered-banner">
+              <h3>Not Covered — Across All Areas</h3>
+              <ul class="not-covered-list">
+                <li>Cleaning inside appliances (fridge, stovetop, microwave, oven)</li>
+                <li>Cleaning inside kitchen cabinets</li>
+                <li>Washing of shower curtains</li>
+                <li>Washing of foot mats</li>
+              </ul>
+            </div>
+
+            <div class="policy-clause" style="margin-top: 16px;">
+              <span class="policy-clause-num">4.1</span>
+              <p class="policy-clause-text">Any activity not listed under the covered sections is out of scope and will not be carried out during a standard visit.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">4.2</span>
+              <p class="policy-clause-text">Clients who require out-of-scope activities may request a custom deep clean — subject to availability, additional pricing and prior agreement with the supervisor before the visit.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">4.3</span>
+              <p class="policy-clause-text">Workers are not permitted to carry out activities outside the covered list without prior written approval from Cleanse. Requests made directly to workers on the day will be declined.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="section-5" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">5</span>
+            <h2 class="policy-section-title">Scheduling & Visits</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">5.1</span>
+              <p class="policy-clause-text">Monthly subscribers receive 8 visits per month — twice weekly on agreed days.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">5.2</span>
+              <p class="policy-clause-text">Visit schedules are set at the start of each subscription and remain consistent month to month.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">5.3</span>
+              <p class="policy-clause-text"><strong>Rescheduling</strong>: Clients may reschedule a visit by messaging their supervisor at least 16 hours before the scheduled appointment time, or before 5pm the day before the visit — whichever comes first. Rescheduling requests made within 16 hours of the appointment or after 5pm the day before will be treated as short notice. The visit will be forfeited for that month and will not be replaced or carried over.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">5.4</span>
+              <p class="policy-clause-text"><strong>Missed appointment</strong>: If a Cleanse team arrives at the scheduled time and is unable to gain entry within 30 minutes of arrival, the visit will be marked as a missed appointment and forfeited for that month. No replacement visit will be scheduled and no refund will be issued for that visit. Clients are responsible for ensuring access arrangements are in place before every visit.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">5.5</span>
+              <p class="policy-clause-text">If Cleanse fails to show up for a scheduled visit without prior notice, that visit will be rescheduled at no additional cost within the same month.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="section-6" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">6</span>
+            <h2 class="policy-section-title">Access & Entry</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">6.1</span>
+              <p class="policy-clause-text">Clients are not required to be home during visits. Most of our clients are not.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">6.2</span>
+              <p class="policy-clause-text">The supervisor will send a WhatsApp message before entering any unoccupied property and a confirmation message when the visit is complete and the property is locked.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">6.3</span>
+              <p class="policy-clause-text">Clients are responsible for providing access arrangements — a spare key, gate code or security clearance — before their first visit. Cleanse will not enter a property without confirmed access.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">6.4</span>
+              <p class="policy-clause-text">All access information is held confidentially by the supervisor and not shared with any third party.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="section-7" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">7</span>
+            <h2 class="policy-section-title">Quality & Complaints</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">7.1</span>
+              <p class="policy-clause-text">After every visit, the supervisor sends a brief feedback message. Clients are encouraged to respond with any notes.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">7.2</span>
+              <p class="policy-clause-text">If a client is not satisfied with a visit, they must notify their supervisor within 24 hours of the visit.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">7.3</span>
+              <p class="policy-clause-text">Cleanse will arrange a return visit to address the specific concern within 48 hours of the complaint being received. This is at no additional cost to the client.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">7.4</span>
+              <p class="policy-clause-text">Repeat quality failures — defined as three or more valid complaints within a single month — will result in a team review and, where necessary, a team change.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">7.5</span>
+              <p class="policy-clause-text">Complaints submitted more than 24 hours after a visit cannot be addressed under this policy but will be noted for quality improvement purposes.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="section-8" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">8</span>
+            <h2 class="policy-section-title">Trust, Safety & Valuables</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.1</span>
+              <p class="policy-clause-text">All Cleanse workers are screened and referenced before entering any client property.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.2</span>
+              <p class="policy-clause-text">Workers are trained not to touch, move or disturb personal items beyond what is required for cleaning. If a worker needs to move an item to clean, it will be returned to its original position.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.3</span>
+              <p class="policy-clause-text">Workers do not open drawers, wardrobes, safes or personal storage at any time.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.4</span>
+              <p class="policy-clause-text"><strong>Client responsibility for valuables</strong>: By subscribing to Cleanse and agreeing to this policy, clients confirm they have secured all high-value items, sensitive documents, cash, jewellery and medications before each visit. Cleanse workers are trained never to touch personal storage, but clients bear responsibility for items left unsecured. Signing or accepting this policy serves as confirmation that the client has been advised of this responsibility.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.5</span>
+              <p class="policy-clause-text"><strong>Theft or misconduct</strong>: Any report of theft or misconduct will be investigated immediately. The supervisor will contact the client by phone — not WhatsApp — within the same day. If the complaint is substantiated, the matter will be escalated, the worker removed from the client's team and the client made whole through our insurance policy where applicable. Where a client has signed or accepted this policy and failed to secure valuables as advised in Section 8.4, Cleanse's liability is limited to the outcome of the investigation and the terms of our insurance policy.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">8.6</span>
+              <p class="policy-clause-text"><strong>False accusations</strong>: If an investigation finds no evidence of misconduct, Cleanse reserves the right to reassign the accused worker to a different client team while maintaining their employment.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 9 -->
+        <section id="section-9" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">9</span>
+            <h2 class="policy-section-title">Worker Conduct Toward Clients</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">9.1</span>
+              <p class="policy-clause-text">Workers are not permitted to request personal favours, borrow items, ask for additional payment or engage in personal relationships with clients or household members.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">9.2</span>
+              <p class="policy-clause-text">Workers are not permitted to use client facilities — kitchen, bathroom, television or Wi-Fi — during visits except where the client explicitly permits it.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">9.3</span>
+              <p class="policy-clause-text">Any breach of conduct should be reported to the supervisor immediately. Cleanse takes all reports seriously.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">9.4</span>
+              <p class="policy-clause-text"><strong>Financial advances and gifts</strong>: Clients must not give cash advances, loans or gifts of any kind directly to Cleanse workers under any circumstances. All worker compensation is handled exclusively by Cleanse. If a worker requests money, a loan or any financial favour from a client, the client should decline and report it to the supervisor immediately. Any worker found to have solicited or accepted any form of financial advance, gift or personal benefit from clients will face immediate disciplinary action including termination.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 10 -->
+        <section id="section-10" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">10</span>
+            <h2 class="policy-section-title">Sexual Harassment Policy</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>Cleanse is committed to maintaining a safe, respectful environment for both clients and workers. This policy applies in every client home where Cleanse operates and is fully consistent with Nigerian law.</p>
+            <div class="policy-clause">
+              <span class="policy-clause-num">10.1</span>
+              <p class="policy-clause-text"><strong>Protection of clients</strong>: Cleanse workers are expected to treat every client, household member and person on the property with complete respect at all times. Any form of sexual harassment by a Cleanse worker toward a client or household member will result in immediate removal from all assignments and termination of employment pending investigation.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">10.2</span>
+              <p class="policy-clause-text"><strong>Protection of workers</strong>: Clients are equally expected to treat Cleanse workers with dignity and respect. Sexual harassment of any Cleanse worker — by a client, household member or any person on the property — will result in immediate termination of the client's subscription without refund.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">10.3</span>
+              <p class="policy-clause-text"><strong>What constitutes sexual harassment</strong>: Sexual harassment includes but is not limited to:</p>
+            </div>
+            <ul class="policy-bullets" style="margin-top: -8px; margin-bottom: 8px;">
+              <li>Unwelcome sexual advances or requests for sexual favours</li>
+              <li>Offensive comments, jokes or language of a sexual nature</li>
+              <li>Sharing sexually explicit images or messages</li>
+              <li>Unwanted touching, grabbing or physical contact of a sexual nature</li>
+              <li>Stalking, threatening or intimidating behaviour of a sexual nature</li>
+            </ul>
+            <p><strong>This policy is non-negotiable. There are no exceptions.</strong></p>
+          </div>
+        </section>
+
+        <!-- SECTION 11 -->
+        <section id="section-11" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">11</span>
+            <h2 class="policy-section-title">Accidental Damage</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">11.1</span>
+              <p class="policy-clause-text">Cleanse workers are trained to handle all items in a client's home with care. In the event that a worker accidentally damages property during a visit, the client must notify the supervisor within 24 hours of the visit.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">11.2</span>
+              <p class="policy-clause-text">Cleanse will investigate the report and, where the damage is confirmed to have occurred during the visit, will arrange repair or replacement of the damaged item at Cleanse's expense, subject to the terms of our insurance policy.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">11.3</span>
+              <p class="policy-clause-text">Cleanse is not liable for damage to items that were already broken, unstable or fragile prior to the visit, or damage caused by pre-existing conditions in the property.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">11.4</span>
+              <p class="policy-clause-text">Damage reports submitted more than 24 hours after a visit cannot be processed under this clause but will be noted for quality improvement purposes.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 12 -->
+        <section id="section-12" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">12</span>
+            <h2 class="policy-section-title">Insurance</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">12.1</span>
+              <p class="policy-clause-text">Cleanse Limited holds a business liability insurance policy covering accidental damage to client property and theft by employees during service delivery.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">12.2</span>
+              <p class="policy-clause-text">Where a valid claim arises under Sections 8.5 or 11, Cleanse will initiate the insurance process on the client's behalf. The client will be kept informed throughout.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">12.3</span>
+              <p class="policy-clause-text">Insurance claims are subject to the terms and conditions of Cleanse's insurance provider. Cleanse will share relevant policy details with the client where a claim is being processed.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">12.4</span>
+              <p class="policy-clause-text">Clients are advised that insurance does not cover items left unsecured contrary to Section 8.4, or items for which no prior evidence of value exists.</p>
+            </div>
+            <p style="color: var(--mid-gray); font-size: 14px; margin-top: 8px;"><em>Note: This section will be updated with the specific insurance provider name and policy number once the policy is in place.</em></p>
+          </div>
+        </section>
+
+        <!-- SECTION 13 -->
+        <section id="section-13" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">13</span>
+            <h2 class="policy-section-title">Unauthorised Entry</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">13.1</span>
+              <p class="policy-clause-text">Cleanse workers are required to send a WhatsApp message to the client before entering any unoccupied property and a confirmation message upon leaving.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">13.2</span>
+              <p class="policy-clause-text">Entry without sending the pre-entry message constitutes a breach of Cleanse's operational standards. Clients who discover this has occurred should report it to their supervisor immediately.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">13.3</span>
+              <p class="policy-clause-text">Cleanse will investigate any report of unauthorised or unannounced entry and take disciplinary action against the worker where the breach is confirmed. The client will be informed of the outcome.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 14 -->
+        <section id="section-14" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">14</span>
+            <h2 class="policy-section-title">Client Conduct Toward Workers</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>Cleanse workers are professionals employed to deliver a service in your home. All clients are expected to treat Cleanse workers with basic dignity and respect at all times.</p>
+            <div class="policy-clause">
+              <span class="policy-clause-num">14.1</span>
+              <p class="policy-clause-text">The following conduct by clients or household members toward Cleanse workers is prohibited:</p>
+            </div>
+            <ul class="policy-bullets" style="margin-top: -8px; margin-bottom: 8px;">
+              <li>Verbal abuse, insults or demeaning language</li>
+              <li>Threats of any kind — physical, financial or otherwise</li>
+              <li>Intimidation or deliberate humiliation</li>
+              <li>Unreasonable demands beyond the agreed scope of service</li>
+              <li>Any behaviour that creates a hostile or unsafe working environment</li>
+            </ul>
+            <div class="policy-clause">
+              <span class="policy-clause-num">14.2</span>
+              <p class="policy-clause-text">Where a worker reports any of the above, Cleanse will investigate promptly. If the conduct is confirmed, Cleanse reserves the right to suspend or terminate the client's subscription immediately without refund.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">14.3</span>
+              <p class="policy-clause-text">Workers are instructed to leave the property immediately if they feel unsafe at any point during a visit and to notify their supervisor. Cleanse fully supports this decision.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 15 -->
+        <section id="section-15" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">15</span>
+            <h2 class="policy-section-title">Termination by Cleanse</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">15.1</span>
+              <p class="policy-clause-text">Cleanse reserves the right to terminate a client's subscription at any time under the following circumstances:</p>
+            </div>
+            <ul class="policy-bullets" style="margin-top: -8px; margin-bottom: 8px;">
+              <li>Non-payment beyond 7 days after the payment due date</li>
+              <li>Verbal, physical or sexual abuse of any Cleanse worker</li>
+              <li>Repeated violation of this policy after written warning</li>
+              <li>Any conduct that compromises the safety or wellbeing of Cleanse workers</li>
+              <li>Fraudulent claims against Cleanse or its workers</li>
+            </ul>
+            <div class="policy-clause">
+              <span class="policy-clause-num">15.2</span>
+              <p class="policy-clause-text">Where termination is due to non-payment, Cleanse will issue one written warning via WhatsApp before suspending service.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">15.3</span>
+              <p class="policy-clause-text">Where termination is due to conduct, Cleanse may terminate immediately without prior warning and without obligation to refund any unused portion of the current month's payment.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">15.4</span>
+              <p class="policy-clause-text">Upon termination, the client's spot will be released to the waitlist.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 16 -->
+        <section id="section-16" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">16</span>
+            <h2 class="policy-section-title">First Month Resolution</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">16.1</span>
+              <p class="policy-clause-text">Cleanse is committed to getting the service right from the very first visit. If after your first two visits you feel the service has not met the standard described in this policy, contact your supervisor directly.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">16.2</span>
+              <p class="policy-clause-text">Cleanse will conduct a full review of both visits, speak with the team and arrange corrective action within 48 hours.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">16.3</span>
+              <p class="policy-clause-text">If after the corrective action you remain unsatisfied, you may exit the subscription at the end of the first month without the standard one-month notice requirement. This applies to first-month subscribers only and is not available in subsequent months.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 17 -->
+        <section id="section-17" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">17</span>
+            <h2 class="policy-section-title">Force Majeure</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">17.1</span>
+              <p class="policy-clause-text">Cleanse will make every reasonable effort to deliver scheduled visits on time and to the agreed standard. However, in circumstances beyond Cleanse's reasonable control — including but not limited to flooding, civil unrest, widespread illness across the team, or government-imposed restrictions — Cleanse may be unable to deliver visits as scheduled.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">17.2</span>
+              <p class="policy-clause-text">In such circumstances, Cleanse will notify affected clients as soon as possible via WhatsApp and will reschedule missed visits at the earliest opportunity within the same month where possible.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">17.3</span>
+              <p class="policy-clause-text">Where rescheduling within the same month is not possible, affected visits will be credited to the following month's service at no additional charge.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">17.4</span>
+              <p class="policy-clause-text">Cleanse is not liable for any losses arising from service disruption caused by force majeure events.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 18 -->
+        <section id="section-18" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">18</span>
+            <h2 class="policy-section-title">Dispute Resolution</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>Cleanse aims to resolve all client concerns quickly and fairly. If you have a concern that has not been resolved through your supervisor, escalate it in the following order:</p>
+            <ol class="policy-numbered-list" style="counter-reset: section-counter;">
+              <li>Contact your supervisor directly via WhatsApp.</li>
+              <li>If unresolved within 24 hours, email hello@cleanse.ng and mark it for the attention of the founder.</li>
+              <li>If still unresolved within 72 hours, both parties agree to seek resolution through mediation before pursuing any legal action.</li>
+            </ol>
+            <div class="policy-clause" style="margin-top: 16px;">
+              <span class="policy-clause-num">18.1</span>
+              <p class="policy-clause-text">Both Cleanse and the client agree to engage in good faith at every step of this process before escalating to formal legal proceedings.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">18.2</span>
+              <p class="policy-clause-text">This policy is governed by the laws of the Federal Republic of Nigeria.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 19 -->
+        <section id="section-19" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">19</span>
+            <h2 class="policy-section-title">Age Restriction</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">19.1</span>
+              <p class="policy-clause-text">Cleanse services are available to individuals aged 18 and above only.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">19.2</span>
+              <p class="policy-clause-text">By subscribing to or booking a Cleanse service, the client confirms they are at least 18 years of age.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">19.3</span>
+              <p class="policy-clause-text">Where a client is found to be under 18, Cleanse reserves the right to cancel the subscription immediately and refund any unused portion of payment.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 20 -->
+        <section id="section-20" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">20</span>
+            <h2 class="policy-section-title">Refund Policy</h2>
+          </div>
+          <div class="policy-section-body">
+            <p>Cleanse will issue a refund under the following circumstances only:</p>
+            <ul class="policy-bullets">
+              <li>The client cancels before any service has been delivered</li>
+              <li>The wrong service was booked in error and no visit has taken place</li>
+            </ul>
+            <p>Refunds are not issued for completed visits. Where a visit did not meet the expected standard, the remedy is a return visit — not a refund. See Section 7.</p>
+            <div class="policy-clause">
+              <span class="policy-clause-num">20.1</span>
+              <p class="policy-clause-text"><strong>Processing fees</strong>: All refunds are subject to a processing fee charged by our third-party payment partner. This ranges between 1% and 1.5% for naira transactions. This fee is deducted from the refund amount and is not covered by Cleanse.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">20.2</span>
+              <p class="policy-clause-text"><strong>Refund timeline</strong>: Refunds may take up to 21 working days to process from the date the refund is approved. Cleanse will notify the client once the refund has been initiated.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 21 -->
+        <section id="section-21" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">21</span>
+            <h2 class="policy-section-title">Photography & Content</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">21.1</span>
+              <p class="policy-clause-text">Cleanse will never photograph, record or share images of a client's property without the client's explicit written consent.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">21.2</span>
+              <p class="policy-clause-text">Where Cleanse wishes to use images of a client's home for marketing, social media or promotional purposes, a separate consent form will be provided to the client. No images will be used without a signed consent form.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">21.3</span>
+              <p class="policy-clause-text">Clients who are willing to have their home featured in Cleanse content should notify their supervisor. Participation is entirely voluntary and has no bearing on the quality or priority of service received.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 22 -->
+        <section id="section-22" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">22</span>
+            <h2 class="policy-section-title">Cancellation & Pause Policy</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">22.1</span>
+              <p class="policy-clause-text">Monthly subscribers may cancel their subscription with one calendar month's notice, sent to their supervisor in writing via WhatsApp.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">22.2</span>
+              <p class="policy-clause-text"><strong>Pausing</strong>: Subscribers may pause their service for up to 30 days once per year without losing their spot. The supervisor must be notified at least 7 days before the pause begins.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">22.3</span>
+              <p class="policy-clause-text">Pauses beyond 30 days will result in the client's spot being released to the waitlist. The client may rejoin when a spot is next available.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">22.4</span>
+              <p class="policy-clause-text">One-time clients may cancel a confirmed booking up to 24 hours before the visit for a full refund. Cancellations within 24 hours of the visit are non-refundable.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 23 -->
+        <section id="section-23" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">23</span>
+            <h2 class="policy-section-title">Privacy</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">23.1</span>
+              <p class="policy-clause-text">Client information — name, address, contact details and home preferences — is held confidentially by Cleanse and used solely for the purpose of delivering the service.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">23.2</span>
+              <p class="policy-clause-text">Client information is never sold, shared or disclosed to third parties without the client's consent, except where required by law.</p>
+            </div>
+            <div class="policy-clause">
+              <span class="policy-clause-num">23.3</span>
+              <p class="policy-clause-text">Client WhatsApp conversations with supervisors are for operational use only and are not monitored or shared beyond the Cleanse operations team.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 24 -->
+        <section id="section-24" class="policy-section">
+          <div class="policy-section-header">
+            <span class="policy-section-num">24</span>
+            <h2 class="policy-section-title">Changes to This Policy</h2>
+          </div>
+          <div class="policy-section-body">
+            <div class="policy-clause">
+              <span class="policy-clause-num">24.1</span>
+              <p class="policy-clause-text">Cleanse reserves the right to update this policy at any time. Clients will be notified of significant changes via WhatsApp at least 14 days before they take effect. Continued use of the service after notification constitutes acceptance of the updated policy.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTACT INFO -->
+        <div style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border); margin-top: 60px;">
+          <h3 style="font-family: var(--font-header); color: var(--primary-purple); font-size: 20px; margin-bottom: 12px; font-weight: 700;">Need to get in touch?</h3>
+          <p style="color: var(--mid-gray); max-width: 500px; margin: 0 auto 24px auto;">For any questions about this policy or your service, contact your dedicated supervisor directly via WhatsApp.</p>
+          <div style="font-size: 15px; color: var(--charcoal); display: flex; flex-direction: column; gap: 6px;">
+            <span>General enquiries: <a href="mailto:hello@cleanse.ng" style="color: var(--primary-purple); font-weight: 600;">hello@cleanse.ng</a> &bull; <a href="index.html" style="color: var(--primary-purple); font-weight: 600;">cleanse.ng</a></span>
+            <span style="color: var(--mid-gray);">Ibadan, Oyo State &bull; Nigeria</span>
+            <span style="font-size: 13px; font-style: italic; color: var(--light-gray); margin-top: 12px;">Cleanse Limited is registered with the Corporate Affairs Commission of Nigeria.</span>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand brand-logo">
+          <img src="./logo.png" alt="cleanse.ng" class="logo-img">
+        </div>
+        <p class="footer-tagline">For those who know what their time is worth. Ibadan, Oyo State — serving GRA, Bodija, Jericho, Iyaganku, Akobo & Oluyole.</p>
+        <div class="footer-contact">
+          <span>WhatsApp: <a href="https://wa.me/2349130663739" target="_blank" data-wa-link>+234 913 066 3739</a></span>
+          <span>Instagram: <a href="#">@cleanse.ng</a></span>
+          <span>Working hours: 8am – 6pm daily</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="index.html#pricing">Residential Cleaning</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="index.html#faq">FAQ</a></li>
+          <li><a href="https://wa.me/2349130663739" target="_blank" data-wa-link>Contact</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 cleanse.ng. All rights reserved.</span>
+      <span>Ibadan, Oyo State, Nigeria</span>
+    </div>
+  </footer>
+
+  <!-- SCROLL TO TOP -->
+  <button id="back-to-top" style="position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%; background-color: var(--primary-purple); color: white; border: none; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(58, 29, 109, 0.25); z-index: 1000; transition: opacity 0.2s ease, transform 0.2s ease;">↑</button>
+
+  <!-- SCRIPTS -->
+  <script>
+    // TOC active state highlighting on scroll using Intersection Observer
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('.policy-section');
+      const navLinks = document.querySelectorAll('#policy-toc .policy-nav-item');
+      const mobileDropdown = document.getElementById('policy-mobile-dropdown');
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: '-10% 0px -80% 0px', // Trigger when section is near the top
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const activeId = entry.target.getAttribute('id');
+            
+            // Sync desktop TOC
+            navLinks.forEach(link => {
+              const href = link.querySelector('a').getAttribute('href');
+              if (href === `#${activeId}`) {
+                link.classList.add('active');
+                
+                // Scroll the active item into view inside the sidebar if needed
+                link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              } else {
+                link.classList.remove('active');
+              }
+            });
+
+            // Sync mobile select
+            if (mobileDropdown) {
+              mobileDropdown.value = activeId;
+            }
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => observer.observe(section));
+
+      // Handle mobile select navigation
+      if (mobileDropdown) {
+        mobileDropdown.addEventListener('change', (e) => {
+          const targetId = e.target.value;
+          const targetSection = document.getElementById(targetId);
+          if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+
+      // Smooth scroll for desktop sidebar links
+      const tocLinks = document.querySelectorAll('#policy-toc a');
+      tocLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const targetSection = document.getElementById(targetId);
+          if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Search & Filter functionality
+      const searchInput = document.getElementById('policy-search');
+      const noResults = document.getElementById('policy-no-results');
+      
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        let matchCount = 0;
+        
+        sections.forEach(section => {
+          const text = section.textContent.toLowerCase();
+          const matches = text.includes(query);
+          
+          if (matches) {
+            section.style.display = 'block';
+            matchCount++;
+          } else {
+            section.style.display = 'none';
+          }
+        });
+
+        if (matchCount === 0) {
+          noResults.style.display = 'block';
+        } else {
+          noResults.style.display = 'none';
+        }
+        
+        // Hide sidebar on filter if list gets modified, or keep standard
+      });
+
+      // Back to Top button logic
+      const backToTop = document.getElementById('back-to-top');
+      
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+          backToTop.style.display = 'flex';
+        } else {
+          backToTop.style.display = 'none';
+        }
+      });
+
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      
+      // Hover effect on back-to-top button
+      backToTop.addEventListener('mouseenter', () => {
+        backToTop.style.transform = 'scale(1.1)';
+      });
+      backToTop.addEventListener('mouseleave', () => {
+        backToTop.style.transform = 'scale(1)';
+      });
+    });
+  </script>
+</body>
+
+</html>
