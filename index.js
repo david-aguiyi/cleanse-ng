@@ -635,6 +635,12 @@ function updateWizardUI() {
     wizardStepPlan.classList.add('active');
     pStep1.classList.add('active');
 
+    // Sync apartment size dropdown visibility
+    const apartmentSizeGroup = document.getElementById('apartment-size-group');
+    if (apartmentSizeGroup) {
+      apartmentSizeGroup.style.display = _isPlanPreSelected ? 'none' : 'block';
+    }
+
     if (wizardTitle) wizardTitle.textContent = "Select a Service";
     if (wizardSubtitle) wizardSubtitle.textContent = "";
 
@@ -1212,6 +1218,13 @@ function openBookingModal(planName) {
     }
     planInput.value = planName;
     _isPlanPreSelected = true;
+
+    // Hide apartment size selector group since the size has been pre-selected
+    const apartmentSizeGroup = document.getElementById('apartment-size-group');
+    if (apartmentSizeGroup) {
+      apartmentSizeGroup.style.display = 'none';
+    }
+
     if (planName.includes('Monthly Subscription') || planName.includes('Custom Plan')) {
       _currentWizardStep = 2; // Skip step 1 (Plan Selection)
     } else {
@@ -1223,6 +1236,13 @@ function openBookingModal(planName) {
       apartmentSizeInput.value = "";
     }
     _isPlanPreSelected = false;
+
+    // Show apartment size selector group for general bookings
+    const apartmentSizeGroup = document.getElementById('apartment-size-group');
+    if (apartmentSizeGroup) {
+      apartmentSizeGroup.style.display = 'block';
+    }
+
     _currentWizardStep = 1;
   }
 
@@ -2200,7 +2220,8 @@ if (waitlistForm) {
   }
 });
 
-// Automatically open waitlist modal on page load for all screen sizes
+// Automatically open waitlist modal on page load for all screen sizes (Disabled/Removed as requested)
+/*
 window.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('waitlist_popup_dismissed') === 'true') {
     return;
@@ -2231,4 +2252,5 @@ window.addEventListener('DOMContentLoaded', () => {
   // Backup timer: trigger after 5 seconds
   setTimeout(triggerWaitlistPopup, 5000);
 });
+*/
 
