@@ -1725,7 +1725,7 @@
           updated = true;
         }
         if (item.name && !item.price) {
-          item.price = calculateVisitPrice(item.plan || '', item.visits || '');
+          item.price = calculateVisitPrice(item.plan || '', item.visits || '', item.discount || '');
           updated = true;
         }
       });
@@ -1735,8 +1735,21 @@
       }
     }
 
-    function calculateVisitPrice(plan, visitsText) {
-      const planPrices = {
+    function calculateVisitPrice(plan, visitsText, discount) {
+      const isWelcome = (discount && discount.toLowerCase().includes('welcome')) || 
+                        plan.toLowerCase().includes('welcome') || 
+                        plan.toLowerCase().includes('promo');
+
+      const planPrices = isWelcome ? {
+        "1 Bedroom Flat": 7000,
+        "2 Bedroom Flat": 10000,
+        "3 Bedroom Flat": 15000,
+        "4 Bedroom Flat": 20000,
+        "1 Bedroom": 7000,
+        "2 Bedroom": 10000,
+        "3 Bedroom": 15000,
+        "4 Bedroom": 20000
+      } : {
         "1 Bedroom Flat": 10000,
         "2 Bedroom Flat": 15000,
         "3 Bedroom Flat": 20000,
@@ -1748,7 +1761,7 @@
       };
 
       // Find which plan rate matches
-      let baseRate = 15000; // default 2 bedroom
+      let baseRate = isWelcome ? 10000 : 15000; // default 2 bedroom
       for (const key in planPrices) {
         if (plan.toLowerCase().includes(key.toLowerCase())) {
           baseRate = planPrices[key];
@@ -1757,15 +1770,18 @@
       }
 
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
-        // Monthly subscriptions:
-        // 1 Bedroom: 50000 / 6 = 8333
-        // 2 Bedroom: 80000 / 6 = 13333
-        // 3 Bedroom: 100000 / 6 = 16667
-        // 4 Bedroom: 150000 / 6 = 25000
-        if (plan.toLowerCase().includes("1 bedroom")) return 8333;
-        if (plan.toLowerCase().includes("2 bedroom")) return 13333;
-        if (plan.toLowerCase().includes("3 bedroom")) return 16667;
-        if (plan.toLowerCase().includes("4 bedroom")) return 25000;
+        // Monthly subscriptions (Welcome Offer rates vs Regular rates):
+        if (isWelcome) {
+          if (plan.toLowerCase().includes("1 bedroom")) return 5833; // 35,000 / 6
+          if (plan.toLowerCase().includes("2 bedroom")) return 8333; // 50,000 / 6
+          if (plan.toLowerCase().includes("3 bedroom")) return 11667; // 70,000 / 6
+          if (plan.toLowerCase().includes("4 bedroom")) return 16667; // 100,000 / 6
+        } else {
+          if (plan.toLowerCase().includes("1 bedroom")) return 8333; // 50,000 / 6
+          if (plan.toLowerCase().includes("2 bedroom")) return 13333; // 80,000 / 6
+          if (plan.toLowerCase().includes("3 bedroom")) return 16667; // 100,000 / 6
+          if (plan.toLowerCase().includes("4 bedroom")) return 25000; // 150,000 / 6
+        }
         return baseRate; // fallback
       }
 

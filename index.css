@@ -1801,7 +1801,12 @@
       overflow-y: auto !important;
     }
     .promo-modal-left-img {
-      display: none !important;
+      display: block !important;
+      min-height: 280px !important;
+      height: 280px !important;
+      width: 100% !important;
+      background-size: cover !important;
+      background-position: center top !important;
     }
   }
 
