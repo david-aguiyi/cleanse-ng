@@ -1539,6 +1539,7 @@
               <div><strong style="color: var(--white);">Email:</strong> <span id="info-email">-</span></div>
               <div><strong style="color: var(--white);">Phone:</strong> <span id="info-phone">-</span></div>
               <div><strong style="color: var(--white);">Selected Plan:</strong> <span id="info-plan">-</span></div>
+              <div><strong style="color: var(--white);">Applied Discount:</strong> <span id="info-discount" style="color: var(--neon-green); font-weight: bold;">-</span></div>
               <div><strong style="color: var(--white);">Frequency:</strong> <span id="info-visits">-</span></div>
               <div>
                 <strong style="color: var(--white);">📍 Address:</strong> <span id="info-address">-</span>
@@ -2478,7 +2479,8 @@
         plan, 
         visits: visitsText, 
         address, 
-        code: isPromo ? `${codeVal} (Promo)` : codeVal 
+        code: isPromo ? `${codeVal} (Promo)` : codeVal,
+        discount: isPromo ? "Welcome Offer" : "None"
       };
 
       // Check for Promo Abuse in historyList
@@ -2509,11 +2511,17 @@
       submitBtn.onclick = submitAllToSheet;
 
       // Fill summary cards
-      document.getElementById('info-code').textContent = codeVal;
+      const codeEl = document.getElementById('info-code');
+      if (codeEl) {
+        codeEl.textContent = isPromoAbuse ? "BLOCKED (Promo Reuse)" : codeVal;
+        codeEl.style.color = isPromoAbuse ? 'var(--red)' : 'var(--neon-green)';
+      }
+      
       document.getElementById('info-name').textContent = name;
       document.getElementById('info-email').textContent = email;
       document.getElementById('info-phone').textContent = phone;
       document.getElementById('info-plan').textContent = plan;
+      document.getElementById('info-discount').textContent = isPromo ? "Welcome Offer" : "None";
       document.getElementById('info-visits').textContent = visitsText;
       document.getElementById('info-address').textContent = address || "Not provided";
 
@@ -2559,7 +2567,7 @@
 
       renderScheduledVisits();
       document.getElementById('general-info-card').style.display = 'block';
-      document.getElementById('results').style.display = 'block';
+      document.getElementById('results').style.display = isPromoAbuse ? 'none' : 'block';
     }
 
     function formatDate(dateObj) {
@@ -2709,7 +2717,8 @@
             address: currentCustomer.address || '',
             visits: currentCustomer.visits || '1 visit per month',
             preferences: currentCustomer.preferences || 'None',
-            rawMessage: document.getElementById('order-input').value || ''
+            rawMessage: document.getElementById('order-input').value || '',
+            discount: currentCustomer.discount || 'None'
           });
         }
       });
@@ -3439,6 +3448,14 @@
       
       const warningEl = document.getElementById('promo-abuse-warning');
       if (warningEl) warningEl.style.display = 'none';
+
+      const codeEl = document.getElementById('info-code');
+      if (codeEl) {
+        codeEl.style.color = '';
+        codeEl.textContent = '-';
+      }
+      const discEl = document.getElementById('info-discount');
+      if (discEl) discEl.textContent = '-';
 
       currentCustomer = null;
       scheduledVisits = [];
