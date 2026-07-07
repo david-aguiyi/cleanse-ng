@@ -177,10 +177,10 @@ const pricingData = {
     { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 150000 }
   ],
   monthly: [
-    { primary: '₦50,000', unit: ' / month', secondary: '₦10,000 / visit' },
-    { primary: '₦80,000', unit: ' / month', secondary: '₦15,000 / visit' },
-    { primary: '₦100,000', unit: ' / month', secondary: '₦20,000 / visit' },
-    { primary: '₦150,000', unit: ' / month', secondary: '₦25,000 / visit' }
+    { primary: '₦50,000', unit: ' / month', secondary: '' },
+    { primary: '₦80,000', unit: ' / month', secondary: '' },
+    { primary: '₦100,000', unit: ' / month', secondary: '' },
+    { primary: '₦150,000', unit: ' / month', secondary: '' }
   ]
 };
 
