@@ -2437,33 +2437,43 @@
       // Generate code for new booking
       const codeVal = getNextAvailableCode();
       
-      // Parser regexes
-      const planMatch = text.match(/Plan:\*?\s*([^\n]+)/i);
-      const nameMatch = text.match(/Name:\*?\s*([^\n]+)/i);
-      const emailMatch = text.match(/Email:\*?\s*([^\n]+)/i);
-      const phoneMatch = text.match(/Phone:\*?\s*([^\n]+)/i);
-      const visitsMatch = text.match(/Visits per Month:\*?\s*([^\n]+)/i);
-      const dateMatch = text.match(/Preferred Date:\*?\s*([^\n]+)/i);
-      const slotMatch = text.match(/Preferred Schedule:\*?\s*([^\n]+)/i);
-      const addressMatch = text.match(/(?:Home Address|Address):\*?\s*([^\n]+)/i);
+      // Check if welcome offer is applied in message
+      const isPromo = text.includes('[WELCOME OFFER APPLIED]');
+      
+      // Parser regexes matching WhatsApp bold markdown format (*Field*:)
+      const planMatch = text.match(/\*Plan\*:\s*([^\n]+)/i);
+      const nameMatch = text.match(/\*Name\*:\s*([^\n]+)/i);
+      const emailMatch = text.match(/\*Email\*:\s*([^\n]+)/i);
+      const phoneMatch = text.match(/\*Phone\*:\s*([^\n]+)/i);
+      const visitsMatch = text.match(/\*Visits per Month\*:\s*([^\n]+)/i);
+      const dateMatch = text.match(/\*Preferred Date\*:\s*([^\n]+)/i);
+      const slotMatch = text.match(/\*Preferred Schedule\*:\s*([^\n]+)/i);
+      const addressMatch = text.match(/\*(?:Home Address|Address)\*:\s*([^\n]+)/i);
 
-      const plan = planMatch ? planMatch[1].trim() : "Unknown Plan";
-      const name = nameMatch ? nameMatch[1].trim() : "Unknown Name";
-      const email = emailMatch ? emailMatch[1].trim() : "Unknown Email";
-      const phone = phoneMatch ? phoneMatch[1].trim() : "Unknown Phone";
-      const visitsText = visitsMatch ? visitsMatch[1].trim() : "1 visit per month";
-      const rawDate = dateMatch ? dateMatch[1].trim() : "";
-      const slot = normalizeSlot(slotMatch ? slotMatch[1].trim() : "8am - 11am");
-      const address = addressMatch ? addressMatch[1].trim() : "";
+      const plan = planMatch ? planMatch[1].replace(/\*/g, '').trim() : "Unknown Plan";
+      const name = nameMatch ? nameMatch[1].replace(/\*/g, '').trim() : "Unknown Name";
+      const email = emailMatch ? emailMatch[1].replace(/\*/g, '').trim() : "Unknown Email";
+      const phone = phoneMatch ? phoneMatch[1].replace(/\*/g, '').trim() : "Unknown Phone";
+      const visitsText = visitsMatch ? visitsMatch[1].replace(/\*/g, '').trim() : "1 visit per month";
+      const rawDate = dateMatch ? dateMatch[1].replace(/\*/g, '').trim() : "";
+      const slot = normalizeSlot(slotMatch ? slotMatch[1].replace(/\*/g, '').trim() : "8am - 11am");
+      const address = addressMatch ? addressMatch[1].replace(/\*/g, '').trim() : "";
 
       let startDate = new Date();
       if (rawDate) {
-        const cleanDateStr = rawDate.replace(/\*/g, '').trim();
-        const d = new Date(cleanDateStr);
+        const d = new Date(rawDate);
         if (!isNaN(d.getTime())) startDate = d;
       }
 
-      currentCustomer = { name, email, phone, plan, visits: visitsText, address, code: codeVal };
+      currentCustomer = { 
+        name, 
+        email, 
+        phone, 
+        plan, 
+        visits: visitsText, 
+        address, 
+        code: isPromo ? `${codeVal} (Promo)` : codeVal 
+      };
 
       // Restore submit button state
       const submitBtn = document.getElementById('btn-auto-submit');
