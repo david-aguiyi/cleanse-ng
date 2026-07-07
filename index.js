@@ -431,15 +431,15 @@ function updateFrequencyCards() {
     {
       value: '2 visits per month (Twice monthly)',
       title: 'Twice monthly',
-      subtitle: '2 visits / month (Saves ₦800/visit)',
-      totalCost: (baseRate - 800) * 2,
+      subtitle: '2 visits / month',
+      totalCost: (baseRate - 500) * 2,
       isSubscription: false
     },
     {
       value: '4 visits per month (4 times monthly)',
       title: 'Weekly',
-      subtitle: '4 visits / month (Saves ₦1,600/visit)',
-      totalCost: (baseRate - 1600) * 4,
+      subtitle: '4 visits / month',
+      totalCost: (baseRate - 1000) * 4,
       isSubscription: false
     }
   ];
@@ -586,11 +586,11 @@ function updateBookingSummary() {
         freqLabel = "(Once monthly)";
       } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
         multiplier = 2;
-        ratePerVisit = priceInfo.rate - 800;
+        ratePerVisit = priceInfo.rate - 500;
         freqLabel = "(Twice monthly)";
       } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
         multiplier = 4;
-        ratePerVisit = priceInfo.rate - 1600;
+        ratePerVisit = priceInfo.rate - 1000;
         freqLabel = "(Weekly)";
       }
 
@@ -821,10 +821,10 @@ function updateVerifyStepDetails() {
         multiplier = 1;
       } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
         multiplier = 2;
-        ratePerVisit = priceInfo.rate - 800;
+        ratePerVisit = priceInfo.rate - 500;
       } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
         multiplier = 4;
-        ratePerVisit = priceInfo.rate - 1600;
+        ratePerVisit = priceInfo.rate - 1000;
       }
       totalVal = ratePerVisit * multiplier;
     }
@@ -1733,10 +1733,10 @@ if (bookingForm) {
           multiplier = 1;
         } else if (visits && visits.includes("2 visits")) {
           multiplier = 2;
-          ratePerVisit = priceInfo.rate - 800;
+          ratePerVisit = priceInfo.rate - 500;
         } else if (visits && visits.includes("4 visits")) {
           multiplier = 4;
-          ratePerVisit = priceInfo.rate - 1600;
+          ratePerVisit = priceInfo.rate - 1000;
         }
 
         const total = ratePerVisit * multiplier;
