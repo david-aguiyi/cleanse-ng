@@ -1975,18 +1975,20 @@
 
   #promo-close-btn {
     top: 16px !important;
-    right: 16px !important;
-    border-radius: 8px !important;
-    background: var(--white) !important;
+    right: 20px !important;
+    background: none !important;
+    border: none !important;
     color: var(--deep-purple) !important;
-    border: 2.5px solid var(--deep-purple) !important;
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 20px !important;
+    font-size: 32px !important;
+    width: auto !important;
+    height: auto !important;
     box-shadow: none !important;
-    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    line-height: 1 !important;
   }
   #promo-close-btn:hover {
-    background: var(--neon-green) !important;
+    opacity: 0.7;
+    background: none !important;
     color: var(--deep-purple) !important;
   }
