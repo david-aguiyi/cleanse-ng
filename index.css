@@ -1940,3 +1940,34 @@
       font-size: 12.5px !important;
     }
   }
+
+  .promo-modal-right-content {
+    padding: 44px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    text-align: left;
+    gap: 14px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .promo-headline {
+    font-family: var(--font-header);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  @media (max-width: 480px) {
+    .promo-modal-right-content {
+      padding: 36px 20px 28px 20px !important;
+    }
+    .promo-headline {
+      font-size: 26px !important;
+    }
+  }
