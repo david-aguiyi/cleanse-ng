@@ -1767,8 +1767,11 @@ if (bookingForm) {
     }
 
     // Construct WhatsApp message template
-    const waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n` +
-      `• *Plan:* ${selectedPlan}\n` +
+    let waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n`;
+    if (isPromoApplied) {
+      waMessage += `🎉 *[WELCOME OFFER APPLIED]*\n\n`;
+    }
+    waMessage += `• *Plan:* ${selectedPlan}\n` +
       `• *Visits per Month:* ${visitsText}\n` +
       `• *Pricing:* ${priceDetailsText}\n` +
       `• *Name:* ${fullName}\n` +
