@@ -907,66 +907,32 @@
 
   <!-- PROMOTIONAL MODAL FOR FIRST-TIME USERS -->
   <div class="booking-modal-overlay" id="promo-modal" style="display: none; z-index: 2500;">
-    <div class="booking-modal-content promo-modal-content" style="max-width: 520px; padding: 40px 32px; text-align: center; border: 1px solid var(--border); background: var(--off-white); color: var(--deep-purple); box-shadow: 0 24px 48px rgba(26, 13, 51, 0.18); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border-radius: 16px; width: 90%; max-height: 95vh; overflow-y: auto;">
-      <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
+    <div class="booking-modal-content promo-modal-content">
+      <!-- Left Column: Lifestyle Image -->
+      <div class="promo-modal-left-img" style="background-image: url('booking_lifestyle_image.png'); background-size: cover; background-position: center; width: 100%; height: 100%; min-height: 420px;"></div>
       
-      <div style="background: var(--lavender); padding: 6px 16px; border-radius: 100px; display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-purple); margin-bottom: 4px; font-family: var(--font-header);">
-        ✨ First-Time Customer Offer
-      </div>
-      
-      <h2 style="font-family: var(--font-header); font-size: 26px; font-weight: 700; color: var(--deep-purple); margin-bottom: 4px; line-height: 1.2;">
-        Unlock Exclusive Welcome Rates!
-      </h2>
-      <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5; margin-bottom: 12px; font-family: var(--font-body);">
-        Claim special introductory pricing on our premium residential cleans. These rates apply to your first booking only.
-      </p>
-      
-      <!-- Promo Pricing Comparison -->
-      <div class="promo-pricing-box" style="margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; font-family: var(--font-body); width: 100%;">
+      <!-- Right Column: Content -->
+      <div style="padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; gap: 16px; position: relative;">
+        <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
         
-        <!-- 2 Bed -->
-        <div style="background: var(--white); border: 1px solid var(--border); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-          <div style="text-align: left;">
-            <strong style="color: var(--deep-purple); font-size: 15px; display: block; font-family: var(--font-header);">2 Bedroom Plan</strong>
-            <span style="color: var(--mid-gray); font-size: 12px;">Regular: ₦15k/visit — ₦80k/mo</span>
-          </div>
-          <div style="text-align: right;">
-            <span style="color: var(--primary-purple); font-weight: 700; font-size: 16px; display: block;">₦10k / visit</span>
-            <span style="color: var(--deep-purple); font-weight: 600; font-size: 13px;">₦50k / month (6 visits)</span>
-          </div>
+        <div style="background: var(--lavender); padding: 6px 14px; border-radius: 100px; display: flex; align-items: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-purple); font-family: var(--font-header);">
+          <!-- Font Awesome style inline SVG Sparkle icon -->
+          <svg width="12" height="12" viewBox="0 0 512 512" fill="currentColor" style="margin-right: 6px;">
+            <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h192v224c0 17.7 14.3 32 32 32s32-14.3 32-32V320h192c17.7 0 32-14.3 32-32s-14.3-32-32-32H288V32z"/>
+          </svg>
+          Welcome Offer
         </div>
-
-        <!-- 3 Bed -->
-        <div style="background: var(--white); border: 1px solid var(--border); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-          <div style="text-align: left;">
-            <strong style="color: var(--deep-purple); font-size: 15px; display: block; font-family: var(--font-header);">3 Bedroom Plan</strong>
-            <span style="color: var(--mid-gray); font-size: 12px;">Regular: ₦20k/visit — ₦100k/mo</span>
-          </div>
-          <div style="text-align: right;">
-            <span style="color: var(--primary-purple); font-weight: 700; font-size: 16px; display: block;">₦15k / visit</span>
-            <span style="color: var(--deep-purple); font-weight: 600; font-size: 13px;">₦80k / month (6 visits)</span>
-          </div>
-        </div>
-
-        <!-- 4 Bed -->
-        <div style="background: var(--white); border: 1px solid var(--border); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-          <div style="text-align: left;">
-            <strong style="color: var(--deep-purple); font-size: 15px; display: block; font-family: var(--font-header);">4 Bedroom+ Plan</strong>
-            <span style="color: var(--mid-gray); font-size: 12px;">Regular: ₦25k/visit — ₦150k/mo</span>
-          </div>
-          <div style="text-align: right;">
-            <span style="color: var(--primary-purple); font-weight: 700; font-size: 16px; display: block;">₦20k / visit</span>
-            <span style="color: var(--deep-purple); font-weight: 600; font-size: 13px;">₦120k / month (6 visits)</span>
-          </div>
-        </div>
-
+        
+        <h2 style="font-family: var(--font-header); font-size: 28px; font-weight: 700; color: var(--deep-purple); margin: 0; line-height: 1.25;">
+          Unlock Exclusive First-Time Rates!
+        </h2>
+        
+        <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; margin: 0; font-family: var(--font-body);">
+          <strong>Save time and get your space cleaned for as low as ₦7,000.</strong> Claim our special introductory pricing on all residential plans. These rates apply to your first booking only and will be applied automatically at checkout.
+        </p>
+        
+        <button id="promo-claim-btn" class="btn-primary" style="width: 100%; border: none; padding: 14px; font-weight: 700; background: var(--primary-purple); font-family: var(--font-header); letter-spacing: 0.02em; border-radius: 8px; cursor: pointer; color: var(--white); display: flex; align-items: center; justify-content: center; margin-top: 12px; font-size: 15px;">Claim Welcome Rates →</button>
       </div>
-
-      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-        <button id="promo-claim-btn" class="btn-primary" style="width: 100%; border: none; padding: 14px; font-weight: 700; background: var(--primary-purple); font-family: var(--font-header); letter-spacing: 0.02em; border-radius: 8px; cursor: pointer; color: var(--white); display: flex; align-items: center; justify-content: center;">Claim Welcome Rates →</button>
-        <button id="promo-decline-btn" class="btn-ghost" style="color: var(--mid-gray); border: 1px solid var(--border); font-size: 13px; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; background: transparent; font-family: var(--font-header); display: flex; align-items: center; justify-content: center;">No thanks, continue with regular rates</button>
-      </div>
-
     </div>
   </div>
 

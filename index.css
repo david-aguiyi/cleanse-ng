@@ -1783,3 +1783,24 @@
     background-size: 16px;
     padding-right: 40px;
   }
+
+  .promo-modal-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1.25fr !important;
+    max-width: 800px !important;
+    width: 90%;
+    background: var(--off-white);
+    border-radius: 16px;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  @media (max-width: 768px) {
+    .promo-modal-content {
+      grid-template-columns: 1fr !important;
+      max-width: 460px !important;
+      overflow-y: auto !important;
+    }
+    .promo-modal-left-img {
+      display: none !important;
+    }
+  }
