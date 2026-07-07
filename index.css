@@ -1915,3 +1915,28 @@
       padding: 12px 8px !important;
     }
   }
+
+  .promo-trigger-btn {
+    font-size: 14px;
+    color: var(--primary-purple);
+    border-bottom: 1.5px solid var(--primary-purple);
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-header);
+    font-weight: 600;
+    padding: 2px 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 480px) {
+    .promo-trigger-btn {
+      font-size: 12.5px !important;
+    }
+  }
