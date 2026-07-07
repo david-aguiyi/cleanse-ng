@@ -1805,11 +1805,45 @@
     }
   }
 
-  @keyframes brutalBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+  .btn-brutal-bounce {
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
   }
   
   .btn-brutal-bounce:hover {
-    animation: brutalBounce 0.4s ease-in-out infinite;
+    transform: translate(-3px, -3px) !important;
+    box-shadow: 7px 7px 0px 0px var(--deep-purple) !important;
+  }
+
+  /* Apartment Size custom cards */
+  .apt-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .apt-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-family: var(--font-header);
+    font-weight: 600;
+    color: var(--deep-purple);
+    font-size: 14px;
+  }
+  .apt-card:hover {
+    border-color: var(--primary-purple);
+    background: rgba(58, 29, 109, 0.01);
+  }
+  .apt-card.active {
+    border-color: var(--primary-purple) !important;
+    background: rgba(58, 29, 109, 0.03) !important;
+    box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08) !important;
   }

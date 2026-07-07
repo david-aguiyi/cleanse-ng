@@ -478,8 +478,14 @@
             <div class="booking-wizard-step active" id="wizard-step-plan">
               <!-- Apartment Size Selection -->
               <div class="form-group full-width" id="apartment-size-group" style="margin-bottom: 20px;">
-                <label for="booking-apartment-size">Apartment Size *</label>
-                <select id="booking-apartment-size" required>
+                <label style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Apartment Size *</label>
+                <div class="apt-cards" id="apt-size-cards-container">
+                  <div class="apt-card" data-val="1 Bedroom">1 Bedroom</div>
+                  <div class="apt-card" data-val="2 Bedroom">2 Bedroom</div>
+                  <div class="apt-card" data-val="3 Bedroom">3 Bedroom</div>
+                  <div class="apt-card" data-val="4 Bedroom">4 Bedroom+</div>
+                </div>
+                <select id="booking-apartment-size" style="display: none;" required>
                   <option value="" disabled selected>Select apartment size</option>
                   <option value="1 Bedroom">1 Bedroom</option>
                   <option value="2 Bedroom">2 Bedroom</option>

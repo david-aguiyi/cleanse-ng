@@ -1257,6 +1257,9 @@ function openBookingModal(planName) {
     planInput.value = "";
     if (apartmentSizeInput) {
       apartmentSizeInput.value = "";
+      // Sync custom cards active class to clear them
+      const aptCards = document.querySelectorAll('.apt-card');
+      aptCards.forEach(card => card.classList.remove('active'));
     }
     _isPlanPreSelected = false;
 
@@ -1294,6 +1297,16 @@ function handlePlanChange() {
     else if (planName.includes("3 Bedroom")) apartmentSize = "3 Bedroom";
     else if (planName.includes("4 Bedroom")) apartmentSize = "4 Bedroom";
     apartmentSizeInput.value = apartmentSize;
+
+    // Sync custom cards active class
+    const aptCards = document.querySelectorAll('.apt-card');
+    aptCards.forEach(card => {
+      if (card.getAttribute('data-val') === apartmentSize) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    });
   }
 
   if (planName.includes('Monthly Subscription')) {
@@ -1535,6 +1548,16 @@ if (apartmentSizeInput) {
       planInput.value = "";
     }
     handlePlanChange();
+  });
+
+  // Handle click on custom apartment size cards
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('.apt-card');
+    if (card) {
+      const val = card.getAttribute('data-val');
+      apartmentSizeInput.value = val;
+      apartmentSizeInput.dispatchEvent(new Event('change'));
+    }
   });
 }
 
