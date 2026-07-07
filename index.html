@@ -474,8 +474,8 @@
               <input type="text" id="booking-website" name="website" tabindex="-1" autocomplete="off" value="">
             </div>
 
-            <!-- STEP 1: PLAN SELECTION -->
-            <div class="booking-wizard-step active" id="wizard-step-plan">
+            <!-- STEP 1: APARTMENT SIZE SELECTION -->
+            <div class="booking-wizard-step active" id="wizard-step-size">
               <!-- Apartment Size Selection -->
               <div class="form-group full-width" id="apartment-size-group" style="margin-bottom: 20px;">
                 <label style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 4px; display: block;">Apartment Size *</label>
@@ -493,7 +493,10 @@
                   <option value="4 Bedroom">4 Bedroom+</option>
                 </select>
               </div>
+            </div>
 
+            <!-- STEP 2: PLAN SELECTION -->
+            <div class="booking-wizard-step" id="wizard-step-plan">
               <!-- Selected Plan Selection (Hidden visually, active programmatically) -->
               <div class="form-row" id="plan-row" style="display: none;">
                 <div class="form-group full-width">
@@ -517,8 +520,8 @@
               </div>
 
               <!-- Frequency Selection Section -->
-              <div class="form-group full-width" id="frequency-section" style="margin-top: 0; display: none;">
-                <label style="display: none;">Select Frequency *</label>
+              <div class="form-group full-width" id="frequency-section" style="margin-top: 0;">
+                <label style="font-family: var(--font-header); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--deep-purple); margin-bottom: 8px; display: block;">Select Plan *</label>
                 <div class="frequency-cards" id="frequency-cards-container">
                   <!-- Dynamically Populated -->
                 </div>

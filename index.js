@@ -341,6 +341,7 @@ const scheduleOptions = {
 };
 
 const bookingSchedulePillsContainer = document.getElementById('booking-schedule-pills');
+const wizardStepSize = document.getElementById('wizard-step-size');
 const wizardStepPlan = document.getElementById('wizard-step-plan');
 const wizardStepSchedule = document.getElementById('wizard-step-schedule');
 const wizardStepContact = document.getElementById('wizard-step-contact');
@@ -634,6 +635,7 @@ function updateBookingSummary() {
 }
 
 function updateWizardUI() {
+  if (wizardStepSize) wizardStepSize.classList.remove('active');
   wizardStepPlan.classList.remove('active');
   wizardStepSchedule.classList.remove('active');
   wizardStepContact.classList.remove('active');
@@ -654,32 +656,41 @@ function updateWizardUI() {
   const standardSummary = document.getElementById('standard-summary-panel');
   const verifySummary = document.getElementById('wizard-step-verify-right');
 
-  if (_currentWizardStep === 1) {
-    wizardStepPlan.classList.add('active');
-    pStep1.classList.add('active');
+  // Common UI reset for modal content layout on steps 1-4 vs step 5
+  const modalContent = document.querySelector('.booking-modal-content');
+  if (modalContent) {
+    modalContent.classList.remove('mobile-show-summary');
+    modalContent.classList.remove('verify-step-active');
+  }
+  if (modalLeft) modalLeft.style.background = '';
 
-    // Sync apartment size dropdown visibility
-    const apartmentSizeGroup = document.getElementById('apartment-size-group');
-    if (apartmentSizeGroup) {
-      apartmentSizeGroup.style.display = _isPlanPreSelected ? 'none' : 'block';
-    }
+  if (_currentWizardStep === 1) {
+    if (wizardStepSize) wizardStepSize.classList.add('active');
+    pStep1.classList.add('active');
 
     if (wizardTitle) wizardTitle.textContent = "Select a Service";
     if (wizardSubtitle) wizardSubtitle.textContent = "";
 
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
-    if (modalLeft) modalLeft.style.background = '';
-    const modalContent = document.querySelector('.booking-modal-content');
-    if (modalContent) {
-      modalContent.classList.remove('mobile-show-summary');
-      modalContent.classList.remove('verify-step-active');
-    }
 
     wizardBackBtn.style.visibility = 'visible'; // Back button on step 1 to close modal
-    wizardNextBtn.style.display = 'block';
+    wizardNextBtn.style.display = 'none'; // Auto-advances when a size is clicked
     bookingSubmitBtn.style.display = 'none';
   } else if (_currentWizardStep === 2) {
+    wizardStepPlan.classList.add('active');
+    pStep1.classList.add('active'); // Still step 1 of progress bar
+
+    if (wizardTitle) wizardTitle.textContent = "Select Plan";
+    if (wizardSubtitle) wizardSubtitle.textContent = "";
+
+    if (standardSummary) standardSummary.style.display = 'flex';
+    if (verifySummary) verifySummary.style.display = 'none';
+
+    wizardBackBtn.style.visibility = 'visible';
+    wizardNextBtn.style.display = 'block';
+    bookingSubmitBtn.style.display = 'none';
+  } else if (_currentWizardStep === 3) {
     wizardStepSchedule.classList.add('active');
     pStep1.classList.add('completed');
     pDiv1.style.background = 'var(--neon-green)';
@@ -690,17 +701,11 @@ function updateWizardUI() {
 
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
-    if (modalLeft) modalLeft.style.background = '';
-    const modalContent = document.querySelector('.booking-modal-content');
-    if (modalContent) {
-      modalContent.classList.remove('mobile-show-summary');
-      modalContent.classList.remove('verify-step-active');
-    }
 
     wizardBackBtn.style.visibility = 'visible';
     wizardNextBtn.style.display = 'block';
     bookingSubmitBtn.style.display = 'none';
-  } else if (_currentWizardStep === 3) {
+  } else if (_currentWizardStep === 4) {
     wizardStepContact.classList.add('active');
     pStep1.classList.add('completed');
     pDiv1.style.background = 'var(--neon-green)';
@@ -713,17 +718,11 @@ function updateWizardUI() {
 
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
-    if (modalLeft) modalLeft.style.background = '';
-    const modalContent = document.querySelector('.booking-modal-content');
-    if (modalContent) {
-      modalContent.classList.remove('mobile-show-summary');
-      modalContent.classList.remove('verify-step-active');
-    }
 
     wizardBackBtn.style.visibility = 'visible';
     wizardNextBtn.style.display = 'block';
     bookingSubmitBtn.style.display = 'none';
-  } else if (_currentWizardStep === 4) {
+  } else if (_currentWizardStep === 5) {
     if (wizardStepVerifyLeft) wizardStepVerifyLeft.classList.add('active');
     pStep1.classList.add('completed');
     pDiv1.style.background = 'var(--neon-green)';
@@ -738,7 +737,6 @@ function updateWizardUI() {
     if (verifySummary) verifySummary.style.display = 'flex';
     if (modalLeft) modalLeft.style.background = '#f2f6ff';
 
-    const modalContent = document.querySelector('.booking-modal-content');
     if (modalContent) {
       modalContent.classList.add('mobile-show-summary');
       modalContent.classList.add('verify-step-active');
@@ -1249,9 +1247,9 @@ function openBookingModal(planName) {
     }
 
     if (planName.includes('Monthly Subscription') || planName.includes('Custom Plan')) {
-      _currentWizardStep = 2; // Skip step 1 (Plan Selection)
+      _currentWizardStep = 3; // Skip Size and Plan selection, go straight to Date/Time
     } else {
-      _currentWizardStep = 1; // Pay-Per-Visit must select frequency
+      _currentWizardStep = 2; // Skip Size selection, go to Plan selection to pick frequency
     }
   } else {
     planInput.value = "";
@@ -1374,10 +1372,11 @@ function transitionModalSize(actionCallback) {
 
 function changeWizardStep(nextStep, direction) {
   const steps = {
-    1: wizardStepPlan,
-    2: wizardStepSchedule,
-    3: wizardStepContact,
-    4: wizardStepVerifyLeft
+    1: wizardStepSize,
+    2: wizardStepPlan,
+    3: wizardStepSchedule,
+    4: wizardStepContact,
+    5: wizardStepVerifyLeft
   };
 
   const currentStepEl = steps[_currentWizardStep];
@@ -1422,17 +1421,19 @@ function changeWizardStep(nextStep, direction) {
 if (wizardNextBtn) {
   wizardNextBtn.addEventListener('click', () => {
     if (_currentWizardStep === 1) {
-      if (apartmentSizeInput && !apartmentSizeInput.checkValidity()) {
+      if (apartmentSizeInput && !apartmentSizeInput.value) {
         apartmentSizeInput.reportValidity();
         return;
       }
+      changeWizardStep(2, 'next');
+    } else if (_currentWizardStep === 2) {
       if (!planInput.checkValidity()) {
         planInput.reportValidity();
         return;
       }
       if (!planInput.value.includes('Monthly Subscription') && !visitsSelect.value) {
         const step1ValMsg = document.getElementById('step1-validation-msg');
-        if (step1ValMsg) step1ValMsg.textContent = "Please select a frequency option.";
+        if (step1ValMsg) step1ValMsg.textContent = "Please select a plan option.";
         return;
       }
       const propSelect = document.getElementById('booking-property');
@@ -1440,9 +1441,8 @@ if (wizardNextBtn) {
         propSelect.reportValidity();
         return;
       }
-
-      changeWizardStep(2, 'next');
-    } else if (_currentWizardStep === 2) {
+      changeWizardStep(3, 'next');
+    } else if (_currentWizardStep === 3) {
       // Validate date selected
       const dateVal = bookingDateInput.value;
       if (!dateVal) {
@@ -1468,9 +1468,9 @@ if (wizardNextBtn) {
         return;
       }
 
-      changeWizardStep(3, 'next');
-    } else if (_currentWizardStep === 3) {
-      // Validate step 3 fields: Name, Email, Phone, Location
+      changeWizardStep(4, 'next');
+    } else if (_currentWizardStep === 4) {
+      // Validate step 4 fields: Name, Email, Phone, Location
       const nameInput = document.getElementById('booking-name');
       const emailInput = document.getElementById('booking-email');
       const phoneInput = document.getElementById('booking-phone');
@@ -1517,7 +1517,7 @@ if (wizardNextBtn) {
         return;
       }
 
-      changeWizardStep(4, 'next');
+      changeWizardStep(5, 'next');
     }
   });
 }
@@ -1527,10 +1527,7 @@ if (wizardBackBtn) {
     if (_currentWizardStep === 1) {
       closeBookingModal();
     } else {
-      const minStep = _isPlanPreSelected && (planInput.value.includes('Monthly Subscription') || planInput.value.includes('Custom Plan')) ? 2 : 1;
-      if (_currentWizardStep > minStep) {
-        changeWizardStep(_currentWizardStep - 1, 'back');
-      }
+      changeWizardStep(_currentWizardStep - 1, 'back');
     }
   });
 }
@@ -1557,6 +1554,13 @@ if (apartmentSizeInput) {
       const val = card.getAttribute('data-val');
       apartmentSizeInput.value = val;
       apartmentSizeInput.dispatchEvent(new Event('change'));
+
+      // Auto-advance to Step 2 with a short click feedback delay
+      if (_currentWizardStep === 1) {
+        setTimeout(() => {
+          changeWizardStep(2, 'next');
+        }, 150);
+      }
     }
   });
 }
