@@ -212,14 +212,12 @@ function updatePricing(isMonthly) {
 
     if (isMonthly) {
       if (difference > 0) {
-        const percentage = Math.round((difference / oneTimeTotal) * 100);
-        el.textContent = `${percentage}% Off`;
+        el.textContent = `Save ₦${difference.toLocaleString()}/mo`;
         el.style.opacity = '1';
         el.style.transform = 'translateY(0)';
       } else if (difference < 0) {
         const savings = Math.abs(difference);
-        const percentage = Math.round((savings / oneTimeTotal) * 100);
-        el.textContent = `${percentage}% Off`;
+        el.textContent = `Save ₦${savings.toLocaleString()}/mo`;
         el.style.opacity = '1';
         el.style.transform = 'translateY(0)';
       } else {
