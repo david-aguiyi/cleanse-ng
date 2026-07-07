@@ -1972,9 +1972,7 @@
       font-size: 26px !important;
     }
     #promo-close-btn {
-      top: 18px !important;
-      right: 20px !important;
-      font-size: 28px !important;
+      display: none !important;
     }
   }
 
