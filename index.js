@@ -171,10 +171,10 @@ const labelMonthly = document.getElementById('label-monthly');
 
 const pricingData = {
   oneTime: [
-    { primary: '₦10,000', unit: ' / visit', secondary: '₦50,000 / month (8 visits)', rawPrice: 10000, monthlyPrice: 50000 },
-    { primary: '₦15,000', unit: ' / visit', secondary: '₦80,000 / month (8 visits)', rawPrice: 15000, monthlyPrice: 80000 },
-    { primary: '₦20,000', unit: ' / visit', secondary: '₦100,000 / month (8 visits)', rawPrice: 20000, monthlyPrice: 100000 },
-    { primary: '₦25,000', unit: ' / visit', secondary: '₦150,000 / month (8 visits)', rawPrice: 25000, monthlyPrice: 150000 }
+    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 50000 },
+    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 80000 },
+    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 100000 },
+    { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 150000 }
   ],
   monthly: [
     { primary: '₦50,000', unit: ' / month', secondary: '₦10,000 / visit' },
@@ -202,6 +202,11 @@ function updatePricing(isMonthly) {
 
   secondaryPriceElements.forEach((el, index) => {
     el.textContent = data[index].secondary;
+    if (data[index].secondary) {
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
   });
 
   savingsElements.forEach((el, index) => {
@@ -391,16 +396,16 @@ function updateFrequencyCards() {
   visitsSelect.required = true;
 
   // Determine base rate based on selected plan
-  let baseRate = 11500;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = 16000;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20500;
+  let baseRate = 10000;
+  if (selectedPlan.includes('2 Bedroom')) baseRate = 15000;
+  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20000;
   else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
 
   // Determine Monthly Subscription rate
-  let subscriptionRate = 60000;
-  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 100000;
-  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 140000;
-  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 200000;
+  let subscriptionRate = 50000;
+  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 80000;
+  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 100000;
+  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 150000;
 
   // Parse room size name
   let bedrooms = "1 Bedroom";
