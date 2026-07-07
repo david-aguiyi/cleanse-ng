@@ -1525,6 +1525,12 @@
 
         <!-- General Info Summary -->
         <div class="result-section" id="general-info-card">
+          <!-- Promo Abuse Warning Alert -->
+          <div id="promo-abuse-warning" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1.5px solid var(--red); border-radius: 8px; padding: 14px; margin-bottom: 16px; color: var(--red); font-size: 13.5px; font-weight: 600; align-items: center; gap: 10px; line-height: 1.4;">
+            <span style="font-size: 20px; flex-shrink: 0;">⚠️</span>
+            <span>PROMO REUSE DETECTED: This customer (phone/email) has booked before and is ineligible for the First-Time Welcome Offer.</span>
+          </div>
+
           <div class="result-card">
             <label style="color: var(--neon-green); font-size: 12px; margin-bottom: 12px; display: block;">Client Information</label>
             <div style="font-size: 14px; display: flex; flex-direction: column; gap: 8px; color: var(--light-gray);">
@@ -2475,6 +2481,26 @@
         code: isPromo ? `${codeVal} (Promo)` : codeVal 
       };
 
+      // Check for Promo Abuse in historyList
+      let isPromoAbuse = false;
+      if (isPromo) {
+        const cleanPhone = phone.replace(/[^\d]/g, '');
+        const cleanEmail = email.toLowerCase().trim();
+        
+        isPromoAbuse = historyList.some(item => {
+          if (item.status === 'cancelled') return false;
+          const itemPhone = (item.phone || '').replace(/[^\d]/g, '');
+          const itemEmail = (item.email || '').toLowerCase().trim();
+          
+          return (cleanPhone && itemPhone === cleanPhone) || (cleanEmail && itemEmail === cleanEmail);
+        });
+      }
+
+      const warningEl = document.getElementById('promo-abuse-warning');
+      if (warningEl) {
+        warningEl.style.display = isPromoAbuse ? 'flex' : 'none';
+      }
+
       // Restore submit button state
       const submitBtn = document.getElementById('btn-auto-submit');
       submitBtn.textContent = "⚡ Save All Visits to Google Sheet";
@@ -3406,6 +3432,10 @@
       document.getElementById('order-input').value = '';
       document.getElementById('results').style.display = 'none';
       document.getElementById('general-info-card').style.display = 'none';
+      
+      const warningEl = document.getElementById('promo-abuse-warning');
+      if (warningEl) warningEl.style.display = 'none';
+
       currentCustomer = null;
       scheduledVisits = [];
       document.getElementById('travel-time-container').innerHTML = '';
