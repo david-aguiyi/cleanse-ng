@@ -2208,6 +2208,9 @@
             const nameStr = cols[3] || 'Unknown Client';
             const planStr = cols[4] || 'Cleanse Plan';
             const codeStr = cols[5] || '';
+            const discountStr = cols[6] || 'None';
+            const phoneStr = cols[7] || '';
+            const emailStr = cols[8] || '';
 
             // Only register active bookings for clashes
             if (statusStr !== 'cancelled') {
@@ -2223,7 +2226,10 @@
               status: statusStr,
               name: nameStr,
               plan: planStr,
-              code: codeStr
+              code: codeStr,
+              discount: discountStr,
+              phone: phoneStr,
+              email: emailStr
             });
           }
         }
@@ -2248,6 +2254,18 @@
           }
           if (sb.code && historyList[existingIdx].code !== sb.code) {
             historyList[existingIdx].code = sb.code;
+            localChanged = true;
+          }
+          if (sb.discount && historyList[existingIdx].discount !== sb.discount) {
+            historyList[existingIdx].discount = sb.discount;
+            localChanged = true;
+          }
+          if (sb.phone && historyList[existingIdx].phone !== sb.phone) {
+            historyList[existingIdx].phone = sb.phone;
+            localChanged = true;
+          }
+          if (sb.email && historyList[existingIdx].email !== sb.email) {
+            historyList[existingIdx].email = sb.email;
             localChanged = true;
           }
           if (localChanged) {
