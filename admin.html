@@ -1751,14 +1751,14 @@
 
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
         // Monthly subscriptions:
-        // 1 Bedroom: 50000 / 8 = 6250
-        // 2 Bedroom: 80000 / 8 = 10000
-        // 3 Bedroom: 100000 / 8 = 12500
-        // 4 Bedroom: 150000 / 8 = 18750
-        if (plan.toLowerCase().includes("1 bedroom")) return 6250;
-        if (plan.toLowerCase().includes("2 bedroom")) return 10000;
-        if (plan.toLowerCase().includes("3 bedroom")) return 12500;
-        if (plan.toLowerCase().includes("4 bedroom")) return 18750;
+        // 1 Bedroom: 50000 / 6 = 8333
+        // 2 Bedroom: 80000 / 6 = 13333
+        // 3 Bedroom: 100000 / 6 = 16667
+        // 4 Bedroom: 150000 / 6 = 25000
+        if (plan.toLowerCase().includes("1 bedroom")) return 8333;
+        if (plan.toLowerCase().includes("2 bedroom")) return 13333;
+        if (plan.toLowerCase().includes("3 bedroom")) return 16667;
+        if (plan.toLowerCase().includes("4 bedroom")) return 25000;
         return baseRate; // fallback
       }
 
@@ -1770,7 +1770,7 @@
         ratePerVisit = baseRate - 500;
       } else if (visitsText.includes("4 visits") || visitsText.includes("weekly")) {
         ratePerVisit = baseRate - 1000;
-      } else if (visitsText.includes("8 visits")) {
+      } else if (visitsText.includes("6 visits")) {
         ratePerVisit = baseRate - 2000;
       }
       return ratePerVisit;
@@ -2492,7 +2492,7 @@
       let recurrenceCount = 1;
       if (visitsText.includes("2 visits")) recurrenceCount = 2;
       else if (visitsText.includes("4 visits")) recurrenceCount = 4;
-      else if (visitsText.includes("8 visits")) recurrenceCount = 8;
+      else if (visitsText.includes("6 visits")) recurrenceCount = 6;
 
       scheduledVisits = [];
       let nextDate = new Date(startDate);
@@ -2503,7 +2503,7 @@
             nextDate.setDate(nextDate.getDate() + 14);
           } else if (recurrenceCount === 4) {
             nextDate.setDate(nextDate.getDate() + 7);
-          } else if (recurrenceCount === 8) {
+          } else if (recurrenceCount === 6) {
             const dayOfWeek = nextDate.getDay();
             const addDays = (dayOfWeek >= 1 && dayOfWeek <= 3) ? 3 : 4; 
             nextDate.setDate(nextDate.getDate() + addDays);
