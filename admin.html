@@ -3135,7 +3135,8 @@
           address: oldItem ? oldItem.address : '',
           visits: oldItem ? oldItem.visits : '1 visit per month',
           preferences: oldItem ? oldItem.preferences : 'None',
-          rawMessage: oldItem ? oldItem.rawMessage : ''
+          rawMessage: oldItem ? oldItem.rawMessage : '',
+          discount: oldItem ? oldItem.discount : 'None'
         });
 
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
@@ -3347,7 +3348,8 @@
           address: oldItem ? oldItem.address : '',
           visits: oldItem ? oldItem.visits : '1 visit per month',
           preferences: oldItem ? oldItem.preferences : 'None',
-          rawMessage: document.getElementById('order-input').value
+          rawMessage: document.getElementById('order-input').value,
+          discount: oldItem ? oldItem.discount : 'None'
         });
         localStorage.setItem('cleanse_booking_history', JSON.stringify(historyList));
 
