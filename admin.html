@@ -2446,15 +2446,15 @@
       // Check if welcome offer is applied in message
       const isPromo = text.includes('[WELCOME OFFER APPLIED]');
       
-      // Parser regexes matching WhatsApp bold markdown format (*Field*:)
-      const planMatch = text.match(/\*Plan\*:\s*([^\n]+)/i);
-      const nameMatch = text.match(/\*Name\*:\s*([^\n]+)/i);
-      const emailMatch = text.match(/\*Email\*:\s*([^\n]+)/i);
-      const phoneMatch = text.match(/\*Phone\*:\s*([^\n]+)/i);
-      const visitsMatch = text.match(/\*Visits per Month\*:\s*([^\n]+)/i);
-      const dateMatch = text.match(/\*Preferred Date\*:\s*([^\n]+)/i);
-      const slotMatch = text.match(/\*Preferred Schedule\*:\s*([^\n]+)/i);
-      const addressMatch = text.match(/\*(?:Home Address|Address)\*:\s*([^\n]+)/i);
+      // Parser regexes matching WhatsApp bold markdown format (*Field:*)
+      const planMatch = text.match(/\*Plan:\*\s*([^\n]+)/i);
+      const nameMatch = text.match(/\*Name:\*\s*([^\n]+)/i);
+      const emailMatch = text.match(/\*Email:\*\s*([^\n]+)/i);
+      const phoneMatch = text.match(/\*Phone:\*\s*([^\n]+)/i);
+      const visitsMatch = text.match(/\*Visits per Month:\*\s*([^\n]+)/i);
+      const dateMatch = text.match(/\*Preferred Date:\*\s*([^\n]+)/i);
+      const slotMatch = text.match(/\*Preferred Schedule:\*\s*([^\n]+)/i);
+      const addressMatch = text.match(/\*(?:Home Address|Address):\*\s*([^\n]+)/i);
 
       const plan = planMatch ? planMatch[1].replace(/\*/g, '').trim() : "Unknown Plan";
       const name = nameMatch ? nameMatch[1].replace(/\*/g, '').trim() : "Unknown Name";
