@@ -1943,13 +1943,13 @@
   }
 
   .promo-modal-right-content {
-    padding: 44px 36px;
+    padding: 32px 32px 28px 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
     text-align: left;
-    gap: 14px;
+    gap: 12px;
     position: relative;
     width: 100%;
     box-sizing: border-box;
@@ -1966,16 +1966,21 @@
   
   @media (max-width: 480px) {
     .promo-modal-right-content {
-      padding: 36px 20px 28px 20px !important;
+      padding: 24px 20px 20px 20px !important;
     }
     .promo-headline {
       font-size: 26px !important;
     }
+    #promo-close-btn {
+      top: 18px !important;
+      right: 20px !important;
+      font-size: 28px !important;
+    }
   }
 
   #promo-close-btn {
-    top: 16px !important;
-    right: 20px !important;
+    top: 24px !important;
+    right: 28px !important;
     background: none !important;
     border: none !important;
     color: var(--deep-purple) !important;
