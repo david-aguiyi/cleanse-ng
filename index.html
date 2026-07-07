@@ -922,26 +922,35 @@
       <div class="promo-modal-left-img" style="background-image: url('booking_lifestyle_image.png'); background-size: cover; background-position: center; width: 100%; height: 100%; min-height: 420px;"></div>
       
       <!-- Right Column: Content -->
-      <div style="padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; gap: 16px; position: relative;">
+      <div style="padding: 44px 36px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; gap: 14px; position: relative;">
         <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
         
-        <div style="background: var(--lavender); padding: 6px 14px; border-radius: 100px; display: flex; align-items: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-purple); font-family: var(--font-header);">
+        <div style="background: var(--primary-purple); padding: 6px 14px; border-radius: 100px; display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); font-family: var(--font-header);">
           <!-- Font Awesome style inline SVG Sparkle icon -->
-          <svg width="12" height="12" viewBox="0 0 512 512" fill="currentColor" style="margin-right: 6px;">
+          <svg width="10" height="10" viewBox="0 0 512 512" fill="currentColor" style="margin-right: 6px;">
             <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h192v224c0 17.7 14.3 32 32 32s32-14.3 32-32V320h192c17.7 0 32-14.3 32-32s-14.3-32-32-32H288V32z"/>
           </svg>
           Welcome Offer
         </div>
         
-        <h2 style="font-family: var(--font-header); font-size: 28px; font-weight: 700; color: var(--deep-purple); margin: 0; line-height: 1.25;">
-          Unlock Exclusive First-Time Rates!
+        <h2 style="font-family: var(--font-header); font-size: 30px; font-weight: 700; color: var(--deep-purple); margin: 0; line-height: 1.2;">
+          Unlock Welcome Rates!
         </h2>
         
-        <p style="font-size: 15px; color: var(--mid-gray); line-height: 1.6; margin: 0; font-family: var(--font-body);">
-          <strong>Save time and get your space cleaned for as low as ₦7,000.</strong> Claim our special introductory pricing on all residential plans. These rates apply to your first booking only and will be applied automatically at checkout.
+        <p style="font-size: 14px; color: var(--mid-gray); line-height: 1.5; margin: 0; font-family: var(--font-body);">
+          Get special introductory pricing applied automatically to your first booking.
         </p>
+
+        <!-- Dynamic Promo Highlight Box (Emphasis on Discount) -->
+        <div style="background: var(--lavender); border: 2px dashed var(--primary-purple); padding: 16px; border-radius: 12px; width: 100%; box-sizing: border-box;">
+          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--primary-purple); letter-spacing: 0.05em; display: block; margin-bottom: 2px; font-family: var(--font-header);">Save Time & Save Money</span>
+          <span style="font-size: 13px; color: var(--deep-purple); font-family: var(--font-body); display: block;">
+            Get your space cleaned for as low as:
+            <strong style="font-size: 32px; color: var(--primary-purple); font-family: var(--font-header); display: block; margin-top: 4px; line-height: 1.1; font-weight: 700;">₦7,000 <span style="font-size: 16px; font-weight: 500; color: var(--deep-purple); font-family: var(--font-body);">/ visit</span></strong>
+          </span>
+        </div>
         
-        <button id="promo-claim-btn" class="btn-primary" style="width: 100%; border: none; padding: 14px; font-weight: 700; background: var(--primary-purple); font-family: var(--font-header); letter-spacing: 0.02em; border-radius: 8px; cursor: pointer; color: var(--white); display: flex; align-items: center; justify-content: center; margin-top: 12px; font-size: 15px;">Claim Welcome Rates →</button>
+        <button id="promo-claim-btn" class="btn-primary" style="width: 100%; border: none; padding: 14px; font-weight: 700; background: var(--primary-purple); font-family: var(--font-header); letter-spacing: 0.02em; border-radius: 8px; cursor: pointer; color: var(--white); display: flex; align-items: center; justify-content: center; margin-top: 4px; font-size: 15px; box-shadow: 0 4px 14px rgba(58, 29, 109, 0.25);">Claim Welcome Rates →</button>
       </div>
     </div>
   </div>
