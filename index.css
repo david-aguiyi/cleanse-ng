@@ -1815,8 +1815,8 @@
   }
   
   .btn-brutal-bounce:hover {
-    transform: translate(-3px, -3px) !important;
-    box-shadow: 7px 7px 0px 0px var(--deep-purple) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(124, 252, 0, 0.4) !important;
   }
 
   /* Apartment Size custom cards */
@@ -1885,7 +1885,7 @@
   
   .promo-claim-btn-brutal {
     width: 100%;
-    border: 3px solid var(--deep-purple);
+    border: 2px solid var(--deep-purple);
     padding: 14px;
     font-weight: 800;
     background: var(--neon-green);
@@ -1899,9 +1899,9 @@
     justify-content: center;
     margin-top: 14px;
     font-size: 16px;
-    box-shadow: 4px 4px 0px 0px var(--deep-purple);
+    box-shadow: 0 4px 12px rgba(124, 252, 0, 0.25);
     text-transform: uppercase;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     white-space: nowrap;
   }
   
