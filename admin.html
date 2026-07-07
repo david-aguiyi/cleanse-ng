@@ -2463,7 +2463,7 @@
       const codeVal = getNextAvailableCode();
       
       // Check if welcome offer is applied in message
-      const isPromo = text.includes('[WELCOME OFFER APPLIED]');
+      const isPromo = /welcome offer/i.test(text);
       
       // Parser regexes matching WhatsApp bold markdown format (*Field:*)
       const planMatch = text.match(/\*Plan:\*\s*([^\n]+)/i);
