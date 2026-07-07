@@ -2291,5 +2291,15 @@ window.addEventListener('DOMContentLoaded', () => {
   if (promoCloseBtn) {
     promoCloseBtn.addEventListener('click', () => dismissPromo(false));
   }
+
+  const triggerPromoBtn = document.getElementById('trigger-promo-btn');
+  if (triggerPromoBtn) {
+    triggerPromoBtn.addEventListener('click', () => {
+      if (promoModal) {
+        promoModal.style.display = 'flex';
+        promoModal.classList.add('active');
+      }
+    });
+  }
 });
 
