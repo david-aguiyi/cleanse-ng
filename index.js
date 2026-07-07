@@ -207,7 +207,7 @@ const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
 const savingsElements = document.querySelectorAll('.pc-savings');
 
 function updatePricing(isMonthly) {
-  const currentPricing = isPromoApplied ? promoPricingData : pricingData;
+  const currentPricing = pricingData;
   const data = isMonthly ? currentPricing.monthly : currentPricing.oneTime;
 
   primaryPriceElements.forEach((el, index) => {
@@ -1638,6 +1638,8 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
   if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta') || btn.classList.contains('btn-primary')) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
+      isPromoApplied = false;
+      localStorage.setItem('cleanse_promo_applied', 'false');
 
       let planName = '';
       const card = btn.closest('.pricing-card');
