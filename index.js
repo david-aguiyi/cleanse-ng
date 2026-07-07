@@ -2318,6 +2318,15 @@ window.addEventListener('DOMContentLoaded', () => {
     promoCloseBtn.addEventListener('click', () => dismissPromo(false));
   }
 
+  // Close promo modal when clicking outside the card content (backdrop click)
+  if (promoModal) {
+    promoModal.addEventListener('click', (e) => {
+      if (e.target === promoModal) {
+        dismissPromo(false);
+      }
+    });
+  }
+
   const triggerPromoBtn = document.getElementById('trigger-promo-btn');
   if (triggerPromoBtn) {
     triggerPromoBtn.addEventListener('click', () => {
