@@ -1847,3 +1847,71 @@
     background: rgba(58, 29, 109, 0.03) !important;
     box-shadow: 0 0 0 2px rgba(58, 29, 109, 0.08) !important;
   }
+
+  /* Responsive Promo Modal Elements */
+  .promo-badge {
+    background: var(--primary-purple);
+    padding: 6px 14px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    font-family: var(--font-header);
+  }
+  
+  .promo-price-header {
+    font-size: 42px;
+    color: var(--deep-purple);
+    font-family: var(--font-header);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+  
+  .promo-claim-btn-brutal {
+    width: 100%;
+    border: 3px solid var(--deep-purple);
+    padding: 14px;
+    font-weight: 800;
+    background: var(--neon-green);
+    font-family: var(--font-header);
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--deep-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    font-size: 16px;
+    box-shadow: 4px 4px 0px 0px var(--deep-purple);
+    text-transform: uppercase;
+    transition: transform 0.1s, box-shadow 0.1s;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 480px) {
+    .promo-badge {
+      padding: 4px 10px !important;
+      font-size: 8.5px !important;
+    }
+    .promo-price-header {
+      font-size: 32px !important;
+    }
+    .promo-price-header span {
+      font-size: 13px !important;
+    }
+    .promo-claim-btn-brutal {
+      font-size: 12.5px !important;
+      padding: 12px 8px !important;
+    }
+  }

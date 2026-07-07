@@ -931,7 +931,7 @@
       <div style="padding: 44px 36px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; gap: 14px; position: relative;">
         <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
         
-        <div style="background: var(--primary-purple); padding: 6px 14px; border-radius: 100px; display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); font-family: var(--font-header);">
+        <div class="promo-badge">
           <!-- Font Awesome style inline SVG Sparkle icon -->
           <svg width="10" height="10" viewBox="0 0 512 512" fill="currentColor" style="margin-right: 6px;">
             <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h192v224c0 17.7 14.3 32 32 32s32-14.3 32-32V320h192c17.7 0 32-14.3 32-32s-14.3-32-32-32H288V32z"/>
@@ -949,12 +949,12 @@
           <span style="font-size: 13.5px; color: var(--deep-purple); font-family: var(--font-body); display: block; font-weight: 600; margin-bottom: 2px;">
             Get your space cleaned for as low as:
           </span>
-          <strong style="font-size: 42px; color: var(--deep-purple); font-family: var(--font-header); display: block; line-height: 1.1; font-weight: 900; letter-spacing: -0.01em;">
+          <strong class="promo-price-header">
             ₦7,000 <span style="font-size: 16px; font-weight: 700; color: var(--deep-purple); font-family: var(--font-body);">/ visit</span>
           </strong>
         </div>
         
-        <button id="promo-claim-btn" class="btn-brutal-bounce" style="width: 100%; border: 3px solid var(--deep-purple); padding: 14px; font-weight: 800; background: var(--neon-green); font-family: var(--font-header); letter-spacing: 0.04em; border-radius: 8px; cursor: pointer; color: var(--deep-purple); display: flex; align-items: center; justify-content: center; margin-top: 14px; font-size: 16px; box-shadow: 4px 4px 0px 0px var(--deep-purple); text-transform: uppercase; transition: transform 0.1s, box-shadow 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0px 0px var(--deep-purple)';" onmouseup="this.style.transform=''; this.style.boxShadow='4px 4px 0px 0px var(--deep-purple)';">Claim Welcome Rates →</button>
+        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0px 0px var(--deep-purple)';" onmouseup="this.style.transform=''; this.style.boxShadow='4px 4px 0px 0px var(--deep-purple)';">Claim Welcome Rates →</button>
       </div>
     </div>
   </div>
