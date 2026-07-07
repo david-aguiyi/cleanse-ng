@@ -1730,18 +1730,18 @@
 
     function calculateVisitPrice(plan, visitsText) {
       const planPrices = {
-        "1 Bedroom Flat": 11500,
-        "2 Bedroom Flat": 16000,
-        "3 Bedroom Flat": 20500,
+        "1 Bedroom Flat": 10000,
+        "2 Bedroom Flat": 15000,
+        "3 Bedroom Flat": 20000,
         "4 Bedroom Flat": 25000,
-        "1 Bedroom": 11500,
-        "2 Bedroom": 16000,
-        "3 Bedroom": 20500,
+        "1 Bedroom": 10000,
+        "2 Bedroom": 15000,
+        "3 Bedroom": 20000,
         "4 Bedroom": 25000
       };
 
       // Find which plan rate matches
-      let baseRate = 16000; // default 2 bedroom
+      let baseRate = 15000; // default 2 bedroom
       for (const key in planPrices) {
         if (plan.toLowerCase().includes(key.toLowerCase())) {
           baseRate = planPrices[key];
@@ -1751,14 +1751,14 @@
 
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
         // Monthly subscriptions:
-        // 1 Bedroom: 60000 / 8 = 7500
-        // 2 Bedroom: 100000 / 8 = 12500
-        // 3 Bedroom: 140000 / 8 = 17500
-        // 4 Bedroom: 200000 / 8 = 25000
-        if (plan.toLowerCase().includes("1 bedroom")) return 7500;
-        if (plan.toLowerCase().includes("2 bedroom")) return 12500;
-        if (plan.toLowerCase().includes("3 bedroom")) return 17500;
-        if (plan.toLowerCase().includes("4 bedroom")) return 25000;
+        // 1 Bedroom: 50000 / 8 = 6250
+        // 2 Bedroom: 80000 / 8 = 10000
+        // 3 Bedroom: 100000 / 8 = 12500
+        // 4 Bedroom: 150000 / 8 = 18750
+        if (plan.toLowerCase().includes("1 bedroom")) return 6250;
+        if (plan.toLowerCase().includes("2 bedroom")) return 10000;
+        if (plan.toLowerCase().includes("3 bedroom")) return 12500;
+        if (plan.toLowerCase().includes("4 bedroom")) return 18750;
         return baseRate; // fallback
       }
 
