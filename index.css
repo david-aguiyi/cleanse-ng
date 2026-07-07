@@ -1858,6 +1858,7 @@
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
+    align-self: center;
     letter-spacing: 0.08em;
     color: var(--white);
     font-family: var(--font-header);
@@ -1975,9 +1976,17 @@
   #promo-close-btn {
     top: 16px !important;
     right: 16px !important;
-    border-radius: 50% !important;
+    border-radius: 8px !important;
+    background: var(--white) !important;
+    color: var(--deep-purple) !important;
+    border: 2.5px solid var(--deep-purple) !important;
     width: 32px !important;
     height: 32px !important;
     font-size: 20px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: none !important;
+    transition: background 0.2s, color 0.2s;
+  }
+  #promo-close-btn:hover {
+    background: var(--neon-green) !important;
+    color: var(--deep-purple) !important;
   }
