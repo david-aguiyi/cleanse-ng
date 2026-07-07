@@ -1802,11 +1802,11 @@
     }
     .promo-modal-left-img {
       display: block !important;
-      min-height: 280px !important;
-      height: 280px !important;
+      min-height: 340px !important;
+      height: 340px !important;
       width: 100% !important;
-      background-size: cover !important;
-      background-position: center top !important;
+      background-size: contain !important;
+      background-position: bottom center !important;
     }
   }
 
