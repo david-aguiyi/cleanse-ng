@@ -609,14 +609,15 @@
   }
   .pc-savings {
     display: inline-block;
-    background: var(--neon-green);
-    color: var(--deep-purple);
+    background: #d1fae5;
+    color: #065f46;
     font-size: 11px;
     padding: 4px 10px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.04em;
     align-self: flex-start;
     font-family: var(--font-header);
+    border-radius: 100px;
   }
   .pc-btn {
     padding: 12px 20px;
