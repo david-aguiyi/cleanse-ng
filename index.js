@@ -169,6 +169,8 @@ const pricingCheckbox = document.getElementById('pricing-toggle-checkbox');
 const labelPayPerVisit = document.getElementById('label-pay-per-visit');
 const labelMonthly = document.getElementById('label-monthly');
 
+let isPromoApplied = localStorage.getItem('cleanse_promo_applied') === 'true';
+
 const pricingData = {
   oneTime: [
     { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 50000 },
@@ -184,13 +186,29 @@ const pricingData = {
   ]
 };
 
+const promoPricingData = {
+  oneTime: [
+    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 50000 },
+    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 50000 },
+    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 80000 },
+    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 120000 }
+  ],
+  monthly: [
+    { primary: '₦50,000', unit: ' / month', secondary: '' },
+    { primary: '₦50,000', unit: ' / month', secondary: '' },
+    { primary: '₦80,000', unit: ' / month', secondary: '' },
+    { primary: '₦120,000', unit: ' / month', secondary: '' }
+  ]
+};
+
 const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
 const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
 const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
 const savingsElements = document.querySelectorAll('.pc-savings');
 
 function updatePricing(isMonthly) {
-  const data = isMonthly ? pricingData.monthly : pricingData.oneTime;
+  const currentPricing = isPromoApplied ? promoPricingData : pricingData;
+  const data = isMonthly ? currentPricing.monthly : currentPricing.oneTime;
 
   primaryPriceElements.forEach((el, index) => {
     el.textContent = data[index].primary;
@@ -210,7 +228,7 @@ function updatePricing(isMonthly) {
   });
 
   savingsElements.forEach((el, index) => {
-    const item = pricingData.oneTime[index];
+    const item = currentPricing.oneTime[index];
     const oneTimeTotal = item.rawPrice * 6;
     const monthlyTotal = item.monthlyPrice;
     const difference = oneTimeTotal - monthlyTotal;
@@ -397,15 +415,15 @@ function updateFrequencyCards() {
 
   // Determine base rate based on selected plan
   let baseRate = 10000;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = 15000;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20000;
-  else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
+  if (selectedPlan.includes('2 Bedroom')) baseRate = isPromoApplied ? 10000 : 15000;
+  else if (selectedPlan.includes('3 Bedroom')) baseRate = isPromoApplied ? 15000 : 20000;
+  else if (selectedPlan.includes('4 Bedroom')) baseRate = isPromoApplied ? 20000 : 25000;
 
   // Determine Monthly Subscription rate
   let subscriptionRate = 50000;
-  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 80000;
-  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 100000;
-  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 150000;
+  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = isPromoApplied ? 50000 : 80000;
+  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = isPromoApplied ? 80000 : 100000;
+  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = isPromoApplied ? 120000 : 150000;
 
   // Parse room size name
   let bedrooms = "1 Bedroom";
@@ -556,12 +574,12 @@ function updateBookingSummary() {
   const planPrices = {
     "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (6 visits)": { rate: 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (6 visits)": { rate: 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (6 visits)": { rate: 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (6 visits)": { rate: 150000, type: "fixed" }
+    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
+    "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
+    "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -801,12 +819,12 @@ function updateVerifyStepDetails() {
   const planPrices = {
     "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (6 visits)": { rate: 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (6 visits)": { rate: 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (6 visits)": { rate: 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (6 visits)": { rate: 150000, type: "fixed" }
+    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
+    "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
+    "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -1711,12 +1729,12 @@ if (bookingForm) {
     const planPrices = {
       "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
       "1 Bedroom — Monthly Subscription (6 visits)": { rate: 50000, type: "fixed" },
-      "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-      "2 Bedroom — Monthly Subscription (6 visits)": { rate: 80000, type: "fixed" },
-      "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-      "3 Bedroom — Monthly Subscription (6 visits)": { rate: 100000, type: "fixed" },
-      "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-      "4 Bedroom — Monthly Subscription (6 visits)": { rate: 150000, type: "fixed" }
+      "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
+      "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+      "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
+      "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
     };
 
     const priceInfo = planPrices[selectedPlan];
@@ -2225,37 +2243,51 @@ if (waitlistForm) {
   }
 });
 
-// Automatically open waitlist modal on page load for all screen sizes (Disabled/Removed as requested)
-/*
+// Promotional Modal Logic for First-Time Users
 window.addEventListener('DOMContentLoaded', () => {
-  if (sessionStorage.getItem('waitlist_popup_dismissed') === 'true') {
-    return;
+  const promoModal = document.getElementById('promo-modal');
+  const promoClaimBtn = document.getElementById('promo-claim-btn');
+  const promoDeclineBtn = document.getElementById('promo-decline-btn');
+  const promoCloseBtn = document.getElementById('promo-close-btn');
+
+  // Check if user has already seen/dismissed the promo
+  const hasSeenPromo = localStorage.getItem('cleanse_promo_dismissed');
+
+  if (!hasSeenPromo && promoModal) {
+    // Show after 1.5 seconds delay
+    setTimeout(() => {
+      promoModal.style.display = 'flex';
+      promoModal.classList.add('active');
+    }, 1500);
   }
 
-  let popupOpened = false;
-  function triggerWaitlistPopup() {
-    if (popupOpened) return;
-    popupOpened = true;
-    const standardModalActive = modal && modal.classList.contains('active');
-    if (waitlistModal && !waitlistModal.classList.contains('active') && !standardModalActive) {
-      openWaitlistModal();
+  function dismissPromo(claim) {
+    if (promoModal) {
+      promoModal.style.display = 'none';
+      promoModal.classList.remove('active');
     }
-    window.removeEventListener('scroll', handleWaitlistScrollTrigger);
-  }
-
-  // Trigger on scroll past 20% page height
-  function handleWaitlistScrollTrigger() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (docHeight > 0 && (scrollTop / docHeight) >= 0.20) {
-      triggerWaitlistPopup();
+    localStorage.setItem('cleanse_promo_dismissed', 'true');
+    if (claim) {
+      isPromoApplied = true;
+      localStorage.setItem('cleanse_promo_applied', 'true');
+      
+      // Update homepage pricing cards and booking steps instantly
+      const pricingCheckbox = document.getElementById('pricing-toggle-checkbox');
+      const isMonthly = pricingCheckbox ? pricingCheckbox.checked : false;
+      updatePricing(isMonthly);
+      updateFrequencyCards();
+      updateBookingSummary();
     }
   }
 
-  window.addEventListener('scroll', handleWaitlistScrollTrigger);
-
-  // Backup timer: trigger after 5 seconds
-  setTimeout(triggerWaitlistPopup, 5000);
+  if (promoClaimBtn) {
+    promoClaimBtn.addEventListener('click', () => dismissPromo(true));
+  }
+  if (promoDeclineBtn) {
+    promoDeclineBtn.addEventListener('click', () => dismissPromo(false));
+  }
+  if (promoCloseBtn) {
+    promoCloseBtn.addEventListener('click', () => dismissPromo(false));
+  }
 });
-*/
 
