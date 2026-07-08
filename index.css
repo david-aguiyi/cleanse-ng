@@ -1790,23 +1790,20 @@
     max-width: 800px !important;
     width: 90%;
     background: var(--off-white);
-    border-radius: 16px;
+    border: 3px solid var(--deep-purple) !important;
+    box-shadow: 8px 8px 0px var(--deep-purple) !important;
+    border-radius: 12px !important;
     overflow: hidden !important;
     padding: 0 !important;
   }
   @media (max-width: 768px) {
     .promo-modal-content {
       grid-template-columns: 1fr !important;
-      max-width: 460px !important;
-      overflow-y: auto !important;
+      max-width: 420px !important;
+      overflow-y: hidden !important;
     }
     .promo-modal-left-img {
-      display: block !important;
-      min-height: 340px !important;
-      height: 340px !important;
-      width: 100% !important;
-      background-size: contain !important;
-      background-position: bottom center !important;
+      display: none !important;
     }
   }
 
