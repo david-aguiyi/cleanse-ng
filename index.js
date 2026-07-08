@@ -188,16 +188,16 @@ const pricingData = {
 
 const promoPricingData = {
   oneTime: [
-    { primary: '₦7,000', unit: ' / visit', secondary: '', rawPrice: 7000, monthlyPrice: 30000 },
-    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 50000 },
-    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 80000 },
-    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 120000 }
+    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 35000 },
+    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 50000 },
+    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 70000 },
+    { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 100000 }
   ],
   monthly: [
-    { primary: '₦30,000', unit: ' / month', secondary: '' },
+    { primary: '₦35,000', unit: ' / month', secondary: '' },
     { primary: '₦50,000', unit: ' / month', secondary: '' },
-    { primary: '₦80,000', unit: ' / month', secondary: '' },
-    { primary: '₦120,000', unit: ' / month', secondary: '' }
+    { primary: '₦70,000', unit: ' / month', secondary: '' },
+    { primary: '₦100,000', unit: ' / month', secondary: '' }
   ]
 };
 
@@ -207,7 +207,7 @@ const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
 const savingsElements = document.querySelectorAll('.pc-savings');
 
 function updatePricing(isMonthly) {
-  const currentPricing = pricingData;
+  const currentPricing = isPromoApplied ? promoPricingData : pricingData;
   const data = isMonthly ? currentPricing.monthly : currentPricing.oneTime;
 
   primaryPriceElements.forEach((el, index) => {
@@ -229,7 +229,7 @@ function updatePricing(isMonthly) {
 
   savingsElements.forEach((el, index) => {
     const item = currentPricing.oneTime[index];
-    const oneTimeTotal = item.rawPrice * 6;
+    const oneTimeTotal = item.rawPrice * 8;
     const monthlyTotal = item.monthlyPrice;
     const difference = oneTimeTotal - monthlyTotal;
 
@@ -415,16 +415,16 @@ function updateFrequencyCards() {
   visitsSelect.required = true;
 
   // Determine base rate based on selected plan
-  let baseRate = isPromoApplied ? 7000 : 10000;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = isPromoApplied ? 10000 : 15000;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = isPromoApplied ? 15000 : 20000;
-  else if (selectedPlan.includes('4 Bedroom')) baseRate = isPromoApplied ? 20000 : 25000;
+  let baseRate = 10000;
+  if (selectedPlan.includes('2 Bedroom')) baseRate = 15000;
+  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20000;
+  else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
 
   // Determine Monthly Subscription rate
-  let subscriptionRate = isPromoApplied ? 30000 : 50000;
+  let subscriptionRate = isPromoApplied ? 35000 : 50000;
   if (selectedPlan.includes('2 Bedroom')) subscriptionRate = isPromoApplied ? 50000 : 80000;
-  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = isPromoApplied ? 80000 : 100000;
-  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = isPromoApplied ? 120000 : 150000;
+  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = isPromoApplied ? 70000 : 100000;
+  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = isPromoApplied ? 100000 : 150000;
 
   // Parse room size name
   let bedrooms = "1 Bedroom";
@@ -434,9 +434,9 @@ function updateFrequencyCards() {
 
   const frequencies = [
     {
-      value: '6 visits per month',
+      value: '8 visits per month',
       title: 'Monthly Subscription',
-      subtitle: '6 visits / month',
+      subtitle: '8 visits / month',
       totalCost: subscriptionRate,
       isSubscription: true
     },
@@ -451,14 +451,14 @@ function updateFrequencyCards() {
       value: '2 visits per month (Twice monthly)',
       title: 'Twice monthly',
       subtitle: '2 visits / month',
-      totalCost: (baseRate - 500) * 2,
+      totalCost: baseRate * 2,
       isSubscription: false
     },
     {
       value: '4 visits per month (4 times monthly)',
       title: 'Weekly',
       subtitle: '4 visits / month',
-      totalCost: (baseRate - 1000) * 4,
+      totalCost: baseRate * 4,
       isSubscription: false
     }
   ];
@@ -499,7 +499,7 @@ function updateFrequencyCards() {
       // Update planInput based on whether it is subscription or pay per visit
       const size = apartmentSizeInput ? apartmentSizeInput.value : bedrooms;
       if (freq.isSubscription) {
-        planInput.value = `${size} — Monthly Subscription (6 visits)`;
+        planInput.value = `${size} — Monthly Subscription (8 visits)`;
       } else {
         planInput.value = `${size} — Pay Per Visit`;
       }
@@ -511,6 +511,24 @@ function updateFrequencyCards() {
 
     frequencyCardsContainer.appendChild(card);
   });
+
+  // Append promo/welcome offer notice if applicable
+  let noticeEl = document.getElementById('frequency-promo-notice');
+  if (isPromoApplied) {
+    if (!noticeEl) {
+      noticeEl = document.createElement('p');
+      noticeEl.id = 'frequency-promo-notice';
+      noticeEl.style.fontSize = '12.5px';
+      noticeEl.style.color = 'var(--primary-purple)';
+      noticeEl.style.fontWeight = '600';
+      noticeEl.style.marginTop = '12px';
+      noticeEl.style.lineHeight = '1.4';
+      frequencyCardsContainer.parentNode.appendChild(noticeEl);
+    }
+    noticeEl.innerHTML = `ℹ️ <strong>Welcome Offer:</strong> Your first month at a discounted rate. Same 8 visits. Same team. Same standard. After month one, subscription automatically moves to standard monthly pricing.`;
+  } else {
+    if (noticeEl) noticeEl.remove();
+  }
 }
 
 function updateBookingSummary() {
@@ -573,14 +591,14 @@ function updateBookingSummary() {
 
   // Pricing calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 30000 : 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
+    "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+    "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
+    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+    "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+    "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -589,11 +607,11 @@ function updateBookingSummary() {
 
     if (priceInfo.type === "fixed") {
       summaryExtrasText.textContent = `Extras: ${bedrooms}`;
-      summaryFrequencyText.textContent = "(6 times monthly)";
+      summaryFrequencyText.textContent = "(8 times monthly)";
 
       summaryBreakdownServiceName.textContent = `cleanse.ng Monthly Subscription`;
       summaryBreakdownServicePrice.textContent = `₦${priceInfo.rate.toLocaleString()}`;
-      summaryBreakdownServiceFreq.textContent = "(6 times monthly)";
+      summaryBreakdownServiceFreq.textContent = "(8 times monthly)";
       summaryTotal.textContent = `₦${priceInfo.rate.toLocaleString()}`;
     } else {
       let multiplier = 2; // default
@@ -605,11 +623,9 @@ function updateBookingSummary() {
         freqLabel = "(Once monthly)";
       } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
         multiplier = 2;
-        ratePerVisit = priceInfo.rate - 500;
         freqLabel = "(Twice monthly)";
       } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
         multiplier = 4;
-        ratePerVisit = priceInfo.rate - 1000;
         freqLabel = "(Weekly)";
       }
 
@@ -795,7 +811,7 @@ function updateVerifyStepDetails() {
   const isMonthly = selectedPlan.includes('Monthly Subscription');
   let freqText = "";
   if (isMonthly) {
-    freqText = "Monthly Subscription (6 visits)";
+    freqText = "Monthly Subscription (8 visits)";
   } else if (selectedPlan.includes("Custom Plan")) {
     freqText = "Custom Plan (pricing to be confirmed)";
   } else {
@@ -815,14 +831,14 @@ function updateVerifyStepDetails() {
 
   // Total Price calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 30000 : 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
+    "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+    "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
+    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+    "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+    "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
+    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+    "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -837,10 +853,8 @@ function updateVerifyStepDetails() {
         multiplier = 1;
       } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
         multiplier = 2;
-        ratePerVisit = priceInfo.rate - 500;
       } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
         multiplier = 4;
-        ratePerVisit = priceInfo.rate - 1000;
       }
       totalVal = ratePerVisit * multiplier;
     }
@@ -1308,7 +1322,7 @@ function handlePlanChange() {
   }
 
   if (planName.includes('Monthly Subscription')) {
-    visitsSelect.value = "6 visits per month";
+    visitsSelect.value = "8 visits per month";
 
     if (planSummary) {
       planSummaryText.textContent = planName;
@@ -1674,7 +1688,7 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
         let bedroomLabel = card.querySelector('.pc-label').textContent.trim();
         if (bedroomLabel === "4 Bedroom+") bedroomLabel = "4 Bedroom";
         const isMonthly = pricingCheckbox ? pricingCheckbox.checked : false;
-        planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (6 visits)' : 'Pay Per Visit'}`;
+        planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (8 visits)' : 'Pay Per Visit'}`;
         openBookingModal(planName);
       } else {
         // Nav or Hero buttons open the modal with no plan selected, allowing choice
@@ -1756,14 +1770,14 @@ if (bookingForm) {
 
     // Calculate pricing details dynamically
     const planPrices = {
-      "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
-      "1 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 30000 : 50000, type: "fixed" },
-      "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
-      "2 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-      "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
-      "3 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 80000 : 100000, type: "fixed" },
-      "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
-      "4 Bedroom — Monthly Subscription (6 visits)": { rate: isPromoApplied ? 120000 : 150000, type: "fixed" }
+      "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+      "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
+      "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+      "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
+      "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+      "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
+      "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+      "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
     };
 
     const priceInfo = planPrices[selectedPlan];
@@ -1771,8 +1785,9 @@ if (bookingForm) {
     let visitsText = visits;
     if (priceInfo) {
       if (priceInfo.type === "fixed") {
-        priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / month`;
-        visitsText = "6 visits per month";
+        const promoText = isPromoApplied ? " (Welcome Offer - 1st month only, then standard monthly pricing)" : "";
+        priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / month${promoText}`;
+        visitsText = "8 visits per month";
       } else {
         let multiplier = 2; // default
         let ratePerVisit = priceInfo.rate;
@@ -1780,10 +1795,8 @@ if (bookingForm) {
           multiplier = 1;
         } else if (visits && visits.includes("2 visits")) {
           multiplier = 2;
-          ratePerVisit = priceInfo.rate - 500;
         } else if (visits && visits.includes("4 visits")) {
           multiplier = 4;
-          ratePerVisit = priceInfo.rate - 1000;
         }
 
         const total = ratePerVisit * multiplier;

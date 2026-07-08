@@ -1740,16 +1740,7 @@
                         plan.toLowerCase().includes('welcome') || 
                         plan.toLowerCase().includes('promo');
 
-      const planPrices = isWelcome ? {
-        "1 Bedroom Flat": 7000,
-        "2 Bedroom Flat": 10000,
-        "3 Bedroom Flat": 15000,
-        "4 Bedroom Flat": 20000,
-        "1 Bedroom": 7000,
-        "2 Bedroom": 10000,
-        "3 Bedroom": 15000,
-        "4 Bedroom": 20000
-      } : {
+      const planPrices = {
         "1 Bedroom Flat": 10000,
         "2 Bedroom Flat": 15000,
         "3 Bedroom Flat": 20000,
@@ -1761,7 +1752,7 @@
       };
 
       // Find which plan rate matches
-      let baseRate = isWelcome ? 10000 : 15000; // default 2 bedroom
+      let baseRate = 15000; // default 2 bedroom
       for (const key in planPrices) {
         if (plan.toLowerCase().includes(key.toLowerCase())) {
           baseRate = planPrices[key];
@@ -1772,31 +1763,21 @@
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
         // Monthly subscriptions (Welcome Offer rates vs Regular rates):
         if (isWelcome) {
-          if (plan.toLowerCase().includes("1 bedroom")) return 5833; // 35,000 / 6
-          if (plan.toLowerCase().includes("2 bedroom")) return 8333; // 50,000 / 6
-          if (plan.toLowerCase().includes("3 bedroom")) return 11667; // 70,000 / 6
-          if (plan.toLowerCase().includes("4 bedroom")) return 16667; // 100,000 / 6
+          if (plan.toLowerCase().includes("1 bedroom")) return 4375; // 35,000 / 8
+          if (plan.toLowerCase().includes("2 bedroom")) return 6250; // 50,000 / 8
+          if (plan.toLowerCase().includes("3 bedroom")) return 8750; // 70,000 / 8
+          if (plan.toLowerCase().includes("4 bedroom")) return 12500; // 100,000 / 8
         } else {
-          if (plan.toLowerCase().includes("1 bedroom")) return 8333; // 50,000 / 6
-          if (plan.toLowerCase().includes("2 bedroom")) return 13333; // 80,000 / 6
-          if (plan.toLowerCase().includes("3 bedroom")) return 16667; // 100,000 / 6
-          if (plan.toLowerCase().includes("4 bedroom")) return 25000; // 150,000 / 6
+          if (plan.toLowerCase().includes("1 bedroom")) return 6250; // 50,000 / 8
+          if (plan.toLowerCase().includes("2 bedroom")) return 10000; // 80,000 / 8
+          if (plan.toLowerCase().includes("3 bedroom")) return 12500; // 100,000 / 8
+          if (plan.toLowerCase().includes("4 bedroom")) return 18750; // 150,000 / 8
         }
         return baseRate; // fallback
       }
 
-      // Pay Per Visit discounts:
-      let ratePerVisit = baseRate;
-      if (visitsText.includes("1 visit") || visitsText.includes("once")) {
-        ratePerVisit = baseRate;
-      } else if (visitsText.includes("2 visits") || visitsText.includes("twice")) {
-        ratePerVisit = baseRate - 500;
-      } else if (visitsText.includes("4 visits") || visitsText.includes("weekly")) {
-        ratePerVisit = baseRate - 1000;
-      } else if (visitsText.includes("6 visits")) {
-        ratePerVisit = baseRate - 2000;
-      }
-      return ratePerVisit;
+      // Pay Per Visit flat rate:
+      return baseRate;
     }
 
     function updateRevenueTracker() {
@@ -2569,10 +2550,11 @@
       // Determine frequency and generate recurring dates
       let recurrenceCount = 1;
       if (plan.includes("Monthly Subscription")) {
-        recurrenceCount = 6;
+        recurrenceCount = 8;
       } else {
         if (visitsText.includes("2 visits")) recurrenceCount = 2;
         else if (visitsText.includes("4 visits")) recurrenceCount = 4;
+        else if (visitsText.includes("8 visits")) recurrenceCount = 8;
         else if (visitsText.includes("6 visits")) recurrenceCount = 6;
       }
 
@@ -2585,7 +2567,7 @@
             nextDate.setDate(nextDate.getDate() + 14);
           } else if (recurrenceCount === 4) {
             nextDate.setDate(nextDate.getDate() + 7);
-          } else if (recurrenceCount === 6) {
+          } else if (recurrenceCount === 6 || recurrenceCount === 8) {
             const dayOfWeek = nextDate.getDay();
             const addDays = (dayOfWeek >= 1 && dayOfWeek <= 3) ? 3 : 4; 
             nextDate.setDate(nextDate.getDate() + addDays);
