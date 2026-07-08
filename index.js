@@ -1554,7 +1554,12 @@ if (apartmentSizeInput) {
   apartmentSizeInput.addEventListener('change', () => {
     const size = apartmentSizeInput.value;
     if (size) {
-      planInput.value = `${size} — Pay Per Visit`;
+      if (isPromoApplied && selectedPromoType === 'monthly') {
+        planInput.value = `${size} — Monthly Subscription (8 visits)`;
+        visitsSelect.value = "8 visits per month";
+      } else {
+        planInput.value = `${size} — Pay Per Visit`;
+      }
     } else {
       planInput.value = "";
     }
@@ -2351,12 +2356,10 @@ window.addEventListener('DOMContentLoaded', () => {
       updateFrequencyCards();
       updateBookingSummary();
 
-      // Automatically launch the booking modal step with pre-selected rate
-      if (selectedPromoType === 'monthly') {
-        openBookingModal("1 Bedroom — Monthly Subscription (8 visits)");
-      } else {
-        openBookingModal("1 Bedroom — Pay Per Visit");
-      }
+      // Automatically launch the booking modal at Step 1 (Size selection)
+      // Since isPromoApplied is true and selectedPromoType is set, it will auto-default
+      // to the correct plan type (Monthly Subscription or Pay Per Visit) on Step 2.
+      openBookingModal("");
     }
   }
 
