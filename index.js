@@ -2353,17 +2353,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const hasSeenPromo = localStorage.getItem('cleanse_promo_dismissed') || sessionStorage.getItem('cleanse_promo_dismissed');
 
   if (!hasSeenPromo && promoModal) {
-    // Show immediately after 3 seconds of being on the website
+    // Show immediately after 2 seconds of being on the website with clean ease-in transition
     setTimeout(() => {
-      promoModal.style.display = 'flex';
       promoModal.classList.add('active');
-    }, 3000);
+      document.body.style.overflow = 'hidden'; // Disable background scrolling
+    }, 2000);
   }
 
   function dismissPromo(claim) {
     if (promoModal) {
-      promoModal.style.display = 'none';
       promoModal.classList.remove('active');
+      document.body.style.overflow = ''; // Restore background scrolling
     }
     localStorage.setItem('cleanse_promo_dismissed', 'true');
     sessionStorage.setItem('cleanse_promo_dismissed', 'true');
