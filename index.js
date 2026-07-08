@@ -207,7 +207,7 @@ const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
 const savingsElements = document.querySelectorAll('.pc-savings');
 
 function updatePricing(isMonthly) {
-  const currentPricing = isPromoApplied ? promoPricingData : pricingData;
+  const currentPricing = pricingData;
   const data = isMonthly ? currentPricing.monthly : currentPricing.oneTime;
 
   primaryPriceElements.forEach((el, index) => {
