@@ -1714,6 +1714,19 @@
     border-color: #ff3b30 !important;
   }
 
+  /* Show only service selection in Step 1 (hide standard summary panel) */
+  .booking-modal-content.size-step-active {
+    grid-template-columns: 1fr !important;
+    max-width: 480px !important;
+    height: auto !important;
+  }
+  .booking-modal-content.size-step-active .booking-modal-left {
+    width: 100% !important;
+  }
+  .booking-modal-content.size-step-active #standard-summary-panel {
+    display: none !important;
+  }
+
   /* Show only verification card in Step 4 */
   .booking-modal-content.verify-step-active {
     grid-template-columns: 1fr !important;

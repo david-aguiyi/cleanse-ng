@@ -692,10 +692,14 @@ function updateWizardUI() {
   if (modalContent) {
     modalContent.classList.remove('mobile-show-summary');
     modalContent.classList.remove('verify-step-active');
+    modalContent.classList.remove('size-step-active');
   }
   if (modalLeft) modalLeft.style.background = '';
 
   if (_currentWizardStep === 1) {
+    if (modalContent) {
+      modalContent.classList.add('size-step-active');
+    }
     if (wizardStepSize) wizardStepSize.classList.add('active');
     pStep1.classList.add('active');
 
@@ -1572,6 +1576,13 @@ if (wizardBackBtn) {
     } else {
       changeWizardStep(_currentWizardStep - 1, 'back');
     }
+  });
+}
+
+const verifyBackBtn = document.getElementById('verify-back-btn');
+if (verifyBackBtn) {
+  verifyBackBtn.addEventListener('click', () => {
+    changeWizardStep(4, 'back');
   });
 }
 
