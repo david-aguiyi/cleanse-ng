@@ -170,6 +170,7 @@ const labelPayPerVisit = document.getElementById('label-pay-per-visit');
 const labelMonthly = document.getElementById('label-monthly');
 
 let isPromoApplied = localStorage.getItem('cleanse_promo_applied') === 'true';
+let isPromoFlow = false;
 
 const pricingData = {
   oneTime: [
@@ -1223,6 +1224,7 @@ function renderCalendar() {
 
 function openBookingModal(planName) {
   _modalOpenTime = Date.now();
+  isPromoFlow = false; // Reset to false for standard bookings
 
   // Clear validation messages
   ['step1-validation-msg', 'step2-validation-msg', 'step3-validation-msg', 'step4-validation-msg', 'coupon-validation-msg', 'calendar-booking-message'].forEach(id => {
@@ -1554,6 +1556,15 @@ if (wizardBackBtn) {
   wizardBackBtn.addEventListener('click', () => {
     if (_currentWizardStep === 1) {
       closeBookingModal();
+      if (isPromoFlow) {
+        // Re-open the promotional modal popup
+        const promoModal = document.getElementById('promo-modal');
+        if (promoModal) {
+          promoModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+        isPromoFlow = false; // Reset to avoid looping
+      }
     } else {
       changeWizardStep(_currentWizardStep - 1, 'back');
     }
@@ -2382,6 +2393,7 @@ window.addEventListener('DOMContentLoaded', () => {
       // Since isPromoApplied is true and selectedPromoType is set, it will auto-default
       // to the correct plan type (Monthly Subscription or Pay Per Visit) on Step 2.
       openBookingModal("");
+      isPromoFlow = true; // Mark as promotional flow for back navigation
     }
   }
 
