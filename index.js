@@ -2342,15 +2342,22 @@ window.addEventListener('DOMContentLoaded', () => {
   const promoDeclineBtn = document.getElementById('promo-decline-btn');
   const promoCloseBtn = document.getElementById('promo-close-btn');
 
-  // Check if user has already seen/dismissed the promo
-  const hasSeenPromo = localStorage.getItem('cleanse_promo_dismissed');
+  // Allow forcing the promo modal display via URL query parameters for testing/review
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('force_promo') || urlParams.has('forcePromo') || urlParams.has('promo')) {
+    localStorage.removeItem('cleanse_promo_dismissed');
+    sessionStorage.removeItem('cleanse_promo_dismissed');
+  }
+
+  // Check if user has already seen/dismissed the promo (check both localStorage and sessionStorage)
+  const hasSeenPromo = localStorage.getItem('cleanse_promo_dismissed') || sessionStorage.getItem('cleanse_promo_dismissed');
 
   if (!hasSeenPromo && promoModal) {
-    // Show after 1.5 seconds delay
+    // Show immediately after 3 seconds of being on the website
     setTimeout(() => {
       promoModal.style.display = 'flex';
       promoModal.classList.add('active');
-    }, 1500);
+    }, 3000);
   }
 
   function dismissPromo(claim) {
@@ -2359,6 +2366,7 @@ window.addEventListener('DOMContentLoaded', () => {
       promoModal.classList.remove('active');
     }
     localStorage.setItem('cleanse_promo_dismissed', 'true');
+    sessionStorage.setItem('cleanse_promo_dismissed', 'true');
     if (claim) {
       isPromoApplied = true;
       localStorage.setItem('cleanse_promo_applied', 'true');
