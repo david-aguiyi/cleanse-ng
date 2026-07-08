@@ -925,26 +925,38 @@
 
   <!-- PROMOTIONAL MODAL FOR FIRST-TIME USERS -->
   <div class="booking-modal-overlay" id="promo-modal" style="display: none; z-index: 2500;">
-    <div class="booking-modal-content promo-modal-content">
+    <div class="booking-modal-content promo-modal-content" style="background: #222222; border: 3px solid #333333; box-shadow: 0 12px 36px rgba(0,0,0,0.5); color: #FFFFFF; max-width: 800px; width: 90%; border-radius: 16px; overflow: hidden; display: grid;">
       <!-- Left Column: Lifestyle Image -->
-      <div class="promo-modal-left-img" style="background: #E6DFD9 url('welcome_helper.png') no-repeat bottom center; background-size: contain; width: 100%; height: 100%; min-height: 520px;"></div>
+      <div class="promo-modal-left-img" style="background: #1E1E1E url('welcome_helper.png') no-repeat bottom center; background-size: contain; width: 100%; height: 100%; min-height: 520px; border-right: 1px solid #333333;"></div>
       
       <!-- Right Column: Content -->
-      <div class="promo-modal-right-content">
+      <div class="promo-modal-right-content" style="background: #222222; padding: 40px 32px 32px 32px; display: flex; flex-direction: column; justify-content: center; position: relative;">
         <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
         
-        <!-- Neubrutalist Promo Highlight Box (Emphasis on Discount) -->
-        <div style="background: var(--lavender); border: 3px solid var(--deep-purple); box-shadow: 0 8px 24px rgba(58, 29, 109, 0.1); padding: 22px; border-radius: 12px; width: 100%; box-sizing: border-box; margin: 12px 0 6px 0;">
-          <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--deep-purple); letter-spacing: 0.08em; display: block; margin-bottom: 4px; font-family: var(--font-header);">Welcome Offer</span>
-          <span style="font-size: 13.5px; color: var(--deep-purple); font-family: var(--font-body); display: block; font-weight: 600; margin-bottom: 8px;">
-            Your first month at a discounted rate. Same 8 visits. Same team. Same standard.
-          </span>
-          <strong class="promo-price-header">
-            ₦35,000 <span style="font-size: 16px; font-weight: 700; color: var(--deep-purple); font-family: var(--font-body);">/ month</span>
-          </strong>
+        <span style="font-size: 13.5px; color: #B3B3B3; font-family: var(--font-body); font-weight: 500; display: block; margin-bottom: 4px;">first room, first clean</span>
+        <h2 style="font-family: var(--font-header); font-size: 26px; font-weight: 700; color: #FFFFFF; margin: 0 0 20px 0; line-height: 1.25;">Try your first room from ₦4,500</h2>
+        
+        <!-- Two-line Price Box -->
+        <div style="background: #1A1A1A; border: 1.5px solid #333333; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; box-sizing: border-box;">
+          <!-- Row 1: Monthly plan -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-family: var(--font-body); font-size: 15px; font-weight: 600; color: #E5E5E5;">Monthly plan, per visit</span>
+            <span style="font-family: var(--font-header); font-size: 18px; font-weight: 700; color: #00c853;">₦4,500</span>
+          </div>
+          <!-- Divider -->
+          <div style="height: 1px; background: #333333; margin: 0;"></div>
+          <!-- Row 2: One-time visit -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-family: var(--font-body); font-size: 15px; font-weight: 500; color: #999999;">One-time visit</span>
+            <span style="font-family: var(--font-header); font-size: 17px; font-weight: 600; color: #666666; text-decoration: line-through;">₦7,000</span>
+          </div>
         </div>
         
-        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal">Claim Welcome Rates</button>
+        <p style="font-size: 13.5px; color: #B3B3B3; line-height: 1.45; font-family: var(--font-body); margin: 0 0 24px 0; font-weight: 400;">
+          Price shown is for 1 room.<br>Subscribe monthly to unlock the lower rate.
+        </p>
+        
+        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal" style="background: #00c853; border: none; color: #000000; font-family: var(--font-header); font-weight: 700; font-size: 15.5px; padding: 14px 20px; border-radius: 8px; width: 100%; cursor: pointer; transition: all 0.2s;">Claim my ₦4,500 rate</button>
       </div>
     </div>
   </div>
