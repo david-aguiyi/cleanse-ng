@@ -933,29 +933,31 @@
       <div class="promo-modal-right-content" style="background: var(--off-white); padding: 40px 32px 32px 32px; display: flex; flex-direction: column; justify-content: center; position: relative;">
         <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
         
-        <h2 style="font-family: var(--font-header); font-size: 26px; font-weight: 800; color: var(--deep-purple); margin: 0 0 16px 0; line-height: 1.2;">Try your first room from ₦4,500</h2>
+        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary-purple); letter-spacing: 0.08em; display: block; margin-bottom: 4px; font-family: var(--font-header);">welcome offer, 1 room</span>
+        <h2 style="font-family: var(--font-header); font-size: 26px; font-weight: 800; color: var(--deep-purple); margin: 0 0 16px 0; line-height: 1.2;">Two ways to get started</h2>
         
-        <!-- Two-line Price Box -->
-        <div style="background: var(--white); border: 2px solid var(--deep-purple); box-shadow: 4px 4px 0px var(--deep-purple); border-radius: 8px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; box-sizing: border-box;">
-          <!-- Row 1: Monthly plan -->
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-family: var(--font-body); font-size: 15px; font-weight: 700; color: var(--deep-purple);">Monthly plan, per visit</span>
-            <span style="font-family: var(--font-header); font-size: 18px; font-weight: 800; color: #00b82f;">₦4,500</span>
+        <!-- Two Interactive pricing cards -->
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; box-sizing: border-box;">
+          <!-- One-time visit option -->
+          <div id="promo-opt-onetime" class="promo-opt-card" style="background: var(--white); border: 2px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; user-select: none;">
+            <span style="font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--mid-gray);">One-time visit</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-family: var(--font-header); font-size: 16px; font-weight: 600; color: var(--light-gray); text-decoration: line-through;">₦10,000</span>
+              <span style="font-family: var(--font-header); font-size: 20px; font-weight: 800; color: var(--deep-purple);">₦7,000</span>
+            </div>
           </div>
-          <!-- Divider -->
-          <div style="height: 2px; background: var(--deep-purple); margin: 0;"></div>
-          <!-- Row 2: One-time visit -->
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--mid-gray);">One-time visit</span>
-            <span style="font-family: var(--font-header); font-size: 17px; font-weight: 600; color: var(--light-gray); text-decoration: line-through;">₦7,000</span>
+          <!-- Monthly plan option -->
+          <div id="promo-opt-monthly" class="promo-opt-card selected" style="background: var(--white); border: 3px solid var(--deep-purple); box-shadow: 4px 4px 0px var(--deep-purple); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; user-select: none;">
+            <span style="font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--deep-purple);">Monthly plan, per visit</span>
+            <span style="font-family: var(--font-header); font-size: 20px; font-weight: 800; color: #00b82f;">₦4,500</span>
           </div>
         </div>
         
-        <p style="font-size: 11.5px; color: var(--mid-gray); line-height: 1.4; font-family: var(--font-body); margin: 0 0 12px 0; font-weight: 600;">
-          Price shown is for 1 room. Subscribe monthly to unlock the lower rate.
+        <p style="font-size: 11.5px; color: var(--mid-gray); line-height: 1.45; font-family: var(--font-body); margin: 0 0 12px 0; font-weight: 600;">
+          Prices shown are for 1 room. Monthly plan unlocks the lower per-visit rate.
         </p>
         
-        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal">Claim my ₦4,500 rate</button>
+        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal" style="margin-top: 4px;">Choose my rate</button>
       </div>
     </div>
   </div>

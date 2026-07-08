@@ -415,10 +415,10 @@ function updateFrequencyCards() {
   visitsSelect.required = true;
 
   // Determine base rate based on selected plan
-  let baseRate = 10000;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = 15000;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = 20000;
-  else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
+  let baseRate = isPromoApplied ? 7000 : 10000;
+  if (selectedPlan.includes('2 Bedroom')) baseRate = isPromoApplied ? 10000 : 15000;
+  else if (selectedPlan.includes('3 Bedroom')) baseRate = isPromoApplied ? 15000 : 20000;
+  else if (selectedPlan.includes('4 Bedroom')) baseRate = isPromoApplied ? 20000 : 25000;
 
   // Determine Monthly Subscription rate
   let subscriptionRate = isPromoApplied ? 35000 : 50000;
@@ -591,13 +591,13 @@ function updateBookingSummary() {
 
   // Pricing calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+    "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
     "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
     "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
     "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
   };
 
@@ -831,13 +831,13 @@ function updateVerifyStepDetails() {
 
   // Total Price calculation
   const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+    "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
     "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+    "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
     "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+    "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
     "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+    "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
     "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
   };
 
@@ -1770,13 +1770,13 @@ if (bookingForm) {
 
     // Calculate pricing details dynamically
     const planPrices = {
-      "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
+      "1 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 7000 : 10000, type: "per-visit" },
       "1 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 35000 : 50000, type: "fixed" },
-      "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
+      "2 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 10000 : 15000, type: "per-visit" },
       "2 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 50000 : 80000, type: "fixed" },
-      "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
+      "3 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 15000 : 20000, type: "per-visit" },
       "3 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 70000 : 100000, type: "fixed" },
-      "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
+      "4 Bedroom — Pay Per Visit": { rate: isPromoApplied ? 20000 : 25000, type: "per-visit" },
       "4 Bedroom — Monthly Subscription (8 visits)": { rate: isPromoApplied ? 100000 : 150000, type: "fixed" }
     };
 
@@ -2289,8 +2289,36 @@ if (waitlistForm) {
 });
 
 // Promotional Modal Logic for First-Time Users
+let selectedPromoType = 'monthly';
+
 window.addEventListener('DOMContentLoaded', () => {
   const promoModal = document.getElementById('promo-modal');
+  const optOnetime = document.getElementById('promo-opt-onetime');
+  const optMonthly = document.getElementById('promo-opt-monthly');
+
+  if (optOnetime && optMonthly) {
+    optOnetime.addEventListener('click', () => {
+      selectedPromoType = 'onetime';
+      optOnetime.style.border = '3px solid var(--deep-purple)';
+      optOnetime.style.boxShadow = '4px 4px 0px var(--deep-purple)';
+      optOnetime.querySelector('span').style.color = 'var(--deep-purple)';
+
+      optMonthly.style.border = '2px solid var(--border)';
+      optMonthly.style.boxShadow = 'none';
+      optMonthly.querySelector('span').style.color = 'var(--mid-gray)';
+    });
+
+    optMonthly.addEventListener('click', () => {
+      selectedPromoType = 'monthly';
+      optMonthly.style.border = '3px solid var(--deep-purple)';
+      optMonthly.style.boxShadow = '4px 4px 0px var(--deep-purple)';
+      optMonthly.querySelector('span').style.color = 'var(--deep-purple)';
+
+      optOnetime.style.border = '2px solid var(--border)';
+      optOnetime.style.boxShadow = 'none';
+      optOnetime.querySelector('span').style.color = 'var(--mid-gray)';
+    });
+  }
   const promoClaimBtn = document.getElementById('promo-claim-btn');
   const promoDeclineBtn = document.getElementById('promo-decline-btn');
   const promoCloseBtn = document.getElementById('promo-close-btn');
@@ -2323,8 +2351,12 @@ window.addEventListener('DOMContentLoaded', () => {
       updateFrequencyCards();
       updateBookingSummary();
 
-      // Automatically launch the booking modal step
-      openBookingModal("");
+      // Automatically launch the booking modal step with pre-selected rate
+      if (selectedPromoType === 'monthly') {
+        openBookingModal("1 Bedroom — Monthly Subscription (8 visits)");
+      } else {
+        openBookingModal("1 Bedroom — Pay Per Visit");
+      }
     }
   }
 
