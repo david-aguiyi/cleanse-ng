@@ -705,7 +705,11 @@ function updateWizardUI() {
     if (standardSummary) standardSummary.style.display = 'flex';
     if (verifySummary) verifySummary.style.display = 'none';
 
-    wizardBackBtn.style.visibility = 'visible'; // Back button on step 1 to close modal
+    if (isPromoFlow) {
+      wizardBackBtn.style.visibility = 'visible'; // Show back button to allow returning to promo popup
+    } else {
+      wizardBackBtn.style.visibility = 'hidden'; // Hide back button for standard bookings
+    }
     wizardNextBtn.style.display = 'none'; // Auto-advances when a size is clicked
     bookingSubmitBtn.style.display = 'none';
   } else if (_currentWizardStep === 2) {
