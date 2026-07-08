@@ -516,16 +516,30 @@ function updateFrequencyCards() {
   let noticeEl = document.getElementById('frequency-promo-notice');
   if (isPromoApplied) {
     if (!noticeEl) {
-      noticeEl = document.createElement('p');
+      noticeEl = document.createElement('div');
       noticeEl.id = 'frequency-promo-notice';
+      noticeEl.style.background = 'var(--white)';
+      noticeEl.style.border = '2px solid var(--deep-purple)';
+      noticeEl.style.boxShadow = '3px 3px 0px var(--deep-purple)';
+      noticeEl.style.borderRadius = '8px';
+      noticeEl.style.padding = '12px 16px';
+      noticeEl.style.marginTop = '16px';
+      noticeEl.style.display = 'flex';
+      noticeEl.style.alignItems = 'flex-start';
+      noticeEl.style.gap = '10px';
       noticeEl.style.fontSize = '12.5px';
-      noticeEl.style.color = 'var(--primary-purple)';
-      noticeEl.style.fontWeight = '600';
-      noticeEl.style.marginTop = '12px';
-      noticeEl.style.lineHeight = '1.4';
+      noticeEl.style.color = 'var(--deep-purple)';
+      noticeEl.style.lineHeight = '1.45';
+      noticeEl.style.fontWeight = '500';
       frequencyCardsContainer.parentNode.appendChild(noticeEl);
     }
-    noticeEl.innerHTML = `ℹ️ <strong>Welcome Offer:</strong> Your first month at a discounted rate. Same 8 visits. Same team. Same standard. After month one, subscription automatically moves to standard monthly pricing.`;
+    noticeEl.innerHTML = `
+      <i class="fa-solid fa-circle-info" style="color: #007AFF; font-size: 16px; margin-top: 1px; flex-shrink: 0;"></i>
+      <div>
+        <strong style="color: var(--primary-purple); font-family: var(--font-header); font-weight: 700;">Welcome Offer:</strong>
+        Your first month at a discounted rate. Same 8 visits. Same team. Same standard. After month one, subscription automatically moves to standard monthly pricing.
+      </div>
+    `;
   } else {
     if (noticeEl) noticeEl.remove();
   }
