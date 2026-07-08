@@ -1746,9 +1746,69 @@
     height: 100% !important;
   }
   .booking-modal-content.verify-step-active .mobile-confirm-btn {
-    display: block !important;
-    width: 100% !important;
-    margin-top: 24px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 2 !important;
+    width: auto !important;
+    margin-top: 0 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Verify step footer and back button */
+  .verify-action-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .verify-back-btn-brutal {
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex: 1;
+    box-sizing: border-box;
+    margin: 0 !important;
+  }
+  .verify-back-btn-brutal:hover {
+    background: var(--off-white-dark);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0px var(--border);
+  }
+
+  /* Responsive metadata grid inside verification step */
+  .verify-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px) {
+    .verify-meta-grid {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    #wizard-step-verify-right .summary-content {
+      padding: 16px !important;
+    }
+    #wizard-step-verify-right .summary-header {
+      padding: 16px 20px !important;
+    }
+    #wizard-step-verify-right .summary-header h3 {
+      font-size: 16px !important;
+      padding: 6px 12px !important;
+    }
   }
 
   /* Responsive overrides for Waitlist Modal */
