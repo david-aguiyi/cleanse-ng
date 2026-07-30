@@ -2077,3 +2077,129 @@
     border-color: rgba(255, 255, 255, 0.6) !important;
     color: #FFFFFF !important;
   }
+
+  /* ── HOW IT WORKS SECTION ── */
+  .how-it-works {
+    padding: 100px 48px;
+    background: var(--off-white-dark);
+    border-bottom: 1px solid var(--border);
+  }
+  .how-it-works-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-family: var(--font-header);
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 40px;
+  }
+  .step-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(26, 13, 51, 0.08);
+  }
+  .step-badge {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+    background: rgba(58, 29, 109, 0.08);
+    padding: 4px 10px;
+    border-radius: 100px;
+    align-self: flex-start;
+  }
+  .step-card h3 {
+    font-family: var(--font-header);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    line-height: 1.3;
+  }
+  .step-card p {
+    font-size: 15px;
+    color: var(--mid-gray);
+    line-height: 1.6;
+  }
+
+  /* ── FINAL CTA SECTION ── */
+  .final-cta {
+    padding: 100px 48px;
+    background: var(--deep-purple);
+    color: var(--white);
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .final-cta-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .final-cta h2 {
+    font-family: var(--font-header);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .final-cta h2 em {
+    font-style: italic;
+    color: var(--neon-green);
+  }
+  .final-cta p {
+    font-size: 18px;
+    color: var(--lavender);
+    line-height: 1.6;
+  }
+  .final-cta-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .final-cta .btn-ghost {
+    color: var(--white);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    padding: 12px 24px;
+  }
+  .final-cta .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--white);
+  }
+  .final-cta-micro {
+    font-size: 13px !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .how-it-works { padding: 60px 24px; }
+    .steps-grid { grid-template-columns: 1fr; gap: 20px; }
+    .final-cta { padding: 60px 24px; }
+    .final-cta-actions { flex-direction: column; width: 100%; }
+    .final-cta-actions a { width: 100%; text-align: center; }
+  }
+
