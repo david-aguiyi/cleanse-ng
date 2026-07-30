@@ -1162,7 +1162,8 @@ function renderCalendar() {
     cell.textContent = day;
 
     const slotsBooked = bookedSlots[cellDateStr] || [];
-    const maxSlots = isCellSunday ? 1 : 3;
+    const activeTeamsCount = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
+    const maxSlots = isCellSunday ? (1 * activeTeamsCount) : (3 * activeTeamsCount);
     const isFullyBooked = slotsBooked.length >= maxSlots;
     const isPartiallyBooked = slotsBooked.length > 0 && slotsBooked.length < maxSlots;
     const isSelectable = !isCellPast && !isCellToday;
@@ -2437,5 +2438,12 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Listen for active team updates from Admin Panel
+  window.addEventListener('storage', (e) => {
+    if (!e.key || e.key === 'cleanse_active_teams') {
+      if (typeof renderCalendar === 'function') renderCalendar();
+    }
+  });
 });
 

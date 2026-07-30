@@ -1462,6 +1462,21 @@
 
     <!-- Collapsible Settings Panel -->
     <div class="panel" id="settings-panel">
+      <!-- Cleaning Teams & Capacity Management Block -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:8px;">🧹 Cleaning Teams & Slot Capacity</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div style="font-family: 'Lexend'; font-size: 16px; font-weight: 700; color: white;">Active Cleaning Teams: <span id="team-count-display" style="color: var(--neon-green);">1 Team</span></div>
+            <div style="font-size: 12px; color: var(--light-gray); margin-top: 4px;">Total Monthly Capacity: <strong id="team-capacity-display" style="color: white;">72 slots / month</strong> (3 slots per day per team)</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" style="min-height: 36px; padding: 6px 14px;" onclick="removeTeam()">- Remove Team</button>
+            <button class="btn-primary" style="min-height: 36px; padding: 6px 14px; background: var(--neon-green); color: var(--deep-purple); font-weight: 700;" onclick="addNewTeam()">+ Add New Team</button>
+          </div>
+        </div>
+      </div>
+
       <h3 style="font-family:'Lexend'; font-size:14px; color:var(--neon-green); margin-bottom:12px;">Google API Connections</h3>
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <div class="form-group" style="margin: 0;">
@@ -1494,6 +1509,11 @@
         <span class="stat-title">📅 Active Bookings</span>
         <span class="stat-value" id="stats-active-count">0</span>
         <span class="stat-meta">Upcoming visits</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">🧹 Active Teams</span>
+        <span class="stat-value" id="stats-teams-count">1 Team</span>
+        <span class="stat-meta" id="stats-teams-capacity" style="color: var(--neon-green);">72 visits/mo capacity</span>
       </div>
       <div class="stat-card">
         <span class="stat-title">💰 Est. Monthly Revenue</span>
@@ -1647,6 +1667,54 @@
     // MASTER KEY PASSWORD CONFIGURATION
     // Change "cleanseadmin" to your preferred personal password
     const ADMIN_PASSWORD = "cleanseadmin";
+
+    // ── TEAM MANAGEMENT & CAPACITY ENGINE ──
+    function updateTeamDisplay() {
+      const teams = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
+      const capacity = teams * 72;
+      
+      const countEl = document.getElementById('team-count-display');
+      if (countEl) countEl.textContent = teams + (teams === 1 ? ' Team' : ' Teams');
+      
+      const capEl = document.getElementById('team-capacity-display');
+      if (capEl) capEl.textContent = capacity + ' slots / month (' + (teams * 3) + ' slots/day)';
+      
+      const statTeamsEl = document.getElementById('stats-teams-count');
+      if (statTeamsEl) statTeamsEl.textContent = teams + (teams === 1 ? ' Team' : ' Teams');
+      
+      const statCapEl = document.getElementById('stats-teams-capacity');
+      if (statCapEl) statCapEl.textContent = capacity + ' visits/mo capacity';
+    }
+
+    function addNewTeam() {
+      let teams = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
+      teams++;
+      localStorage.setItem('cleanse_active_teams', teams.toString());
+      updateTeamDisplay();
+      
+      try {
+        window.dispatchEvent(new Event('storage'));
+      } catch (e) {}
+      
+      showCustomAlert('Team Added! 🚀', 'Team ' + teams + ' has been activated. +' + 72 + ' new monthly booking slots are now unlocked on the website calendar!', 'success');
+    }
+
+    function removeTeam() {
+      let teams = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
+      if (teams <= 1) {
+        showCustomAlert('Cannot Remove Team', 'You must have at least 1 active cleaning team.', 'warning');
+        return;
+      }
+      teams--;
+      localStorage.setItem('cleanse_active_teams', teams.toString());
+      updateTeamDisplay();
+      
+      try {
+        window.dispatchEvent(new Event('storage'));
+      } catch (e) {}
+      
+      showCustomAlert('Team Removed', 'Active teams set to ' + teams + '. Total monthly capacity is now ' + (teams * 72) + ' slots.', 'info');
+    }
 
     function normalizeSlot(sVal) {
       if (!sVal) return "";
@@ -2025,6 +2093,7 @@
         historyList = JSON.parse(savedHistory);
       }
       renderHistory();
+      updateTeamDisplay();
 
       // Service Worker registration & Notification request
       initNotifications();
