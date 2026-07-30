@@ -2129,6 +2129,10 @@
     font-size: 15px;
     text-decoration: none;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     transition: background 0.2s, transform 0.2s;
   }
   .final-cta .btn-primary:hover {
@@ -2140,6 +2144,14 @@
     color: var(--white);
     border: 1.5px solid rgba(255, 255, 255, 0.4);
     padding: 12px 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
   }
   .final-cta .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.1);
