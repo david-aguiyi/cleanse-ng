@@ -40,7 +40,7 @@
     font-family: var(--font-body);
     background: var(--off-white);
     color: var(--black);
-    font-size: 16px;
+    font-size: 14.5px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     user-select: none;
@@ -179,7 +179,7 @@
     white-space: nowrap;
   }
   .hero-sub {
-    font-size: 18px;
+    font-size: 15px;
     color: var(--lavender);
     max-width: 440px;
     line-height: 1.65;
@@ -447,7 +447,7 @@
     font-weight: 700;
   }
   .pricing-sub {
-    font-size: 15px;
+    font-size: 13.5px;
     color: var(--mid-gray);
     margin-top: 16px;
     font-weight: 400;
@@ -2106,7 +2106,7 @@
     color: var(--neon-green);
   }
   .final-cta p {
-    font-size: 18px;
+    font-size: 15px;
     color: var(--lavender);
     line-height: 1.6;
   }
@@ -2117,6 +2117,23 @@
     justify-content: center;
     align-items: center;
     margin-top: 8px;
+  }
+  .final-cta .btn-primary {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    border: none;
+    padding: 14px 30px;
+    font-weight: 600;
+    font-family: var(--font-header);
+    font-size: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .final-cta .btn-primary:hover {
+    background: var(--white);
+    color: var(--deep-purple);
+    transform: translateY(-1px);
   }
   .final-cta .btn-ghost {
     color: var(--white);
