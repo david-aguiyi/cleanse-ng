@@ -152,6 +152,7 @@
     justify-content: center;
     gap: 28px;
     border-right: 1px solid rgba(255,255,255,0.08);
+    container-type: inline-size;
   }
   .hero-eyebrow {
     font-size: 11px;
@@ -163,8 +164,8 @@
   }
   .hero h1 {
     font-family: var(--font-header);
-    font-size: clamp(34px, 4.4vw, 58px);
-    line-height: 1.1;
+    font-size: clamp(26px, 8.4cqi, 76px);
+    line-height: 1.05;
     letter-spacing: -0.025em;
     color: var(--white);
     font-weight: 700;
@@ -848,7 +849,7 @@
       grid-template-columns: 1fr;
     }
     .hero h1 {
-      font-size: clamp(26px, 7.5vw, 44px);
+      font-size: clamp(26px, 8.8cqi, 64px);
     }
     .btn-primary {
       padding: 10px 18px;
