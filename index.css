@@ -21,7 +21,7 @@
     --green-light: var(--primary-purple);
     
     /* Fonts */
-    --font-header: 'Lexend', system-ui, sans-serif;
+    --font-header: 'Clash Display', 'Lexend', system-ui, sans-serif;
     --font-body: 'Nunito', system-ui, sans-serif;
     
     --serif: var(--font-header);
@@ -37,7 +37,7 @@
   }
 
   body {
-    font-family: var(--font-body);
+    font-family: var(--font-header);
     background: var(--off-white);
     color: var(--black);
     font-size: 16px;
@@ -47,6 +47,21 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+  }
+
+  /* Sub font rules for sub-text, subheadlines, and descriptions */
+  .hero-sub,
+  .pricing-sub,
+  .subheadline,
+  .trust-content p,
+  .final-cta p,
+  .step-card p,
+  .faq-a-inner,
+  .footer-tagline,
+  .footer-contact,
+  .testimonial-quote,
+  .problem-point {
+    font-family: var(--font-body);
   }
 
   input, textarea {
