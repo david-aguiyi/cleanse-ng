@@ -1871,26 +1871,21 @@ if (bookingForm) {
 
     const whatsappUrl = _getWaUrl(waMessage);
 
-    // Set the WhatsApp link on the thank you page
-    document.getElementById('success-whatsapp-btn').href = whatsappUrl;
+    // Save booking session state for booking-confirmed.html
+    try {
+      sessionStorage.setItem('cleanse_last_booking', JSON.stringify({
+        plan: selectedPlan,
+        visits: visitsText,
+        location: location,
+        waUrl: whatsappUrl
+      }));
+    } catch (e) {}
 
-    // Immediately open WhatsApp URL in a new window/tab
-    window.open(whatsappUrl, '_blank');
-
-    // Clear saved session state so a new booking starts fresh
+    // Clear saved draft session state
     sessionStorage.removeItem('cleanse_booking_state');
 
-    // Transition modal to success view
-    transitionModalSize(() => {
-      formContainer.style.display = 'none';
-      successContainer.classList.add('active');
-      const content = document.querySelector('.booking-modal-content');
-      if (content) {
-        content.classList.remove('verify-step-active');
-        content.classList.remove('mobile-show-summary');
-        content.classList.add('confirmed');
-      }
-    });
+    // Redirect to confirmation page for Google Ads / GA4 conversion tracking
+    window.location.href = 'booking-confirmed.html';
   });
 }
 
