@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cleanse.ng/sitemap.xml
+Sitemap: https://www.cleanse.ng/sitemap.xml
