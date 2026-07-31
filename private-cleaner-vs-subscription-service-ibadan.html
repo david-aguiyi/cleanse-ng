@@ -276,6 +276,65 @@
       gap: 16px;
       flex-wrap: wrap;
     }
+
+    .blog-post-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0 0;
+      padding: 14px 18px;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    
+    .blog-post-nav.bottom-nav {
+      margin: 36px 0 24px;
+    }
+    
+    .post-nav-item {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      max-width: 48%;
+      transition: transform 0.2s ease;
+    }
+    
+    .post-nav-item:hover {
+      transform: translateY(-2px);
+    }
+    
+    .post-nav-prev {
+      text-align: left;
+    }
+    
+    .post-nav-next {
+      text-align: right;
+      margin-left: auto;
+    }
+    
+    .post-nav-label {
+      font-family: var(--font-header);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary-purple);
+      margin-bottom: 4px;
+    }
+    
+    .post-nav-title {
+      font-family: var(--font-header);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--deep-purple);
+      line-height: 1.35;
+    }
+    
+    .post-nav-item:hover .post-nav-title {
+      color: var(--black);
+    }
   </style>
 </head>
 
@@ -308,6 +367,18 @@
         <span>•</span>
         <span>Ibadan, Nigeria</span>
       </div>
+
+      <!-- TOP ARTICLE NAV -->
+      <nav class="blog-post-nav" aria-label="Blog post navigation">
+        <a href="is-cleanse-ng-worth-it.html" class="post-nav-item post-nav-prev">
+          <span class="post-nav-label">&larr; Previous Article</span>
+          <span class="post-nav-title">Is Cleanse.ng Worth It? An Honest Review</span>
+        </a>
+        <a href="how-to-find-trusted-house-cleaners-ibadan.html" class="post-nav-item post-nav-next">
+          <span class="post-nav-label">Next Article &rarr;</span>
+          <span class="post-nav-title">How to Find Trusted House Cleaners in Ibadan</span>
+        </a>
+      </nav>
     </header>
 
     <article class="article-body">
@@ -411,6 +482,18 @@
           <p>Enjoy reliable scheduled visits twice a week without chasing or unexpected cancellations.</p>
         </div>
       </div>
+
+      <!-- BOTTOM ARTICLE NAV -->
+      <nav class="blog-post-nav bottom-nav" aria-label="Blog post navigation">
+        <a href="is-cleanse-ng-worth-it.html" class="post-nav-item post-nav-prev">
+          <span class="post-nav-label">&larr; Previous Article</span>
+          <span class="post-nav-title">Is Cleanse.ng Worth It? An Honest Review</span>
+        </a>
+        <a href="how-to-find-trusted-house-cleaners-ibadan.html" class="post-nav-item post-nav-next">
+          <span class="post-nav-label">Next Article &rarr;</span>
+          <span class="post-nav-title">How to Find Trusted House Cleaners in Ibadan</span>
+        </a>
+      </nav>
 
       <!-- CTA BANNER -->
       <section class="cta-banner">
