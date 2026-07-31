@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
+      var isLocal = window.location.protocol === 'file:';
+      var host = window.location.hostname;
+      var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
+      if (isLocal || (host && !isAllowed)) {
+        document.documentElement.style.display = 'none';
+        window.location.href = 'https://cleanse.ng';
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog & Guides · Cleanse.ng</title>
+  <meta name="description"
+    content="Explore expert guides on home cleaning, domestic help management, pricing breakdowns, and subscription cleaning in Ibadan, Nigeria.">
+  <meta name="keywords"
+    content="cleanse blog, house cleaning guides ibadan, domestic staff management nigeria, cleaning subscription guide, cleanse.ng">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cleanse.ng/blog.html">
+  <meta property="og:title" content="Blog & Guides · Cleanse.ng">
+  <meta property="og:description"
+    content="Guides, pricing breakdowns, and advice on home cleaning subscriptions and hassle-free domestic management in Ibadan.">
+  <meta property="og:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://cleanse.ng/blog.html">
+  <meta property="twitter:title" content="Blog & Guides · Cleanse.ng">
+  <meta property="twitter:description"
+    content="Discover the Cleanse.ng blog. Expert advice on home cleaning subscriptions, pricing, and domestic help in Ibadan.">
+  <meta property="twitter:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <link rel="canonical" href="https://cleanse.ng/blog.html">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:site_name" content="cleanse.ng">
+  <meta property="og:locale" content="en_US">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    .blog-hero {
+      background: linear-gradient(135deg, rgba(58, 29, 109, 0.05) 0%, rgba(124, 252, 0, 0.05) 100%);
+      padding: 80px 24px 60px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .blog-hero h1 {
+      font-family: var(--font-header);
+      font-size: clamp(34px, 5vw, 52px);
+      font-weight: 700;
+      color: var(--deep-purple);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    
+    .blog-hero p {
+      font-size: 19px;
+      color: var(--mid-gray);
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .blog-grid-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+    
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 32px;
+    }
+    
+    .blog-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+    
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(58, 29, 109, 0.1);
+    }
+    
+    .blog-card-body {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    
+    .blog-card-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-family: var(--font-header);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary-purple);
+      background: rgba(58, 29, 109, 0.08);
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .blog-card-title {
+      font-family: var(--font-header);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--deep-purple);
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+    
+    .blog-card-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .blog-card-title a:hover {
+      color: var(--primary-purple);
+    }
+    
+    .blog-card-excerpt {
+      font-size: 15px;
+      color: var(--mid-gray);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+    
+    .blog-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      font-size: 13.5px;
+      color: var(--light-gray);
+    }
+    
+    .blog-card-link {
+      font-family: var(--font-header);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary-purple);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .blog-card-link:hover {
+      color: var(--deep-purple);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo brand-logo" href="index.html" style="text-decoration: none;">
+      <span style="font-family: var(--font-header); font-weight: 700; font-size: 24px; letter-spacing: -0.03em; color: var(--deep-purple);">cleanse<span style="color: #7CFC00;">.ng</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="blog.html" class="active" style="color: var(--primary-purple); font-weight: 700;">Blog</a></li>
+      <li><a href="#" data-wa-link>Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="#" data-wa-link>Book Now</a>
+  </nav>
+
+  <!-- BLOG HERO -->
+  <header class="blog-hero">
+    <h1>Cleanse.ng Guides & Insights</h1>
+    <p>Everything you need to know about home cleaning subscriptions, domestic help management, pricing guides, and hassle-free living in Ibadan.</p>
+  </header>
+
+  <!-- BLOG GRID -->
+  <main class="blog-grid-container">
+    <div class="blog-grid">
+
+      <!-- CARD 1 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-calculator"></i> Pricing Comparison</span>
+          <h2 class="blog-card-title"><a href="home-cleaning-subscription-vs-pay-per-visit.html">Home Cleaning Subscription vs. Pay Per Visit: Cost, Pros & Cons</a></h2>
+          <p class="blog-card-excerpt">A complete 2026 comparison evaluating subscription plans vs pay-per-visit bookings across costs, scheduling flexibility, and quality guarantees.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+            <a href="home-cleaning-subscription-vs-pay-per-visit.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 2 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-location-dot"></i> Location Spotlight</span>
+          <h2 class="blog-card-title"><a href="jericho-house-cleaning.html">Reliable House Cleaning in Jericho, Ibadan</a></h2>
+          <p class="blog-card-excerpt">Discover how Jericho residents protect their creative focus and keep pristine homes with supervised cleaning subscriptions.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="jericho-house-cleaning.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-brain"></i> Domestic Management</span>
+          <h2 class="blog-card-title"><a href="how-to-stop-micromanaging-house-help-nigeria.html">How to Stop Micromanaging Your House Help in Nigeria</a></h2>
+          <p class="blog-card-excerpt">Unpacking the cognitive tax of chasing, retraining, and supervising domestic staff—and how supervised subscriptions remove the headache.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="how-to-stop-micromanaging-house-help-nigeria.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 4 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-earth-americas"></i> Diaspora Guide</span>
+          <h2 class="blog-card-title"><a href="overseas-property-cleaning-ibadan-diaspora.html">Managing Property Cleaning in Ibadan from the US & Diaspora</a></h2>
+          <p class="blog-card-excerpt">How Nigerians in the US, UK, and Canada can maintain homes in Ibadan with WhatsApp photo verifications and zero relative friction.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="overseas-property-cleaning-ibadan-diaspora.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 5 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-trophy"></i> Local Ranking</span>
+          <h2 class="blog-card-title"><a href="best-cleaning-services-ibadan.html">Best Cleaning Services in Ibadan (2026 Ranked)</a></h2>
+          <p class="blog-card-excerpt">An objective comparison ranking subscription services, domestic agencies, independent cleaners, and industrial companies in Ibadan.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+            <a href="best-cleaning-services-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 6 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-coins"></i> Pricing Guide</span>
+          <h2 class="blog-card-title"><a href="home-cleaning-cost-ibadan.html">How Much Does Home Cleaning Cost in Ibadan?</a></h2>
+          <p class="blog-card-excerpt">A complete 2026 pricing breakdown across apartment sizes (1 to 4+ bedrooms), single visits vs 8-visit monthly subscriptions.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="home-cleaning-cost-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 7 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-money-bill-wave"></i> Cleaner Hiring</span>
+          <h2 class="blog-card-title"><a href="how-much-to-hire-a-cleaner-ibadan.html">How Much Does It Cost to Hire a Cleaner in Ibadan?</a></h2>
+          <p class="blog-card-excerpt">Comparing daily cleaner rates, agency placement fees, and Cleanse.ng all-inclusive subscriptions in Ibadan.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="how-much-to-hire-a-cleaner-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 8 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-star"></i> Brand Review</span>
+          <h2 class="blog-card-title"><a href="is-cleanse-ng-worth-it.html">Is Cleanse.ng Worth It? An Honest Review</a></h2>
+          <p class="blog-card-excerpt">An in-depth review covering active supervisors, 100% supplies provided, vetted staff, guaranteed schedules, and WhatsApp resolution.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="is-cleanse-ng-worth-it.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 9 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-scale-balanced"></i> Service Model</span>
+          <h2 class="blog-card-title"><a href="private-cleaner-vs-subscription-service-ibadan.html">Private Cleaner vs. Subscription Cleaning Service in Ibadan</a></h2>
+          <p class="blog-card-excerpt">Evaluating independent private cleaners vs subscription services across cost math, vetting, supervision, and peace of mind.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+            <a href="private-cleaner-vs-subscription-service-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 10 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-shield-halved"></i> Trust & Vetting</span>
+          <h2 class="blog-card-title"><a href="how-to-find-trusted-house-cleaners-ibadan.html">How to Find Trusted House Cleaners in Ibadan</a></h2>
+          <p class="blog-card-excerpt">A buyer's guide covering background checks, active supervision, damage insurance, and red flags to avoid when hiring cleaners.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="how-to-find-trusted-house-cleaners-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 11 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-house-laptop"></i> Productivity</span>
+          <h2 class="blog-card-title"><a href="outsource-cleaning-nigeria.html">Outsource Cleaning in Nigeria: Is It Worth It?</a></h2>
+          <p class="blog-card-excerpt">Why busy Nigerian professionals across Ibadan, Lagos, and Abuja are delegating cleaning to subscription services.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="outsource-cleaning-nigeria.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 12 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-arrows-rotate"></i> Subscription Guide</span>
+          <h2 class="blog-card-title"><a href="cleaning-subscription-plans-ibadan.html">Cleaning Subscription Plans in Ibadan: Options & Scheduling</a></h2>
+          <p class="blog-card-excerpt">How recurring 8-visit monthly subscriptions work, scheduling flexibility, and quality control in Ibadan.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            <a href="cleaning-subscription-plans-ibadan.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 13 -->
+      <article class="blog-card">
+        <div class="blog-card-body">
+          <span class="blog-card-badge"><i class="fa-solid fa-file-contract"></i> Legal & Security</span>
+          <h2 class="blog-card-title"><a href="cleaner-contract-vs-managed-service-nigeria.html">Independent Cleaner Contracts vs Managed Services in Nigeria</a></h2>
+          <p class="blog-card-excerpt">Essential clauses when contracting cleaners in Nigeria and how Cleanse.ng eliminates employment liability and legal friction.</p>
+          <div class="blog-card-footer">
+            <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+            <a href="cleaner-contract-vs-managed-service-nigeria.html" class="blog-card-link">Read Guide &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand brand-logo">
+          <img src="./logo.png" alt="cleanse.ng" class="logo-img">
+        </div>
+        <p class="footer-tagline">Protect your creative process.<br><br>Ibadan, Oyo State.</p>
+        <div class="footer-contact">
+          <span>WhatsApp: <a href="#" id="wa-display-num" data-wa-link>+234 913 066 3739</a></span>
+          <span>Instagram: <a href="https://www.instagram.com/cleanse.ng" target="_blank" rel="noopener noreferrer">@cleanse.ng</a></span>
+          <span>Working hours: 8am - 6pm daily</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="index.html">Residential Cleaning</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Locations & Guides</h4>
+        <ul>
+          <li><a href="blog.html">Blog Overview</a></li>
+          <li><a href="jericho-house-cleaning.html">Jericho, Ibadan</a></li>
+          <li><a href="outsource-cleaning-nigeria.html">Outsource Cleaning in Nigeria</a></li>
+          <li><a href="how-to-find-trusted-house-cleaners-ibadan.html">Trusted House Cleaners in Ibadan</a></li>
+          <li><a href="best-cleaning-services-ibadan.html">Best Cleaning Services in Ibadan</a></li>
+          <li><a href="home-cleaning-cost-ibadan.html">Home Cleaning Cost in Ibadan</a></li>
+          <li><a href="is-cleanse-ng-worth-it.html">Is Cleanse.ng Worth It?</a></li>
+          <li><a href="how-to-stop-micromanaging-house-help-nigeria.html">Stop Micromanaging House Help</a></li>
+          <li><a href="how-much-to-hire-a-cleaner-ibadan.html">Cost to Hire a Cleaner in Ibadan</a></li>
+          <li><a href="private-cleaner-vs-subscription-service-ibadan.html">Private Cleaner vs. Subscription</a></li>
+          <li><a href="cleaning-subscription-plans-ibadan.html">Cleaning Subscriptions in Ibadan</a></li>
+          <li><a href="overseas-property-cleaning-ibadan-diaspora.html">Overseas Property Cleaning (US/UK)</a></li>
+          <li><a href="cleaner-contract-vs-managed-service-nigeria.html">Cleaner Contracts vs. Managed Services</a></li>
+          <li><a href="home-cleaning-subscription-vs-pay-per-visit.html">Subscription vs. Pay Per Visit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="index.html#faq">FAQ</a></li>
+          <li><a href="#" data-wa-link>Contact</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="customer.html" target="_blank">Customer Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 cleanse.ng. All rights reserved.</span>
+      <span>Ibadan, Oyo State, Nigeria</span>
+    </div>
+  </footer>
+
+  <script src="./index.js"></script>
+</body>
+
+</html>
