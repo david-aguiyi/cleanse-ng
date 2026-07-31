@@ -885,6 +885,7 @@
   }
 
   /* ── BOOKING MODAL OVERLAY ── */
+  /* ── BOOKING MODAL OVERLAY ── */
   .booking-modal-overlay {
     position: fixed;
     top: 0;
@@ -901,7 +902,8 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    padding: 20px;
+    padding: 12px;
+    overflow-y: auto;
   }
   .booking-modal-overlay.active {
     opacity: 1;
@@ -911,7 +913,7 @@
     width: 100%;
     max-width: 760px;
     height: auto;
-    max-height: 90vh;
+    max-height: min(92vh, 720px);
     background: var(--off-white);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -938,14 +940,15 @@
   }
   .booking-modal-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 14px;
+    right: 14px;
     background: var(--deep-purple);
     color: var(--white);
     border: none;
-    font-size: 24px;
-    width: 36px;
-    height: 36px;
+    font-size: 22px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -958,11 +961,22 @@
     color: var(--deep-purple);
   }
   .booking-modal-left {
-    padding: 20px 24px;
+    padding: 16px 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    max-height: 100%;
+    position: relative;
+  }
+  .booking-modal-left::-webkit-scrollbar,
+  .summary-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .booking-modal-left::-webkit-scrollbar-thumb,
+  .summary-content::-webkit-scrollbar-thumb {
+    background: var(--lavender);
+    border-radius: 10px;
   }
   @media (min-width: 769px) and (min-height: 600px) {
     .booking-modal-left {
