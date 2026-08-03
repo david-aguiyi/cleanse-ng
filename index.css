@@ -191,7 +191,6 @@
     border-radius: 3px 12px 4px 10px;
     z-index: -1;
     transform: rotate(-0.8deg);
-    box-shadow: 0 2px 12px rgba(124, 252, 0, 0.35);
   }
   .hero-sub {
     font-size: 18px;
