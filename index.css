@@ -170,9 +170,12 @@
     display: inline-block;
     white-space: nowrap;
   }
+  mark.hero-marker,
   .hero-marker {
     position: relative;
     display: inline-block;
+    background: transparent;
+    background-color: transparent;
     color: var(--white);
     padding: 0 6px;
     z-index: 1;
