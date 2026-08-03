@@ -2634,9 +2634,9 @@
       if (plan.includes("Monthly Subscription")) {
         recurrenceCount = 8;
       } else {
-        if (visitsText.includes("2 visits")) recurrenceCount = 2;
+        if (visitsText.includes("2 visits/week") || visitsText.includes("Twice a week") || visitsText.includes("8 visits")) recurrenceCount = 8;
+        else if (visitsText.includes("2 visits")) recurrenceCount = 2;
         else if (visitsText.includes("4 visits")) recurrenceCount = 4;
-        else if (visitsText.includes("8 visits")) recurrenceCount = 8;
         else if (visitsText.includes("6 visits")) recurrenceCount = 6;
       }
 
