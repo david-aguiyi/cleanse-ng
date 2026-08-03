@@ -177,20 +177,21 @@
     background: transparent;
     background-color: transparent;
     color: var(--white);
-    padding: 0 6px;
+    padding: 0 10px 0 16px;
     z-index: 1;
   }
   .hero-marker::after {
     content: "";
     position: absolute;
-    left: -4px;
-    bottom: 10%;
-    width: calc(100% + 8px);
-    height: 55%;
-    background: linear-gradient(95deg, rgba(124, 252, 0, 0.85) 0%, rgba(124, 252, 0, 0.7) 100%);
-    border-radius: 3px 12px 4px 10px;
+    left: -12px;
+    bottom: 4%;
+    width: calc(100% + 22px);
+    height: 80%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 100' preserveAspectRatio='none'%3E%3Cpath d='M52,14 C120,11 250,15 380,13 C425,12 465,15 485,17 C491,24 483,32 489,40 C484,48 490,58 485,65 C491,72 486,78 480,82 C400,85 280,82 180,84 C110,85 60,83 45,80 L68,74 L32,72 L62,66 L12,63 L56,58 L3,54 L52,48 L8,44 L60,39 L22,35 L64,30 L35,25 L68,21 Z' fill='%237CFC00'/%3E%3Cpath d='M38,22 L10,20 L35,18 Z M30,36 L4,34 L28,32 Z M34,55 L2,53 L30,51 Z M26,71 L8,69 L24,67 Z' fill='%237CFC00' opacity='0.75'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     z-index: -1;
-    transform: rotate(-0.8deg);
+    transform: rotate(-0.5deg);
   }
   .hero-sub {
     font-size: 18px;
