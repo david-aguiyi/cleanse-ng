@@ -1,4 +1,4 @@
-// ═══════════════════════════════════════
+﻿// ═══════════════════════════════════════
 // CLONE & SECURITY PROTECTION
 // ═══════════════════════════════════════
 (function () {
@@ -35,8 +35,8 @@ document.addEventListener('keydown', function (e) {
 const _sc = {
   // WhatsApp number — encoded and split for obfuscation
   // To change your number: update these base64 segments
-  // Current: 234 + 913066 + 3739 = 2349130663739
-  _p: ['MjM0', 'OTEzMDY2', 'MzczOQ=='],
+  // Current: 234 + 813379 + 2588 = 2348133792588
+  _p: ['MjM0', 'ODEzMzc5', 'MjU4OA=='],
   maxSubmissions: 3,      // Max form submissions per window
   windowMs: 300000,       // Rate limit window (5 minutes)
   minFormTimeMs: 3000,    // Minimum time to fill form (3 seconds)
