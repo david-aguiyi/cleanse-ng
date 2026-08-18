@@ -156,10 +156,10 @@
       });
     });
 
-    // Slot cards (Vertical Row Cards)
-    document.querySelectorAll('.lite-slot-card').forEach(card => {
-      card.addEventListener('click', function () {
-        document.querySelectorAll('.lite-slot-card').forEach(c => c.classList.remove('active'));
+    // Slot pills (Bubble Form)
+    document.querySelectorAll('.lite-slot-pill').forEach(pill => {
+      pill.addEventListener('click', function () {
+        document.querySelectorAll('.lite-slot-pill').forEach(p => p.classList.remove('active'));
         this.classList.add('active');
         selectedTimeSlot = this.getAttribute('data-slot');
       });
