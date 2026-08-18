@@ -545,6 +545,9 @@
 
 _Submitted via Cleanse Lite Booking System_`;
 
+    // Launch WhatsApp directly with prefilled booking message
+    openWaMessage(_pendingWaText);
+
     // Show Success Confirmed View inside Modal
     const formEl = document.getElementById('lite-booking-form');
     const headerEl = document.querySelector('#lite-booking-modal .lite-modal-header');
