@@ -778,8 +778,8 @@
 }
 
 .lite-cal-day {
-  height: 24px;
-  max-height: 24px;
+  height: 26px;
+  max-height: 26px;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -792,16 +792,86 @@
   justify-content: center;
   transition: all 0.15s ease;
   padding: 0;
+  position: relative;
+  user-select: none;
 }
 
-.lite-cal-day:hover:not(.disabled):not(.empty) {
+.lite-cal-day:hover:not(.disabled):not(.empty):not(.fully-booked) {
   background: rgba(58, 29, 109, 0.1);
+}
+
+.lite-cal-day.today {
+  background: #fef08a !important;
+  color: #854d0e !important;
+  cursor: not-allowed;
+}
+
+.lite-cal-day.selectable {
+  font-weight: 700;
+}
+
+.lite-cal-day.selectable::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #10b981;
+  border-radius: 1px;
+  opacity: 0.85;
+}
+
+.lite-cal-day.partially-booked::after {
+  background: #f59e0b;
+}
+
+.lite-cal-day.fully-booked {
+  color: #94a3b8 !important;
+  background: #f8fafc !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.lite-cal-day[data-tooltip] {
+  position: relative;
+}
+
+.lite-cal-day[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(15, 14, 20, 0.92);
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.15s ease;
+  z-index: 20;
+}
+
+.lite-cal-day[data-tooltip]:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .lite-cal-day.selected {
   background: var(--primary-purple) !important;
   color: var(--white) !important;
   border-color: var(--primary-purple) !important;
+}
+
+.lite-cal-day.selected::after {
+  display: none;
 }
 
 .lite-cal-day.disabled {
@@ -818,29 +888,31 @@
 /* Time Slot Bubble Pills */
 .lite-slots-container {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .lite-slot-pill {
-  flex: 1;
-  min-width: 120px;
-  padding: 10px 14px;
+  flex: 1 1 30%;
+  min-width: 0;
+  padding: 8px 6px;
   background: var(--off-white);
   border: 1.5px solid var(--border);
   border-radius: 100px;
   font-family: var(--font-body);
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--deep-purple);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.2;
 }
 
-.lite-slot-pill:hover {
+.lite-slot-pill:hover:not(.disabled) {
   border-color: var(--primary-purple);
   background: var(--white);
 }
@@ -849,6 +921,16 @@
   background: var(--primary-purple);
   color: var(--white);
   border-color: var(--primary-purple);
+}
+
+.lite-slot-pill.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--off-white);
+  border-color: var(--border);
+  color: var(--mid-gray);
+  pointer-events: none;
+  text-decoration: line-through;
 }
 
 .lite-form-group {
