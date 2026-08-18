@@ -24,22 +24,25 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: 8px;
   letter-spacing: -0.03em;
   line-height: 1;
 }
 
-.lite-brand-text .lite-dot-ng,
-.lite-footer-brand-text .lite-dot-ng {
+.lite-logo-name {
+  display: inline;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.lite-dot-ng {
   color: var(--neon-green);
 }
 
-.lite-brand-text .lite-tag-text,
-.lite-footer-brand-text .lite-tag-text {
+.lite-tag-text {
   font-style: italic;
   font-weight: 400;
   color: var(--lavender);
-  margin-left: 6px;
 }
 
 .lite-badge {
