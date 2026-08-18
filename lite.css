@@ -960,6 +960,89 @@
   margin-top: 18px;
 }
 
+/* Summary Card in Step 4 */
+.lite-summary-card {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+}
+
+.lite-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lite-summary-title {
+  font-family: var(--font-header);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--deep-purple);
+  margin: 0;
+}
+
+.lite-summary-badge {
+  background: var(--primary-purple);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lite-summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.lite-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.lite-sum-label {
+  color: var(--mid-gray);
+  font-weight: 500;
+}
+
+.lite-sum-val {
+  color: var(--black);
+  font-weight: 700;
+  text-align: right;
+  max-width: 65%;
+}
+
+.lite-sum-val.price {
+  color: var(--primary-purple);
+  font-size: 13.5px;
+}
+
+/* Success State Popup View */
+.lite-success-badge {
+  width: 64px;
+  height: 64px;
+  background: var(--neon-green);
+  color: var(--deep-purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 14px rgba(124, 252, 0, 0.35);
+}
+
 @media (max-width: 900px) {
   .lite-hero-grid {
     grid-template-columns: 1fr;

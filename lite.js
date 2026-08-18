@@ -124,6 +124,7 @@
   let selectedBedrooms = '1 Bedroom';
   let selectedDateObj = null;
   let selectedTimeSlot = '8am - 11am';
+  let _pendingWaText = '';
 
   // Calendar State
   const _todayObj = new Date();
@@ -180,7 +181,22 @@
       }
       goToStep(3);
     });
-    document.getElementById('lite-btn-to-step2-back').addEventListener('click', () => goToStep(2));
+    document.getElementById('lite-btn-back-to-step2').addEventListener('click', () => goToStep(2));
+    document.getElementById('lite-btn-to-step4').addEventListener('click', prepareAndGoToStep4);
+    document.getElementById('lite-btn-back-to-step3').addEventListener('click', () => goToStep(3));
+
+    // Success Screen buttons
+    const waBtn = document.getElementById('lite-success-wa-btn');
+    if (waBtn) {
+      waBtn.addEventListener('click', () => {
+        if (_pendingWaText) openWaMessage(_pendingWaText);
+      });
+    }
+
+    const closeBtn = document.getElementById('lite-success-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeLiteBookingModal);
+    }
 
     // Calendar month nav
     document.getElementById('lite-cal-prev').addEventListener('click', () => {
@@ -201,6 +217,41 @@
 
     // Form submit
     document.getElementById('lite-booking-form').addEventListener('submit', handleFormSubmit);
+  }
+
+  function prepareAndGoToStep4() {
+    const name = document.getElementById('lite-field-name').value.trim();
+    const phone = document.getElementById('lite-field-phone').value.trim();
+    const zone = document.getElementById('lite-field-zone').value;
+    const address = document.getElementById('lite-field-address').value.trim();
+    const valMsg = document.getElementById('step3-validation-msg');
+
+    if (!name || !phone || !zone || !address) {
+      if (valMsg) valMsg.textContent = 'Please fill in all required contact details.';
+      else alert('Please fill in all required fields.');
+      return;
+    }
+    if (valMsg) valMsg.textContent = '';
+
+    let price = '₦25,000 / month';
+    if (selectedPlan.toLowerCase().includes('one-time')) {
+      price = '₦7,000 / visit';
+    } else if (selectedBedrooms.includes('2 Bedroom')) {
+      price = '₦32,000 / month';
+    }
+
+    const dateFormatted = selectedDateObj
+      ? selectedDateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+      : 'Not specified';
+
+    document.getElementById('lite-sum-plan').textContent = `${selectedPlan} (${selectedBedrooms})`;
+    document.getElementById('lite-sum-price').textContent = price;
+    document.getElementById('lite-sum-datetime').textContent = `${dateFormatted} (${selectedTimeSlot})`;
+    document.getElementById('lite-sum-name').textContent = name;
+    document.getElementById('lite-sum-phone').textContent = phone;
+    document.getElementById('lite-sum-address').textContent = `${zone} (${address})`;
+
+    goToStep(4);
   }
 
   function updateSlotPillsForDate(cellDateStr, dayOfWeek) {
@@ -375,13 +426,16 @@
     if (modalTitle && modalSub) {
       if (currentStep === 1) {
         modalTitle.textContent = "Customize Cleanse Lite";
-        modalSub.textContent = "Step 1 of 3 — Select plan and bedroom count";
+        modalSub.textContent = "Step 1 of 4 — Select plan and bedroom count";
       } else if (currentStep === 2) {
         modalTitle.textContent = "Pick Date & Time";
-        modalSub.textContent = "Step 2 of 3 — Choose your preferred visit slot";
+        modalSub.textContent = "Step 2 of 4 — Choose your preferred visit slot";
       } else if (currentStep === 3) {
         modalTitle.textContent = "Your Contact Details";
-        modalSub.textContent = "Step 3 of 3 — Finalize booking on WhatsApp";
+        modalSub.textContent = "Step 3 of 4 — Enter contact & street address";
+      } else if (currentStep === 4) {
+        modalTitle.textContent = "Verify & Confirm";
+        modalSub.textContent = "Step 4 of 4 — Review booking summary";
       }
     }
   }
@@ -408,6 +462,20 @@
     if (!modal) return;
     modal.classList.remove('open');
     document.body.style.overflow = '';
+
+    // Reset modal steps & view
+    setTimeout(() => {
+      const formEl = document.getElementById('lite-booking-form');
+      const headerEl = document.querySelector('#lite-booking-modal .lite-modal-header');
+      const progressEl = document.querySelector('#lite-booking-modal .lite-modal-progress');
+      const successEl = document.getElementById('lite-booking-success-container');
+
+      if (formEl) formEl.style.display = 'block';
+      if (headerEl) headerEl.style.display = 'block';
+      if (progressEl) progressEl.style.display = 'flex';
+      if (successEl) successEl.style.display = 'none';
+      goToStep(1);
+    }, 300);
   }
 
   async function handleFormSubmit(e) {
@@ -419,7 +487,7 @@
     const address = document.getElementById('lite-field-address').value.trim();
 
     if (!name || !phone || !zone || !address) {
-      alert('Please fill in all required fields.');
+      goToStep(3);
       return;
     }
 
@@ -462,7 +530,7 @@
     }
 
     // Format WhatsApp message payload
-    const text =
+    _pendingWaText =
 `*NEW CLEANSE LITE BOOKING* 🟢
 
 *Plan:* ${selectedPlan} (${selectedBedrooms})
@@ -477,8 +545,16 @@
 
 _Submitted via Cleanse Lite Booking System_`;
 
-    closeLiteBookingModal();
-    openWaMessage(text);
+    // Show Success Confirmed View inside Modal
+    const formEl = document.getElementById('lite-booking-form');
+    const headerEl = document.querySelector('#lite-booking-modal .lite-modal-header');
+    const progressEl = document.querySelector('#lite-booking-modal .lite-modal-progress');
+    const successEl = document.getElementById('lite-booking-success-container');
+
+    if (formEl) formEl.style.display = 'none';
+    if (headerEl) headerEl.style.display = 'none';
+    if (progressEl) progressEl.style.display = 'none';
+    if (successEl) successEl.style.display = 'block';
   }
 
   // ── INITIALIZE ON DOM READY ──
