@@ -123,7 +123,7 @@
   let selectedPlan = 'Monthly — Cleanse Lite';
   let selectedBedrooms = '1 Bedroom';
   let selectedDateObj = null;
-  let selectedTimeSlot = 'Morning (8am - 11am)';
+  let selectedTimeSlot = '8am - 11am';
 
   // Calendar State
   const _todayObj = new Date();
@@ -366,6 +366,10 @@
       dot.classList.toggle('active', idx + 1 <= currentStep);
     });
 
+    if (currentStep === 2) {
+      renderCalendar();
+    }
+
     const modalTitle = document.getElementById('lite-modal-title');
     const modalSub = document.getElementById('lite-modal-sub');
     if (modalTitle && modalSub) {
@@ -394,6 +398,7 @@
     }
 
     goToStep(1);
+    renderCalendar();
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   };
