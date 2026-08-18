@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Redirect /lite.html to /lite
+RewriteCond %{THE_REQUEST} \s/lite\.html[\s?] [NC]
+RewriteRule ^lite\.html$ /lite [R=301,L]
+
+# Serve /lite from /lite.html
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L,QSA]

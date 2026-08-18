@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
+      var isLocal = window.location.protocol === 'file:';
+      var host = window.location.hostname;
+      var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
+      if (isLocal || (host && !isAllowed)) {
+        document.documentElement.style.display = 'none';
+        window.location.href = 'https://cleanse.ng';
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda</title>
+  <meta name="description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta name="keywords"
+    content="cleanse lite, house cleaners agbowo, house cleaners bodija, house cleaners barika, house cleaners orogun, house cleaners samonda, home cleaning ibadan, residential cleaners ibadan">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cleanse.ng/lite">
+  <meta property="og:title" content="Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda">
+  <meta property="og:description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta property="og:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://cleanse.ng/lite">
+  <meta property="twitter:title" content="Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda">
+  <meta property="twitter:description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta property="twitter:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <link rel="canonical" href="https://cleanse.ng/lite">
+  <link rel="icon" href="../favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.svg">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../index.css">
+  <link rel="stylesheet" href="../lite.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav class="lite-nav">
+    <a href="../index.html" class="lite-brand-text" id="nav-logo"><span class="lite-logo-name">cleanse<span class="lite-dot-ng">.ng</span></span> <em class="lite-tag-text">lite</em></a>
+    <div>
+      <button class="lite-nav-book-btn" onclick="openLiteBookingModal()">Book Now</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ── SECTION 1 — HERO & PRICING (FITTED WITH IMAGE) ── -->
+    <section class="lite-hero-section">
+      <div class="lite-hero-grid">
+        <div class="lite-hero-image-col">
+          <img src="../lite_hero_image.jpg" alt="Cleanse Lite — Clean home, zero stress" class="lite-hero-img">
+        </div>
+        <div class="lite-hero-content-col">
+          <h1 class="lite-hero-headline">
+            Your most important<br>
+            <em>work is not cleaning.</em>
+          </h1>
+
+          <p class="lite-hero-sub">
+            Same Cleanse standard. Once a week.<br>
+            Built for Agbowo, Bodija, Barika, Orogun and Samonda.
+          </p>
+
+          <!-- Two Pricing Cards -->
+          <div class="lite-cards-grid">
+            <!-- Card 1: One-time visit -->
+            <div class="lite-price-card">
+              <div>
+                <h3 class="lite-card-title">One-time visit</h3>
+                <div class="lite-card-price">₦7,000 <span>/ visit</span></div>
+                <p class="lite-card-desc">Try us once. No commitment.</p>
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="button" onclick="openLiteBookingModal('One-time visit')" class="lite-btn-primary purple">
+                  Book One-Time &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Monthly Cleanse Lite FEATURED -->
+            <div class="lite-price-card featured">
+              <span class="lite-card-tag">Most Popular</span>
+              <div>
+                <h3 class="lite-card-title">Monthly — Cleanse Lite</h3>
+                <div class="lite-card-price">₦25,000 <span>/ month</span></div>
+                <p class="lite-card-desc">Once a week. Every week.</p>
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="button" onclick="openLiteBookingModal('Monthly — Cleanse Lite')" class="lite-btn-primary">
+                  Book Monthly &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p class="lite-small-print">
+            Starting price for a 1 bedroom home. Up to 2 bedrooms.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 2 — THE FEELING ── -->
+    <section class="lite-feeling-section">
+      <div class="lite-feeling-container">
+        <h2 class="lite-feeling-headline">
+          <em>Peace of mind.</em><br>
+          Every week.
+        </h2>
+        <div class="lite-feeling-body">
+          <p>You have better things to do with your time than clean.</p>
+          <p>Once a week we come in and handle it completely. No stress. No managing. No thinking about it.</p>
+          <p style="color: var(--neon-green); font-weight: 600;">Just a clean home and the time to do what actually matters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3 — TESTIMONIALS CAROUSEL ── -->
+    <section class="lite-testimonials-section">
+      <h2 class="lite-testimonials-header">
+        What Cleanse clients say.
+      </h2>
+
+      <div class="lite-carousel-container">
+        <div class="lite-carousel-track" id="lite-testimonial-track">
+          <!-- Slide 1 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;I stopped thinking about it.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Temi A., Bodija</p>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;My Saturdays are different now.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Chisom E., Bodija</p>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;Worth every naira. Did not think I would say that but here we are.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Seun B., Samonda</p>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;I genuinely forgot cleaning was something I used to do.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Tolu F., Agbowo</p>
+            </div>
+          </div>
+
+          <!-- Slide 5 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;Came home after a long week. Everything was clean. I sat down and did not move for two hours. That was new.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Blessing N., Orogun</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Navigation Controls -->
+        <div class="lite-carousel-nav">
+          <button type="button" class="lite-carousel-btn" id="lite-carousel-prev" aria-label="Previous testimonial">&larr;</button>
+          <div class="lite-carousel-dots" id="lite-carousel-dots"></div>
+          <button type="button" class="lite-carousel-btn" id="lite-carousel-next" aria-label="Next testimonial">&rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4 — FINAL CTA ── -->
+    <section class="lite-final-cta-section">
+      <div class="lite-final-cta-container">
+        <h2 class="lite-final-headline">
+          Stop giving your weekends<br>
+          <em>to cleaning.</em>
+        </h2>
+
+        <p class="lite-final-sub">
+          Cleanse Lite. Same standard. Once a week.
+        </p>
+
+        <div class="lite-final-btn-group">
+          <button type="button" onclick="openLiteBookingModal()" class="lite-btn-primary" style="width: 100%;">
+            <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> WhatsApp us &rarr; 0913 066 3739
+          </button>
+          <button type="button" onclick="openLiteBookingModal()" class="lite-btn-secondary" style="width: 100%;">
+            Book at cleanse.ng/lite
+          </button>
+          <p style="margin-top: 12px;">
+            <a href="../index.html#pricing" class="lite-upgrade-link" style="font-style: italic;">
+              Ready for twice a week or a larger home? Explore full Cleanse plans at cleanse.ng
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="lite-footer">
+    <div class="lite-footer-container">
+      <div>
+        <a href="../index.html" class="lite-footer-brand-text"><span class="lite-logo-name">cleanse<span class="lite-dot-ng">.ng</span></span> <em class="lite-tag-text">lite</em></a>
+      </div>
+
+      <div class="lite-footer-meta">
+        <p style="font-weight: 700; font-family: var(--font-header); color: var(--white); font-size: 15px;">cleanse.ng/lite — Cleanse Lite</p>
+        <p style="font-style: italic; opacity: 0.9; margin-bottom: 10px;">Protect your creative process.</p>
+        <p>Ibadan, Oyo State | WhatsApp: <strong>0913 066 3739</strong> | Working hours: 8am &mdash; 6pm daily</p>
+      </div>
+
+      <div class="lite-footer-disclaimer">
+        <p style="margin-bottom: 6px;">&copy; 2026 cleanse.ng. All rights reserved.</p>
+        <p style="color: var(--neon-green);">This is Cleanse Lite. For our full service visit <a href="../index.html" style="color: inherit; text-decoration: underline;">cleanse.ng</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── LITE MULTI-STEP BOOKING MODAL WITH CALENDAR ── -->
+  <div class="lite-modal-overlay" id="lite-booking-modal">
+    <div class="lite-modal-container">
+      <button type="button" class="lite-modal-close-btn" id="lite-modal-close" aria-label="Close modal">&times;</button>
+      
+      <div class="lite-modal-header">
+        <h3 class="lite-modal-title">Book Cleanse Lite</h3>
+        <p class="lite-modal-sub">Once a week cleaning for Agbowo, Bodija, Barika, Orogun & Samonda</p>
+      </div>
+
+      <!-- Step Progress Bar -->
+      <div class="lite-modal-progress">
+        <div class="lite-progress-dot active" id="lite-p-dot-1"></div>
+        <div class="lite-progress-dot" id="lite-p-dot-2"></div>
+        <div class="lite-progress-dot" id="lite-p-dot-3"></div>
+      </div>
+
+      <form id="lite-booking-form">
+        <!-- STEP 1: PLAN & BEDROOMS -->
+        <div class="lite-wizard-step active" id="lite-step-1">
+          <label class="lite-form-label">1. Select Plan</label>
+          <div class="lite-grid-cards">
+            <div class="lite-modal-plan-opt active" data-plan="Monthly — Cleanse Lite">
+              <div class="lite-opt-title">Monthly Lite</div>
+              <div class="lite-opt-price">₦25,000/mo</div>
+            </div>
+            <div class="lite-modal-plan-opt" data-plan="One-time visit">
+              <div class="lite-opt-title">One-Time Visit</div>
+              <div class="lite-opt-price">₦7,000/visit</div>
+            </div>
+          </div>
+
+          <label class="lite-form-label">2. Home Size</label>
+          <div class="lite-grid-cards">
+            <div class="lite-modal-bed-opt active" data-bed="1 Bedroom">
+              <div class="lite-opt-title">1 Bedroom</div>
+            </div>
+            <div class="lite-modal-bed-opt" data-bed="2 Bedrooms">
+              <div class="lite-opt-title">2 Bedrooms</div>
+            </div>
+          </div>
+
+          <button type="button" class="lite-btn-primary" id="lite-btn-to-step2">
+            Select Cleaning Date &rarr;
+          </button>
+        </div>
+
+        <!-- STEP 2: CALENDAR & TIME SLOT -->
+        <div class="lite-wizard-step" id="lite-step-2">
+          <label class="lite-form-label">Pick Cleaning Date</label>
+          
+          <!-- Custom Calendar Widget -->
+          <div class="lite-cal-widget">
+            <div class="lite-cal-header">
+              <span class="lite-cal-month-title" id="lite-cal-month-year">August 2026</span>
+              <div>
+                <button type="button" class="lite-cal-nav-btn" id="lite-cal-prev">&lt;</button>
+                <button type="button" class="lite-cal-nav-btn" id="lite-cal-next">&gt;</button>
+              </div>
+            </div>
+            <div class="lite-cal-weekdays">
+              <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+            </div>
+            <div class="lite-cal-days-grid" id="lite-cal-days-grid">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <div id="lite-selected-date-display" style="font-size: 13px; font-weight: 700; color: var(--primary-purple); margin-bottom: 6px; text-align: center;">
+            Please select a date on the calendar
+          </div>
+          <div id="lite-calendar-booking-message" style="font-size: 12px; color: #e11d48; font-weight: 600; text-align: center; min-height: 18px; margin-bottom: 10px;"></div>
+
+          <label class="lite-form-label">Pick Time Slot</label>
+          <div class="lite-slots-container">
+            <div class="lite-slot-pill active" data-slot="Morning (8am - 11am)">Morning (8am - 11am)</div>
+            <div class="lite-slot-pill" data-slot="Afternoon (11am - 2pm)">Afternoon (11am - 2pm)</div>
+            <div class="lite-slot-pill" data-slot="Late Afternoon (2pm - 5pm)">Late Afternoon (2pm - 5pm)</div>
+          </div>
+
+          <div class="lite-modal-btn-row">
+            <button type="button" class="lite-btn-secondary" id="lite-btn-to-step1" style="width: 40%;">Back</button>
+            <button type="button" class="lite-btn-primary" id="lite-btn-to-step3" style="width: 60%;">Enter Details &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: CONTACT & LOCATION -->
+        <div class="lite-wizard-step" id="lite-step-3">
+          <div class="lite-form-group">
+            <label class="lite-form-label">Full Name *</label>
+            <input type="text" id="lite-field-name" required placeholder="e.g. Temi Adewale">
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Phone Number *</label>
+            <input type="tel" id="lite-field-phone" required placeholder="e.g. 08012345678">
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Zone / Area *</label>
+            <select id="lite-field-zone" required>
+              <option value="Agbowo">Agbowo</option>
+              <option value="Bodija" selected>Bodija</option>
+              <option value="Barika">Barika</option>
+              <option value="Orogun">Orogun</option>
+              <option value="Samonda">Samonda</option>
+            </select>
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Street Address *</label>
+            <input type="text" id="lite-field-address" required placeholder="e.g. 14 Awoyokun Street, Bodija">
+          </div>
+
+          <div class="lite-modal-btn-row">
+            <button type="button" class="lite-btn-secondary" id="lite-btn-back-to-step2" style="width: 35%;">Back</button>
+            <button type="submit" class="lite-btn-primary" style="width: 65%;">
+              <i class="fa-brands fa-whatsapp"></i> Confirm on WhatsApp
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../lite.js"></script>
+</body>
+
+</html>
