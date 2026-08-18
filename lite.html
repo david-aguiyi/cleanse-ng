@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
+      var isLocal = window.location.protocol === 'file:';
+      var host = window.location.hostname;
+      var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
+      if (isLocal || (host && !isAllowed)) {
+        document.documentElement.style.display = 'none';
+        window.location.href = 'https://cleanse.ng';
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda</title>
+  <meta name="description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta name="keywords"
+    content="cleanse lite, house cleaners agbowo, house cleaners bodija, house cleaners barika, house cleaners orogun, house cleaners samonda, home cleaning ibadan, residential cleaners ibadan">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cleanse.ng/lite">
+  <meta property="og:title" content="Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda">
+  <meta property="og:description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta property="og:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://cleanse.ng/lite">
+  <meta property="twitter:title" content="Cleanse Lite — Professional Cleaning in Agbowo, Bodija, Barika, Orogun & Samonda">
+  <meta property="twitter:description"
+    content="Cleanse Lite. Same standard. Once a week. From ₦25,000 a month. Serving Agbowo, Bodija, Barika, Orogun and Samonda.">
+  <meta property="twitter:image" content="https://framerusercontent.com/images/1KFvSEziXMnZL6ikBoCq4FcIqjQ.png">
+  
+  <link rel="canonical" href="https://cleanse.ng/lite">
+  <link rel="icon" href="./favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="./favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.svg">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+  <link rel="stylesheet" href="./lite.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav style="padding: 16px 32px;">
+    <a href="index.html" class="brand-logo" id="nav-logo">
+      <img src="./logo.png" alt="cleanse.ng logo" class="logo-img" width="120" height="28">
+      <span class="lite-badge">
+        <span class="lite-badge-dot"></span> LITE
+      </span>
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html#pricing" class="btn-ghost" style="font-size: 14px; font-weight: 600;">
+        Explore full plans at cleanse.ng &rarr;
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ── SECTION 1 — HERO & PRICING ── -->
+    <section class="lite-hero-section">
+      <div class="lite-eyebrow">
+        <span style="color: var(--neon-green); margin-right: 4px;">🟢</span> CLEANSE LITE &middot; IBADAN
+      </div>
+      
+      <h1 class="lite-hero-headline">
+        Your most important<br>
+        <em>work is not cleaning.</em>
+      </h1>
+
+      <p class="lite-hero-sub">
+        Same Cleanse standard. Once a week.<br>
+        Built for Agbowo, Bodija, Barika, Orogun and Samonda.
+      </p>
+
+      <!-- Two Pricing Cards -->
+      <div class="lite-cards-grid">
+        <!-- Card 1: One-time visit -->
+        <div class="lite-price-card">
+          <div>
+            <h3 class="lite-card-title">One-time visit</h3>
+            <div class="lite-card-price">₦7,000 <span>/ visit</span></div>
+            <p class="lite-card-desc">Try us once. No commitment.</p>
+          </div>
+          <div style="margin-top: 24px;">
+            <a href="#" data-wa-msg="Hello Cleanse! I'd like to book a One-Time Visit (₦7,000) under Cleanse Lite." class="lite-btn-primary" style="background: var(--primary-purple); color: var(--white); box-shadow: none;">
+              Book One-Time &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Monthly Cleanse Lite FEATURED -->
+        <div class="lite-price-card featured">
+          <span class="lite-card-tag">Most Popular</span>
+          <div>
+            <h3 class="lite-card-title">Monthly — Cleanse Lite</h3>
+            <div class="lite-card-price">₦25,000 <span>/ month</span></div>
+            <p class="lite-card-desc">Once a week. Every week.</p>
+          </div>
+          <div style="margin-top: 24px;">
+            <a href="#" data-wa-msg="Hello Cleanse! I'd like to subscribe to Cleanse Lite Monthly (₦25,000/month, once a week)." class="lite-btn-primary">
+              Book on WhatsApp &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p class="lite-small-print">
+        Starting price for a 1 bedroom home. Up to 2 bedrooms.
+      </p>
+
+      <div class="lite-cta-group">
+        <a href="#" data-wa-msg="Hello Cleanse! I would like to book Cleanse Lite on WhatsApp (09130663739)." class="lite-btn-primary">
+          <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Book on WhatsApp &rarr; 0913 066 3739
+        </a>
+        <a href="index.html#pricing" class="lite-upgrade-link">
+          Want twice a week? See our full plans at cleanse.ng
+        </a>
+      </div>
+    </section>
+
+    <!-- ── SECTION 2 — THE FEELING ── -->
+    <section class="lite-feeling-section">
+      <div class="lite-feeling-container">
+        <h2 class="lite-feeling-headline">
+          <em>Peace of mind.</em><br>
+          Every week.
+        </h2>
+        <div class="lite-feeling-body">
+          <p>You have better things to do with your time than clean.</p>
+          <p>Once a week we come in and handle it completely. No stress. No managing. No thinking about it.</p>
+          <p style="color: var(--neon-green); font-weight: 600;">Just a clean home and the time to do what actually matters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3 — TESTIMONIALS ── -->
+    <section class="lite-testimonials-section">
+      <h2 class="lite-testimonials-header">
+        What Cleanse clients say.
+      </h2>
+
+      <div class="lite-testimonials-grid">
+        <!-- Testimonial 1 -->
+        <div class="lite-testimonial-card">
+          <p class="lite-quote-text">&ldquo;I stopped thinking about it.&rdquo;</p>
+          <p class="lite-quote-author">&mdash; Temi A., Bodija</p>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="lite-testimonial-card">
+          <p class="lite-quote-text">&ldquo;My Saturdays are different now.&rdquo;</p>
+          <p class="lite-quote-author">&mdash; Chisom E., Bodija</p>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="lite-testimonial-card">
+          <p class="lite-quote-text">&ldquo;Worth every naira. Did not think I would say that but here we are.&rdquo;</p>
+          <p class="lite-quote-author">&mdash; Seun B., Samonda</p>
+        </div>
+
+        <!-- Testimonial 4 -->
+        <div class="lite-testimonial-card">
+          <p class="lite-quote-text">&ldquo;I genuinely forgot cleaning was something I used to do.&rdquo;</p>
+          <p class="lite-quote-author">&mdash; Tolu F., Agbowo</p>
+        </div>
+
+        <!-- Testimonial 5 -->
+        <div class="lite-testimonial-card">
+          <p class="lite-quote-text">&ldquo;Came home after a long week. Everything was clean. I sat down and did not move for two hours. That was new.&rdquo;</p>
+          <p class="lite-quote-author">&mdash; Blessing N., Orogun</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4 — FINAL CTA ── -->
+    <section class="lite-final-cta-section">
+      <div class="lite-final-cta-container">
+        <h2 class="lite-final-headline">
+          Stop giving your weekends<br>
+          <em>to cleaning.</em>
+        </h2>
+
+        <p class="lite-final-sub">
+          Cleanse Lite. Same standard. Once a week.
+        </p>
+
+        <div class="lite-price-reminder">
+          ₦25,000 a month. ₦7,000 a visit. Up to 2 bedrooms.
+        </div>
+
+        <div class="lite-final-btn-group">
+          <a href="#" data-wa-msg="Hello Cleanse! I'd like to book Cleanse Lite for my home." class="lite-btn-primary">
+            <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> WhatsApp us &rarr; 0913 066 3739
+          </a>
+          <a href="https://cleanse.ng/lite" class="lite-btn-secondary">
+            Book at cleanse.ng/lite
+          </a>
+          <p style="margin-top: 16px;">
+            <a href="index.html#pricing" class="lite-upgrade-link" style="font-style: italic;">
+              Ready for twice a week or a larger home? Explore full Cleanse plans at cleanse.ng
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="lite-footer">
+    <div class="lite-footer-container">
+      <div class="lite-footer-brand">
+        <img src="./logo-white.svg" alt="Cleanse.ng" class="logo-img" width="120" height="28">
+        <span class="lite-badge">LITE</span>
+      </div>
+
+      <div class="lite-footer-meta">
+        <p style="font-weight: 700; font-family: var(--font-header); color: var(--white); font-size: 15px;">cleanse.ng/lite — Cleanse Lite</p>
+        <p style="font-style: italic; opacity: 0.9; margin-bottom: 10px;">Protect your creative process.</p>
+        <p>Ibadan, Oyo State | WhatsApp: <strong>0913 066 3739</strong> | Working hours: 8am &mdash; 6pm daily</p>
+      </div>
+
+      <div class="lite-footer-disclaimer">
+        <p style="margin-bottom: 6px;">&copy; 2026 cleanse.ng. All rights reserved.</p>
+        <p style="color: var(--neon-green);">This is Cleanse Lite. For our full service visit <a href="index.html" style="color: inherit; text-decoration: underline;">cleanse.ng</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Link Obfuscation & Security Script -->
+  <script>
+    (function () {
+      var waNum = ['MjM0', 'OTEzMDY2', 'MzczOQ=='].map(function (p) { return atob(p); }).join('');
+      
+      document.querySelectorAll('[data-wa-msg]').forEach(function (el) {
+        var msg = el.getAttribute('data-wa-msg') || 'Hello Cleanse! I would like to make an inquiry about Cleanse Lite.';
+        el.href = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
+        el.target = '_blank';
+        el.rel = 'noopener noreferrer';
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
