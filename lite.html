@@ -58,80 +58,67 @@
 <body>
 
   <!-- ── NAVIGATION ── -->
-  <nav style="padding: 16px 32px;">
-    <a href="index.html" class="brand-logo" id="nav-logo">
-      <img src="./logo.png" alt="cleanse.ng logo" class="logo-img" width="120" height="28">
-      <span class="lite-badge">
-        <span class="lite-badge-dot"></span> LITE
-      </span>
-    </a>
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <a href="index.html#pricing" class="btn-ghost" style="font-size: 14px; font-weight: 600;">
-        Explore full plans at cleanse.ng &rarr;
-      </a>
+  <nav class="lite-nav">
+    <a href="index.html" class="lite-brand-text" id="nav-logo">cleanse<span class="lite-dot-ng">.ng</span> <em class="lite-tag-text">lite</em></a>
+    <div>
+      <button class="lite-nav-book-btn" onclick="openLiteBookingModal()">Book Now</button>
     </div>
   </nav>
 
   <main>
-    <!-- ── SECTION 1 — HERO & PRICING ── -->
+    <!-- ── SECTION 1 — HERO & PRICING (FITTED WITH IMAGE) ── -->
     <section class="lite-hero-section">
-      <div class="lite-eyebrow">
-        <span style="color: var(--neon-green); margin-right: 4px;">🟢</span> CLEANSE LITE &middot; IBADAN
-      </div>
-      
-      <h1 class="lite-hero-headline">
-        Your most important<br>
-        <em>work is not cleaning.</em>
-      </h1>
-
-      <p class="lite-hero-sub">
-        Same Cleanse standard. Once a week.<br>
-        Built for Agbowo, Bodija, Barika, Orogun and Samonda.
-      </p>
-
-      <!-- Two Pricing Cards -->
-      <div class="lite-cards-grid">
-        <!-- Card 1: One-time visit -->
-        <div class="lite-price-card">
-          <div>
-            <h3 class="lite-card-title">One-time visit</h3>
-            <div class="lite-card-price">₦7,000 <span>/ visit</span></div>
-            <p class="lite-card-desc">Try us once. No commitment.</p>
-          </div>
-          <div style="margin-top: 24px;">
-            <a href="#" data-wa-msg="Hello Cleanse! I'd like to book a One-Time Visit (₦7,000) under Cleanse Lite." class="lite-btn-primary" style="background: var(--primary-purple); color: var(--white); box-shadow: none;">
-              Book One-Time &rarr;
-            </a>
-          </div>
+      <div class="lite-hero-grid">
+        <div class="lite-hero-image-col">
+          <img src="./lite_hero_image.jpg" alt="Cleanse Lite — Clean home, zero stress" class="lite-hero-img">
         </div>
+        <div class="lite-hero-content-col">
+          <h1 class="lite-hero-headline">
+            Your most important<br>
+            <em>work is not cleaning.</em>
+          </h1>
 
-        <!-- Card 2: Monthly Cleanse Lite FEATURED -->
-        <div class="lite-price-card featured">
-          <span class="lite-card-tag">Most Popular</span>
-          <div>
-            <h3 class="lite-card-title">Monthly — Cleanse Lite</h3>
-            <div class="lite-card-price">₦25,000 <span>/ month</span></div>
-            <p class="lite-card-desc">Once a week. Every week.</p>
+          <p class="lite-hero-sub">
+            Same Cleanse standard. Once a week.<br>
+            Built for Agbowo, Bodija, Barika, Orogun and Samonda.
+          </p>
+
+          <!-- Two Pricing Cards -->
+          <div class="lite-cards-grid">
+            <!-- Card 1: One-time visit -->
+            <div class="lite-price-card">
+              <div>
+                <h3 class="lite-card-title">One-time visit</h3>
+                <div class="lite-card-price">₦7,000 <span>/ visit</span></div>
+                <p class="lite-card-desc">Try us once. No commitment.</p>
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="button" onclick="openLiteBookingModal('One-time visit')" class="lite-btn-primary purple">
+                  Book One-Time &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Monthly Cleanse Lite FEATURED -->
+            <div class="lite-price-card featured">
+              <span class="lite-card-tag">Most Popular</span>
+              <div>
+                <h3 class="lite-card-title">Monthly — Cleanse Lite</h3>
+                <div class="lite-card-price">₦25,000 <span>/ month</span></div>
+                <p class="lite-card-desc">Once a week. Every week.</p>
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="button" onclick="openLiteBookingModal('Monthly — Cleanse Lite')" class="lite-btn-primary">
+                  Book Monthly &rarr;
+                </button>
+              </div>
+            </div>
           </div>
-          <div style="margin-top: 24px;">
-            <a href="#" data-wa-msg="Hello Cleanse! I'd like to subscribe to Cleanse Lite Monthly (₦25,000/month, once a week)." class="lite-btn-primary">
-              Book on WhatsApp &rarr;
-            </a>
-          </div>
+
+          <p class="lite-small-print">
+            Starting price for a 1 bedroom home. Up to 2 bedrooms.
+          </p>
         </div>
-      </div>
-
-      <p class="lite-small-print">
-        Starting price for a 1 bedroom home. Up to 2 bedrooms.
-      </p>
-
-      <div class="lite-cta-group">
-        <a href="#" data-wa-msg="Hello Cleanse! I would like to book Cleanse Lite on WhatsApp (09130663739)." class="lite-btn-primary">
-          <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Book on WhatsApp &rarr; 0913 066 3739
-        </a>
-        <a href="index.html#pricing" class="lite-upgrade-link">
-          Want twice a week? See our full plans at cleanse.ng
-        </a>
       </div>
     </section>
 
@@ -150,41 +137,60 @@
       </div>
     </section>
 
-    <!-- ── SECTION 3 — TESTIMONIALS ── -->
+    <!-- ── SECTION 3 — TESTIMONIALS CAROUSEL ── -->
     <section class="lite-testimonials-section">
       <h2 class="lite-testimonials-header">
         What Cleanse clients say.
       </h2>
 
-      <div class="lite-testimonials-grid">
-        <!-- Testimonial 1 -->
-        <div class="lite-testimonial-card">
-          <p class="lite-quote-text">&ldquo;I stopped thinking about it.&rdquo;</p>
-          <p class="lite-quote-author">&mdash; Temi A., Bodija</p>
+      <div class="lite-carousel-container">
+        <div class="lite-carousel-track" id="lite-testimonial-track">
+          <!-- Slide 1 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;I stopped thinking about it.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Temi A., Bodija</p>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;My Saturdays are different now.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Chisom E., Bodija</p>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;Worth every naira. Did not think I would say that but here we are.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Seun B., Samonda</p>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;I genuinely forgot cleaning was something I used to do.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Tolu F., Agbowo</p>
+            </div>
+          </div>
+
+          <!-- Slide 5 -->
+          <div class="lite-carousel-slide">
+            <div class="lite-testimonial-card">
+              <p class="lite-quote-text">&ldquo;Came home after a long week. Everything was clean. I sat down and did not move for two hours. That was new.&rdquo;</p>
+              <p class="lite-quote-author">&mdash; Blessing N., Orogun</p>
+            </div>
+          </div>
         </div>
 
-        <!-- Testimonial 2 -->
-        <div class="lite-testimonial-card">
-          <p class="lite-quote-text">&ldquo;My Saturdays are different now.&rdquo;</p>
-          <p class="lite-quote-author">&mdash; Chisom E., Bodija</p>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="lite-testimonial-card">
-          <p class="lite-quote-text">&ldquo;Worth every naira. Did not think I would say that but here we are.&rdquo;</p>
-          <p class="lite-quote-author">&mdash; Seun B., Samonda</p>
-        </div>
-
-        <!-- Testimonial 4 -->
-        <div class="lite-testimonial-card">
-          <p class="lite-quote-text">&ldquo;I genuinely forgot cleaning was something I used to do.&rdquo;</p>
-          <p class="lite-quote-author">&mdash; Tolu F., Agbowo</p>
-        </div>
-
-        <!-- Testimonial 5 -->
-        <div class="lite-testimonial-card">
-          <p class="lite-quote-text">&ldquo;Came home after a long week. Everything was clean. I sat down and did not move for two hours. That was new.&rdquo;</p>
-          <p class="lite-quote-author">&mdash; Blessing N., Orogun</p>
+        <!-- Carousel Navigation Controls -->
+        <div class="lite-carousel-nav">
+          <button type="button" class="lite-carousel-btn" id="lite-carousel-prev" aria-label="Previous testimonial">&larr;</button>
+          <div class="lite-carousel-dots" id="lite-carousel-dots"></div>
+          <button type="button" class="lite-carousel-btn" id="lite-carousel-next" aria-label="Next testimonial">&rarr;</button>
         </div>
       </div>
     </section>
@@ -206,13 +212,13 @@
         </div>
 
         <div class="lite-final-btn-group">
-          <a href="#" data-wa-msg="Hello Cleanse! I'd like to book Cleanse Lite for my home." class="lite-btn-primary">
-            <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> WhatsApp us &rarr; 0913 066 3739
-          </a>
-          <a href="https://cleanse.ng/lite" class="lite-btn-secondary">
+          <button type="button" onclick="openLiteBookingModal()" class="lite-btn-primary" style="width: 100%;">
+            <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> WhatsApp us &rarr; 0913 066 3739
+          </button>
+          <button type="button" onclick="openLiteBookingModal()" class="lite-btn-secondary" style="width: 100%;">
             Book at cleanse.ng/lite
-          </a>
-          <p style="margin-top: 16px;">
+          </button>
+          <p style="margin-top: 12px;">
             <a href="index.html#pricing" class="lite-upgrade-link" style="font-style: italic;">
               Ready for twice a week or a larger home? Explore full Cleanse plans at cleanse.ng
             </a>
@@ -225,9 +231,8 @@
   <!-- ── FOOTER ── -->
   <footer class="lite-footer">
     <div class="lite-footer-container">
-      <div class="lite-footer-brand">
-        <img src="./logo-white.svg" alt="Cleanse.ng" class="logo-img" width="120" height="28">
-        <span class="lite-badge">LITE</span>
+      <div>
+        <a href="index.html" class="lite-footer-brand-text">cleanse<span class="lite-dot-ng">.ng</span> <em class="lite-tag-text">lite</em></a>
       </div>
 
       <div class="lite-footer-meta">
@@ -243,20 +248,160 @@
     </div>
   </footer>
 
-  <!-- WhatsApp Link Obfuscation & Security Script -->
-  <script>
-    (function () {
-      var waNum = ['MjM0', 'OTEzMDY2', 'MzczOQ=='].map(function (p) { return atob(p); }).join('');
+  <!-- ── LITE MULTI-STEP BOOKING MODAL WITH CALENDAR ── -->
+  <div class="lite-modal-overlay" id="lite-booking-modal">
+    <div class="lite-modal-container">
+      <button type="button" class="lite-modal-close-btn" id="lite-modal-close" aria-label="Close modal">&times;</button>
       
-      document.querySelectorAll('[data-wa-msg]').forEach(function (el) {
-        var msg = el.getAttribute('data-wa-msg') || 'Hello Cleanse! I would like to make an inquiry about Cleanse Lite.';
-        el.href = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
-        el.target = '_blank';
-        el.rel = 'noopener noreferrer';
-      });
-    })();
-  </script>
+      <div class="lite-modal-header">
+        <h3 class="lite-modal-title">Book Cleanse Lite</h3>
+        <p class="lite-modal-sub">Once a week cleaning for Agbowo, Bodija, Barika, Orogun & Samonda</p>
+      </div>
 
+      <!-- Step Progress Bar -->
+      <div class="lite-modal-progress">
+        <div class="lite-progress-dot active" id="lite-p-dot-1"></div>
+        <div class="lite-progress-dot" id="lite-p-dot-2"></div>
+        <div class="lite-progress-dot" id="lite-p-dot-3"></div>
+      </div>
+
+      <form id="lite-booking-form">
+        <!-- STEP 1: PLAN & BEDROOMS -->
+        <div class="lite-wizard-step active" id="lite-step-1">
+          <label class="lite-form-label">1. Select Plan</label>
+          <div class="lite-grid-cards">
+            <div class="lite-modal-plan-opt active" data-plan="Monthly — Cleanse Lite">
+              <div class="lite-opt-title">Monthly Lite</div>
+              <div class="lite-opt-price">₦25,000/mo</div>
+            </div>
+            <div class="lite-modal-plan-opt" data-plan="One-time visit">
+              <div class="lite-opt-title">One-Time Visit</div>
+              <div class="lite-opt-price">₦7,000/visit</div>
+            </div>
+          </div>
+
+          <label class="lite-form-label">2. Home Size</label>
+          <div class="lite-grid-cards">
+            <div class="lite-modal-bed-opt active" data-bed="1 Bedroom">
+              <div class="lite-opt-title">1 Bedroom</div>
+            </div>
+            <div class="lite-modal-bed-opt" data-bed="2 Bedrooms">
+              <div class="lite-opt-title">2 Bedrooms</div>
+            </div>
+          </div>
+
+          <button type="button" class="lite-btn-primary" id="lite-btn-to-step2">
+            Select Cleaning Date &rarr;
+          </button>
+        </div>
+
+        <!-- STEP 2: CALENDAR & TIME SLOT -->
+        <div class="lite-wizard-step" id="lite-step-2">
+          <label class="lite-form-label">Pick Cleaning Date</label>
+          
+          <!-- Custom Calendar Widget -->
+          <div class="lite-cal-widget">
+            <div class="lite-cal-header">
+              <span class="lite-cal-month-title" id="lite-cal-month-year">August 2026</span>
+              <div>
+                <button type="button" class="lite-cal-nav-btn" id="lite-cal-prev">&lt;</button>
+                <button type="button" class="lite-cal-nav-btn" id="lite-cal-next">&gt;</button>
+              </div>
+            </div>
+            <div class="lite-cal-weekdays">
+              <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+            </div>
+            <div class="lite-cal-days-grid" id="lite-cal-days-grid">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <div id="lite-selected-date-display" style="font-size: 13px; font-weight: 700; color: var(--primary-purple); margin-bottom: 14px; text-align: center;">
+            Please select a date on the calendar
+          </div>
+
+          <label class="lite-form-label">Pick Time Slot</label>
+          <div class="lite-slots-vertical">
+            <div class="lite-slot-card active" data-slot="Morning (8am - 11am)">
+              <div class="lite-slot-left">
+                <span class="lite-slot-icon">🌅</span>
+                <div>
+                  <div class="lite-slot-name">Morning</div>
+                  <div class="lite-slot-time">8:00 AM &mdash; 11:00 AM</div>
+                </div>
+              </div>
+              <div class="lite-slot-check">&check;</div>
+            </div>
+
+            <div class="lite-slot-card" data-slot="Afternoon (11am - 2pm)">
+              <div class="lite-slot-left">
+                <span class="lite-slot-icon">☀️</span>
+                <div>
+                  <div class="lite-slot-name">Afternoon</div>
+                  <div class="lite-slot-time">11:00 AM &mdash; 2:00 PM</div>
+                </div>
+              </div>
+              <div class="lite-slot-check">&check;</div>
+            </div>
+
+            <div class="lite-slot-card" data-slot="Late Afternoon (2pm - 5pm)">
+              <div class="lite-slot-left">
+                <span class="lite-slot-icon">🌆</span>
+                <div>
+                  <div class="lite-slot-name">Late Afternoon</div>
+                  <div class="lite-slot-time">2:00 PM &mdash; 5:00 PM</div>
+                </div>
+              </div>
+              <div class="lite-slot-check">&check;</div>
+            </div>
+          </div>
+
+          <div class="lite-modal-btn-row">
+            <button type="button" class="lite-btn-secondary" id="lite-btn-to-step1" style="width: 40%;">Back</button>
+            <button type="button" class="lite-btn-primary" id="lite-btn-to-step3" style="width: 60%;">Enter Details &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: CONTACT & LOCATION -->
+        <div class="lite-wizard-step" id="lite-step-3">
+          <div class="lite-form-group">
+            <label class="lite-form-label">Full Name *</label>
+            <input type="text" id="lite-field-name" required placeholder="e.g. Temi Adewale">
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Phone Number *</label>
+            <input type="tel" id="lite-field-phone" required placeholder="e.g. 08012345678">
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Zone / Area *</label>
+            <select id="lite-field-zone" required>
+              <option value="Agbowo">Agbowo</option>
+              <option value="Bodija" selected>Bodija</option>
+              <option value="Barika">Barika</option>
+              <option value="Orogun">Orogun</option>
+              <option value="Samonda">Samonda</option>
+            </select>
+          </div>
+
+          <div class="lite-form-group">
+            <label class="lite-form-label">Street Address *</label>
+            <input type="text" id="lite-field-address" required placeholder="e.g. 14 Awoyokun Street, Bodija">
+          </div>
+
+          <div class="lite-modal-btn-row">
+            <button type="button" class="lite-btn-secondary" id="lite-btn-back-to-step2" style="width: 35%;">Back</button>
+            <button type="submit" class="lite-btn-primary" style="width: 65%;">
+              <i class="fa-brands fa-whatsapp"></i> Confirm on WhatsApp
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="./lite.js"></script>
 </body>
 
 </html>
