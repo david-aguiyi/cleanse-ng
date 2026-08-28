@@ -1808,20 +1808,7 @@
     }
 
     function calculateVisitPrice(plan, visitsText, discount) {
-      const isWelcome = (discount && discount.toLowerCase().includes('welcome')) || 
-                        plan.toLowerCase().includes('welcome') || 
-                        plan.toLowerCase().includes('promo');
-
-      const planPrices = isWelcome ? {
-        "1 Bedroom Flat": 7000,
-        "2 Bedroom Flat": 9000,
-        "3 Bedroom Flat": 12000,
-        "4 Bedroom Flat": 15000,
-        "1 Bedroom": 7000,
-        "2 Bedroom": 9000,
-        "3 Bedroom": 12000,
-        "4 Bedroom": 15000
-      } : {
+      const planPrices = {
         "1 Bedroom Flat": 10000,
         "2 Bedroom Flat": 15000,
         "3 Bedroom Flat": 20000,
@@ -1842,18 +1829,10 @@
       }
 
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
-        // Monthly subscriptions (Welcome Offer rates vs Regular rates):
-        if (isWelcome) {
-          if (plan.toLowerCase().includes("1 bedroom")) return 4375; // 35,000 / 8
-          if (plan.toLowerCase().includes("2 bedroom")) return 6250; // 50,000 / 8
-          if (plan.toLowerCase().includes("3 bedroom")) return 8750; // 70,000 / 8
-          if (plan.toLowerCase().includes("4 bedroom")) return 12500; // 100,000 / 8
-        } else {
-          if (plan.toLowerCase().includes("1 bedroom")) return 6250; // 50,000 / 8
-          if (plan.toLowerCase().includes("2 bedroom")) return 10000; // 80,000 / 8
-          if (plan.toLowerCase().includes("3 bedroom")) return 12500; // 100,000 / 8
-          if (plan.toLowerCase().includes("4 bedroom")) return 18750; // 150,000 / 8
-        }
+        if (plan.toLowerCase().includes("1 bedroom")) return 4375; // 35,000 / 8
+        if (plan.toLowerCase().includes("2 bedroom")) return 6250; // 50,000 / 8
+        if (plan.toLowerCase().includes("3 bedroom")) return 8750; // 70,000 / 8
+        if (plan.toLowerCase().includes("4 bedroom")) return 12500; // 100,000 / 8
         return baseRate; // fallback
       }
 
@@ -2541,8 +2520,8 @@
       // Generate code for new booking
       const codeVal = getNextAvailableCode();
       
-      // Check if welcome offer is applied in message
-      const isPromo = /welcome offer/i.test(text);
+      // Promo check (welcome offer removed)
+      const isPromo = false;
       
       // Parser regexes matching WhatsApp bold markdown format (*Field:*)
       const planMatch = text.match(/\*Plan:\*\s*([^\n]+)/i);

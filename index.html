@@ -326,17 +326,6 @@
         <span class="toggle-label" id="label-monthly">Monthly</span>
       </div>
 
-      <!-- First-Time Customer Trigger -->
-      <div style="margin-top: 16px; text-align: center;">
-        <p style="font-size: 12.5px; color: var(--mid-gray); margin-bottom: 4px; font-weight: 400; letter-spacing: 0.01em;">First time? Our welcome offer gets you started for as low as ₦7,000 a visit.</p>
-        <button id="trigger-promo-btn" class="promo-trigger-btn" onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
-          <svg width="12" height="12" viewBox="0 0 512 512" fill="currentColor">
-            <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h192v224c0 17.7 14.3 32 32 32s32-14.3 32-32V320h192c17.7 0 32-14.3 32-32s-14.3-32-32-32H288V32z"/>
-          </svg>
-          Claim welcome offer
-        </button>
-      </div>
-
     </div>
 
     <div class="pricing-grid">
@@ -347,9 +336,9 @@
           <div class="pc-price-primary">
             <span class="price-val">₦10,000</span><span class="price-unit"> / visit</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦50,000 / month (twice a week)</div>
+          <div class="pc-price-secondary" style="display: none;">₦35,000 / month (twice a week)</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦30,000/mo
+        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦45,000/mo
         </div>
         <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
       </div>
@@ -363,9 +352,9 @@
           <div class="pc-price-primary">
             <span class="price-val">₦15,000</span><span class="price-unit"> / visit</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦80,000 / month (twice a week)</div>
+          <div class="pc-price-secondary" style="display: none;">₦50,000 / month (twice a week)</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦40,000/mo
+        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦70,000/mo
         </div>
         <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
       </div>
@@ -376,9 +365,9 @@
           <div class="pc-price-primary">
             <span class="price-val">₦20,000</span><span class="price-unit"> / visit</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦100,000 / month (twice a week)</div>
+          <div class="pc-price-secondary" style="display: none;">₦70,000 / month (twice a week)</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦60,000/mo
+        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦90,000/mo
         </div>
         <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
       </div>
@@ -389,9 +378,9 @@
           <div class="pc-price-primary">
             <span class="price-val">₦25,000</span><span class="price-unit"> / visit</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦150,000 / month (twice a week)</div>
+          <div class="pc-price-secondary" style="display: none;">₦100,000 / month (twice a week)</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦50,000/mo
+        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦100,000/mo
         </div>
         <a href="#" data-wa-link class="pc-btn">Book Appointment</a>
       </div>
@@ -1017,49 +1006,6 @@
     </div>
   </div>
   -->
-
-  <!-- PROMOTIONAL MODAL FOR FIRST-TIME USERS -->
-  <div class="booking-modal-overlay" id="promo-modal" style="z-index: 2500;">
-    <div class="booking-modal-content promo-modal-content">
-      <!-- Left Column: Lifestyle Image -->
-      <div class="promo-modal-left-img" style="background: var(--deep-purple) url('discount_promo_image.jpg') no-repeat center center; background-size: cover; width: 100%; height: 100%; min-height: 520px; border-right: 3px solid var(--deep-purple);"></div>
-      
-      <!-- Right Column: Content -->
-      <div class="promo-modal-right-content" style="background: var(--off-white); padding: 40px 32px 32px 32px; display: flex; flex-direction: column; justify-content: center; position: relative;">
-        <button class="booking-modal-close" id="promo-close-btn" aria-label="Close modal">&times;</button>
-        
-        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary-purple); letter-spacing: 0.08em; display: block; margin-bottom: 4px; font-family: var(--font-header);">Welcome offer • select your home size</span>
-        <h2 style="font-family: var(--font-header); font-size: 26px; font-weight: 800; color: var(--deep-purple); margin: 0 0 16px 0; line-height: 1.2;">Two ways to get started</h2>
-        
-        <!-- Two Interactive pricing cards -->
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; box-sizing: border-box;">
-          <!-- One-time visit option -->
-          <div id="promo-opt-onetime" class="promo-opt-card" style="background: var(--white); border: 2px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; user-select: none;">
-            <span style="font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--mid-gray);">One-time visit, from</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-family: var(--font-header); font-size: 16px; font-weight: 600; color: var(--light-gray); text-decoration: line-through;">₦10,000</span>
-              <span style="font-family: var(--font-header); font-size: 20px; font-weight: 800; color: var(--deep-purple);">₦7,000</span>
-            </div>
-          </div>
-          <!-- Monthly plan option -->
-          <div id="promo-opt-monthly" class="promo-opt-card selected" style="background: var(--white); border: 3px solid var(--deep-purple); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; user-select: none;">
-            <span style="font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--deep-purple);">Monthly plan, from</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-family: var(--font-header); font-size: 16px; font-weight: 600; color: var(--light-gray); text-decoration: line-through;">₦50,000</span>
-              <span style="font-family: var(--font-header); font-size: 20px; font-weight: 800; color: #00b82f;">₦35,000</span>
-            </div>
-            <span style="font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--mid-gray);">Twice-weekly visits included, works out to <strong style="color: var(--deep-purple); font-weight: 800;">~₦4,500/visit</strong></span>
-          </div>
-        </div>
-        
-        <p style="font-size: 11.5px; color: var(--mid-gray); line-height: 1.45; font-family: var(--font-body); margin: 0 0 12px 0; font-weight: 600;">
-          Starting price for a 1 bedroom home. Larger spaces are priced at checkout.
-        </p>
-        
-        <button id="promo-claim-btn" class="btn-brutal-bounce promo-claim-btn-brutal" style="margin-top: 4px;">See my price</button>
-      </div>
-    </div>
-  </div>
 
   <!-- CUSTOM BEDROOMS MODAL -->
   <div class="booking-modal-overlay" id="custom-bedrooms-modal">
