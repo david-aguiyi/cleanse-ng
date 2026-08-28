@@ -439,6 +439,9 @@
     color: var(--primary-purple);
     font-weight: 700;
   }
+  .pricing-header .pricing-sub {
+    margin-top: 20px;
+  }
   /* ── CLEANSE LITE PRICING BANNER ── */
   .pricing-lite-banner {
     background: linear-gradient(135deg, var(--deep-purple) 0%, var(--primary-purple) 100%);
