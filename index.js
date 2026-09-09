@@ -171,16 +171,18 @@ const labelMonthly = document.getElementById('label-monthly');
 
 const pricingData = {
   oneTime: [
-    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 35000 },
-    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 50000 },
-    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 70000 },
-    { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 100000 }
+    { primary: '₦10,000', unit: ' / visit', secondary: '', rawPrice: 10000, monthlyPrice: 60000 },
+    { primary: '₦15,000', unit: ' / visit', secondary: '', rawPrice: 15000, monthlyPrice: 80000 },
+    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 100000 },
+    { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 120000 },
+    { primary: '₦30,000', unit: ' / visit', secondary: '', rawPrice: 30000, monthlyPrice: 150000 }
   ],
   monthly: [
-    { primary: '₦35,000', unit: ' / month', secondary: '' },
-    { primary: '₦50,000', unit: ' / month', secondary: '' },
-    { primary: '₦70,000', unit: ' / month', secondary: '' },
-    { primary: '₦100,000', unit: ' / month', secondary: '' }
+    { primary: '₦60,000', unit: ' / month', secondary: '' },
+    { primary: '₦80,000', unit: ' / month', secondary: '' },
+    { primary: '₦100,000', unit: ' / month', secondary: '' },
+    { primary: '₦120,000', unit: ' / month', secondary: '' },
+    { primary: '₦150,000', unit: ' / month', secondary: '' }
   ]
 };
 
@@ -402,18 +404,21 @@ function updateFrequencyCards() {
   if (selectedPlan.includes('2 Bedroom')) baseRate = 15000;
   else if (selectedPlan.includes('3 Bedroom')) baseRate = 20000;
   else if (selectedPlan.includes('4 Bedroom')) baseRate = 25000;
+  else if (selectedPlan.includes('5 Bedroom')) baseRate = 30000;
 
   // Determine Monthly Subscription rate
-  let subscriptionRate = 35000;
-  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 50000;
-  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 70000;
-  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 100000;
+  let subscriptionRate = 60000;
+  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 80000;
+  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 100000;
+  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 120000;
+  else if (selectedPlan.includes('5 Bedroom')) subscriptionRate = 150000;
 
   // Parse room size name
   let bedrooms = "1 Bedroom";
   if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
   else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
   else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
+  else if (selectedPlan.includes("5 Bedroom")) bedrooms = "5 Bedroom";
 
   const frequencies = [
     {
@@ -561,13 +566,15 @@ function updateBookingSummary() {
   // Pricing calculation
   const planPrices = {
     "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 35000, type: "fixed" },
+    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
     "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 50000, type: "fixed" },
+    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
     "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 70000, type: "fixed" },
+    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
     "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" }
+    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
+    "5 Bedroom — Pay Per Visit": { rate: 30000, type: "per-visit" },
+    "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -809,13 +816,15 @@ function updateVerifyStepDetails() {
   // Total Price calculation
   const planPrices = {
     "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 35000, type: "fixed" },
+    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
     "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 50000, type: "fixed" },
+    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
     "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 70000, type: "fixed" },
+    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
     "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" }
+    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
+    "5 Bedroom — Pay Per Visit": { rate: 30000, type: "per-visit" },
+    "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
   };
 
   const priceInfo = planPrices[selectedPlan];
@@ -1287,6 +1296,7 @@ function handlePlanChange() {
     else if (planName.includes("2 Bedroom")) apartmentSize = "2 Bedroom";
     else if (planName.includes("3 Bedroom")) apartmentSize = "3 Bedroom";
     else if (planName.includes("4 Bedroom")) apartmentSize = "4 Bedroom";
+    else if (planName.includes("5 Bedroom")) apartmentSize = "5 Bedroom";
     apartmentSizeInput.value = apartmentSize;
 
     // Sync custom cards active class
@@ -1755,13 +1765,15 @@ if (bookingForm) {
     // Calculate pricing details dynamically
     const planPrices = {
       "1 Bedroom — Pay Per Visit": { rate: 10000, type: "per-visit" },
-      "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 35000, type: "fixed" },
+      "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
       "2 Bedroom — Pay Per Visit": { rate: 15000, type: "per-visit" },
-      "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 50000, type: "fixed" },
+      "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
       "3 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-      "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 70000, type: "fixed" },
+      "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
       "4 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-      "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" }
+      "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
+      "5 Bedroom — Pay Per Visit": { rate: 30000, type: "per-visit" },
+      "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
     };
 
     const priceInfo = planPrices[selectedPlan];

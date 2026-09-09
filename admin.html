@@ -1813,10 +1813,12 @@
         "2 Bedroom Flat": 15000,
         "3 Bedroom Flat": 20000,
         "4 Bedroom Flat": 25000,
+        "5 Bedroom Flat": 30000,
         "1 Bedroom": 10000,
         "2 Bedroom": 15000,
         "3 Bedroom": 20000,
-        "4 Bedroom": 25000
+        "4 Bedroom": 25000,
+        "5 Bedroom": 30000
       };
 
       // Find which plan rate matches
@@ -1829,10 +1831,11 @@
       }
 
       if (plan.toLowerCase().includes("monthly") || plan.toLowerCase().includes("subscription")) {
-        if (plan.toLowerCase().includes("1 bedroom")) return 4375; // 35,000 / 8
-        if (plan.toLowerCase().includes("2 bedroom")) return 6250; // 50,000 / 8
-        if (plan.toLowerCase().includes("3 bedroom")) return 8750; // 70,000 / 8
-        if (plan.toLowerCase().includes("4 bedroom")) return 12500; // 100,000 / 8
+        if (plan.toLowerCase().includes("1 bedroom")) return 7500; // 60,000 / 8
+        if (plan.toLowerCase().includes("2 bedroom")) return 10000; // 80,000 / 8
+        if (plan.toLowerCase().includes("3 bedroom")) return 12500; // 100,000 / 8
+        if (plan.toLowerCase().includes("4 bedroom")) return 15000; // 120,000 / 8
+        if (plan.toLowerCase().includes("5 bedroom")) return 18750; // 150,000 / 8
         return baseRate; // fallback
       }
 
