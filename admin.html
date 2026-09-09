@@ -1809,20 +1809,20 @@
 
     function calculateVisitPrice(plan, visitsText, discount) {
       const planPrices = {
-        "1 Bedroom Flat": 10000,
-        "2 Bedroom Flat": 15000,
-        "3 Bedroom Flat": 20000,
-        "4 Bedroom Flat": 25000,
-        "5 Bedroom Flat": 30000,
-        "1 Bedroom": 10000,
-        "2 Bedroom": 15000,
-        "3 Bedroom": 20000,
-        "4 Bedroom": 25000,
-        "5 Bedroom": 30000
+        "1 Bedroom Flat": 15000,
+        "2 Bedroom Flat": 20000,
+        "3 Bedroom Flat": 25000,
+        "4 Bedroom Flat": 30000,
+        "5 Bedroom Flat": 40000,
+        "1 Bedroom": 15000,
+        "2 Bedroom": 20000,
+        "3 Bedroom": 25000,
+        "4 Bedroom": 30000,
+        "5 Bedroom": 40000
       };
 
       // Find which plan rate matches
-      let baseRate = 15000; // default 2 bedroom
+      let baseRate = 20000; // default 2 bedroom
       for (const key in planPrices) {
         if (plan.toLowerCase().includes(key.toLowerCase())) {
           baseRate = planPrices[key];
