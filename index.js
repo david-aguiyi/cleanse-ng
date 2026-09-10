@@ -1668,10 +1668,10 @@ if (policyModal) {
   });
 }
 
-// Intercept click on all Book Appointment buttons
+// Intercept click on Book Appointment buttons
 document.querySelectorAll('a[data-wa-link]').forEach(btn => {
-  // Only intercept buttons that are styled to book appointments (excluding text links in topbar / footer)
-  if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta') || btn.classList.contains('btn-primary')) {
+  // Only intercept buttons that are styled for modal booking (pc-btn and nav-cta)
+  if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta')) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
 
@@ -1684,7 +1684,7 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
         planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (Twice a week)' : 'Pay Per Visit'}`;
         openBookingModal(planName);
       } else {
-        // Nav or Hero buttons open the modal with no plan selected, allowing choice
+        // Nav button opens the modal with no plan selected, allowing choice
         openBookingModal("");
       }
     });
