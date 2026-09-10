@@ -80,12 +80,11 @@ var _modalOpenTime = 0;
 
 // Initialize all obfuscated WhatsApp links at runtime
 document.querySelectorAll('[data-wa-link]').forEach(function (el) {
-  el.href = _getWaUrl();
-  // Open contact/whatsapp links in a new tab (excluding modal buttons)
-  if (!el.classList.contains('pc-btn') && !el.classList.contains('nav-cta') && !el.classList.contains('btn-primary')) {
-    el.target = '_blank';
-    el.rel = 'noopener noreferrer';
-  }
+  var defaultMsg = 'Hi Cleanse.ng, I am interested in your services.';
+  var msg = el.getAttribute('data-wa-msg') || el.getAttribute('data-wa-message') || defaultMsg;
+  el.href = _getWaUrl(msg);
+  el.target = '_blank';
+  el.rel = 'noopener noreferrer';
 });
 
 // Testimonial slider
