@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–7**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–8**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -43,9 +43,15 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–7**:
   booking is never lost); `emitBookingConfirmed` enqueues the dispatch. Functions
   are served at `/api/inngest`.
 
-Stages 8–11 (SMS fallback, WhatsApp cleaner handoff, job execution, hardening)
-are **not** built here — see the blueprint for the sequence. Clear `TODO(Stage N)`
-markers point to the extension seams (e.g. `runOfferSmsFallback`).
+- **Stage 8 — SMS fallback:** provider-neutral `SmsProvider` adapter with a
+  BulkSMSNigeria implementation (swap to Termii without touching dispatch),
+  `runOfferSmsFallback` (fills the Stage 7 seam — SMS to offers with no sufficient
+  push response, one short segment with a `/j/<code>` deep link that opens but
+  never claims), a signed delivery-status webhook, and cost logging on the
+  notification row.
+
+Stages 9–11 (WhatsApp cleaner handoff, job execution, hardening) are **not** built
+here — see the blueprint for the sequence.
 
 Inngest runs locally via `npx inngest-cli dev` against `/api/inngest`; in
 production set `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY`. Without Inngest, paid

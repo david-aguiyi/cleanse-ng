@@ -9,6 +9,7 @@ import { serviceClient } from "@/db/service-client";
 import { AppError } from "@/http/errors";
 import { dispatchConfig, payoutConfig } from "@/config";
 import { getEligibleCleaners } from "./eligibility";
+import { newShortCode } from "@/domain/booking/reference";
 import { activeTokens } from "@/domain/cleaner/device-service";
 import { sendToTokens } from "@/providers/firebase/push-gateway";
 import { logger } from "@/observability/logger";
@@ -210,6 +211,7 @@ export async function createDispatchRound(
       property_bedrooms: booking.property_bedrooms,
       scheduled_start_at: booking.scheduled_start_at,
       payout_kobo: displayPayout,
+      sms_code: newShortCode(),
     },
   }));
 

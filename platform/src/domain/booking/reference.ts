@@ -29,3 +29,8 @@ export function newPaymentReference(): string {
 export function newCleanerCode(): string {
   return `CLR-${randomToken(4)}`;
 }
+
+/** Short offer code for SMS deep links, e.g. "Ab3K9" — keeps one SMS segment. */
+export function newShortCode(): string {
+  return randomToken(6);
+}

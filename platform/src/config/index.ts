@@ -37,6 +37,11 @@ export const payoutConfig = {
   cleanerPayoutBps: num("CLEANER_PAYOUT_BPS", 6000), // 60% of customer total (display)
 } as const;
 
+/** SMS cost logging — provider rate varies; store as config (Appendix C). */
+export const smsConfig = {
+  unitCostKobo: num("SMS_UNIT_COST_KOBO", 0), // per-segment estimate for cost reporting
+} as const;
+
 /** Feature flags. Kept here so build order stages can be toggled per environment. */
 export const featureFlags = {
   paystackEnabled: Boolean(process.env.PAYSTACK_SECRET_KEY),
