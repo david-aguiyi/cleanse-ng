@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { initPaymentSchema } from "@/validation/schemas";
 import { initializePaystack } from "@/domain/payment/payment-service";
 import { ok, handleError } from "@/http/response";
+import { rateLimitByIp } from "@/http/rate-limit";
 import { newRequestId, logger } from "@/observability/logger";
 
 export const runtime = "nodejs";
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest, ctx: { params: { ref: string } }) {
   const requestId = newRequestId();
   try {
+    rateLimitByIp(req, "payment-init", 12, 60_000);
     const body = await req.json().catch(() => ({}));
     const { callback_path } = initPaymentSchema.parse(body);
     const result = await initializePaystack(ctx.params.ref, callback_path);

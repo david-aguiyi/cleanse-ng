@@ -30,6 +30,13 @@ export async function getAdminContext(): Promise<AdminContext | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
+  // Optional MFA enforcement (Blueprint §6.1). When required, the session must
+  // have stepped up to aal2. Off by default so it can be rolled out per env.
+  if (process.env.ADMIN_MFA_REQUIRED === "true") {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel !== "aal2") return null;
+  }
+
   const { data: admin } = await serviceClient()
     .from("admin_users")
     .select("id, full_name, role, active")

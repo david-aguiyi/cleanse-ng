@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { AppError } from "./errors";
 import { logger } from "@/observability/logger";
+import { captureException } from "@/observability/sentry";
 
 export function ok<T>(data: T, requestId: string, status = 200): NextResponse {
   return NextResponse.json({ ok: true, data, request_id: requestId }, { status });
@@ -42,5 +43,6 @@ export function handleError(err: unknown, requestId: string): NextResponse {
     );
   }
   logger.error("Unhandled error", { requestId, error: String(err) });
+  captureException(err, { requestId });
   return fail("INTERNAL_ERROR", "Something went wrong. Please try again.", requestId, 500);
 }

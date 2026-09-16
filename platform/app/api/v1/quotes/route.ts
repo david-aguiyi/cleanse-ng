@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { quoteRequestSchema } from "@/validation/schemas";
 import { createQuote } from "@/domain/pricing/pricing-service";
 import { ok, handleError } from "@/http/response";
+import { rateLimitByIp } from "@/http/rate-limit";
 import { newRequestId, logger } from "@/observability/logger";
 
 export const runtime = "nodejs";
@@ -11,6 +12,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const requestId = newRequestId();
   try {
+    rateLimitByIp(req, "quotes", 30, 60_000);
     const body = await req.json();
     const input = quoteRequestSchema.parse(body);
     const quote = await createQuote(input);

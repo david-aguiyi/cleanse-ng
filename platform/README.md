@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–10**:
+This scaffold implements the blueprint's **complete Developer Build Order, Stages 0–11**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -63,7 +63,17 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–10**
   slots finish; completion rolls up cleaner metrics. Cleaner job screen with
   progress, address, customer/ops contact, and the active-job card on home.
 
-Stage 11 (hardening) is **not** built here — see the blueprint for the sequence.
+- **Stage 11 — Hardening + launch:** IP rate limiting on quote/booking/payment-init/
+  offer-accept, optional admin **MFA enforcement** (`ADMIN_MFA_REQUIRED`, aal2), an
+  RLS hardening migration (`0004`, deny-by-default on all remaining exposed tables
+  + revoke anon grants), a dependency-optional Sentry capture seam wired into the
+  error handler, and the launch docs: `docs/LAUNCH_CHECKLIST.md`,
+  `docs/RUNBOOKS.md`, `docs/ACCEPTANCE_MATRIX.md`.
+
+The full blueprint build order is now implemented. Remaining work before real
+production is operational, not structural: provision the external accounts, apply
+migrations `0001`–`0004`, run the manual acceptance tests in `docs/ACCEPTANCE_MATRIX.md`
+against staging, and complete `docs/LAUNCH_CHECKLIST.md`.
 
 Inngest runs locally via `npx inngest-cli dev` against `/api/inngest`; in
 production set `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY`. Without Inngest, paid
@@ -87,7 +97,11 @@ Apply the database schema + seed to your Supabase project:
 # via the Supabase SQL editor or CLI, in order:
 supabase/migrations/0001_baseline_schema.sql
 supabase/migrations/0002_functions_rls.sql
+supabase/migrations/0003_eligibility_fn.sql
+supabase/migrations/0004_rls_hardening.sql
 supabase/seed.sql
+# then bootstrap an admin operator:
+supabase/admin_bootstrap.sql
 ```
 
 ### What you can run without external accounts
@@ -118,11 +132,17 @@ supabase/seed.sql
 - The atomic first-accept-wins RPC `claim_job_offer` is installed for Stage 6;
   the service role is the only grantee (§5.3).
 
-## Hardening notes (before production)
+## Remaining hardening notes (before production)
+
+Done in Stage 11: rate limiting (§14), Inngest webhook dispatch (§13), RLS
+deny-by-default (§6), optional admin MFA (§6.1), Sentry seam (§15). Still open:
 
 - Move `finalizePaystackPayment`'s payment+booking writes into a single Postgres
   function/transaction (currently a guarded two-step update — idempotent but not
   atomic across both rows).
-- Add rate limiting to quote/booking/payment-init endpoints (§14).
-- Replace the inline webhook finalize with an Inngest dispatch (§13, Stage 7).
-- Add the signed-token `GET /api/v1/bookings/{ref}/confirmation` gate (§7).
+- Add the signed-token `GET /api/v1/bookings/{ref}/confirmation` gate (§7) — the
+  confirmation page currently reads by reference server-side.
+- Back the in-memory rate limiter with a shared store (e.g. Upstash Redis) for
+  multi-instance deployments.
+- Replace SVG PWA icons with maskable PNGs (192/512) for best install fidelity.
+- Run the manual rows in `docs/ACCEPTANCE_MATRIX.md` against staging.
