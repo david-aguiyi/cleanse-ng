@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–5**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–6**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -28,11 +28,18 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–5**:
   "Enable job alerts" opt-in (`POST /api/v1/cleaner/devices`), a server push
   gateway (Firebase Admin) that sends customer-safe payloads and marks invalid
   tokens inactive, and an ops device-health test push.
+- **Stage 6 — Atomic assignment:** eligibility ranking (`get_eligible_cleaners`
+  RPC, migration 0003), dispatch-round offer creation (admin **rebroadcast**,
+  reused by Stage 7), the cleaner offer list/detail (customer-safe until won),
+  and first-accept-wins accept via the `claim_job_offer` RPC — WON reveals full
+  job details, everyone else gets "already taken". A concurrency integration test
+  (`tests/concurrency`) proves exactly one winner for 10 simultaneous accepts
+  (runs only with `CLEANSE_TEST_SUPABASE_URL` + `CLEANSE_TEST_SERVICE_ROLE_KEY`).
 
-Stages 6–11 (atomic dispatch, durable Inngest workflows, SMS fallback, WhatsApp
-cleaner handoff, job execution, hardening) are **not** built here — see the
-blueprint for the sequence. Clear `TODO(Stage N)` markers point to the extension
-seams (e.g. `emitBookingConfirmed`).
+Stages 7–11 (durable Inngest dispatch, SMS fallback, WhatsApp cleaner handoff,
+job execution, hardening) are **not** built here — see the blueprint for the
+sequence. Clear `TODO(Stage N)` markers point to the extension seams (e.g.
+`emitBookingConfirmed`).
 
 Firebase is optional to build/run — push simply no-ops until you add the Firebase
 env vars (client config + VAPID key + service account).

@@ -6,6 +6,7 @@ import { AppError } from "@/http/errors";
 import AdminBar from "../../AdminBar";
 import CustomerActions from "./CustomerActions";
 import NotesForm from "./NotesForm";
+import DispatchControls from "./DispatchControls";
 import { naira, lagos, humanEvent } from "../../format";
 
 export const runtime = "nodejs";
@@ -152,6 +153,18 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="card">
+              <h3>Dispatch</h3>
+              <DispatchControls
+                bookingId={booking.id}
+                canDispatch={
+                  booking.payment_status === "SUCCESS" &&
+                  booking.customer_status === "CONFIRMED" &&
+                  !["COMPLETED", "CANCELLED"].includes(booking.fulfilment_status)
+                }
+              />
             </div>
 
             <div className="card">

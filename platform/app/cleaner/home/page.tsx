@@ -1,18 +1,24 @@
 import { redirect } from "next/navigation";
 import { getCleanerContext } from "@/auth/cleaner";
 import { getMe } from "@/domain/cleaner/cleaner-service";
+import { listOffers } from "@/domain/assignment/assignment-service";
 import CleanerBar from "../CleanerBar";
 import AvailabilityToggle from "../AvailabilityToggle";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function naira(kobo: number): string {
+  return `₦${Math.round(kobo / 100).toLocaleString("en-NG")}`;
+}
+
 export default async function CleanerHome() {
   const ctx = await getCleanerContext();
   if (!ctx) redirect("/cleaner/login?next=/cleaner/home");
 
-  const me = await getMe(ctx.cleanerId);
+  const [me, offers] = await Promise.all([getMe(ctx.cleanerId), listOffers(ctx.cleanerId)]);
   const available = me.availability === "AVAILABLE";
+  const activeOffers = offers.filter((o) => o.is_active);
 
   return (
     <main className="cleaner-shell">
@@ -39,6 +45,30 @@ export default async function CleanerHome() {
         )}
 
         <AvailabilityToggle initialAvailable={available} ready={me.ready} />
+
+        {activeOffers.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <h3 style={{ fontSize: 15, marginBottom: 8 }}>New job offers</h3>
+            {activeOffers.map((o) => (
+              <a
+                key={o.id}
+                href={`/cleaner/offers/${o.id}`}
+                className="card"
+                style={{ display: "block", textDecoration: "none", marginBottom: 10, borderColor: "var(--neon-green)" }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <strong style={{ color: "var(--deep-purple)", fontFamily: "var(--font-header)" }}>
+                    {o.service_name} · {o.property_bedrooms}BR
+                  </strong>
+                  <strong style={{ color: "#2f6b00" }}>{naira(o.payout_kobo)}</strong>
+                </div>
+                <div className="muted" style={{ fontSize: 13 }}>
+                  {o.zone_name ?? "—"} · tap to view
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
 
         <a href="/cleaner/alerts" className="card" style={{ display: "block", textDecoration: "none", marginBottom: 18 }}>
           <h3 style={{ fontSize: 15, marginBottom: 6 }}>🔔 Enable job alerts</h3>
