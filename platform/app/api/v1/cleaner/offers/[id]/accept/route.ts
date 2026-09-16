@@ -37,6 +37,14 @@ export async function POST(req: NextRequest, ctx: { params: { id: string } }) {
         409
       );
     }
+    if (result.result === "TIME_CONFLICT") {
+      return fail(
+        "CLEANER_TIME_CONFLICT",
+        "You already have a job around this time. Finish it before taking another.",
+        requestId,
+        409
+      );
+    }
     return fail("OFFER_NOT_ACTIVE", "This offer is no longer active.", requestId, 409);
   } catch (err) {
     return handleError(err, requestId);

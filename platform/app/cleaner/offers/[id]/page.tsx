@@ -128,7 +128,7 @@ export default async function OfferDetailPage({ params }: { params: { id: string
               {offer.is_active ? (
                 <OfferActions offerId={offer.id} />
               ) : (
-                <div className="notice info">This job has already been taken.</div>
+                <div className="notice info">This job is no longer available.</div>
               )}
             </div>
           </div>

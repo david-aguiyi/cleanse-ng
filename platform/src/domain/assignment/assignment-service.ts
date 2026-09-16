@@ -138,6 +138,7 @@ export async function getOfferForCleaner(offerId: string, cleanerId: string): Pr
 export type AcceptResult =
   | { result: "WON"; bookingReference: string; jobUrl: string }
   | { result: "ALREADY_TAKEN" }
+  | { result: "TIME_CONFLICT" }
   | { result: "OFFER_NOT_ACTIVE" };
 
 /** Atomic accept via claim_job_offer RPC. Returns WON or a friendly reason. */
@@ -168,6 +169,9 @@ export async function acceptOffer(offerId: string, cleanerId: string): Promise<A
 
   if (code === "ALREADY_TAKEN" || code === "CLEANER_ALREADY_ON_BOOKING") {
     return { result: "ALREADY_TAKEN" };
+  }
+  if (code === "CLEANER_TIME_CONFLICT") {
+    return { result: "TIME_CONFLICT" };
   }
   return { result: "OFFER_NOT_ACTIVE" };
 }
