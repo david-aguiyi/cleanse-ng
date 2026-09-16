@@ -24,6 +24,11 @@ export interface CleanerJobView {
   property_bedrooms: number | null;
   scheduled_start_at: string;
   assignment_status: string;
+  assigned_at: string | null;
+  arrived_at: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  completion_report: Record<string, any> | null;
   fulfilment_status: string;
   customer_first_name: string;
   customer_whatsapp: string;
@@ -75,7 +80,7 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
 
   const { data: assignment } = await db
     .from("job_assignments")
-    .select("status")
+    .select("status, assigned_at, on_the_way_at, arrived_at, started_at, completed_at, completion_report")
     .eq("booking_id", booking.id)
     .eq("cleaner_id", cleanerId)
     .in("status", ["ASSIGNED", "ON_THE_WAY", "ARRIVED", "IN_PROGRESS", "COMPLETED"])
@@ -91,6 +96,11 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
     property_bedrooms: booking.property_bedrooms,
     scheduled_start_at: booking.scheduled_start_at,
     assignment_status: assignment.status,
+    assigned_at: assignment.assigned_at ?? null,
+    arrived_at: assignment.arrived_at ?? null,
+    started_at: assignment.started_at ?? null,
+    completed_at: assignment.completed_at ?? null,
+    completion_report: assignment.completion_report ?? null,
     fulfilment_status: booking.fulfilment_status,
     customer_first_name: String(booking.customer?.full_name ?? "").split(" ")[0] ?? "",
     customer_whatsapp: booking.customer?.whatsapp_e164 ?? "",
@@ -101,14 +111,25 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
   };
 }
 
+export interface CompletionReportInput {
+  notes?: string;
+  complaints?: string;
+  positives?: string;
+}
+
 /** Advance the cleaner's assignment; mirror the booking and roll up completion. */
-export async function updateJobStatus(bookingId: string, cleanerId: string, next: Stage) {
+export async function updateJobStatus(
+  bookingId: string,
+  cleanerId: string,
+  next: Stage,
+  report?: CompletionReportInput
+) {
   const db = serviceClient();
   const nowIso = new Date().toISOString();
 
   const { data: assignment } = await db
     .from("job_assignments")
-    .select("id, status")
+    .select("id, status, started_at")
     .eq("booking_id", bookingId)
     .eq("cleaner_id", cleanerId)
     .in("status", ["ASSIGNED", "ON_THE_WAY", "ARRIVED", "IN_PROGRESS"])
@@ -123,7 +144,26 @@ export async function updateJobStatus(bookingId: string, cleanerId: string, next
 
   const patch: Record<string, unknown> = { status: next };
   patch[TS_FIELD[next as Exclude<Stage, "ASSIGNED">]] = nowIso;
-  if (next === "COMPLETED") patch.ended_at = nowIso;
+
+  let durationMinutes: number | null = null;
+  if (next === "COMPLETED") {
+    patch.ended_at = nowIso;
+    if (assignment.started_at) {
+      durationMinutes = Math.max(
+        1,
+        Math.round((Date.now() - new Date(assignment.started_at).getTime()) / 60000)
+      );
+    }
+    patch.completion_report = {
+      duration_minutes: durationMinutes,
+      started_at: assignment.started_at ?? null,
+      completed_at: nowIso,
+      notes: report?.notes ?? null,
+      complaints: report?.complaints ?? null,
+      positives: report?.positives ?? null,
+    };
+  }
+
   await db.from("job_assignments").update(patch).eq("id", assignment.id);
 
   await db.from("booking_events").insert({
@@ -131,13 +171,16 @@ export async function updateJobStatus(bookingId: string, cleanerId: string, next
     event_type: `cleaner.${next.toLowerCase()}`,
     actor_type: "CLEANER",
     actor_id: cleanerId,
-    data: { assignment_id: assignment.id },
+    data:
+      next === "COMPLETED"
+        ? { assignment_id: assignment.id, duration_minutes: durationMinutes, report: report ?? {} }
+        : { assignment_id: assignment.id },
   });
 
   await recomputeBookingFulfilment(bookingId);
   if (next === "COMPLETED") await rollUpCleanerMetrics(cleanerId);
 
-  return { status: next };
+  return { status: next, durationMinutes };
 }
 
 /** Booking fulfilment mirrors the least-advanced active slot; COMPLETED when all done. */

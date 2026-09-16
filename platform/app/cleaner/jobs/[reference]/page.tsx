@@ -4,6 +4,14 @@ import { getCleanerJob } from "@/domain/job/job-service";
 import { AppError } from "@/http/errors";
 import CleanerBar from "../../CleanerBar";
 import JobActions from "./JobActions";
+import CompleteJobForm from "./CompleteJobForm";
+
+function humanDuration(mins: number | null | undefined): string {
+  if (!mins) return "—";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? `${h} hr ${m} min` : `${m} min`;
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -118,7 +126,28 @@ export default async function CleanerJobPage({ params }: { params: { reference: 
           </div>
 
           <div style={{ marginTop: 18 }}>
-            <JobActions bookingId={job.booking_id} status={job.assignment_status} />
+            {job.assignment_status === "COMPLETED" ? (
+              <div className="readiness ready">
+                <strong>Job complete — nice work!</strong>
+                <div style={{ marginTop: 8 }}>
+                  Time on site:{" "}
+                  <strong>{humanDuration(job.completion_report?.duration_minutes)}</strong>
+                </div>
+                {job.completion_report?.complaints && (
+                  <div style={{ marginTop: 6 }}>Customer complaints: {job.completion_report.complaints}</div>
+                )}
+                {job.completion_report?.notes && (
+                  <div style={{ marginTop: 6 }}>You noticed: {job.completion_report.notes}</div>
+                )}
+                {job.completion_report?.positives && (
+                  <div style={{ marginTop: 6 }}>Went well: {job.completion_report.positives}</div>
+                )}
+              </div>
+            ) : job.assignment_status === "IN_PROGRESS" ? (
+              <CompleteJobForm bookingId={job.booking_id} startedAt={job.started_at} />
+            ) : (
+              <JobActions bookingId={job.booking_id} status={job.assignment_status} />
+            )}
           </div>
         </div>
       </div>

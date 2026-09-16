@@ -81,6 +81,7 @@ export interface BookingDetail {
   payments: Record<string, any>[];
   timeline: Record<string, any>[];
   assignedCleaner: Record<string, any> | null;
+  assignment: Record<string, any> | null;
 }
 
 /** Full booking control-centre view (Blueprint §11.3 Booking detail). */
@@ -102,6 +103,17 @@ export async function getBookingDetail(id: string): Promise<BookingDetail> {
       .order("created_at", { ascending: true }),
   ]);
 
+  // Latest assignment (for on-site timestamps + completion report).
+  const { data: assignment } = await db
+    .from("job_assignments")
+    .select(
+      "status, assigned_at, on_the_way_at, arrived_at, started_at, completed_at, end_reason, completion_report"
+    )
+    .eq("booking_id", id)
+    .order("assigned_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   let assignedCleaner: Record<string, any> | null = null;
   if (booking.assigned_cleaner_id) {
     const { data } = await db
@@ -122,6 +134,7 @@ export async function getBookingDetail(id: string): Promise<BookingDetail> {
     payments: payments.data ?? [],
     timeline: timeline.data ?? [],
     assignedCleaner,
+    assignment: assignment ?? null,
   };
 }
 

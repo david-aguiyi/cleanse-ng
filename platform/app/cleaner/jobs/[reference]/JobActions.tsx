@@ -3,12 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const NEXT: Record<string, { status: string; label: string } | null> = {
-  ASSIGNED: { status: "ON_THE_WAY", label: "I'm on the way" },
-  ON_THE_WAY: { status: "ARRIVED", label: "I've arrived" },
-  ARRIVED: { status: "IN_PROGRESS", label: "Start cleaning" },
-  IN_PROGRESS: { status: "COMPLETED", label: "Mark complete" },
-  COMPLETED: null,
+// Steps up to IN_PROGRESS. Completion has its own form (CompleteJobForm).
+const NEXT: Record<string, { status: string; label: string; hint: string } | null> = {
+  ASSIGNED: {
+    status: "ON_THE_WAY",
+    label: "I'm on my way",
+    hint: "You accepted this job. Head over now — please try to arrive within 1 hour.",
+  },
+  ON_THE_WAY: {
+    status: "ARRIVED",
+    label: "I'm here",
+    hint: "On your way. Tap “I'm here” the moment you arrive — it timestamps your arrival.",
+  },
+  ARRIVED: {
+    status: "IN_PROGRESS",
+    label: "Start cleaning",
+    hint: "You've arrived. Tap “Start cleaning” when you begin — we'll time the job.",
+  },
 };
 
 export default function JobActions({
@@ -43,12 +54,13 @@ export default function JobActions({
     }
   }
 
-  if (!step) {
-    return <div className="notice info">This job is complete. Thank you!</div>;
-  }
+  if (!step) return null;
 
   return (
     <div>
+      <p className="step-hint" style={{ marginBottom: 12 }}>
+        {step.hint}
+      </p>
       {error && <div className="notice error">{error}</div>}
       <button
         type="button"

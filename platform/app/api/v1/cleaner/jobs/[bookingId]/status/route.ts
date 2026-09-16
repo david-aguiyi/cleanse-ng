@@ -14,8 +14,8 @@ export async function POST(req: NextRequest, ctx: { params: { bookingId: string 
   const requestId = newRequestId();
   try {
     const cleaner = await requireCleaner();
-    const { status } = jobStatusSchema.parse(await req.json());
-    const result = await updateJobStatus(ctx.params.bookingId, cleaner.cleanerId, status);
+    const { status, report } = jobStatusSchema.parse(await req.json());
+    const result = await updateJobStatus(ctx.params.bookingId, cleaner.cleanerId, status, report);
     return ok(result, requestId);
   } catch (err) {
     return handleError(err, requestId);

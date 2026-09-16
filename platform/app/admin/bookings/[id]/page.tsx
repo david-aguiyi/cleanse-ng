@@ -25,7 +25,17 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
     throw err;
   }
 
-  const { booking, customer, address, items, payments, timeline, assignedCleaner } = detail;
+  const { booking, customer, address, items, payments, timeline, assignedCleaner, assignment } =
+    detail;
+  const report = assignment?.completion_report as Record<string, any> | null;
+  const lagosTime = (iso: string | null | undefined) =>
+    iso
+      ? new Intl.DateTimeFormat("en-NG", {
+          timeZone: "Africa/Lagos",
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(new Date(iso))
+      : "—";
   const addressLine = address
     ? [address.address_line1, address.estate, address.landmark].filter(Boolean).join(", ")
     : "—";
@@ -204,6 +214,54 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
                 </p>
               )}
             </div>
+
+            {assignment && (
+              <div className="card">
+                <h3>Job report</h3>
+                <div className="kv">
+                  <span className="k">On the way</span>
+                  <span>{lagosTime(assignment.on_the_way_at)}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Arrived</span>
+                  <span>{lagosTime(assignment.arrived_at)}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Started</span>
+                  <span>{lagosTime(assignment.started_at)}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Completed</span>
+                  <span>{lagosTime(assignment.completed_at)}</span>
+                </div>
+                {report?.duration_minutes != null && (
+                  <div className="kv" style={{ fontWeight: 700 }}>
+                    <span>Time on site</span>
+                    <span>
+                      {Math.floor(report.duration_minutes / 60) > 0
+                        ? `${Math.floor(report.duration_minutes / 60)} hr `
+                        : ""}
+                      {report.duration_minutes % 60} min
+                    </span>
+                  </div>
+                )}
+                {report?.complaints && (
+                  <p style={{ marginTop: 8 }}>
+                    <strong>Customer complaints:</strong> {report.complaints}
+                  </p>
+                )}
+                {report?.notes && (
+                  <p style={{ marginTop: 6 }}>
+                    <strong>Noticed on site:</strong> {report.notes}
+                  </p>
+                )}
+                {report?.positives && (
+                  <p style={{ marginTop: 6 }}>
+                    <strong>Went well:</strong> {report.positives}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="card">
               <h3>Operations notes</h3>

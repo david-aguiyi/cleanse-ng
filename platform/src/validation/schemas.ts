@@ -100,6 +100,14 @@ export type RegisterDeviceInput = z.infer<typeof registerDeviceSchema>;
 /** Cleaner job status transition (Blueprint §7 POST /cleaner/jobs/{id}/status). */
 export const jobStatusSchema = z.object({
   status: z.enum(["ON_THE_WAY", "ARRIVED", "IN_PROGRESS", "COMPLETED"]),
+  // Optional end-of-job report, only meaningful on COMPLETED.
+  report: z
+    .object({
+      notes: z.string().trim().max(2000).optional(),
+      complaints: z.string().trim().max(2000).optional(),
+      positives: z.string().trim().max(2000).optional(),
+    })
+    .optional(),
 });
 
 export const initPaymentSchema = z.object({

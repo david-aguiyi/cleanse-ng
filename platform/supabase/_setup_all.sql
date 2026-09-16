@@ -1,9 +1,9 @@
--- Cleanse.ng — full database setup (migrations 0001-0006 + seed) in one file.
+-- Cleanse.ng — full database setup (migrations 0001-0007 + seed) in one file.
 -- Run once on a fresh Supabase project.
 
--- ================================================================
+-- ============================
 -- migrations/0001_baseline_schema.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 baseline migration — schema (Blueprint §5.2)
 -- Monetary values are stored in kobo as bigint.
 -- Timestamps use timestamptz and are stored in UTC. UI displays Africa/Lagos.
@@ -444,10 +444,9 @@ create table webhook_events (
   unique(provider, payload_hash)
 );
 
-
--- ================================================================
+-- ============================
 -- migrations/0002_functions_rls.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 — functions, atomic claim, triggers, RLS (Blueprint §5.3, §6.2, Appendix A.1)
 
 -- ---------------------------------------------------------------------------
@@ -629,10 +628,9 @@ create policy cleaner_reads_own_assignments
 -- Do not grant cleaner direct UPDATE on assignment/booking rows.
 -- State transitions go through server APIs/domain services (service role).
 
-
--- ================================================================
+-- ============================
 -- migrations/0003_eligibility_fn.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 — eligibility ranking function (Blueprint §10.1)
 -- Ranks ACTIVE + verified + deployment-ready + AVAILABLE cleaners who serve the
 -- booking's zone and are qualified for its service, excluding those with a
@@ -698,10 +696,9 @@ revoke all on function get_eligible_cleaners(uuid, uuid[], integer) from public;
 revoke all on function get_eligible_cleaners(uuid, uuid[], integer) from anon;
 grant execute on function get_eligible_cleaners(uuid, uuid[], integer) to service_role;
 
-
--- ================================================================
+-- ============================
 -- migrations/0004_rls_hardening.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 — RLS hardening (Blueprint §6, §14).
 -- All privileged reads/writes go through the server-side service role, which
 -- bypasses RLS. Enabling RLS on the remaining exposed tables WITHOUT permissive
@@ -740,10 +737,9 @@ alter table pricing_rules enable row level security;
 revoke all on all tables in schema public from anon;
 revoke all on all tables in schema public from authenticated;
 
-
--- ================================================================
+-- ============================
 -- migrations/0005_fix_claim_ambiguity.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 — fix ambiguous column references in claim_job_offer.
 -- The function's OUT columns (booking_id, slot_number) collided with the
 -- job_offers/job_assignments columns inside WHERE/SET clauses ("column
@@ -859,10 +855,9 @@ revoke all on function claim_job_offer(uuid,uuid) from anon;
 revoke all on function claim_job_offer(uuid,uuid) from authenticated;
 grant execute on function claim_job_offer(uuid,uuid) to service_role;
 
-
--- ================================================================
+-- ============================
 -- migrations/0006_fair_dispatch.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng V2 — fair dispatch (spread work + 2-hour busy lock).
 --
 -- 1. get_eligible_cleaners now ranks by CURRENT WORKLOAD first (fewest recent
@@ -1069,10 +1064,19 @@ revoke all on function claim_job_offer(uuid,uuid) from anon;
 revoke all on function claim_job_offer(uuid,uuid) from authenticated;
 grant execute on function claim_job_offer(uuid,uuid) to service_role;
 
+-- ============================
+-- migrations/0007_completion_report.sql
+-- ============================
+-- Cleanse.ng V2 — cleaner completion report (Stage 10 enhancement).
+-- Stores the cleaner's end-of-job report (duration + notes/complaints/positives)
+-- on the assignment, so operations can see what actually happened on site.
 
--- ================================================================
+alter table job_assignments
+  add column if not exists completion_report jsonb;
+
+-- ============================
 -- seed.sql
--- ================================================================
+-- ============================
 -- Cleanse.ng pilot seed data (Blueprint §5.2 seed + Appendix A.3)
 -- Amounts are NGN converted to kobo. Service fee baseline 20% => service_fee_bps = 2000.
 
@@ -1126,5 +1130,4 @@ insert into pricing_rules(
 select r.id, p.property_bedrooms, 'ONE_TIME', p.amount_kobo,
        2000, '2026-09-16T00:00:00Z'::timestamptz, true
 from regular_service r cross join price_seed p;
-
 
