@@ -22,6 +22,7 @@ function optional(name: string): string | undefined {
 
 export const serverEnv = {
   supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
+  supabasePublishableKey: () => required("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
   supabaseServiceRoleKey: () => required("SUPABASE_SERVICE_ROLE_KEY"),
 
   paystackSecretKey: () => required("PAYSTACK_SECRET_KEY"),

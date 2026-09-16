@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–2**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–3**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -14,11 +14,15 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–2**:
 - **Stage 2 — Paystack:** initialize / callback / webhook, idempotent
   `finalizePaystackPayment`, the customer confirmation page, and admin-visible
   paid bookings (via `booking_events`).
+- **Stage 3 — Admin control centre:** Supabase Auth operator sign-in, role check
+  against `admin_users`, live booking board (filters/search/SLA), full booking
+  detail (customer + address, order, payment, timeline), the manual WhatsApp/call
+  customer action panel, and timestamped operations notes with an audit log.
 
-Stages 3–11 (admin control centre, cleaner PWA + FCM push, atomic dispatch,
-durable Inngest workflows, SMS fallback, WhatsApp handoff, job execution,
-hardening) are **not** built here — see the blueprint for the sequence. Clear
-`TODO(Stage N)` markers point to the extension seams (e.g. `emitBookingConfirmed`).
+Stages 4–11 (cleaner identity + PWA + FCM push, atomic dispatch, durable Inngest
+workflows, SMS fallback, WhatsApp cleaner handoff, job execution, hardening) are
+**not** built here — see the blueprint for the sequence. Clear `TODO(Stage N)`
+markers point to the extension seams (e.g. `emitBookingConfirmed`).
 
 ## Getting started
 
@@ -50,6 +54,9 @@ supabase/seed.sql
 2. **Paystack test** keys — `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`.
 3. Register the webhook `POST {APP_URL}/api/v1/webhooks/paystack` in the
    Paystack dashboard for durable finalization.
+4. **Admin access (Stage 3):** create a Supabase Auth user (dashboard →
+   Authentication → Users), then run `supabase/admin_bootstrap.sql` with that
+   user's UUID to grant an operator role. Sign in at `/admin/login`.
 
 ## Key invariants honoured
 
