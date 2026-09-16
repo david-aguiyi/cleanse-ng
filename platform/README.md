@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–3**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–4**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -18,11 +18,16 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–3**:
   against `admin_users`, live booking board (filters/search/SLA), full booking
   detail (customer + address, order, payment, timeline), the manual WhatsApp/call
   customer action panel, and timestamped operations notes with an audit log.
+- **Stage 4 — Cleaner identity + profile:** admin cleaner onboarding (creates the
+  Supabase Auth account + profile + zones/services), approve/suspend/verify/
+  deployment-ready management, the cleaner PWA sign-in, home and profile screens,
+  and the availability toggle **gated** so only ACTIVE + verified + deployment-ready
+  cleaners can go AVAILABLE (the `isDeploymentReady` predicate).
 
-Stages 4–11 (cleaner identity + PWA + FCM push, atomic dispatch, durable Inngest
-workflows, SMS fallback, WhatsApp cleaner handoff, job execution, hardening) are
-**not** built here — see the blueprint for the sequence. Clear `TODO(Stage N)`
-markers point to the extension seams (e.g. `emitBookingConfirmed`).
+Stages 5–11 (cleaner PWA push/FCM, atomic dispatch, durable Inngest workflows,
+SMS fallback, WhatsApp cleaner handoff, job execution, hardening) are **not**
+built here — see the blueprint for the sequence. Clear `TODO(Stage N)` markers
+point to the extension seams (e.g. `emitBookingConfirmed`).
 
 ## Getting started
 

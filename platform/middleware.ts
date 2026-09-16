@@ -38,10 +38,11 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isAdminArea = path.startsWith("/admin") && path !== "/admin/login";
+  const isCleanerArea = path.startsWith("/cleaner") && path !== "/cleaner/login";
 
-  if (isAdminArea && !user) {
+  if ((isAdminArea || isCleanerArea) && !user) {
     const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/admin/login";
+    loginUrl.pathname = isCleanerArea ? "/cleaner/login" : "/admin/login";
     loginUrl.searchParams.set("next", path);
     return NextResponse.redirect(loginUrl);
   }
@@ -50,6 +51,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Run on admin pages/APIs; skip static assets.
-  matcher: ["/admin/:path*", "/api/v1/admin/:path*"],
+  // Run on admin/cleaner pages; skip static assets. API routes enforce their own
+  // auth via requireAdmin/requireCleaner.
+  matcher: ["/admin/:path*", "/cleaner/:path*"],
 };

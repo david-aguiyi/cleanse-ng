@@ -24,3 +24,8 @@ export function newBookingReference(now = new Date()): string {
 export function newPaymentReference(): string {
   return `CLN-PAY-${randomToken(20)}`;
 }
+
+/** Cleaner code shown to customers/admin, e.g. "CLR-7K2M". */
+export function newCleanerCode(): string {
+  return `CLR-${randomToken(4)}`;
+}

@@ -46,7 +46,7 @@ export default async function AdminBoard({
 
   return (
     <main className="admin-shell">
-      <AdminBar who={`${admin.fullName} · ${admin.role}`} />
+      <AdminBar who={`${admin.fullName} · ${admin.role}`} active="bookings" />
       <div className="admin-wrap">
         <h1 className="admin-h1">Live bookings</h1>
         <p className="muted">

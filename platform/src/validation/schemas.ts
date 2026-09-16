@@ -50,6 +50,44 @@ export const createBookingSchema = z.object({
 });
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 
+const E164_CLEANER = z
+  .string()
+  .trim()
+  .regex(/^\+[1-9]\d{7,14}$/, "Enter a valid international number, e.g. +2348012345678");
+
+/** Admin creates/onboards a cleaner (Blueprint §9.1). */
+export const createCleanerSchema = z.object({
+  full_name: z.string().trim().min(2).max(120),
+  email: z.string().trim().email().max(200),
+  password: z.string().min(8).max(200),
+  phone_e164: E164_CLEANER,
+  whatsapp_e164: E164_CLEANER.optional(),
+  bio: z.string().trim().max(1000).optional(),
+  zone_codes: z.array(z.string().trim().min(1).max(40)).max(30).default([]),
+  service_codes: z.array(z.string().trim().min(1).max(40)).max(30).default([]),
+});
+export type CreateCleanerInput = z.infer<typeof createCleanerSchema>;
+
+/** Admin updates a cleaner: approve/suspend/verify/deployment + profile + skills. */
+export const updateCleanerSchema = z
+  .object({
+    full_name: z.string().trim().min(2).max(120).optional(),
+    bio: z.string().trim().max(1000).optional(),
+    whatsapp_e164: E164_CLEANER.optional(),
+    account_status: z.enum(["ONBOARDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+    verified: z.boolean().optional(),
+    deployment_ready: z.boolean().optional(),
+    zone_codes: z.array(z.string().trim().min(1).max(40)).max(30).optional(),
+    service_codes: z.array(z.string().trim().min(1).max(40)).max(30).optional(),
+  })
+  .refine((v) => Object.keys(v).length > 0, { message: "No changes provided." });
+export type UpdateCleanerInput = z.infer<typeof updateCleanerSchema>;
+
+/** Cleaner sets their own availability (Blueprint §7 PUT /cleaner/availability). */
+export const availabilitySchema = z.object({
+  available: z.boolean(),
+});
+
 export const initPaymentSchema = z.object({
   // Client submits booking reference only; the server reloads the authoritative
   // total from Postgres (Blueprint §8.1). No amount is accepted from the client.
