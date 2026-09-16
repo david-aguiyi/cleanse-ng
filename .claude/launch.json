@@ -4,9 +4,9 @@
     {
       "name": "platform-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "platform", "run", "dev"],
-      "port": 3000,
-      "autoPort": true
+      "runtimeArgs": ["--prefix", "platform", "run", "dev", "--", "--port", "3333"],
+      "port": 3333,
+      "autoPort": false
     }
   ]
 }

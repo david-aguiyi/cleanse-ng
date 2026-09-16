@@ -105,6 +105,26 @@ export default async function ConfirmedPage({
               <span>{formatNairaFromKobo(Number(booking.total_kobo))}</span>
             </div>
           </div>
+
+          {paid && (
+            <a
+              className="btn-primary"
+              href={`https://wa.me/2349130663739?text=${encodeURIComponent(
+                `Hi Cleanse, I just booked a cleaning (ref ${booking.public_reference}). `
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "block",
+                textAlign: "center",
+                marginTop: 20,
+                background: "#25D366",
+                color: "#fff",
+              }}
+            >
+              Chat with us directly on WhatsApp
+            </a>
+          )}
         </div>
 
         <p className="muted" style={{ textAlign: "center", marginTop: 18 }}>
