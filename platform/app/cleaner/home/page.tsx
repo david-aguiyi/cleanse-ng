@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCleanerContext } from "@/auth/cleaner";
 import { getMe } from "@/domain/cleaner/cleaner-service";
 import { listOffers } from "@/domain/assignment/assignment-service";
+import { listActiveJobs } from "@/domain/job/job-service";
 import CleanerBar from "../CleanerBar";
 import AvailabilityToggle from "../AvailabilityToggle";
 
@@ -16,7 +17,11 @@ export default async function CleanerHome() {
   const ctx = await getCleanerContext();
   if (!ctx) redirect("/cleaner/login?next=/cleaner/home");
 
-  const [me, offers] = await Promise.all([getMe(ctx.cleanerId), listOffers(ctx.cleanerId)]);
+  const [me, offers, activeJobs] = await Promise.all([
+    getMe(ctx.cleanerId),
+    listOffers(ctx.cleanerId),
+    listActiveJobs(ctx.cleanerId),
+  ]);
   const available = me.availability === "AVAILABLE";
   const activeOffers = offers.filter((o) => o.is_active);
 
@@ -45,6 +50,30 @@ export default async function CleanerHome() {
         )}
 
         <AvailabilityToggle initialAvailable={available} ready={me.ready} />
+
+        {activeJobs.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <h3 style={{ fontSize: 15, marginBottom: 8 }}>Your active job{activeJobs.length > 1 ? "s" : ""}</h3>
+            {activeJobs.map((j) => (
+              <a
+                key={j.booking_reference}
+                href={`/cleaner/jobs/${j.booking_reference}`}
+                className="card"
+                style={{ display: "block", textDecoration: "none", marginBottom: 10 }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <strong style={{ color: "var(--deep-purple)", fontFamily: "var(--font-header)" }}>
+                    {j.service_name}
+                  </strong>
+                  <span className="pill ful-cleaner_assigned">{j.status.replace(/_/g, " ")}</span>
+                </div>
+                <div className="muted" style={{ fontSize: 13 }}>
+                  {j.booking_reference} · tap to manage
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
 
         {activeOffers.length > 0 && (
           <div style={{ marginBottom: 18 }}>

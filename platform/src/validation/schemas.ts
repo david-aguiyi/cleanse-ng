@@ -97,6 +97,11 @@ export const registerDeviceSchema = z.object({
 });
 export type RegisterDeviceInput = z.infer<typeof registerDeviceSchema>;
 
+/** Cleaner job status transition (Blueprint §7 POST /cleaner/jobs/{id}/status). */
+export const jobStatusSchema = z.object({
+  status: z.enum(["ON_THE_WAY", "ARRIVED", "IN_PROGRESS", "COMPLETED"]),
+});
+
 export const initPaymentSchema = z.object({
   // Client submits booking reference only; the server reloads the authoritative
   // total from Postgres (Blueprint §8.1). No amount is accepted from the client.
