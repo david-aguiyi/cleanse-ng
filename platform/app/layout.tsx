@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   description:
     "Book professional residential cleaning in Ibadan. Flat pricing, vetted teams, secure Paystack checkout.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Cleanse Cleaner", statusBarStyle: "black-translucent" },
+};
+
+export const viewport = {
+  themeColor: "#1A0D33",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

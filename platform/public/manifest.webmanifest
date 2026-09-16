@@ -1,0 +1,25 @@
+{
+  "name": "Cleanse.ng Cleaner",
+  "short_name": "Cleanse Cleaner",
+  "description": "Receive and accept Cleanse cleaning jobs.",
+  "start_url": "/cleaner/home",
+  "scope": "/cleaner/",
+  "display": "standalone",
+  "background_color": "#1A0D33",
+  "theme_color": "#1A0D33",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

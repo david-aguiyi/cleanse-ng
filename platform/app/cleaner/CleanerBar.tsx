@@ -1,7 +1,7 @@
 import Link from "next/link";
 import LogoutButton from "../admin/LogoutButton";
 
-export default function CleanerBar({ active }: { active: "home" | "profile" }) {
+export default function CleanerBar({ active }: { active: "home" | "profile" | "alerts" }) {
   return (
     <div className="cleaner-bar">
       <Link className="brand" href="/cleaner/home">
@@ -11,6 +11,9 @@ export default function CleanerBar({ active }: { active: "home" | "profile" }) {
         <nav className="nav-links">
           <Link href="/cleaner/home" className={active === "home" ? "here" : ""}>
             Home
+          </Link>
+          <Link href="/cleaner/alerts" className={active === "alerts" ? "here" : ""}>
+            Alerts
           </Link>
           <Link href="/cleaner/profile" className={active === "profile" ? "here" : ""}>
             Profile

@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–4**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–5**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -23,11 +23,19 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–4**:
   deployment-ready management, the cleaner PWA sign-in, home and profile screens,
   and the availability toggle **gated** so only ACTIVE + verified + deployment-ready
   cleaners can go AVAILABLE (the `isDeploymentReady` predicate).
+- **Stage 5 — Cleaner PWA push:** installable PWA (manifest + service worker
+  served with the Firebase web config), FCM token registration behind an explicit
+  "Enable job alerts" opt-in (`POST /api/v1/cleaner/devices`), a server push
+  gateway (Firebase Admin) that sends customer-safe payloads and marks invalid
+  tokens inactive, and an ops device-health test push.
 
-Stages 5–11 (cleaner PWA push/FCM, atomic dispatch, durable Inngest workflows,
-SMS fallback, WhatsApp cleaner handoff, job execution, hardening) are **not**
-built here — see the blueprint for the sequence. Clear `TODO(Stage N)` markers
-point to the extension seams (e.g. `emitBookingConfirmed`).
+Stages 6–11 (atomic dispatch, durable Inngest workflows, SMS fallback, WhatsApp
+cleaner handoff, job execution, hardening) are **not** built here — see the
+blueprint for the sequence. Clear `TODO(Stage N)` markers point to the extension
+seams (e.g. `emitBookingConfirmed`).
+
+Firebase is optional to build/run — push simply no-ops until you add the Firebase
+env vars (client config + VAPID key + service account).
 
 ## Getting started
 

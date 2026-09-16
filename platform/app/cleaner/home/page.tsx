@@ -40,11 +40,17 @@ export default async function CleanerHome() {
 
         <AvailabilityToggle initialAvailable={available} ready={me.ready} />
 
+        <a href="/cleaner/alerts" className="card" style={{ display: "block", textDecoration: "none", marginBottom: 18 }}>
+          <h3 style={{ fontSize: 15, marginBottom: 6 }}>🔔 Enable job alerts</h3>
+          <p className="muted">
+            Turn on push notifications so you hear about new jobs the moment they&apos;re available.
+          </p>
+        </a>
+
         <div className="card">
           <h3 style={{ fontSize: 15, marginBottom: 6 }}>Today</h3>
           <p className="muted">
-            Job offers and active jobs appear here once dispatch goes live (Stages 5–10). Turning on
-            push alerts is set up in the next stage.
+            Job offers and active jobs appear here once dispatch goes live (Stages 6–10).
           </p>
         </div>
       </div>

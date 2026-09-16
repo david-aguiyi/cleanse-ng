@@ -88,6 +88,15 @@ export const availabilitySchema = z.object({
   available: z.boolean(),
 });
 
+/** Cleaner registers/updates an FCM device token (Blueprint §7, §9.2). */
+export const registerDeviceSchema = z.object({
+  fcm_token: z.string().trim().min(20).max(4096),
+  platform: z.enum(["ANDROID_WEB", "IOS_WEB", "DESKTOP_WEB", "OTHER"]),
+  push_permission: z.enum(["GRANTED", "DENIED", "UNKNOWN"]).default("GRANTED"),
+  device_fingerprint: z.string().trim().max(200).optional(),
+});
+export type RegisterDeviceInput = z.infer<typeof registerDeviceSchema>;
+
 export const initPaymentSchema = z.object({
   // Client submits booking reference only; the server reloads the authoritative
   // total from Postgres (Blueprint §8.1). No amount is accepted from the client.
