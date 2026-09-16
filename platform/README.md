@@ -1,0 +1,148 @@
+# Cleanse.ng Platform (Engineering Blueprint v2.0)
+
+Next.js App Router + TypeScript booking platform: server-authoritative pricing,
+guest-checkout bookings, and Paystack payments. This lives **alongside** the
+existing static marketing site (repo root) and does not replace it yet.
+
+This scaffold implements the blueprint's **complete Developer Build Order, Stages 0–11**:
+
+- **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
+  envelope, validation, logging, Supabase service client, dispatch config/flags.
+- **Stage 1 — Pricing + booking domain:** `PricingService` (server-authoritative
+  quotes), `BookingService` (AWAITING_PAYMENT drafts), `/api/v1/quotes`,
+  `/api/v1/bookings`, and the customer booking wizard through Review.
+- **Stage 2 — Paystack:** initialize / callback / webhook, idempotent
+  `finalizePaystackPayment`, the customer confirmation page, and admin-visible
+  paid bookings (via `booking_events`).
+- **Stage 3 — Admin control centre:** Supabase Auth operator sign-in, role check
+  against `admin_users`, live booking board (filters/search/SLA), full booking
+  detail (customer + address, order, payment, timeline), the manual WhatsApp/call
+  customer action panel, and timestamped operations notes with an audit log.
+- **Stage 4 — Cleaner identity + profile:** admin cleaner onboarding (creates the
+  Supabase Auth account + profile + zones/services), approve/suspend/verify/
+  deployment-ready management, the cleaner PWA sign-in, home and profile screens,
+  and the availability toggle **gated** so only ACTIVE + verified + deployment-ready
+  cleaners can go AVAILABLE (the `isDeploymentReady` predicate).
+- **Stage 5 — Cleaner PWA push:** installable PWA (manifest + service worker
+  served with the Firebase web config), FCM token registration behind an explicit
+  "Enable job alerts" opt-in (`POST /api/v1/cleaner/devices`), a server push
+  gateway (Firebase Admin) that sends customer-safe payloads and marks invalid
+  tokens inactive, and an ops device-health test push.
+- **Stage 6 — Atomic assignment:** eligibility ranking (`get_eligible_cleaners`
+  RPC, migration 0003), dispatch-round offer creation (admin **rebroadcast**,
+  reused by Stage 7), the cleaner offer list/detail (customer-safe until won),
+  and first-accept-wins accept via the `claim_job_offer` RPC — WON reveals full
+  job details, everyone else gets "already taken". A concurrency integration test
+  (`tests/concurrency`) proves exactly one winner for 10 simultaneous accepts
+  (runs only with `CLEANSE_TEST_SUPABASE_URL` + `CLEANSE_TEST_SERVICE_ROLE_KEY`).
+
+- **Stage 7 — Durable dispatch (Inngest):** `booking/confirmed` drives a
+  checkpointed flow — round 1 → push grace → SMS-fallback seam → round 2 → offer
+  expiry → operations escalation (EXCEPTION + ops alert). The Paystack webhook now
+  enqueues `paystack/payment.succeeded` (with an inline-finalize fallback so a paid
+  booking is never lost); `emitBookingConfirmed` enqueues the dispatch. Functions
+  are served at `/api/inngest`.
+
+- **Stage 8 — SMS fallback:** provider-neutral `SmsProvider` adapter with a
+  BulkSMSNigeria implementation (swap to Termii without touching dispatch),
+  `runOfferSmsFallback` (fills the Stage 7 seam — SMS to offers with no sufficient
+  push response, one short segment with a `/j/<code>` deep link that opens but
+  never claims), a signed delivery-status webhook, and cost logging on the
+  notification row.
+
+- **Stage 9 — Customer cleaner handoff:** signed customer-safe cleaner card
+  (`/c/cleaner/<token>`, hash stored, TTL, allow-listed fields only), one-tap
+  admin "Share with customer" that mints the card and opens a prefilled `wa.me`
+  message (two clicks, no WhatsApp API), and reassignment that closes the current
+  assignment (history kept), returns the booking to dispatch and revokes the card.
+
+- **Stage 10 — Job execution:** the assigned cleaner advances the job
+  ON_THE_WAY → ARRIVED → IN_PROGRESS → COMPLETED
+  (`POST /api/v1/cleaner/jobs/{id}/status`, forward-only, assigned-cleaner only);
+  the booking fulfilment mirrors the aggregate and closes to COMPLETED when all
+  slots finish; completion rolls up cleaner metrics. Cleaner job screen with
+  progress, address, customer/ops contact, and the active-job card on home.
+
+- **Stage 11 — Hardening + launch:** IP rate limiting on quote/booking/payment-init/
+  offer-accept, optional admin **MFA enforcement** (`ADMIN_MFA_REQUIRED`, aal2), an
+  RLS hardening migration (`0004`, deny-by-default on all remaining exposed tables
+  + revoke anon grants), a dependency-optional Sentry capture seam wired into the
+  error handler, and the launch docs: `docs/LAUNCH_CHECKLIST.md`,
+  `docs/RUNBOOKS.md`, `docs/ACCEPTANCE_MATRIX.md`.
+
+The full blueprint build order is now implemented. Remaining work before real
+production is operational, not structural: provision the external accounts, apply
+migrations `0001`–`0004`, run the manual acceptance tests in `docs/ACCEPTANCE_MATRIX.md`
+against staging, and complete `docs/LAUNCH_CHECKLIST.md`.
+
+Inngest runs locally via `npx inngest-cli dev` against `/api/inngest`; in
+production set `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY`. Without Inngest, paid
+bookings still confirm — dispatch is then started manually via admin rebroadcast.
+
+Firebase is optional to build/run — push simply no-ops until you add the Firebase
+env vars (client config + VAPID key + service account).
+
+## Getting started
+
+```bash
+cd platform
+npm install
+cp .env.example .env.local   # fill in Supabase + Paystack TEST keys
+npm run dev
+```
+
+Apply the database schema + seed to your Supabase project:
+
+```bash
+# via the Supabase SQL editor or CLI, in order:
+supabase/migrations/0001_baseline_schema.sql
+supabase/migrations/0002_functions_rls.sql
+supabase/migrations/0003_eligibility_fn.sql
+supabase/migrations/0004_rls_hardening.sql
+supabase/seed.sql
+# then bootstrap an admin operator:
+supabase/admin_bootstrap.sql
+```
+
+### What you can run without external accounts
+
+- `npm run typecheck`, `npm run lint`, `npm run test` (pure-unit tests).
+- The booking UI renders. Quotes/bookings need Supabase; payment needs Paystack.
+
+### Required to exercise the full Stage 0–2 path
+
+1. A **Supabase** project — set `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+2. **Paystack test** keys — `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`.
+3. Register the webhook `POST {APP_URL}/api/v1/webhooks/paystack` in the
+   Paystack dashboard for durable finalization.
+4. **Admin access (Stage 3):** create a Supabase Auth user (dashboard →
+   Authentication → Users), then run `supabase/admin_bootstrap.sql` with that
+   user's UUID to grant an operator role. Sign in at `/admin/login`.
+
+## Key invariants honoured
+
+- The browser never supplies the authoritative total — price is recomputed from
+  DB pricing rules and snapshotted onto the quote/booking (§3.1, §16 pricing tamper).
+- The callback and webhook both call the **same** idempotent
+  `finalizePaystackPayment`; the booking transition is guarded so
+  `booking.confirmed` is emitted exactly once (§8.2, §16 duplicate webhook).
+- Verification requires `status=success` + matching reference + `currency=NGN` +
+  exact expected amount before `CONFIRMED` (§8.2, §16 fake callback / wrong amount).
+- The atomic first-accept-wins RPC `claim_job_offer` is installed for Stage 6;
+  the service role is the only grantee (§5.3).
+
+## Remaining hardening notes (before production)
+
+Done in Stage 11: rate limiting (§14), Inngest webhook dispatch (§13), RLS
+deny-by-default (§6), optional admin MFA (§6.1), Sentry seam (§15). Still open:
+
+- Move `finalizePaystackPayment`'s payment+booking writes into a single Postgres
+  function/transaction (currently a guarded two-step update — idempotent but not
+  atomic across both rows).
+- Add the signed-token `GET /api/v1/bookings/{ref}/confirmation` gate (§7) — the
+  confirmation page currently reads by reference server-side.
+- Back the in-memory rate limiter with a shared store (e.g. Upstash Redis) for
+  multi-instance deployments.
+- Replace SVG PWA icons with maskable PNGs (192/512) for best install fidelity.
+- Run the manual rows in `docs/ACCEPTANCE_MATRIX.md` against staging.
