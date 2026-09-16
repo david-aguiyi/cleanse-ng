@@ -5,6 +5,7 @@ import {
 } from "@/providers/paystack/paystack-client";
 import { storeOnce } from "@/providers/webhook-register";
 import { finalizePaystackPayment } from "@/domain/payment/payment-service";
+import { inngest } from "@/inngest/client";
 import { newRequestId, logger } from "@/observability/logger";
 
 export const runtime = "nodejs";
@@ -46,18 +47,27 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.event === "charge.success" && event.data?.reference) {
-    // Stage 7 replaces this inline finalize with an Inngest dispatch so the
-    // webhook returns immediately and heavy work is checkpointed/retriable.
+    const reference = event.data.reference;
+    // Enqueue durable finalization so the webhook returns 200 promptly and heavy
+    // work is checkpointed/retriable (Blueprint §8.3, §13).
     try {
-      await finalizePaystackPayment(event.data.reference);
-    } catch (err) {
-      logger.error("paystack.webhook.finalize_failed", {
+      await inngest.send({ name: "paystack/payment.succeeded", data: { reference } });
+    } catch (enqueueErr) {
+      // Never lose a paid booking (§4): fall back to inline finalization.
+      logger.error("paystack.webhook.enqueue_failed_fallback_inline", {
         requestId,
-        reference: event.data.reference,
-        error: String(err),
+        reference,
+        error: String(enqueueErr),
       });
-      // Still return 200 so Paystack does not hammer retries; the failure is
-      // visible in logs/booking_events for operations to recover.
+      try {
+        await finalizePaystackPayment(reference);
+      } catch (finalErr) {
+        logger.error("paystack.webhook.finalize_failed", {
+          requestId,
+          reference,
+          error: String(finalErr),
+        });
+      }
     }
   }
 

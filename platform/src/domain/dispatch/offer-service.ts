@@ -25,6 +25,97 @@ function payoutKobo(totalKobo: number): number {
   return Math.round((totalKobo * payoutConfig.cleanerPayoutBps) / 10000);
 }
 
+export interface DispatchState {
+  exists: boolean;
+  fulfilmentStatus: string;
+  customerStatus: string;
+  requestedCleaners: number;
+  activeAssignments: number;
+  fullyAssigned: boolean;
+  terminal: boolean; // completed/cancelled — dispatch should stop
+}
+
+/** Snapshot used by the durable worker to decide whether to keep dispatching. */
+export async function getDispatchState(bookingId: string): Promise<DispatchState> {
+  const db = serviceClient();
+  const { data: booking } = await db
+    .from("bookings")
+    .select("fulfilment_status, customer_status, requested_cleaner_count")
+    .eq("id", bookingId)
+    .maybeSingle();
+  if (!booking) {
+    return {
+      exists: false,
+      fulfilmentStatus: "",
+      customerStatus: "",
+      requestedCleaners: 0,
+      activeAssignments: 0,
+      fullyAssigned: false,
+      terminal: true,
+    };
+  }
+  const { count } = await db
+    .from("job_assignments")
+    .select("id", { count: "exact", head: true })
+    .eq("booking_id", bookingId)
+    .in("status", ["ASSIGNED", "ON_THE_WAY", "ARRIVED", "IN_PROGRESS"]);
+  const active = count ?? 0;
+  return {
+    exists: true,
+    fulfilmentStatus: booking.fulfilment_status,
+    customerStatus: booking.customer_status,
+    requestedCleaners: booking.requested_cleaner_count,
+    activeAssignments: active,
+    fullyAssigned: active >= booking.requested_cleaner_count,
+    terminal: ["COMPLETED", "CANCELLED"].includes(booking.fulfilment_status),
+  };
+}
+
+/** Expire still-active offers whose TTL has passed (Blueprint §10.2 OFFER_TTL). */
+export async function expireStaleOffers(bookingId: string): Promise<number> {
+  const db = serviceClient();
+  const { data } = await db
+    .from("job_offers")
+    .update({ status: "EXPIRED" })
+    .eq("booking_id", bookingId)
+    .in("status", ["CREATED", "PUSH_SENT", "SMS_SENT", "VIEWED"])
+    .lt("expires_at", new Date().toISOString())
+    .select("id");
+  return data?.length ?? 0;
+}
+
+/** Mark a still-unassigned booking as EXCEPTION and raise an ops alert (§10.3). */
+export async function escalateBooking(bookingId: string): Promise<void> {
+  const db = serviceClient();
+  const { data: updated } = await db
+    .from("bookings")
+    .update({ fulfilment_status: "EXCEPTION" })
+    .eq("id", bookingId)
+    .in("fulfilment_status", ["UNASSIGNED", "DISPATCHING", "PARTIALLY_ASSIGNED"])
+    .select("id")
+    .maybeSingle();
+
+  if (updated) {
+    await db.from("booking_events").insert({
+      booking_id: bookingId,
+      event_type: "dispatch.escalated",
+      actor_type: "SYSTEM",
+      data: { reason: "no_cleaner_assigned_within_sla" },
+    });
+    await db.from("notifications").insert({
+      booking_id: bookingId,
+      channel: "ADMIN_INAPP",
+      provider: "INTERNAL",
+      recipient: "operations",
+      template_code: "DISPATCH_ESCALATION",
+      status: "SENT",
+      sent_at: new Date().toISOString(),
+      payload: { severity: "URGENT", message: "Paid booking unassigned within SLA." },
+    });
+    logger.warn("dispatch.escalated", { bookingId });
+  }
+}
+
 /** Create a dispatch round for a booking's unfilled slots. */
 export async function createDispatchRound(
   bookingId: string,

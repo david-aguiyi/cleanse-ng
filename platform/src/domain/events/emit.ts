@@ -1,12 +1,13 @@
 /**
- * Domain event emission. For Stages 0-2 this records the business event and
- * logs it. Stage 7 wires `booking.confirmed` into Inngest to drive durable
- * dispatch (Blueprint §13). Kept behind one function so call sites do not change
- * when Inngest is added.
+ * Domain event emission. Records the business event and enqueues the durable
+ * dispatch flow via Inngest (Blueprint §13). Enqueue failures never fail the
+ * paid-booking confirmation (Blueprint §4 Availability) — they are logged and
+ * remain recoverable via admin rebroadcast.
  */
 import "server-only";
 import { serviceClient } from "@/db/service-client";
 import { logger } from "@/observability/logger";
+import { inngest } from "@/inngest/client";
 
 export async function emitBookingConfirmed(bookingId: string, reference: string): Promise<void> {
   const db = serviceClient();
@@ -17,6 +18,13 @@ export async function emitBookingConfirmed(bookingId: string, reference: string)
     data: { reference },
   });
 
-  // TODO(Stage 7): await inngest.send({ name: "booking/confirmed", data: { bookingId } });
-  logger.info("booking.confirmed emitted (dispatch wired in Stage 7)", { bookingId, reference });
+  try {
+    await inngest.send({
+      name: "booking/confirmed",
+      data: { bookingId, reference },
+    });
+  } catch (err) {
+    // Do not fail confirmation; operations can rebroadcast manually.
+    logger.error("dispatch.enqueue_failed", { bookingId, reference, error: String(err) });
+  }
 }

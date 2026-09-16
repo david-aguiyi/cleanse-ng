@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–6**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–7**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -36,10 +36,20 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–6**:
   (`tests/concurrency`) proves exactly one winner for 10 simultaneous accepts
   (runs only with `CLEANSE_TEST_SUPABASE_URL` + `CLEANSE_TEST_SERVICE_ROLE_KEY`).
 
-Stages 7–11 (durable Inngest dispatch, SMS fallback, WhatsApp cleaner handoff,
-job execution, hardening) are **not** built here — see the blueprint for the
-sequence. Clear `TODO(Stage N)` markers point to the extension seams (e.g.
-`emitBookingConfirmed`).
+- **Stage 7 — Durable dispatch (Inngest):** `booking/confirmed` drives a
+  checkpointed flow — round 1 → push grace → SMS-fallback seam → round 2 → offer
+  expiry → operations escalation (EXCEPTION + ops alert). The Paystack webhook now
+  enqueues `paystack/payment.succeeded` (with an inline-finalize fallback so a paid
+  booking is never lost); `emitBookingConfirmed` enqueues the dispatch. Functions
+  are served at `/api/inngest`.
+
+Stages 8–11 (SMS fallback, WhatsApp cleaner handoff, job execution, hardening)
+are **not** built here — see the blueprint for the sequence. Clear `TODO(Stage N)`
+markers point to the extension seams (e.g. `runOfferSmsFallback`).
+
+Inngest runs locally via `npx inngest-cli dev` against `/api/inngest`; in
+production set `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY`. Without Inngest, paid
+bookings still confirm — dispatch is then started manually via admin rebroadcast.
 
 Firebase is optional to build/run — push simply no-ops until you add the Firebase
 env vars (client config + VAPID key + service account).
