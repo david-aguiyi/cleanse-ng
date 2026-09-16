@@ -7,6 +7,7 @@ import AdminBar from "../../AdminBar";
 import CustomerActions from "./CustomerActions";
 import NotesForm from "./NotesForm";
 import DispatchControls from "./DispatchControls";
+import AssignmentActions from "./AssignmentActions";
 import { naira, lagos, humanEvent } from "../../format";
 
 export const runtime = "nodejs";
@@ -180,9 +181,21 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
                     <span>{assignedCleaner.cleaner_code}</span>
                   </div>
                   <div className="kv">
+                    <span className="k">Phone</span>
+                    <span>{assignedCleaner.phone_e164}</span>
+                  </div>
+                  <div className="kv">
                     <span className="k">Rating</span>
                     <span>{assignedCleaner.rating ?? "—"}</span>
                   </div>
+                  <div className="kv">
+                    <span className="k">Jobs · completion</span>
+                    <span>
+                      {assignedCleaner.completed_jobs ?? 0} ·{" "}
+                      {assignedCleaner.completion_rate ? `${assignedCleaner.completion_rate}%` : "—"}
+                    </span>
+                  </div>
+                  <AssignmentActions bookingId={booking.id} />
                 </>
               ) : (
                 <p className="muted">

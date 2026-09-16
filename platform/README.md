@@ -4,7 +4,7 @@ Next.js App Router + TypeScript booking platform: server-authoritative pricing,
 guest-checkout bookings, and Paystack payments. This lives **alongside** the
 existing static marketing site (repo root) and does not replace it yet.
 
-This scaffold implements the blueprint's **Developer Build Order Stages 0–8**:
+This scaffold implements the blueprint's **Developer Build Order Stages 0–9**:
 
 - **Stage 0 — Foundation:** project config, full Supabase migration + seed, error
   envelope, validation, logging, Supabase service client, dispatch config/flags.
@@ -50,8 +50,14 @@ This scaffold implements the blueprint's **Developer Build Order Stages 0–8**:
   never claims), a signed delivery-status webhook, and cost logging on the
   notification row.
 
-Stages 9–11 (WhatsApp cleaner handoff, job execution, hardening) are **not** built
-here — see the blueprint for the sequence.
+- **Stage 9 — Customer cleaner handoff:** signed customer-safe cleaner card
+  (`/c/cleaner/<token>`, hash stored, TTL, allow-listed fields only), one-tap
+  admin "Share with customer" that mints the card and opens a prefilled `wa.me`
+  message (two clicks, no WhatsApp API), and reassignment that closes the current
+  assignment (history kept), returns the booking to dispatch and revokes the card.
+
+Stages 10–11 (job execution, hardening) are **not** built here — see the blueprint
+for the sequence.
 
 Inngest runs locally via `npx inngest-cli dev` against `/api/inngest`; in
 production set `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY`. Without Inngest, paid

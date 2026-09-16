@@ -42,6 +42,11 @@ export const smsConfig = {
   unitCostKobo: num("SMS_UNIT_COST_KOBO", 0), // per-segment estimate for cost reporting
 } as const;
 
+/** Cleaner share-card lifetime (Blueprint §12.1). */
+export const shareCardConfig = {
+  ttlHours: num("SHARE_CARD_TTL_HOURS", 24), // hours after scheduled service
+} as const;
+
 /** Feature flags. Kept here so build order stages can be toggled per environment. */
 export const featureFlags = {
   paystackEnabled: Boolean(process.env.PAYSTACK_SECRET_KEY),
