@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabase } from "@/auth/supabase-browser";
+import PasswordInput from "../../PasswordInput";
 
 function LoginForm() {
   const router = useRouter();
@@ -55,17 +56,7 @@ function LoginForm() {
               required
             />
           </div>
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          <PasswordInput id="password" value={password} onChange={setPassword} />
           <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={loading}>
             {loading ? "Signing in…" : "Sign in"}
           </button>
