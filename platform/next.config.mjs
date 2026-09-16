@@ -12,11 +12,19 @@ const nextConfig = {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
     ];
+  },
+  async rewrites() {
+    // Serve the carried-over static marketing/SEO pages (public/*.html) at clean,
+    // extension-less URLs. Runs AFTER app routes, so /book, /admin, /cleaner,
+    // /booking/*, /api/* always win; only unmatched single-segment paths (the
+    // article slugs like /blog, /jericho-house-cleaning) fall through here.
+    return {
+      afterFiles: [{ source: "/:slug", destination: "/:slug.html" }],
+    };
   },
 };
 
