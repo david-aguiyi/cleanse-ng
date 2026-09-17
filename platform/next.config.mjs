@@ -23,9 +23,11 @@ const nextConfig = {
     // /booking/*, /api/* always win; only unmatched single-segment paths (the
     // article slugs like /blog, /jericho-house-cleaning) fall through here.
     return {
-      // Serve the static marketing homepage at "/" (public/home.html — Next does
-      // not serve a public/index.html, so it is named home.html).
-      beforeFiles: [{ source: "/", destination: "/home.html" }],
+      // Serve the static marketing homepage at "/". On Vercel the public .html
+      // files serve only at their clean URL (via the /:slug rewrite below), not
+      // at the .html path, so point "/" at the clean "/home" which then resolves
+      // to public/home.html.
+      beforeFiles: [{ source: "/", destination: "/home" }],
       afterFiles: [{ source: "/:slug", destination: "/:slug.html" }],
     };
   },
