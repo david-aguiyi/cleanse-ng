@@ -33,21 +33,23 @@ export default async function ConfirmedPage({
   const { data: booking } = await db
     .from("bookings")
     .select(
-      "public_reference, customer_status, scheduled_start_at, total_kobo, service_id, zone_id, property_bedrooms"
+      "public_reference, customer_status, scheduled_start_at, total_kobo, service_id, zone_id, property_bedrooms, customer_id"
     )
     .eq("public_reference", params.reference)
     .maybeSingle();
 
   if (!booking) notFound();
 
-  const [{ data: service }, { data: zone }] = await Promise.all([
+  const [{ data: service }, { data: zone }, { data: customer }] = await Promise.all([
     db.from("services").select("name").eq("id", booking.service_id).maybeSingle(),
     booking.zone_id
       ? db.from("service_zones").select("name").eq("id", booking.zone_id).maybeSingle()
       : Promise.resolve({ data: null }),
+    db.from("customers").select("full_name").eq("id", booking.customer_id).maybeSingle(),
   ]);
 
   const paid = booking.customer_status === "CONFIRMED";
+  const firstName = String(customer?.full_name ?? "").split(" ")[0] || "there";
 
   return (
     <main className="wizard">
@@ -64,9 +66,10 @@ export default async function ConfirmedPage({
               <div className="confirm-badge" aria-hidden>
                 ✓
               </div>
-              <h1 className="step-title">Your cleaning is booked.</h1>
+              <h1 className="step-title">You&apos;re booked, {firstName}! 🎉</h1>
               <p className="step-hint">
-                A confirmation has been recorded. We&apos;ll be in touch on WhatsApp about your booking.
+                Your payment was successful and your booking is confirmed. We&apos;re arranging your
+                Cleanse professional now and will confirm the details with you on WhatsApp shortly.
               </p>
             </>
           ) : (
@@ -118,8 +121,8 @@ export default async function ConfirmedPage({
                 display: "block",
                 textAlign: "center",
                 marginTop: 20,
-                background: "#25D366",
-                color: "#fff",
+                background: "var(--neon-green)",
+                color: "var(--deep-purple)",
               }}
             >
               Chat with us directly on WhatsApp
