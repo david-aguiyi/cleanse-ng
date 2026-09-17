@@ -23,6 +23,8 @@ const nextConfig = {
     // /booking/*, /api/* always win; only unmatched single-segment paths (the
     // article slugs like /blog, /jericho-house-cleaning) fall through here.
     return {
+      // Serve the static marketing homepage at "/" (index.html in public/).
+      beforeFiles: [{ source: "/", destination: "/index.html" }],
       afterFiles: [{ source: "/:slug", destination: "/:slug.html" }],
     };
   },
