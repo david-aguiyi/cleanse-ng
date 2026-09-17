@@ -57,7 +57,7 @@ export default async function AdminBoard({
           <select name="payment_status" defaultValue={searchParams.payment_status ?? ""}>
             {PAYMENT_STATES.map((s) => (
               <option key={s} value={s}>
-                {s === "" ? "All payments" : s}
+                {s === "" ? "Paid & active (default)" : s === "PENDING" ? "Unpaid / abandoned" : s}
               </option>
             ))}
           </select>

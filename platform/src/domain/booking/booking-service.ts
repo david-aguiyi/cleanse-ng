@@ -44,19 +44,49 @@ export async function createBooking(input: CreateBookingInput): Promise<CreatedB
     throw new AppError("ZONE_NOT_SERVICEABLE", "We do not currently serve this area.");
   }
 
-  // 3. Upsert customer (guest checkout — no account required).
-  const { data: customer, error: custErr } = await db
+  // 3. Resolve customer (guest checkout — no account required). Reuse an existing
+  //    customer record by WhatsApp/phone/email so repeat bookings from the same
+  //    person link to ONE customer instead of creating duplicates.
+  let customerId: string | null = null;
+  const { data: existingCustomer } = await db
     .from("customers")
-    .insert({
-      full_name: input.customer.full_name,
-      email: input.customer.email,
-      phone_e164: input.customer.phone_e164,
-      whatsapp_e164: input.customer.whatsapp_e164,
-      marketing_opt_in: input.customer.marketing_opt_in,
-    })
     .select("id")
-    .single();
-  if (custErr || !customer) throw new AppError("INTERNAL_ERROR", "Could not save customer.");
+    .or(
+      `whatsapp_e164.eq.${input.customer.whatsapp_e164},phone_e164.eq.${input.customer.phone_e164},email.eq.${input.customer.email}`
+    )
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existingCustomer) {
+    customerId = existingCustomer.id;
+    // Keep contact details fresh on the existing record.
+    await db
+      .from("customers")
+      .update({
+        full_name: input.customer.full_name,
+        email: input.customer.email,
+        phone_e164: input.customer.phone_e164,
+        whatsapp_e164: input.customer.whatsapp_e164,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", customerId);
+  } else {
+    const { data: customer, error: custErr } = await db
+      .from("customers")
+      .insert({
+        full_name: input.customer.full_name,
+        email: input.customer.email,
+        phone_e164: input.customer.phone_e164,
+        whatsapp_e164: input.customer.whatsapp_e164,
+        marketing_opt_in: input.customer.marketing_opt_in,
+      })
+      .select("id")
+      .single();
+    if (custErr || !customer) throw new AppError("INTERNAL_ERROR", "Could not save customer.");
+    customerId = customer.id;
+  }
+  const customer = { id: customerId };
 
   // 4. Store the service address owned by the customer.
   const { data: address, error: addrErr } = await db

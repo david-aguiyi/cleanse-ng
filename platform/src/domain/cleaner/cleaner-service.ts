@@ -26,13 +26,13 @@ export async function getMe(cleanerId: string) {
   const { data: cleaner } = await db
     .from("cleaners")
     .select(
-      "id, cleaner_code, full_name, email, phone_e164, whatsapp_e164, bio, photo_path, account_status, availability, verified, deployment_ready, rating, completed_jobs, acceptance_rate, completion_rate, cancellation_rate, work_rate_label, joined_at"
+      "id, cleaner_code, full_name, email, phone_e164, whatsapp_e164, bio, photo_path, account_status, availability, verified, deployment_ready, rating, completed_jobs, acceptance_rate, completion_rate, cancellation_rate, work_rate_label, joined_at, paused_at, blocked_at, block_reason"
     )
     .eq("id", cleanerId)
     .maybeSingle();
   if (!cleaner) throw new AppError("CLEANER_NOT_FOUND", "Cleaner not found.");
 
-  const [zones, services] = await Promise.all([
+  const [zones, services, lastJob] = await Promise.all([
     db
       .from("cleaner_zones")
       .select("zone:service_zones(code, name)")
@@ -41,17 +41,65 @@ export async function getMe(cleanerId: string) {
       .from("cleaner_services")
       .select("approved, service:services(code, name)")
       .eq("cleaner_id", cleanerId),
+    db
+      .from("job_assignments")
+      .select("assigned_at")
+      .eq("cleaner_id", cleanerId)
+      .order("assigned_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
+
+  const lastAssignedAt = (lastJob.data as { assigned_at?: string } | null)?.assigned_at ?? null;
+  const sinceMs = Date.now() - new Date(lastAssignedAt ?? cleaner.joined_at).getTime();
+  const idleDays = Math.floor(sinceMs / 86400000);
 
   return {
     ...cleaner,
     ready: isDeploymentReady(cleaner),
+    last_assigned_at: lastAssignedAt,
+    idle_days: idleDays,
     zones: (zones.data ?? []).map((z: Record<string, any>) => z.zone).filter(Boolean),
     services: (services.data ?? [])
       .filter((s: Record<string, any>) => s.approved)
       .map((s: Record<string, any>) => s.service)
       .filter(Boolean),
   };
+}
+
+/** Cleaner pauses their own account (self-stop). No longer dispatchable. */
+export async function pauseSelf(cleanerId: string) {
+  const db = serviceClient();
+  await db
+    .from("cleaners")
+    .update({
+      account_status: "INACTIVE",
+      availability: "UNAVAILABLE",
+      paused_at: new Date().toISOString(),
+    })
+    .eq("id", cleanerId)
+    .neq("account_status", "SUSPENDED"); // a blocked cleaner cannot self-change
+  return { account_status: "INACTIVE" };
+}
+
+/** Cleaner resumes their own paused account. Blocked accounts cannot self-resume. */
+export async function resumeSelf(cleanerId: string) {
+  const db = serviceClient();
+  const { data: c } = await db
+    .from("cleaners")
+    .select("account_status")
+    .eq("id", cleanerId)
+    .maybeSingle();
+  if (!c) throw new AppError("CLEANER_NOT_FOUND", "Cleaner not found.");
+  if (String(c.account_status) === "SUSPENDED") {
+    throw new AppError("CLEANER_TIME_CONFLICT", "Your account is blocked. Please contact the office.");
+  }
+  await db
+    .from("cleaners")
+    .update({ account_status: "ACTIVE", paused_at: null })
+    .eq("id", cleanerId)
+    .eq("account_status", "INACTIVE");
+  return { account_status: "ACTIVE" };
 }
 
 /**
@@ -108,6 +156,45 @@ export async function listCleaners(filters: CleanerListFilters) {
   const { data, error } = await query;
   if (error) throw new AppError("INTERNAL_ERROR", "Could not load cleaners.");
   return (data ?? []).map((c: any) => ({ ...c, ready: isDeploymentReady(c) }));
+}
+
+/**
+ * Admin performance leaderboard. Ranks cleaners by a blended reputation score
+ * (rating + completion − cancellation), with completed volume as a tiebreak, and
+ * an "issues" count (jobs reassigned away or cancelled) as a quality signal.
+ */
+export async function getLeaderboard(limit = 200) {
+  const db = serviceClient();
+  const { data: cleaners } = await db
+    .from("cleaners")
+    .select(
+      "id, cleaner_code, full_name, account_status, availability, rating, completed_jobs, completion_rate, cancellation_rate, acceptance_rate"
+    )
+    .limit(limit);
+
+  const { data: asg } = await db.from("job_assignments").select("cleaner_id, status");
+  const issues: Record<string, number> = {};
+  (asg ?? []).forEach((a: Record<string, any>) => {
+    if (a.status === "REASSIGNED" || a.status === "CANCELLED") {
+      issues[a.cleaner_id] = (issues[a.cleaner_id] ?? 0) + 1;
+    }
+  });
+
+  const rows: any[] = (cleaners ?? []).map((c: Record<string, any>) => {
+    const score =
+      (Number(c.rating) || 4.6) * 10 +
+      (Number(c.completion_rate) || 90) * 0.4 -
+      (Number(c.cancellation_rate) || 0) * 0.6;
+    return {
+      ...c,
+      issues: issues[c.id] ?? 0,
+      priority_score: Math.round(score * 10) / 10,
+    };
+  });
+  rows.sort(
+    (a, b) => b.priority_score - a.priority_score || (b.completed_jobs || 0) - (a.completed_jobs || 0)
+  );
+  return rows;
 }
 
 export async function getCleanerAdmin(id: string) {
@@ -187,6 +274,17 @@ export async function updateCleaner(id: string, patch: UpdateCleanerInput, admin
     "deployment_ready",
   ] as const) {
     if (patch[key] !== undefined) fields[key] = patch[key];
+  }
+
+  // Block / unblock metadata driven by account_status transitions.
+  if (patch.account_status === "SUSPENDED") {
+    fields.blocked_at = new Date().toISOString();
+    fields.block_reason = patch.block_reason ?? "Blocked by admin.";
+    fields.availability = "UNAVAILABLE";
+  } else if (patch.account_status && before.account_status === "SUSPENDED") {
+    // Unblocking (status changed away from SUSPENDED): clear the block markers.
+    fields.blocked_at = null;
+    fields.block_reason = null;
   }
 
   if (Object.keys(fields).length > 0) {

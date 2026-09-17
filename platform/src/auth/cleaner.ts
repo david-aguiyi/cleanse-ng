@@ -13,6 +13,7 @@ export interface CleanerContext {
   cleanerId: string;
   fullName: string;
   accountStatus: string;
+  blockReason: string | null;
   verified: boolean;
   deploymentReady: boolean;
   availability: string;
@@ -27,7 +28,7 @@ export async function getCleanerContext(): Promise<CleanerContext | null> {
 
   const { data: cleaner } = await serviceClient()
     .from("cleaners")
-    .select("id, full_name, account_status, verified, deployment_ready, availability")
+    .select("id, full_name, account_status, block_reason, verified, deployment_ready, availability")
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -37,14 +38,22 @@ export async function getCleanerContext(): Promise<CleanerContext | null> {
     cleanerId: cleaner.id,
     fullName: cleaner.full_name,
     accountStatus: cleaner.account_status,
+    blockReason: cleaner.block_reason ?? null,
     verified: cleaner.verified,
     deploymentReady: cleaner.deployment_ready,
     availability: cleaner.availability,
   };
 }
 
+/**
+ * API guard. Rejects unauthenticated callers, and blocks SUSPENDED cleaners from
+ * every cleaner action (they can still see the "blocked" screen via the pages).
+ */
 export async function requireCleaner(): Promise<CleanerContext> {
   const ctx = await getCleanerContext();
   if (!ctx) throw new AppError("UNAUTHORIZED", "Please sign in to your cleaner account.");
+  if (ctx.accountStatus === "SUSPENDED") {
+    throw new AppError("FORBIDDEN", "Your account has been blocked. Please contact the office.");
+  }
   return ctx;
 }

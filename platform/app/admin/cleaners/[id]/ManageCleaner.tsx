@@ -29,6 +29,42 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
     set(list.includes(code) ? list.filter((c) => c !== code) : [...list, code]);
 
   const wouldBeReady = status === "ACTIVE" && verified && ready;
+  const isBlocked = status === "SUSPENDED";
+
+  async function patch(body: Record<string, unknown>, okText: string) {
+    setSaving(true);
+    setMsg(null);
+    try {
+      const res = await fetch(`/api/v1/admin/cleaners/${cleaner.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error?.message ?? "Could not save.");
+      setMsg({ kind: "ok", text: okText });
+      router.refresh();
+    } catch (e) {
+      setMsg({ kind: "error", text: e instanceof Error ? e.message : "Could not save." });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function block() {
+    const reason = window.prompt(
+      "Why are you blocking this cleaner? (shown to them)",
+      "Policy violation"
+    );
+    if (reason === null) return;
+    setStatus("SUSPENDED");
+    await patch({ account_status: "SUSPENDED", block_reason: reason || "Blocked by admin." }, "Cleaner blocked.");
+  }
+
+  async function unblock() {
+    setStatus("ACTIVE");
+    await patch({ account_status: "ACTIVE" }, "Cleaner unblocked.");
+  }
 
   async function save() {
     setSaving(true);
@@ -59,6 +95,27 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
   return (
     <div>
       {msg && <div className={`notice ${msg.kind === "ok" ? "info" : "error"}`}>{msg.text}</div>}
+
+      <div
+        className={`readiness ${isBlocked ? "blocked" : "ready"}`}
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}
+      >
+        <span>{isBlocked ? "⛔ This cleaner is blocked." : "Cleaner is not blocked."}</span>
+        {isBlocked ? (
+          <button type="button" className="btn-ghost" onClick={unblock} disabled={saving}>
+            Unblock
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={block}
+            disabled={saving}
+            style={{ background: "#b3261e", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontFamily: "var(--font-header)", fontWeight: 700, cursor: "pointer" }}
+          >
+            Block cleaner
+          </button>
+        )}
+      </div>
 
       <div className="field">
         <label htmlFor="status">Account status</label>

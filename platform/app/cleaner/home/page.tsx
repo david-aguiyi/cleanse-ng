@@ -5,6 +5,7 @@ import { listOffers } from "@/domain/assignment/assignment-service";
 import { listActiveJobs } from "@/domain/job/job-service";
 import CleanerBar from "../CleanerBar";
 import AvailabilityToggle from "../AvailabilityToggle";
+import AccountControls from "../AccountControls";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -50,6 +51,8 @@ export default async function CleanerHome() {
         )}
 
         <AvailabilityToggle initialAvailable={available} ready={me.ready} />
+
+        <AccountControls accountStatus={me.account_status} idleDays={me.idle_days ?? 0} />
 
         {activeJobs.length > 0 && (
           <div style={{ marginBottom: 18 }}>

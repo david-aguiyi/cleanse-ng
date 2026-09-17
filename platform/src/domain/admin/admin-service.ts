@@ -44,7 +44,13 @@ export async function listBookings(filters: BookingListFilters): Promise<Booking
     .order("created_at", { ascending: false })
     .limit(Math.min(filters.limit ?? 100, 200));
 
-  if (filters.paymentStatus) query = query.eq("payment_status", filters.paymentStatus);
+  if (filters.paymentStatus) {
+    query = query.eq("payment_status", filters.paymentStatus);
+  } else {
+    // Default view hides not-yet-paid (abandoned) bookings so the board shows
+    // real, paid work. Choose the "Unpaid / abandoned" filter to see them.
+    query = query.neq("payment_status", "PENDING");
+  }
   if (filters.fulfilmentStatus) query = query.eq("fulfilment_status", filters.fulfilmentStatus);
   if (filters.search) {
     const term = filters.search.trim();

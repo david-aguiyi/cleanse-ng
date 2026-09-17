@@ -75,6 +75,7 @@ export const updateCleanerSchema = z
     bio: z.string().trim().max(1000).optional(),
     whatsapp_e164: E164_CLEANER.optional(),
     account_status: z.enum(["ONBOARDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+    block_reason: z.string().trim().max(500).optional(),
     verified: z.boolean().optional(),
     deployment_ready: z.boolean().optional(),
     zone_codes: z.array(z.string().trim().min(1).max(40)).max(30).optional(),

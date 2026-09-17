@@ -25,9 +25,14 @@ export default async function AdminCleaners({
       <div className="admin-wrap">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
           <h1 className="admin-h1">Cleaner network</h1>
-          <Link className="btn-primary" href="/admin/cleaners/new" style={{ padding: "12px 20px" }}>
-            + Onboard cleaner
-          </Link>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <Link className="btn-ghost" href="/admin/cleaners/leaderboard">
+              🏆 Leaderboard
+            </Link>
+            <Link className="btn-primary" href="/admin/cleaners/new" style={{ padding: "12px 20px" }}>
+              + Onboard cleaner
+            </Link>
+          </div>
         </div>
 
         <form className="filters" method="get">
