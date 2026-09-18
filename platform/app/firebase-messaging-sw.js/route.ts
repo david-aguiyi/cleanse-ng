@@ -24,8 +24,21 @@ export async function GET() {
     appId: env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
   };
 
+  // TEMP DIAGNOSTIC: which Firebase-related env keys does the runtime actually
+  // see? Names only (NEXT_PUBLIC values are non-secret; server keys reported as
+  // presence booleans). Remove once push config is confirmed working.
+  const firebaseKeys = Object.keys(env)
+    .filter((k) => k.includes("FIREBASE"))
+    .sort()
+    .join(",");
+  const serverPresence = `FIREBASE_PROJECT_ID=${Boolean(env.FIREBASE_PROJECT_ID)},FIREBASE_CLIENT_EMAIL=${Boolean(
+    env.FIREBASE_CLIENT_EMAIL
+  )},FIREBASE_PRIVATE_KEY=${Boolean(env.FIREBASE_PRIVATE_KEY)}`;
+
   const body = `
-// build-marker: sw-runtime-v2 | configured=${Boolean(cfg.projectId)}
+// build-marker: sw-runtime-v3 | configured=${Boolean(cfg.projectId)}
+// diag-firebase-keys: [${firebaseKeys}]
+// diag-server-presence: ${serverPresence}
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
