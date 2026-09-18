@@ -25,6 +25,7 @@ export async function GET() {
   };
 
   const body = `
+// build-marker: sw-runtime-v2 | configured=${Boolean(cfg.projectId)}
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
