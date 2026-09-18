@@ -10,12 +10,18 @@ export const dynamic = "force-dynamic";
  * routes a notification click to the offer deep link (Blueprint §9.2, §9.3).
  */
 export async function GET() {
+  // Read at TRUE runtime, not build time. Aliasing process.env defeats Next's
+  // static inlining of `process.env.NEXT_PUBLIC_*` (which bakes in whatever the
+  // value was AT BUILD, i.e. empty if the vars were added after the build). On
+  // Vercel the serverless runtime has all Production env vars, so this always
+  // reflects the current config regardless of when the build ran.
+  const env = process.env;
   const cfg = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+    apiKey: env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+    authDomain: env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+    projectId: env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+    messagingSenderId: env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+    appId: env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
   };
 
   const body = `
