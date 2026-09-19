@@ -26,6 +26,24 @@ function payoutKobo(totalKobo: number): number {
   return Math.round((totalKobo * payoutConfig.cleanerPayoutBps) / 10000);
 }
 
+/**
+ * Cleaner payout for a booking = the compiled "Cleaning service" cut from the
+ * booking's own price breakdown (per-visit for one-time; the whole-plan total
+ * for weekly/monthly subscriptions). Falls back to the legacy flat-share calc
+ * for older bookings priced before the itemised breakdown existed.
+ */
+function cleanerPayoutKobo(booking: { total_kobo: number | string; price_snapshot?: unknown }): number {
+  const snap = booking.price_snapshot as { line_items?: Array<Record<string, unknown>> } | null;
+  const items = snap?.line_items;
+  if (Array.isArray(items)) {
+    const cleaning = items.find((it) => String(it.code) === "CLEANING");
+    if (cleaning && cleaning.line_total_kobo != null) {
+      return Number(cleaning.line_total_kobo);
+    }
+  }
+  return payoutKobo(Number(booking.total_kobo));
+}
+
 export interface DispatchState {
   exists: boolean;
   fulfilmentStatus: string;
@@ -127,7 +145,7 @@ export async function createDispatchRound(
   const { data: booking } = await db
     .from("bookings")
     .select(
-      "id, public_reference, payment_status, customer_status, fulfilment_status, requested_cleaner_count, scheduled_start_at, property_bedrooms, total_kobo, service_id, zone_id"
+      "id, public_reference, payment_status, customer_status, fulfilment_status, requested_cleaner_count, scheduled_start_at, property_bedrooms, total_kobo, price_snapshot, service_id, zone_id"
     )
     .eq("id", bookingId)
     .maybeSingle();
@@ -196,7 +214,10 @@ export async function createDispatchRound(
   }
 
   const expiresAt = new Date(Date.now() + dispatchConfig.offerTtlSeconds * 1000).toISOString();
-  const displayPayout = payoutKobo(Number(booking.total_kobo));
+  const displayPayout = cleanerPayoutKobo(booking);
+  const planSnap = booking.price_snapshot as { frequency_code?: string; plan_visits?: number } | null;
+  const planFrequency = planSnap?.frequency_code ?? "ONE_TIME";
+  const planVisits = Number(planSnap?.plan_visits ?? 1);
 
   // Distribute candidates across unfilled slots (round-robin) — one offer each.
   const rows = candidates.map((cleanerId, i) => ({
@@ -211,6 +232,8 @@ export async function createDispatchRound(
       property_bedrooms: booking.property_bedrooms,
       scheduled_start_at: booking.scheduled_start_at,
       payout_kobo: displayPayout,
+      plan_frequency: planFrequency,
+      plan_visits: planVisits,
       sms_code: newShortCode(),
     },
   }));

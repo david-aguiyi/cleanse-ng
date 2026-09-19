@@ -163,112 +163,63 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-// Dynamic Pricing Toggle Script
-const pricingCheckbox = document.getElementById('pricing-toggle-checkbox');
-const labelPayPerVisit = document.getElementById('label-pay-per-visit');
-const labelMonthly = document.getElementById('label-monthly');
+// Dynamic Pricing Toggle (Per Visit / Weekly / Monthly)
+const pricingFreqToggle = document.getElementById('pricing-freq-toggle');
+let selectedPricingFreq = 'ONE_TIME';
 
-const pricingData = {
-  oneTime: [
-    { primary: '₦9,000', unit: ' / visit', secondary: '', rawPrice: 9000, monthlyPrice: 60000 },
-    { primary: '₦13,000', unit: ' / visit', secondary: '', rawPrice: 13000, monthlyPrice: 80000 },
-    { primary: '₦17,000', unit: ' / visit', secondary: '', rawPrice: 17000, monthlyPrice: 100000 },
-    { primary: '₦20,000', unit: ' / visit', secondary: '', rawPrice: 20000, monthlyPrice: 120000 },
-    { primary: '₦25,000', unit: ' / visit', secondary: '', rawPrice: 25000, monthlyPrice: 150000 }
-  ],
-  monthly: [
-    { primary: '₦60,000', unit: ' / month', secondary: '' },
-    { primary: '₦80,000', unit: ' / month', secondary: '' },
-    { primary: '₦100,000', unit: ' / month', secondary: '' },
-    { primary: '₦120,000', unit: ' / month', secondary: '' },
-    { primary: '₦150,000', unit: ' / month', secondary: '' }
-  ]
-};
+// Update the marketing pricing cards to a frequency code. Prices come from the
+// canonical CLEANSE_PRICING matrix (defined below), so cards, the booking modal
+// and the server all agree. Accepts a legacy boolean (isMonthly) too.
+function updatePricing(freq) {
+  if (freq === true) freq = 'MONTHLY';
+  else if (freq === false) freq = 'ONE_TIME';
+  if (!FREQ_META[freq]) freq = 'ONE_TIME';
+  selectedPricingFreq = freq;
 
-const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
-const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
-const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
-const savingsElements = document.querySelectorAll('.pc-savings');
+  const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
+  const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
+  const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
+  const savingsElements = document.querySelectorAll('.pc-savings');
 
-function updatePricing(isMonthly) {
-  const currentPricing = pricingData;
-  const data = isMonthly ? currentPricing.monthly : currentPricing.oneTime;
-
-  primaryPriceElements.forEach((el, index) => {
-    el.textContent = data[index].primary;
+  primaryPriceElements.forEach(function (el, i) {
+    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
+    if (cell) el.textContent = nairaFmt(cell.total);
   });
-
-  primaryUnitElements.forEach((el, index) => {
-    el.textContent = data[index].unit;
+  primaryUnitElements.forEach(function (el) {
+    el.textContent = freq === 'ONE_TIME' ? ' / visit' : ' / month';
   });
-
-  secondaryPriceElements.forEach((el, index) => {
-    el.textContent = data[index].secondary;
-    if (data[index].secondary) {
-      el.style.display = 'block';
-    } else {
-      el.style.display = 'none';
-    }
+  secondaryPriceElements.forEach(function (el) {
+    el.textContent = '';
+    el.style.display = 'none';
   });
-
-  savingsElements.forEach((el, index) => {
-    const item = currentPricing.oneTime[index];
-    const oneTimeTotal = item.rawPrice * 8;
-    const monthlyTotal = item.monthlyPrice;
-    const difference = oneTimeTotal - monthlyTotal;
-
-    if (isMonthly) {
-      if (difference > 0) {
-        el.textContent = `Save ₦${difference.toLocaleString()}/mo`;
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-      } else if (difference < 0) {
-        const savings = Math.abs(difference);
-        el.textContent = `Save ₦${savings.toLocaleString()}/mo`;
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-      } else {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(5px)';
-      }
+  savingsElements.forEach(function (el, i) {
+    const one = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1].ONE_TIME;
+    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
+    const saving = (one && cell && freq !== 'ONE_TIME') ? (one.total * cell.visits - cell.total) : 0;
+    if (saving > 0) {
+      el.textContent = 'Save ' + nairaFmt(saving) + '/mo';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
     } else {
       el.style.opacity = '0';
       el.style.transform = 'translateY(5px)';
     }
   });
 
-  if (isMonthly) {
-    labelMonthly.classList.add('active');
-    labelPayPerVisit.classList.remove('active');
-  } else {
-    labelPayPerVisit.classList.add('active');
-    labelMonthly.classList.remove('active');
+  if (pricingFreqToggle) {
+    pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
+      const on = btn.getAttribute('data-freq') === freq;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
   }
-  if (pricingCheckbox) pricingCheckbox.setAttribute('aria-checked', isMonthly ? 'true' : 'false');
 }
 
-if (pricingCheckbox) {
-  pricingCheckbox.addEventListener('change', () => {
-    updatePricing(pricingCheckbox.checked);
-  });
-}
-
-if (labelPayPerVisit) {
-  // Clicking labels toggles checkbox
-  labelPayPerVisit.addEventListener('click', () => {
-    if (pricingCheckbox && pricingCheckbox.checked) {
-      pricingCheckbox.checked = false;
-      updatePricing(false);
-    }
-  });
-}
-
-if (labelMonthly) {
-  labelMonthly.addEventListener('click', () => {
-    if (pricingCheckbox && !pricingCheckbox.checked) {
-      pricingCheckbox.checked = true;
-      updatePricing(true);
-    }
+if (pricingFreqToggle) {
+  pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      updatePricing(btn.getAttribute('data-freq'));
+    });
   });
 }
 
@@ -288,6 +239,113 @@ const planSummary = document.getElementById('booking-plan-summary');
 const planSummaryText = document.getElementById('booking-plan-summary-text');
 const frequencySection = document.getElementById('frequency-section');
 const frequencyCardsContainer = document.getElementById('frequency-cards-container');
+
+// --- Canonical booking pricing (mirror of platform/src/domain/pricing/plan-pricing.ts) ---
+// Values in NAIRA. The four parts ALWAYS sum to `total`. If you change a number
+// here, change the server matrix too — the SERVER total is what Paystack charges,
+// and the two must match or the customer sees one price and is charged another.
+// For WEEKLY/MONTHLY, `total` is the whole month (charged upfront).
+const CLEANSE_PRICING = {
+  1: {
+    ONE_TIME: { visits: 1, total: 9000, cleaning: 4500, transport: 2000, supplies: 700, fee: 1800 },
+    WEEKLY:   { visits: 4, total: 32000, cleaning: 15000, transport: 5000, supplies: 2800, fee: 9200 },
+    MONTHLY:  { visits: 8, total: 49000, cleaning: 30000, transport: 8000, supplies: 5600, fee: 5400 },
+  },
+  2: {
+    ONE_TIME: { visits: 1, total: 13000, cleaning: 7400, transport: 2000, supplies: 1000, fee: 2600 },
+    WEEKLY:   { visits: 4, total: 44000, cleaning: 25000, transport: 5000, supplies: 4000, fee: 10000 },
+    MONTHLY:  { visits: 8, total: 74000, cleaning: 50000, transport: 8000, supplies: 8000, fee: 8000 },
+  },
+  3: {
+    ONE_TIME: { visits: 1, total: 17000, cleaning: 10100, transport: 2000, supplies: 1500, fee: 3400 },
+    WEEKLY:   { visits: 4, total: 52000, cleaning: 35000, transport: 5000, supplies: 6000, fee: 6000 },
+    MONTHLY:  { visits: 8, total: 90000, cleaning: 60000, transport: 8000, supplies: 12000, fee: 10000 },
+  },
+  4: {
+    ONE_TIME: { visits: 1, total: 20000, cleaning: 12000, transport: 2000, supplies: 2000, fee: 4000 },
+    WEEKLY:   { visits: 4, total: 60000, cleaning: 40000, transport: 5000, supplies: 8000, fee: 7000 },
+    MONTHLY:  { visits: 8, total: 110000, cleaning: 75000, transport: 8000, supplies: 16000, fee: 11000 },
+  },
+  5: {
+    ONE_TIME: { visits: 1, total: 25000, cleaning: 16000, transport: 2000, supplies: 2000, fee: 5000 },
+    WEEKLY:   { visits: 4, total: 80000, cleaning: 55000, transport: 5000, supplies: 8000, fee: 12000 },
+    MONTHLY:  { visits: 8, total: 120000, cleaning: 80000, transport: 8000, supplies: 16000, fee: 16000 },
+  },
+};
+
+const FREQ_META = {
+  ONE_TIME: { code: 'ONE_TIME', title: 'Per visit', subtitle: 'Single visit',        short: 'Per visit' },
+  WEEKLY:   { code: 'WEEKLY',   title: 'Weekly',    subtitle: '4 visits / month',     short: 'Weekly (4 visits/mo)' },
+  MONTHLY:  { code: 'MONTHLY',  title: 'Monthly',   subtitle: '8 visits / month',     short: 'Monthly (8 visits/mo)' },
+};
+const FREQ_ORDER = ['ONE_TIME', 'WEEKLY', 'MONTHLY'];
+
+function bedroomsFromText(s) {
+  const m = (s || '').match(/(\d+)\s*Bedroom/i);
+  return m ? parseInt(m[1], 10) : null;
+}
+function currentBedrooms() {
+  return bedroomsFromText(apartmentSizeInput && apartmentSizeInput.value) ||
+         bedroomsFromText(planInput && planInput.value);
+}
+// Accepts either a frequency code or any legacy human label and returns a code.
+function normalizeFreq(v) {
+  if (!v) return null;
+  if (FREQ_META[v]) return v;
+  const t = String(v).toLowerCase();
+  if (t.indexOf('twice a week') > -1 || t.indexOf('8 visit') > -1 ||
+      t.indexOf('monthly subscription') > -1) return 'MONTHLY';
+  if (t.indexOf('weekly') > -1 || t.indexOf('4 visit') > -1) return 'WEEKLY';
+  if (t.indexOf('once') > -1 || t.indexOf('1 visit') > -1 ||
+      t.indexOf('per visit') > -1 || t.indexOf('per-visit') > -1 ||
+      t.indexOf('single') > -1) return 'ONE_TIME';
+  if (t.indexOf('monthly') > -1) return 'MONTHLY';
+  return null;
+}
+function currentFreq() {
+  return normalizeFreq(visitsSelect && visitsSelect.value) || 'ONE_TIME';
+}
+function planBreakdown(bedrooms, freq) {
+  if (!bedrooms || !CLEANSE_PRICING[bedrooms]) return null;
+  const cell = CLEANSE_PRICING[bedrooms][freq || 'ONE_TIME'];
+  if (!cell) return null;
+  return Object.assign({ bedrooms: bedrooms, freq: freq || 'ONE_TIME' }, cell);
+}
+function currentBreakdown() {
+  return planBreakdown(currentBedrooms(), currentFreq());
+}
+function nairaFmt(n) { return '₦' + Number(n).toLocaleString(); }
+// The plan holder is a <select>; setting a value that is not an existing option
+// silently blanks it (breaking `required` validation), so ensure the option
+// exists first.
+function setPlanValue(value) {
+  if (!planInput) return;
+  const exists = Array.prototype.some.call(planInput.options, function (o) { return o.value === value; });
+  if (!exists) {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = value;
+    opt.dataset.customOption = 'true';
+    planInput.appendChild(opt);
+  }
+  planInput.value = value;
+}
+// Customer-facing itemised rows for a breakdown cell.
+function breakdownRows(b) {
+  return [
+    { label: 'Cleaning service', value: b.cleaning },
+    { label: 'Transport',        value: b.transport },
+    { label: 'Supplies',         value: b.supplies },
+    { label: 'Service fee',      value: b.fee },
+  ];
+}
+function renderBreakdownInto(el, b) {
+  if (!el) return;
+  el.innerHTML = breakdownRows(b).map(function (r) {
+    return '<div style="display:flex;justify-content:space-between;font-size:14px;color:var(--black);">' +
+      '<span>' + r.label + '</span><span>' + nairaFmt(r.value) + '</span></div>';
+  }).join('');
+}
 
 // Calendar and dynamic schedule options
 const bookingDateInput = document.getElementById('booking-date');
@@ -388,8 +446,8 @@ function updateFrequencyCards() {
   if (!frequencyCardsContainer) return;
   frequencyCardsContainer.innerHTML = '';
 
-  const selectedPlan = planInput.value;
-  if (!selectedPlan || selectedPlan.includes('Custom Plan')) {
+  const bedrooms = currentBedrooms();
+  if (!bedrooms || !CLEANSE_PRICING[bedrooms]) {
     if (frequencySection) frequencySection.style.display = 'none';
     visitsSelect.required = false;
     return;
@@ -398,115 +456,58 @@ function updateFrequencyCards() {
   if (frequencySection) frequencySection.style.display = 'block';
   visitsSelect.required = true;
 
-  // Determine base rate based on selected plan
-  let baseRate = 9000;
-  if (selectedPlan.includes('2 Bedroom')) baseRate = 13000;
-  else if (selectedPlan.includes('3 Bedroom')) baseRate = 17000;
-  else if (selectedPlan.includes('4 Bedroom')) baseRate = 20000;
-  else if (selectedPlan.includes('5 Bedroom')) baseRate = 25000;
+  // Normalise / default the selected frequency to a canonical code.
+  visitsSelect.value = normalizeFreq(visitsSelect.value) || 'ONE_TIME';
 
-  // Determine Monthly Subscription rate
-  let subscriptionRate = 60000;
-  if (selectedPlan.includes('2 Bedroom')) subscriptionRate = 80000;
-  else if (selectedPlan.includes('3 Bedroom')) subscriptionRate = 100000;
-  else if (selectedPlan.includes('4 Bedroom')) subscriptionRate = 120000;
-  else if (selectedPlan.includes('5 Bedroom')) subscriptionRate = 150000;
+  const sizeLabel = bedrooms + ' Bedroom';
 
-  // Parse room size name
-  let bedrooms = "1 Bedroom";
-  if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
-  else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
-  else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
-  else if (selectedPlan.includes("5 Bedroom")) bedrooms = "5 Bedroom";
+  FREQ_ORDER.forEach(function (code) {
+    const meta = FREQ_META[code];
+    const cell = CLEANSE_PRICING[bedrooms][code];
+    if (!cell) return;
 
-  const frequencies = [
-    {
-      value: 'Twice a week (2 visits/week)',
-      title: 'Monthly Subscription',
-      subtitle: 'Twice a week (2 visits / week)',
-      totalCost: subscriptionRate,
-      isSubscription: true
-    },
-    {
-      value: '1 visit per month',
-      title: 'Once monthly',
-      subtitle: '1 visit / month (touch-ups)',
-      totalCost: baseRate,
-      isSubscription: false
-    },
-    {
-      value: '2 visits per month (Twice monthly)',
-      title: 'Twice monthly',
-      subtitle: '2 visits / month',
-      totalCost: baseRate * 2,
-      isSubscription: false
-    },
-    {
-      value: '4 visits per month (4 times monthly)',
-      title: 'Weekly',
-      subtitle: '4 visits / month',
-      totalCost: baseRate * 4,
-      isSubscription: false
-    }
-  ];
-
-  // Default to 1 visit if nothing selected yet
-  if (!visitsSelect.value) {
-    visitsSelect.value = '1 visit per month';
-  }
-
-  frequencies.forEach(freq => {
     const card = document.createElement('div');
     card.className = 'frequency-card';
-    if (freq.isSubscription) {
-      card.classList.add('subscription-card');
-    }
-    if (visitsSelect.value === freq.value) {
+    if (code !== 'ONE_TIME') card.classList.add('subscription-card');
+    if (visitsSelect.value === code) card.classList.add('active');
+
+    const priceLine = code === 'ONE_TIME'
+      ? nairaFmt(cell.total)
+      : nairaFmt(cell.total) + ' / mo';
+
+    card.innerHTML =
+      '<div class="frequency-card-left">' +
+        '<div class="frequency-radio-circle">✓</div>' +
+        '<div class="frequency-card-details">' +
+          '<span class="frequency-card-title">' + meta.title + '</span>' +
+          '<span class="frequency-card-subtitle">' + meta.subtitle + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<span class="frequency-card-price">' + priceLine + '</span>';
+
+    card.addEventListener('click', function () {
+      frequencyCardsContainer.querySelectorAll('.frequency-card').forEach(function (c) {
+        c.classList.remove('active');
+      });
       card.classList.add('active');
-    }
-
-    card.innerHTML = `
-      <div class="frequency-card-left">
-        <div class="frequency-radio-circle">
-          ✓
-        </div>
-        <div class="frequency-card-details">
-          <span class="frequency-card-title">${freq.title}</span>
-          <span class="frequency-card-subtitle">${freq.subtitle}</span>
-        </div>
-      </div>
-      <span class="frequency-card-price">₦${freq.totalCost.toLocaleString()}</span>
-    `;
-
-    card.addEventListener('click', () => {
-      frequencyCardsContainer.querySelectorAll('.frequency-card').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      visitsSelect.value = freq.value;
-
-      // Update planInput based on whether it is subscription or pay per visit
-      const size = apartmentSizeInput ? apartmentSizeInput.value : bedrooms;
-      if (freq.isSubscription) {
-        planInput.value = `${size} — Monthly Subscription (Twice a week)`;
-      } else {
-        planInput.value = `${size} — Pay Per Visit`;
-      }
-
+      visitsSelect.value = code;
+      setPlanValue(sizeLabel + ' — ' + meta.title);
       const step1ValMsg = document.getElementById('step1-validation-msg');
       if (step1ValMsg) step1ValMsg.textContent = '';
-      handlePlanChange();
+      updateBookingSummary();
     });
 
     frequencyCardsContainer.appendChild(card);
   });
 
-  // Clear promo/welcome offer notice if present
+  // Keep planInput in sync with the current selection.
+  setPlanValue(sizeLabel + ' — ' + FREQ_META[visitsSelect.value].title);
+
   let noticeEl = document.getElementById('frequency-promo-notice');
   if (noticeEl) noticeEl.remove();
 }
 
 function updateBookingSummary() {
-  const selectedPlan = planInput.value;
-  const visits = visitsSelect.value;
   const preferredDate = document.getElementById('booking-date-display').value;
   const schedule = bookingScheduleSelect.value;
   const propertyTypeVal = document.getElementById('booking-property') ? document.getElementById('booking-property').value : 'Flat';
@@ -517,14 +518,15 @@ function updateBookingSummary() {
   const summaryMetaSched = document.getElementById('summary-meta-schedule');
   const summarySchedText = document.getElementById('summary-schedule-text');
   const summaryBreakdown = document.getElementById('summary-breakdown-container');
-  const summaryBreakdownItemName = document.getElementById('summary-breakdown-item-name');
-  const summaryBreakdownItemPrice = document.getElementById('summary-breakdown-item-price');
-  const summaryBreakdownServiceName = document.getElementById('summary-breakdown-service-name');
-  const summaryBreakdownServicePrice = document.getElementById('summary-breakdown-service-price');
-  const summaryBreakdownServiceFreq = document.getElementById('summary-breakdown-service-freq');
+  const summaryRows = document.getElementById('summary-breakdown-rows');
   const summaryTotal = document.getElementById('summary-total-price');
+  const summaryTotalLabel = document.getElementById('summary-total-label');
+  const summaryTotalNote = document.getElementById('summary-total-note');
 
-  if (!selectedPlan) {
+  const bedrooms = currentBedrooms();
+  const b = currentBreakdown();
+
+  if (!bedrooms || !b) {
     summaryPlanName.textContent = "No Plan Selected";
     summaryExtrasText.textContent = "Extras: -";
     summaryFrequencyText.textContent = "-";
@@ -534,22 +536,14 @@ function updateBookingSummary() {
     return;
   }
 
-  // Parse room size name and property type
-  let bedrooms = "1 Bedroom";
-  const bedMatch = selectedPlan.match(/(\d+)\s*Bedroom/i);
-  if (bedMatch) {
-    bedrooms = `${bedMatch[1]} Bedroom`;
-  } else if (selectedPlan.includes("2 Bedroom")) bedrooms = "2 Bedroom";
-  else if (selectedPlan.includes("3 Bedroom")) bedrooms = "3 Bedroom";
-  else if (selectedPlan.includes("4 Bedroom")) bedrooms = "4 Bedroom";
-
   let propertyType = propertyTypeVal || "Flat";
-  if (propertyType === "Apartment") propertyType = "Apartment";
-  else if (propertyType === "Duplex") propertyType = "Duplex";
+  const meta = FREQ_META[b.freq];
 
-  summaryPlanName.textContent = `${bedrooms} ${propertyType}`;
-  summaryBreakdownItemName.textContent = `${bedrooms} ${propertyType}`;
-  summaryBreakdownItemPrice.textContent = "₦0.00";
+  summaryPlanName.textContent = `${bedrooms} Bedroom ${propertyType}`;
+  summaryExtrasText.textContent = `Plan: ${meta.title}`;
+  summaryFrequencyText.textContent = b.freq === 'ONE_TIME'
+    ? '(Single visit)'
+    : `(${meta.subtitle})`;
 
   // Schedule text
   if (preferredDate && schedule) {
@@ -562,66 +556,17 @@ function updateBookingSummary() {
     summaryMetaSched.style.display = 'none';
   }
 
-  // Pricing calculation
-  const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 9000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 13000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 17000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
-    "5 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
-  };
-
-  const priceInfo = planPrices[selectedPlan];
-  if (priceInfo) {
-    summaryBreakdown.style.display = 'flex';
-
-    if (priceInfo.type === "fixed") {
-      summaryExtrasText.textContent = `Extras: ${bedrooms}`;
-      summaryFrequencyText.textContent = "(Twice weekly)";
-
-      summaryBreakdownServiceName.textContent = `cleanse.ng Monthly Subscription`;
-      summaryBreakdownServicePrice.textContent = `₦${priceInfo.rate.toLocaleString()}`;
-      summaryBreakdownServiceFreq.textContent = "(Twice weekly)";
-      summaryTotal.textContent = `₦${priceInfo.rate.toLocaleString()}`;
-    } else {
-      let multiplier = 2; // default
-      let ratePerVisit = priceInfo.rate;
-      let freqLabel = "(Twice monthly)";
-
-      if (visits === "1 visit per month" || visits.includes("Once")) {
-        multiplier = 1;
-        freqLabel = "(Once monthly)";
-      } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
-        multiplier = 2;
-        freqLabel = "(Twice monthly)";
-      } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
-        multiplier = 4;
-        freqLabel = "(Weekly)";
-      }
-
-      summaryExtrasText.textContent = `Extras: ${bedrooms}`;
-      summaryFrequencyText.textContent = freqLabel;
-
-      const subtotal = ratePerVisit * multiplier;
-      summaryBreakdownServiceName.textContent = `cleanse.ng Pay Per Visit`;
-      summaryBreakdownServicePrice.textContent = `₦${subtotal.toLocaleString()}`;
-      summaryBreakdownServiceFreq.textContent = freqLabel;
-      summaryTotal.textContent = `₦${subtotal.toLocaleString()}`;
-    }
-  } else {
-    summaryBreakdown.style.display = 'flex';
-    summaryExtrasText.textContent = `Extras: ${bedrooms} (Custom Plan)`;
-    summaryFrequencyText.textContent = "(Pricing to be confirmed)";
-
-    summaryBreakdownServiceName.textContent = `cleanse.ng Custom Plan`;
-    summaryBreakdownServicePrice.textContent = `TBD`;
-    summaryBreakdownServiceFreq.textContent = "(Pricing to be confirmed)";
-    summaryTotal.textContent = `TBD`;
+  // Itemised breakdown
+  summaryBreakdown.style.display = 'flex';
+  renderBreakdownInto(summaryRows, b);
+  summaryTotal.textContent = nairaFmt(b.total);
+  if (summaryTotalLabel) {
+    summaryTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total' : 'Total / month';
+  }
+  if (summaryTotalNote) {
+    summaryTotalNote.textContent = b.freq === 'ONE_TIME'
+      ? ''
+      : `${b.visits} visits/month · ${nairaFmt(Math.round(b.total / b.visits))} per clean`;
   }
 }
 
@@ -774,7 +719,6 @@ function updateVerifyStepDetails() {
   else if (selectedPlan.includes("4 Bedroom")) bedroomLabel = "4 Bedroom Flat";
 
   document.getElementById('verify-plan-name').textContent = bedroomLabel;
-  document.getElementById('verify-breakdown-base-name').textContent = bedroomLabel;
 
   // Date & Time
   const dateVal = document.getElementById('booking-date-display').value || 'Select Date';
@@ -789,66 +733,30 @@ function updateVerifyStepDetails() {
   }
   document.getElementById('verify-date-time').textContent = `${dateVal}${timeStr ? ', ' + timeStr : ''}`;
 
-  // Extras & Service details
-  const visits = visitsSelect.value;
-  const isMonthly = selectedPlan.includes('Monthly Subscription');
-  let freqText = "";
-  if (isMonthly) {
-    freqText = "Monthly Subscription (Twice a week)";
-  } else if (selectedPlan.includes("Custom Plan")) {
-    freqText = "Custom Plan (pricing to be confirmed)";
-  } else {
-    let freqLabel = "Twice monthly";
-    if (visits === "1 visit per month" || visits.includes("Once")) {
-      freqLabel = "Once monthly";
-    } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
-      freqLabel = "Twice monthly";
-    } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
-      freqLabel = "Weekly";
-    }
-    freqText = `${bedroomLabel.replace(' Flat', '')} (${freqLabel})`;
+  // Plan + itemised breakdown
+  const b = currentBreakdown();
+  const verifyRows = document.getElementById('verify-breakdown-rows');
+  const verifyTotal = document.getElementById('verify-total-price');
+  const verifyTotalLabel = document.getElementById('verify-total-label');
+  const verifyExtras = document.getElementById('verify-extras');
+
+  if (!b) {
+    if (verifyExtras) verifyExtras.textContent = 'Plan: not selected';
+    if (verifyRows) verifyRows.innerHTML = '';
+    if (verifyTotal) verifyTotal.textContent = 'TBD';
+    return;
   }
 
-  document.getElementById('verify-extras').textContent = `Extras: cleanse.ng ${freqText}`;
-  document.getElementById('verify-breakdown-service-name').textContent = `└ cleanse.ng ${freqText}`;
+  const meta = FREQ_META[b.freq];
+  const freqText = b.freq === 'ONE_TIME'
+    ? `${bedroomLabel.replace(' Flat', '')} (Single visit)`
+    : `${bedroomLabel.replace(' Flat', '')} (${meta.title} · ${meta.subtitle})`;
 
-  // Total Price calculation
-  const planPrices = {
-    "1 Bedroom — Pay Per Visit": { rate: 9000, type: "per-visit" },
-    "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
-    "2 Bedroom — Pay Per Visit": { rate: 13000, type: "per-visit" },
-    "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
-    "3 Bedroom — Pay Per Visit": { rate: 17000, type: "per-visit" },
-    "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
-    "4 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-    "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
-    "5 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-    "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
-  };
-
-  const priceInfo = planPrices[selectedPlan];
-  if (priceInfo) {
-    let totalVal = 0;
-    if (priceInfo.type === "fixed") {
-      totalVal = priceInfo.rate;
-    } else {
-      let multiplier = 2; // default
-      let ratePerVisit = priceInfo.rate;
-      if (visits === "1 visit per month" || visits.includes("Once")) {
-        multiplier = 1;
-      } else if (visits && (visits.includes("2 visits") || visits.includes("Twice"))) {
-        multiplier = 2;
-      } else if (visits && (visits.includes("4 visits") || visits.includes("Weekly"))) {
-        multiplier = 4;
-      }
-      totalVal = ratePerVisit * multiplier;
-    }
-    const formattedPrice = `₦${totalVal.toLocaleString()}`;
-    document.getElementById('verify-breakdown-service-price').textContent = formattedPrice;
-    document.getElementById('verify-total-price').textContent = formattedPrice;
-  } else {
-    document.getElementById('verify-breakdown-service-price').textContent = "TBD";
-    document.getElementById('verify-total-price').textContent = "TBD";
+  if (verifyExtras) verifyExtras.textContent = `Plan: cleanse.ng ${freqText}`;
+  renderBreakdownInto(verifyRows, b);
+  if (verifyTotal) verifyTotal.textContent = nairaFmt(b.total);
+  if (verifyTotalLabel) {
+    verifyTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total Price' : 'Total / month';
   }
 }
 
@@ -1309,22 +1217,11 @@ function handlePlanChange() {
     });
   }
 
-  if (planName.includes('Monthly Subscription')) {
-    visitsSelect.value = "Twice a week (2 visits/week)";
+  // Carry any frequency embedded in the plan name into the canonical code.
+  const embeddedFreq = normalizeFreq(planName);
+  if (embeddedFreq) visitsSelect.value = embeddedFreq;
 
-    if (planSummary) {
-      planSummaryText.textContent = planName;
-      planSummary.style.display = 'block';
-    }
-  } else {
-    if (visitsSelect.value.includes("Twice a week") || visitsSelect.value.includes("8 visits")) {
-      visitsSelect.value = "1 visit per month";
-    }
-
-    if (planSummary) {
-      planSummary.style.display = 'none';
-    }
-  }
+  if (planSummary) planSummary.style.display = 'none';
 
   updateFrequencyCards();
   updateBookingSummary();
@@ -1680,8 +1577,7 @@ document.querySelectorAll('a[data-wa-link]').forEach(btn => {
       if (card) {
         let bedroomLabel = card.querySelector('.pc-label').textContent.trim();
         if (bedroomLabel === "4 Bedroom+") bedroomLabel = "4 Bedroom";
-        const isMonthly = pricingCheckbox ? pricingCheckbox.checked : false;
-        planName = `${bedroomLabel} — ${isMonthly ? 'Monthly Subscription (Twice a week)' : 'Pay Per Visit'}`;
+        planName = `${bedroomLabel} — ${FREQ_META[selectedPricingFreq].title}`;
         openBookingModal(planName);
       } else {
         // Nav button opens the modal with no plan selected, allowing choice
@@ -1761,43 +1657,21 @@ if (bookingForm) {
 
     const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
 
-    // Calculate pricing details dynamically
-    const planPrices = {
-      "1 Bedroom — Pay Per Visit": { rate: 9000, type: "per-visit" },
-      "1 Bedroom — Monthly Subscription (Twice a week)": { rate: 60000, type: "fixed" },
-      "2 Bedroom — Pay Per Visit": { rate: 13000, type: "per-visit" },
-      "2 Bedroom — Monthly Subscription (Twice a week)": { rate: 80000, type: "fixed" },
-      "3 Bedroom — Pay Per Visit": { rate: 17000, type: "per-visit" },
-      "3 Bedroom — Monthly Subscription (Twice a week)": { rate: 100000, type: "fixed" },
-      "4 Bedroom — Pay Per Visit": { rate: 20000, type: "per-visit" },
-      "4 Bedroom — Monthly Subscription (Twice a week)": { rate: 120000, type: "fixed" },
-      "5 Bedroom — Pay Per Visit": { rate: 25000, type: "per-visit" },
-      "5 Bedroom — Monthly Subscription (Twice a week)": { rate: 150000, type: "fixed" }
-    };
-
-    const priceInfo = planPrices[selectedPlan];
+    // Calculate pricing details from the canonical matrix.
+    const waBreakdown = currentBreakdown();
     let priceDetailsText = "";
     let visitsText = visits;
-    if (priceInfo) {
-      if (priceInfo.type === "fixed") {
-        priceDetailsText = `₦${priceInfo.rate.toLocaleString()} / month`;
-        visitsText = "Twice a week (2 visits/week)";
+    if (waBreakdown) {
+      const wm = FREQ_META[waBreakdown.freq];
+      visitsText = wm.short;
+      if (waBreakdown.freq === 'ONE_TIME') {
+        priceDetailsText = `${nairaFmt(waBreakdown.total)} / visit`;
       } else {
-        let multiplier = 2; // default
-        let ratePerVisit = priceInfo.rate;
-        if (visits === "1 visit per month") {
-          multiplier = 1;
-        } else if (visits && visits.includes("2 visits")) {
-          multiplier = 2;
-        } else if (visits && visits.includes("4 visits")) {
-          multiplier = 4;
-        }
-
-        const total = ratePerVisit * multiplier;
-        priceDetailsText = `₦${ratePerVisit.toLocaleString()} / visit (Total: ₦${total.toLocaleString()} / month)`;
+        priceDetailsText = `${nairaFmt(waBreakdown.total)} / month ` +
+          `(${waBreakdown.visits} visits · ${nairaFmt(Math.round(waBreakdown.total / waBreakdown.visits))} per clean)`;
       }
     } else {
-      priceDetailsText = "Custom Plan (pricing to be confirmed)";
+      priceDetailsText = "Pricing to be confirmed";
     }
 
     // Construct WhatsApp message template
@@ -2344,9 +2218,7 @@ window.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('cleanse_promo_applied', 'true');
       
       // Update homepage pricing cards and booking steps instantly
-      const pricingCheckbox = document.getElementById('pricing-toggle-checkbox');
-      const isMonthly = pricingCheckbox ? pricingCheckbox.checked : false;
-      updatePricing(isMonthly);
+      updatePricing(selectedPricingFreq);
       updateFrequencyCards();
       updateBookingSummary();
 

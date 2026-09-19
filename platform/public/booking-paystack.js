@@ -19,52 +19,10 @@
   }
 
   ready(function () {
-    // Pay Per Visit only — drop Monthly Subscription options for now.
-    var planSel = document.getElementById("booking-selected-plan");
-    if (planSel) {
-      Array.prototype.slice.call(planSel.options).forEach(function (o) {
-        if (/Monthly Subscription/i.test(o.value) || /Monthly Subscription/i.test(o.text)) o.remove();
-      });
-    }
-    // Force the marketing pricing toggle to Pay Per Visit and hide the Monthly label.
-    var toggle = document.getElementById("pricing-toggle-checkbox");
-    if (toggle && toggle.checked) {
-      toggle.checked = false;
-      toggle.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    var lblMonthly = document.getElementById("label-monthly");
-    if (lblMonthly) lblMonthly.style.display = "none";
-
-    // One-time only: in the frequency step, keep just the single-visit option
-    // (hide Monthly Subscription / Twice monthly / Weekly) so the displayed price
-    // always matches the one-time amount the backend charges.
-    var freq = document.getElementById("frequency-cards-container");
-    if (freq) {
-      var apply = function () {
-        Array.prototype.slice.call(freq.children).forEach(function (card) {
-          var t = (card.textContent || "").toLowerCase();
-          var single = t.indexOf("once monthly") > -1 || t.indexOf("1 visit") > -1;
-          if (t.indexOf("subscription") > -1 || t.indexOf("2 visit") > -1 ||
-              t.indexOf("4 visit") > -1 || t.indexOf("twice") > -1 || t.indexOf("weekly") > -1) {
-            single = false;
-          }
-          card.style.display = single ? "" : "none";
-          if (single) {
-            if (!card.dataset._relabeled) {
-              card.innerHTML = card.innerHTML
-                .replace(/Once monthly/i, "One-time clean")
-                .replace(/1 visit \/ month \(touch-ups\)/i, "Single visit")
-                .replace(/1 visit \/ month/i, "Single visit");
-              card.dataset._relabeled = "1";
-            }
-            if (!card.classList.contains("active")) card.click();
-          }
-        });
-      };
-      new MutationObserver(apply).observe(freq, { childList: true });
-      apply();
-    }
-
+    // All plans are bookable: per-visit, weekly (4 visits/mo) and monthly
+    // (8 visits/mo). The frequency cards are built by index.js from the
+    // canonical price matrix; we simply read the selected frequency at submit
+    // time and send it so Paystack charges exactly what the summary shows.
     var form = document.getElementById("booking-plan-form");
     if (form) form.addEventListener("submit", onSubmit, true); // capture: runs before index.js
 
@@ -90,6 +48,18 @@
   function val(id) { var el = document.getElementById(id); return el ? String(el.value || "").trim() : ""; }
 
   function bedroomsFrom(v) { var m = (v || "").match(/(\d+)/); return m ? parseInt(m[1], 10) : null; }
+
+  // Map the selected frequency (a canonical code, or any legacy label) to the
+  // server frequency_code. Defaults to ONE_TIME.
+  function frequencyCode() {
+    var raw = val("booking-visits");
+    if (raw === "ONE_TIME" || raw === "WEEKLY" || raw === "MONTHLY") return raw;
+    var t = raw.toLowerCase();
+    if (t.indexOf("twice a week") > -1 || t.indexOf("8 visit") > -1 ||
+        t.indexOf("monthly subscription") > -1) return "MONTHLY";
+    if (t.indexOf("weekly") > -1 || t.indexOf("4 visit") > -1) return "WEEKLY";
+    return "ONE_TIME";
+  }
 
   function normPhone(raw) {
     var d = (raw || "").replace(/[^\d+]/g, "");
@@ -165,7 +135,7 @@
     try {
       var q = await postJSON("/api/v1/quotes", {
         service_code: "REGULAR", zone_code: area, property_bedrooms: bedrooms,
-        requested_cleaner_count: 1, frequency_code: "ONE_TIME", extras: []
+        requested_cleaner_count: 1, frequency_code: frequencyCode(), extras: []
       });
       if (!q.ok) throw new Error((q.error && q.error.message) || "Could not price your booking.");
 

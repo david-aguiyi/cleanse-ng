@@ -316,15 +316,49 @@
       </div>
       <p class="pricing-sub" style="margin-top: 20px;">All packages include a trained team, cleaning supplies and a dedicated supervisor. Paid monthly.</p>
 
-      <!-- Dynamic Billing Toggle Slider -->
+      <!-- Billing frequency selector (Per Visit / Weekly / Monthly) -->
+      <style>
+        .pricing-freq-toggle {
+          display: inline-flex;
+          gap: 4px;
+          padding: 4px;
+          border-radius: 999px;
+          background: rgba(58, 29, 109, 0.06);
+          border: 1px solid var(--border);
+        }
+        .pricing-freq-option {
+          font-family: var(--font-header);
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--mid-gray);
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 10px 22px;
+          border-radius: 999px;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+        .pricing-freq-option:hover { color: var(--deep-purple); }
+        .pricing-freq-option.active {
+          background: var(--primary-purple);
+          color: var(--white);
+          box-shadow: 0 2px 8px rgba(58, 29, 109, 0.25);
+        }
+        @media (max-width: 480px) {
+          .pricing-freq-toggle { width: 100%; justify-content: center; }
+          .pricing-freq-option { padding: 10px 14px; font-size: 14px; }
+        }
+      </style>
       <div class="pricing-toggle-container">
-        <span class="toggle-label active" id="label-pay-per-visit">Pay Per Visit</span>
-        <label class="toggle-switch-wrapper">
-          <input type="checkbox" id="pricing-toggle-checkbox" class="sr-only-checkbox" role="switch"
-            aria-labelledby="label-pay-per-visit label-monthly" aria-checked="false">
-          <div class="toggle-slider"></div>
-        </label>
-        <span class="toggle-label" id="label-monthly">Monthly</span>
+        <div class="pricing-freq-toggle" id="pricing-freq-toggle" role="tablist" aria-label="Billing frequency">
+          <button type="button" class="pricing-freq-option active" data-freq="ONE_TIME" role="tab"
+            aria-selected="true">Per Visit</button>
+          <button type="button" class="pricing-freq-option" data-freq="WEEKLY" role="tab"
+            aria-selected="false">Weekly</button>
+          <button type="button" class="pricing-freq-option" data-freq="MONTHLY" role="tab"
+            aria-selected="false">Monthly</button>
+        </div>
       </div>
 
     </div>
@@ -797,26 +831,16 @@
             style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
             <div class="summary-breakdown-title">COST BREAKDOWN</div>
 
-            <div class="summary-row"
-              style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black);">
-              <span id="summary-breakdown-item-name">Plan Room Base</span>
-              <span id="summary-breakdown-item-price">₦0.00</span>
-            </div>
-
-            <div class="summary-row-service" style="display: flex; flex-direction: column; gap: 2px;">
-              <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black);">
-                <span id="summary-breakdown-service-name">Service</span>
-                <span id="summary-breakdown-service-price">₦0.00</span>
-              </div>
-              <div id="summary-breakdown-service-freq" style="font-size: 13px; color: var(--mid-gray);"></div>
-            </div>
+            <!-- Itemised rows populated by updateBookingSummary() in index.js -->
+            <div id="summary-breakdown-rows" style="display: flex; flex-direction: column; gap: 10px;"></div>
 
             <div class="summary-breakdown-solid-line"></div>
 
             <div class="summary-row total">
-              <span>Total Price</span>
+              <span id="summary-total-label">Total Price</span>
               <span id="summary-total-price">₦0.00</span>
             </div>
+            <div id="summary-total-note" style="font-size: 12px; color: var(--mid-gray); margin-top: -4px;"></div>
           </div>
         </div>
       </div>
@@ -907,25 +931,15 @@
               style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--light-gray); letter-spacing: 0.05em; font-family: var(--font-header);">Cost
               Breakdown</span>
 
-            <!-- Base Plan Row -->
-            <div
-              style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black); font-family: var(--font-body);">
-              <span id="verify-breakdown-base-name">1 Bedroom Flat</span>
-              <span style="font-weight: 500;">₦0.00</span>
-            </div>
-
-            <!-- Service Frequency Row -->
-            <div
-              style="display: flex; justify-content: space-between; font-size: 14px; color: var(--black); font-family: var(--font-body);">
-              <span id="verify-breakdown-service-name">└ cleanse.ng 1 Bedroom (Twice monthly)</span>
-              <span id="verify-breakdown-service-price" style="font-weight: 600; color: var(--black);">₦0.00</span>
-            </div>
+            <!-- Itemised rows populated by updateVerifyStep()/index.js -->
+            <div id="verify-breakdown-rows"
+              style="display: flex; flex-direction: column; gap: 10px; font-family: var(--font-body);"></div>
 
             <div style="height: 1px; background: var(--border); margin: 4px 0 0 0;"></div>
 
             <!-- Total Row -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span
+              <span id="verify-total-label"
                 style="font-family: var(--font-header); font-size: 16px; font-weight: 700; color: var(--deep-purple);">Total
                 Price</span>
               <span id="verify-total-price"
