@@ -11,6 +11,11 @@ export const dynamic = "force-dynamic";
 function naira(kobo: number): string {
   return `₦${Math.round(kobo / 100).toLocaleString("en-NG")}`;
 }
+function planLabel(freq: string, visits: number): string | null {
+  if (freq === "WEEKLY") return `Weekly plan · ${visits} visits/month`;
+  if (freq === "MONTHLY") return `Monthly plan · ${visits} visits/month`;
+  return null;
+}
 function when(iso: string): string {
   return new Intl.DateTimeFormat("en-NG", {
     timeZone: "Africa/Lagos",
@@ -117,10 +122,21 @@ export default async function OfferDetailPage({ params }: { params: { id: string
               <span className="k">When</span>
               <span>{when(offer.scheduled_start_at)}</span>
             </div>
+            {planLabel(offer.plan_frequency, offer.plan_visits) && (
+              <div className="kv">
+                <span className="k">Plan</span>
+                <span>{planLabel(offer.plan_frequency, offer.plan_visits)}</span>
+              </div>
+            )}
             <div className="kv">
               <span className="k">You earn (est.)</span>
               <span>
                 <strong>{naira(offer.payout_kobo)}</strong>
+                {offer.plan_frequency !== "ONE_TIME" && (
+                  <span className="muted" style={{ display: "block", fontSize: 12, textAlign: "right" }}>
+                    for the {offer.plan_visits}-visit plan
+                  </span>
+                )}
               </span>
             </div>
 
