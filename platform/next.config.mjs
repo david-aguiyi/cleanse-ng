@@ -25,7 +25,10 @@ const nextConfig = {
     // every such request to the canonical clean URL with a permanent redirect so
     // those links resolve instead of 404ing.
     return [
-      // Specific rule first (first match wins): index.html -> site root.
+      // Old homepage entry points -> site root. Both /index and /index.html are
+      // covered because Vercel may resolve /index.html through the generic
+      // /:slug.html rule below (-> /index) before this specific one.
+      { source: "/index", destination: "/", permanent: true },
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/:slug.html", destination: "/:slug", permanent: true },
     ];
