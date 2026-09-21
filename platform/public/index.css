@@ -690,8 +690,8 @@
   }
   .pc-savings {
     display: inline-block;
-    background: #d1fae5;
-    color: #065f46;
+    background: var(--neon-green);
+    color: var(--deep-purple);
     font-size: 11px;
     padding: 4px 10px;
     font-weight: 700;

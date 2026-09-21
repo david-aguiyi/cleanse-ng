@@ -10,6 +10,13 @@ import { AppError } from "@/http/errors";
 import { formatNairaFromKobo } from "@/lib/money";
 import type { PriceLineItem, QuoteResult } from "@/domain/types";
 import type { QuoteRequest } from "@/validation/schemas";
+import { isPlanFrequency, resolvePlanBreakdown } from "./plan-pricing";
+
+const FREQUENCY_LABEL: Record<string, string> = {
+  ONE_TIME: "Per visit",
+  WEEKLY: "Weekly (4 visits / month)",
+  MONTHLY: "Monthly (8 visits / month)",
+};
 
 export async function createQuote(input: QuoteRequest): Promise<QuoteResult> {
   const db = serviceClient();
@@ -40,37 +47,61 @@ export async function createQuote(input: QuoteRequest): Promise<QuoteResult> {
     throw new AppError("ZONE_NOT_SERVICEABLE", "We do not currently serve this area.");
   }
 
-  // Base price rule: match service + bedrooms, active and currently effective,
-  // most recent effective_from wins.
+  // Frequency-driven plan pricing. The plan matrix (plan-pricing.ts) is the
+  // single source of truth for what Paystack charges; it also decomposes the
+  // price into the four parts shown to the customer in the booking summary.
   const nowIso = new Date().toISOString();
-  const { data: rules, error: ruleErr } = await db
-    .from("pricing_rules")
-    .select("id, amount_kobo, service_fee_bps, effective_from, effective_to, extra_id, frequency_code")
-    .eq("service_id", service.id)
-    .eq("property_bedrooms", input.property_bedrooms)
-    .is("extra_id", null)
-    .eq("active", true)
-    .lte("effective_from", nowIso)
-    .order("effective_from", { ascending: false });
-
-  if (ruleErr) throw new AppError("INTERNAL_ERROR", "Could not load pricing.");
-
-  const baseRule = (rules ?? []).find(
-    (r) => r.effective_to === null || new Date(r.effective_to).getTime() > Date.now()
-  );
-  if (!baseRule) {
+  const frequency = input.frequency_code;
+  if (!isPlanFrequency(frequency)) {
+    throw new AppError("PRICING_UNAVAILABLE", "This plan frequency is not available online.");
+  }
+  const breakdown = resolvePlanBreakdown(input.property_bedrooms, frequency);
+  if (!breakdown) {
     throw new AppError("PRICING_UNAVAILABLE", "No active price for this configuration.");
   }
 
-  const serviceFeeBps = baseRule.service_fee_bps ?? 2000;
+  const cleanerCount = input.requested_cleaner_count;
+  const scale = (kobo: number) => kobo * cleanerCount;
+  const planLabel = FREQUENCY_LABEL[frequency] ?? frequency;
+
+  // Effective service-fee ratio for this plan, stored for reporting coherence.
+  const serviceFeeBps = Math.round((breakdown.serviceFeeKobo / breakdown.totalKobo) * 10000);
+
+  // Customer-facing itemised breakdown. The four parts always sum to the total.
+  // NOTE: item_type stays within the DB CHECK set (BASE_SERVICE/EXTRA/
+  // DISCOUNT/ADJUSTMENT); the semantic part is carried in `code`.
   const lineItems: PriceLineItem[] = [
     {
       item_type: "BASE_SERVICE",
-      code: service.code,
-      description: `${service.name} · ${input.property_bedrooms}BR`,
-      quantity: 1,
-      unit_amount_kobo: Number(baseRule.amount_kobo),
-      line_total_kobo: Number(baseRule.amount_kobo),
+      code: "CLEANING",
+      description: `Cleaning service · ${service.name} · ${input.property_bedrooms}BR (${planLabel})`,
+      quantity: cleanerCount,
+      unit_amount_kobo: breakdown.cleaningKobo,
+      line_total_kobo: scale(breakdown.cleaningKobo),
+    },
+    {
+      item_type: "ADJUSTMENT",
+      code: "TRANSPORT",
+      description: "Transport",
+      quantity: cleanerCount,
+      unit_amount_kobo: breakdown.transportKobo,
+      line_total_kobo: scale(breakdown.transportKobo),
+    },
+    {
+      item_type: "ADJUSTMENT",
+      code: "SUPPLIES",
+      description: "Supplies",
+      quantity: cleanerCount,
+      unit_amount_kobo: breakdown.suppliesKobo,
+      line_total_kobo: scale(breakdown.suppliesKobo),
+    },
+    {
+      item_type: "ADJUSTMENT",
+      code: "SERVICE_FEE",
+      description: "Service fee",
+      quantity: cleanerCount,
+      unit_amount_kobo: breakdown.serviceFeeKobo,
+      line_total_kobo: scale(breakdown.serviceFeeKobo),
     },
   ];
 
@@ -109,7 +140,7 @@ export async function createQuote(input: QuoteRequest): Promise<QuoteResult> {
     }
   }
 
-  const subtotalKobo = Number(baseRule.amount_kobo) * input.requested_cleaner_count;
+  const subtotalKobo = scale(breakdown.totalKobo);
   const totalKobo = subtotalKobo + extrasKobo;
 
   const calculationSnapshot = {
@@ -117,8 +148,8 @@ export async function createQuote(input: QuoteRequest): Promise<QuoteResult> {
     zone_code: zone.code,
     property_bedrooms: input.property_bedrooms,
     requested_cleaner_count: input.requested_cleaner_count,
-    frequency_code: input.frequency_code,
-    base_rule_id: baseRule.id,
+    frequency_code: frequency,
+    plan_visits: breakdown.visits,
     service_fee_bps: serviceFeeBps,
     line_items: lineItems,
     computed_at: nowIso,

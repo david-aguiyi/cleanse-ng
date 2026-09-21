@@ -19,6 +19,8 @@ export interface OfferView {
   property_bedrooms: number | null;
   scheduled_start_at: string;
   payout_kobo: number;
+  plan_frequency: string;
+  plan_visits: number;
   expires_at: string;
   is_active: boolean;
   won: boolean;
@@ -56,6 +58,8 @@ export async function listOffers(cleanerId: string) {
     property_bedrooms: o.booking?.property_bedrooms ?? null,
     scheduled_start_at: o.booking?.scheduled_start_at ?? null,
     payout_kobo: Number(o.metadata?.payout_kobo ?? 0),
+    plan_frequency: String(o.metadata?.plan_frequency ?? "ONE_TIME"),
+    plan_visits: Number(o.metadata?.plan_visits ?? 1),
     expires_at: o.expires_at,
     is_active: ACTIVE_OFFER_STATES.includes(o.status) && new Date(o.expires_at).getTime() > Date.now(),
   }));
@@ -107,6 +111,8 @@ export async function getOfferForCleaner(offerId: string, cleanerId: string): Pr
     property_bedrooms: offer.booking?.property_bedrooms ?? null,
     scheduled_start_at: offer.booking?.scheduled_start_at,
     payout_kobo: Number(offer.metadata?.payout_kobo ?? 0),
+    plan_frequency: String(offer.metadata?.plan_frequency ?? "ONE_TIME"),
+    plan_visits: Number(offer.metadata?.plan_visits ?? 1),
     expires_at: offer.expires_at,
     is_active: isActive,
     won,

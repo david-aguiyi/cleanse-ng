@@ -95,7 +95,10 @@ export default async function CleanerHome() {
                   <strong style={{ color: "#2f6b00" }}>{naira(o.payout_kobo)}</strong>
                 </div>
                 <div className="muted" style={{ fontSize: 13 }}>
-                  {o.zone_name ?? "—"} · tap to view
+                  {o.zone_name ?? "—"}
+                  {o.plan_frequency === "WEEKLY" && ` · Weekly (${o.plan_visits} visits)`}
+                  {o.plan_frequency === "MONTHLY" && ` · Monthly (${o.plan_visits} visits)`}
+                  {" · tap to view"}
                 </div>
               </a>
             ))}
