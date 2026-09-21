@@ -17,6 +17,22 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    // The carried-over marketing/SEO pages live in public/*.html and are served
+    // at clean, extension-less URLs (see rewrites() below). On Vercel the ".html"
+    // path itself returns 404, but our sitemap, canonicals and the pages'
+    // internal links (and anything Google indexed) still point at ".html". Send
+    // every such request to the canonical clean URL with a permanent redirect so
+    // those links resolve instead of 404ing.
+    return [
+      // Old homepage entry points -> site root. Both /index and /index.html are
+      // covered because Vercel may resolve /index.html through the generic
+      // /:slug.html rule below (-> /index) before this specific one.
+      { source: "/index", destination: "/", permanent: true },
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/:slug.html", destination: "/:slug", permanent: true },
+    ];
+  },
   async rewrites() {
     // Serve the carried-over static marketing/SEO pages (public/*.html) at clean,
     // extension-less URLs. Runs AFTER app routes, so /book, /admin, /cleaner,
