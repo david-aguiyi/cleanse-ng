@@ -223,6 +223,23 @@ if (pricingFreqToggle) {
   });
 }
 
+// "Book Appointment" on a pricing card: carry the card's bedroom size AND the
+// currently selected frequency into the modal, so we never re-ask for either.
+document.querySelectorAll('.pricing-card .pc-btn').forEach(function (btn) {
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const card = btn.closest('.pricing-card');
+    const label = card && card.querySelector('.pc-label');
+    const bedrooms = bedroomsFromText(label && label.textContent);
+    if (!bedrooms) { openBookingModal(''); return; }
+    const freq = FREQ_META[selectedPricingFreq] ? selectedPricingFreq : 'ONE_TIME';
+    // Suffix carries a marker normalizeFreq() understands, so the modal resolves
+    // the exact frequency (Once a week -> WEEKLY, Twice a week -> MONTHLY).
+    const suffix = freq === 'WEEKLY' ? ' (4 visits/mo)' : freq === 'MONTHLY' ? ' (8 visits/mo)' : '';
+    openBookingModal(bedrooms + ' Bedroom — ' + FREQ_META[freq].title + suffix);
+  });
+});
+
 // Booking Modal Logic
 const modal = document.getElementById('booking-modal');
 const closeBtn = document.getElementById('modal-close-btn');
@@ -274,9 +291,9 @@ const CLEANSE_PRICING = {
 };
 
 const FREQ_META = {
-  ONE_TIME: { code: 'ONE_TIME', title: 'Per visit', subtitle: 'Single visit',        short: 'Per visit' },
-  WEEKLY:   { code: 'WEEKLY',   title: 'Weekly',    subtitle: '4 visits / month',     short: 'Weekly (4 visits/mo)' },
-  MONTHLY:  { code: 'MONTHLY',  title: 'Monthly',   subtitle: '8 visits / month',     short: 'Monthly (8 visits/mo)' },
+  ONE_TIME: { code: 'ONE_TIME', title: 'Per visit',    subtitle: 'One-off clean',       short: 'Per visit' },
+  WEEKLY:   { code: 'WEEKLY',   title: 'Once a week',  subtitle: '4 visits / month',     short: 'Once a week (4 visits/mo)' },
+  MONTHLY:  { code: 'MONTHLY',  title: 'Twice a week', subtitle: '8 visits / month',     short: 'Twice a week (8 visits/mo)' },
 };
 const FREQ_ORDER = ['ONE_TIME', 'WEEKLY', 'MONTHLY'];
 
@@ -1155,10 +1172,13 @@ function openBookingModal(planName) {
       apartmentSizeGroup.style.display = 'none';
     }
 
-    if (planName.includes('Monthly Subscription') || planName.includes('Custom Plan')) {
-      _currentWizardStep = 3; // Skip Size and Plan selection, go straight to Date/Time
+    // If the plan already carries a resolvable frequency (e.g. booked from a
+    // pricing card with the Per visit / Once a week / Twice a week toggle set),
+    // skip BOTH the size and plan steps and go straight to Date/Time.
+    if (planName.includes('Custom Plan') || normalizeFreq(planName)) {
+      _currentWizardStep = 3; // Skip Size + Plan selection, go straight to Date/Time
     } else {
-      _currentWizardStep = 2; // Skip Size selection, go to Plan selection to pick frequency
+      _currentWizardStep = 2; // Size known; go to Plan selection to pick frequency
     }
   } else {
     planInput.value = "";
