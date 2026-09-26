@@ -113,6 +113,22 @@ document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   }, { threshold: [0, 0.6] }).observe(areas);
 })();
 
+// .link-draw underlines draw in when scrolled into view and undraw when they
+// leave. .line-ready is added here, so without JS the underline just shows.
+(function () {
+  const links = document.querySelectorAll('.link-draw');
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-drawn', entry.intersectionRatio >= 1);
+    });
+  }, { threshold: [0, 1] });
+  links.forEach(function (link) {
+    link.classList.add('line-ready');
+    io.observe(link);
+  });
+})();
+
 // Testimonial slider
 let testimonialInterval;
 let activeSlides = [];
@@ -907,6 +923,25 @@ function parseTestimonialsCSV(csvText) {
   return list;
 }
 
+// "Chidinma · GRA, Ibadan" -> name on one line, title/location beneath it.
+// Mirrors the static markup in home.html.
+function buildTestimonialAuthor(author) {
+  const parts = String(author || '').split(/\s+[·•|–]\s+/);
+  const el = document.createElement('div');
+  el.className = 'testimonial-author';
+  const name = document.createElement('span');
+  name.className = 'testimonial-name';
+  name.textContent = parts[0].trim();
+  el.appendChild(name);
+  if (parts.length > 1) {
+    const role = document.createElement('span');
+    role.className = 'testimonial-role';
+    role.textContent = parts.slice(1).join(' · ').trim();
+    el.appendChild(role);
+  }
+  return el;
+}
+
 function renderTestimonials(list) {
   const track = document.querySelector('.testimonial-track');
   const dotsContainer = document.querySelector('.t-dots');
@@ -923,12 +958,8 @@ function renderTestimonials(list) {
     quoteEl.className = 'testimonial-quote';
     quoteEl.textContent = item.quote;
 
-    const authorEl = document.createElement('p');
-    authorEl.className = 'testimonial-author';
-    authorEl.textContent = item.author;
-
     slide.appendChild(quoteEl);
-    slide.appendChild(authorEl);
+    slide.appendChild(buildTestimonialAuthor(item.author));
     track.appendChild(slide);
 
     const dot = document.createElement('div');
