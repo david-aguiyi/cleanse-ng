@@ -1606,9 +1606,9 @@ if (policyModal) {
   });
 }
 
-// Nav "Book" buttons open the modal with no plan selected, allowing choice.
-// (Pricing-card buttons are wired separately, next to updatePricing.)
-document.querySelectorAll('a[data-wa-link].nav-cta').forEach(btn => {
+// Nav "Book" buttons and [data-open-booking] CTAs open the modal with no plan
+// selected, allowing choice. (Pricing-card buttons are wired next to updatePricing.)
+document.querySelectorAll('a[data-wa-link].nav-cta, [data-open-booking]').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     openBookingModal("");

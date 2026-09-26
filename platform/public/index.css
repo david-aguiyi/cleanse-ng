@@ -236,6 +236,32 @@
     border-bottom-color: var(--neon-green);
     background-position: 0 0;
   }
+  .hero-sub-strong {
+    color: var(--white);
+    font-size: 16px;
+    margin-top: -8px;
+  }
+  .hero-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    list-style: none;
+    margin-top: -4px;
+  }
+  .hero-trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--lavender);
+  }
+  .hero-trust i {
+    font-size: 11px;
+    color: var(--neon-green);
+  }
   .hero-areas {
     display: flex;
     flex-direction: column;
@@ -397,6 +423,11 @@
     color: var(--mid-gray);
     font-weight: 400;
     max-width: 420px;
+  }
+  .problem-point b,
+  .problem-right p b {
+    color: var(--deep-purple);
+    font-weight: 600;
   }
   .problem-right p em {
     font-style: italic;
@@ -944,6 +975,18 @@
     max-width: 620px;
     font-weight: 400;
   }
+  .trust-content p b {
+    color: var(--deep-purple);
+    font-weight: 600;
+  }
+  .trust-content p.trust-signoff {
+    font-family: var(--font-header);
+    font-size: clamp(20px, 2.4vw, 26px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin-top: 4px;
+  }
   .trust-content .btn-ghost {
     margin-top: 12px;
     color: var(--deep-purple);
@@ -1032,7 +1075,9 @@
     font-weight: 400;
     max-width: 680px;
   }
-  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner p + p { margin-top: 10px; }
+  .faq-a-inner b { color: var(--deep-purple); font-weight: 600; }
+  .faq-item.open .faq-a { max-height: 480px; }
 
   /* ── FOOTER ── */
   footer {
@@ -2431,6 +2476,14 @@
     font-size: 17.5px;
     color: var(--lavender);
     line-height: 1.65;
+  }
+  .final-cta p.final-cta-signoff {
+    font-family: var(--font-header);
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--neon-green);
+    letter-spacing: -0.01em;
   }
   .final-cta-actions {
     display: flex;
