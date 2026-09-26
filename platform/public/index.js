@@ -87,6 +87,28 @@ document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   el.rel = 'noopener noreferrer';
 });
 
+// Hero areas ease in, name by name, the first time they scroll into view.
+// .reveal-ready (hidden) is in the markup; adding .is-revealed plays the fade.
+(function () {
+  const areas = document.querySelector('.hero-areas.reveal-ready');
+  if (!areas) return;
+  const reveal = function () {
+    void areas.offsetWidth; // commit the hidden state so the fade-in transitions
+    areas.classList.add('is-revealed');
+  };
+  if (!('IntersectionObserver' in window)) { reveal(); return; }
+  Array.prototype.filter.call(
+    areas.querySelectorAll('.hero-areas-label, .hero-areas-row > i, .hero-areas-list li'),
+    function (el) { return getComputedStyle(el).display !== 'none'; }
+  ).forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
+  const io = new IntersectionObserver(function (entries) {
+    if (!entries.some(function (e) { return e.isIntersecting; })) return;
+    io.disconnect();
+    reveal();
+  }, { threshold: 0.6 });
+  io.observe(areas);
+})();
+
 // Testimonial slider
 let testimonialInterval;
 let activeSlides = [];
