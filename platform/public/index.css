@@ -237,12 +237,49 @@
     background-position: 0 0;
   }
   .hero-areas {
-    font-size: 12px;
-    color: var(--lavender);
-    opacity: 0.8;
-    letter-spacing: 0.06em;
-    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 480px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .hero-areas-label {
     font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.75;
+  }
+  /* Every item gets a leading dot; the list is pulled left by one dot + gap and
+     clipped by .hero-areas, so wrapped lines never start with a dot. */
+  .hero-areas { overflow: hidden; }
+  .hero-areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+    list-style: none;
+    margin-left: -28px;
+  }
+  .hero-areas-list li {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+  .hero-areas-list li::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    margin: 0 12px;
+    border-radius: 50%;
+    background: var(--neon-green);
   }
   .hero-proof {
     display: inline-flex;
@@ -744,6 +781,118 @@
     letter-spacing: 0.02em;
   }
   .pc-btn:hover { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
+
+  /* ── SIZE-FIRST PLANS: pick a home size, compare 3 plans side by side ── */
+  .pricing-size-picker {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pricing-size-label {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+  }
+  .pricing-size-toggle {
+    position: relative;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(58, 29, 109, 0.06);
+    border: 1px solid var(--border);
+  }
+  /* One purple pill that glides under the active size (positioned by index.js). */
+  .pricing-size-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: var(--primary-purple);
+    box-shadow: 0 2px 10px rgba(58, 29, 109, 0.28);
+    transition:
+      transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+      width 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform, width;
+    pointer-events: none;
+  }
+  .pricing-size-indicator.no-anim { transition: none; }
+  .pricing-size-option {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px 22px;
+    border-radius: 999px;
+    transition: color 0.35s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pricing-size-option:hover { color: var(--deep-purple); }
+  .pricing-size-option.active { color: var(--white); }
+  /* Before JS positions the pill, fall back to a static highlight. */
+  .pricing-size-toggle:not(.has-indicator) .pricing-size-option.active {
+    background: var(--primary-purple);
+  }
+  .pricing-size-option:focus { outline: none; }
+  .pricing-size-option:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+  }
+  /* Prices ease up into place when the size changes. */
+  @keyframes pc-price-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .pc-price-display.is-updating,
+  .pc-savings.is-updating {
+    animation: pc-price-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-size-indicator,
+    .pricing-size-option { transition: none; }
+    .pc-price-display.is-updating,
+    .pc-savings.is-updating { animation: none; }
+  }
+  #pricing .pricing-header { margin-bottom: 36px; }
+  .pricing-grid.plan-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+  .pricing-grid.plan-grid .pricing-card:nth-child(2) { border-right: 1px solid var(--border); }
+  .pc-sub {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mid-gray);
+    margin-top: -12px;
+  }
+  .pricing-card.featured .pc-sub { color: var(--lavender); }
+  @media (max-width: 760px) {
+    .pricing-grid.plan-grid { grid-template-columns: 1fr; }
+    .pricing-grid.plan-grid .pricing-card,
+    .pricing-grid.plan-grid .pricing-card:nth-child(2) {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      gap: 18px;
+    }
+    .pricing-grid.plan-grid .pricing-card:last-child { border-bottom: none; }
+    /* Empty savings slot only exists to align cards side by side. */
+    .pricing-grid.plan-grid .pc-savings:empty { display: none; }
+  }
+  @media (max-width: 480px) {
+    .pricing-size-toggle { width: 100%; }
+    .pricing-size-option { flex: 1; padding: 10px 0; font-size: 14px; }
+  }
   .pricing-card.featured .pc-btn {
     background: transparent;
     color: var(--neon-green);

@@ -214,6 +214,17 @@
         <a class="btn-primary" href="#" data-wa-link data-wa-msg="Hi Cleanse.ng, I am interested in your services.">Chat with us directly</a>
         <a class="btn-ghost" href="#pricing">See our plans &rarr;</a>
       </div>
+      <div class="hero-areas">
+        <p class="hero-areas-label">Serving Ibadan's finest neighbourhoods</p>
+        <ul class="hero-areas-list">
+          <li>Bodija</li>
+          <li>Jericho</li>
+          <li>Iyaganku GRA</li>
+          <li>Oluyole</li>
+          <li>Akobo</li>
+          <li>GRA</li>
+        </ul>
+      </div>
     </div>
     <div class="hero-right">
       <img src="./hero_lifestyle_image.jpg" alt="Creative professional focused on her process" fetchpriority="high"
@@ -314,119 +325,62 @@
     <div class="pricing-header">
       <div class="stacked-heading">
         <span>One price.</span>
-        <span><em>Twice a week.</em></span>
+        <span><em>Your schedule.</em></span>
         <span>Everything included.</span>
       </div>
       <p class="pricing-sub" style="margin-top: 20px;">Every plan comes with trained, trusted personnel and all the cleaning supplies — nothing for you to buy or manage.</p>
 
-      <!-- Billing frequency selector (Per Visit / Weekly / Monthly) -->
-      <style>
-        .pricing-freq-toggle {
-          display: inline-flex;
-          gap: 4px;
-          padding: 4px;
-          border-radius: 999px;
-          background: rgba(58, 29, 109, 0.06);
-          border: 1px solid var(--border);
-        }
-        .pricing-freq-option {
-          font-family: var(--font-header);
-          font-size: 15px;
-          font-weight: 600;
-          color: var(--mid-gray);
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          padding: 10px 22px;
-          border-radius: 999px;
-          transition: all 0.2s ease;
-          white-space: nowrap;
-        }
-        .pricing-freq-option:hover { color: var(--deep-purple); }
-        .pricing-freq-option.active {
-          background: var(--primary-purple);
-          color: var(--white);
-          box-shadow: 0 2px 8px rgba(58, 29, 109, 0.25);
-        }
-        @media (max-width: 480px) {
-          .pricing-freq-toggle { width: 100%; justify-content: center; }
-          .pricing-freq-option { padding: 10px 14px; font-size: 14px; }
-        }
-      </style>
-      <div class="pricing-toggle-container">
-        <div class="pricing-freq-toggle" id="pricing-freq-toggle" role="tablist" aria-label="Billing frequency">
-          <button type="button" class="pricing-freq-option active" data-freq="ONE_TIME" role="tab"
-            aria-selected="true">Per Visit</button>
-          <button type="button" class="pricing-freq-option" data-freq="WEEKLY" role="tab"
-            aria-selected="false">Once a week</button>
-          <button type="button" class="pricing-freq-option" data-freq="MONTHLY" role="tab"
-            aria-selected="false">Twice a week</button>
+      <!-- Step 1: home size. Plan cards below update to the chosen size (index.js). -->
+      <div class="pricing-toggle-container pricing-size-picker">
+        <p class="pricing-size-label" id="pricing-size-label">Your home size</p>
+        <div class="pricing-size-toggle" id="pricing-size-toggle" role="group" aria-labelledby="pricing-size-label">
+          <button type="button" class="pricing-size-option" data-bedrooms="1" aria-pressed="false">1 bed</button>
+          <button type="button" class="pricing-size-option active" data-bedrooms="2" aria-pressed="true">2 bed</button>
+          <button type="button" class="pricing-size-option" data-bedrooms="3" aria-pressed="false">3 bed</button>
+          <button type="button" class="pricing-size-option" data-bedrooms="4" aria-pressed="false">4 bed</button>
+          <button type="button" class="pricing-size-option" data-bedrooms="5" aria-pressed="false">5 bed</button>
         </div>
       </div>
-
     </div>
 
-    <div class="pricing-grid">
-      <!-- 1 Bedroom -->
-      <div class="pricing-card">
-        <p class="pc-label">1 Bedroom</p>
-        <div class="pc-price-display">
-          <div class="pc-price-primary">
-            <span class="price-val">₦5,000</span><span class="price-unit"> / visit</span>
-          </div>
-          <div class="pc-price-secondary" style="display: none;">₦20,000 / month (twice a week)</div>
-        </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦20,000/mo</div>
-        <a href="#" class="pc-btn">Book Appointment</a>
-      </div>
-      <!-- 2 Bedroom FEATURED -->
-      <div class="pricing-card featured">
-        <span class="badge-most-booked">Most Booked</span>
-        <p class="pc-label">2 Bedroom</p>
+    <!-- Step 2: how often. Static values are the 2-bedroom prices. -->
+    <div class="pricing-grid plan-grid" aria-live="polite">
+      <div class="pricing-card" data-freq="ONE_TIME">
+        <p class="pc-label">Per visit</p>
+        <p class="pc-sub">A one-off clean, whenever you need it</p>
         <div class="pc-price-display">
           <div class="pc-price-primary">
             <span class="price-val">₦8,000</span><span class="price-unit"> / visit</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦40,000 / month (twice a week)</div>
+          <div class="pc-price-secondary">Pay as you go, no commitment</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦24,000/mo</div>
-        <a href="#" class="pc-btn">Book Appointment</a>
+        <div class="pc-savings" style="visibility: hidden;"></div>
+        <a href="#" class="pc-btn">Book a visit</a>
       </div>
-      <!-- 3 Bedroom -->
-      <div class="pricing-card">
-        <p class="pc-label">3 Bedroom</p>
+      <div class="pricing-card" data-freq="WEEKLY">
+        <p class="pc-label">Once a week</p>
+        <p class="pc-sub">4 visits a month, paid monthly</p>
         <div class="pc-price-display">
           <div class="pc-price-primary">
-            <span class="price-val">₦12,000</span><span class="price-unit"> / visit</span>
+            <span class="price-val">₦20,000</span><span class="price-unit"> / month</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦50,000 / month (twice a week)</div>
+          <div class="pc-price-secondary pc-per-clean">₦5,000 per clean</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦46,000/mo</div>
-        <a href="#" class="pc-btn">Book Appointment</a>
+        <div class="pc-savings">You save ₦12,000 a month</div>
+        <a href="#" class="pc-btn">Book once a week</a>
       </div>
-      <!-- 4 Bedroom -->
-      <div class="pricing-card">
-        <p class="pc-label">4 Bedroom</p>
+      <div class="pricing-card featured" data-freq="MONTHLY">
+        <span class="badge-most-booked" style="display: none;">Best value</span>
+        <p class="pc-label">Twice a week</p>
+        <p class="pc-sub">8 visits a month, paid monthly</p>
         <div class="pc-price-display">
           <div class="pc-price-primary">
-            <span class="price-val">₦15,000</span><span class="price-unit"> / visit</span>
+            <span class="price-val">₦40,000</span><span class="price-unit"> / month</span>
           </div>
-          <div class="pc-price-secondary" style="display: none;">₦40,000 / month (twice a week)</div>
+          <div class="pc-price-secondary pc-per-clean">₦5,000 per clean</div>
         </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦80,000/mo</div>
-        <a href="#" class="pc-btn">Book Appointment</a>
-      </div>
-      <!-- 5 Bedroom -->
-      <div class="pricing-card">
-        <p class="pc-label">5 Bedroom</p>
-        <div class="pc-price-display">
-          <div class="pc-price-primary">
-            <span class="price-val">₦20,000</span><span class="price-unit"> / visit</span>
-          </div>
-          <div class="pc-price-secondary" style="display: none;">₦50,000 / month (twice a week)</div>
-        </div>
-        <div class="pc-savings" style="opacity: 0; transform: translateY(5px); transition: all 0.3s;">Save ₦110,000/mo</div>
-        <a href="#" class="pc-btn">Book Appointment</a>
+        <div class="pc-savings">You save ₦24,000 a month</div>
+        <a href="#" class="pc-btn">Book twice a week</a>
       </div>
     </div>
 
@@ -806,7 +760,7 @@
                     Verify Order Details</h2>
                   <p
                     style="font-size: 13px; color: var(--mid-gray); line-height: 1.5; max-width: 260px; margin: 0 auto;">
-                    Click "submit" to complete your booking by making payment.
+                    Confirm and we'll open WhatsApp with your booking details, ready to send.
                   </p>
                 </div>
                 <div class="inline-validation-msg" id="step4-validation-msg" style="text-align: center;"></div>
