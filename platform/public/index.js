@@ -87,26 +87,30 @@ document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   el.rel = 'noopener noreferrer';
 });
 
-// Hero areas ease in, name by name, the first time they scroll into view.
-// .reveal-ready (hidden) is in the markup; adding .is-revealed plays the fade.
+// Hero areas fade in, name by name, as they scroll into view, and fade back
+// out (last name first) as they leave. .reveal-ready (hidden) is in the
+// markup; toggling .is-revealed plays the fade.
 (function () {
   const areas = document.querySelector('.hero-areas.reveal-ready');
   if (!areas) return;
-  const reveal = function () {
-    void areas.offsetWidth; // commit the hidden state so the fade-in transitions
-    areas.classList.add('is-revealed');
+  if (!('IntersectionObserver' in window)) { areas.classList.add('is-revealed'); return; }
+  const items = function () {
+    return Array.prototype.filter.call(
+      areas.querySelectorAll('.hero-areas-label, .hero-areas-row > i, .hero-areas-list li'),
+      function (el) { return getComputedStyle(el).display !== 'none'; }
+    );
   };
-  if (!('IntersectionObserver' in window)) { reveal(); return; }
-  Array.prototype.filter.call(
-    areas.querySelectorAll('.hero-areas-label, .hero-areas-row > i, .hero-areas-list li'),
-    function (el) { return getComputedStyle(el).display !== 'none'; }
-  ).forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
-  const io = new IntersectionObserver(function (entries) {
-    if (!entries.some(function (e) { return e.isIntersecting; })) return;
-    io.disconnect();
-    reveal();
-  }, { threshold: 0.6 });
-  io.observe(areas);
+  const setShown = function (shown) {
+    if (shown === areas.classList.contains('is-revealed')) return;
+    const els = items();
+    els.forEach(function (el, i) {
+      el.style.transitionDelay = (shown ? i * 70 : (els.length - 1 - i) * 40) + 'ms';
+    });
+    areas.classList.toggle('is-revealed', shown);
+  };
+  new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) { setShown(entry.intersectionRatio >= 0.6); });
+  }, { threshold: [0, 0.6] }).observe(areas);
 })();
 
 // Testimonial slider

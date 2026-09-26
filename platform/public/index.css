@@ -329,14 +329,19 @@
     border-radius: 50%;
     background: var(--neon-green);
   }
-  /* Areas ease in, name by name, the first time they scroll into view.
-     .reveal-ready is in the markup (hidden, no transition); index.js adds
-     .is-revealed, whose transition plays the fade-in. */
+  /* Areas fade in, name by name, as they scroll into view, and back out as
+     they leave. .reveal-ready is in the markup (so first paint is already
+     hidden, no flash); index.js toggles .is-revealed. Each state's
+     transition is the one used when moving INTO it: quicker fade-out,
+     softer fade-in. */
   .hero-areas.reveal-ready .hero-areas-label,
   .hero-areas.reveal-ready .hero-areas-row > i,
   .hero-areas.reveal-ready .hero-areas-list li {
     opacity: 0;
     transform: translateY(8px);
+    transition:
+      opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+      transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
   }
   .hero-areas.reveal-ready.is-revealed .hero-areas-label,
   .hero-areas.reveal-ready.is-revealed .hero-areas-row > i,
