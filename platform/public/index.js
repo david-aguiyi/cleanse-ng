@@ -258,35 +258,35 @@ const frequencySection = document.getElementById('frequency-section');
 const frequencyCardsContainer = document.getElementById('frequency-cards-container');
 
 // --- Canonical booking pricing (mirror of platform/src/domain/pricing/plan-pricing.ts) ---
-// Values in NAIRA. The four parts ALWAYS sum to `total`. If you change a number
-// here, change the server matrix too — the SERVER total is what Paystack charges,
-// and the two must match or the customer sees one price and is charged another.
+// Values in NAIRA. If you change a number here, change the server matrix too —
+// the SERVER total is what Paystack charges, and the two must match or the
+// customer sees one price and is charged another.
 // For WEEKLY/MONTHLY, `total` is the whole month (charged upfront).
 const CLEANSE_PRICING = {
   1: {
-    ONE_TIME: { visits: 1, total: 9000, cleaning: 4500, transport: 2000, supplies: 700, fee: 1800 },
-    WEEKLY:   { visits: 4, total: 32000, cleaning: 15000, transport: 5000, supplies: 2800, fee: 9200 },
-    MONTHLY:  { visits: 8, total: 49000, cleaning: 30000, transport: 8000, supplies: 5600, fee: 5400 },
+    ONE_TIME: { visits: 1, total: 5000 },
+    WEEKLY:   { visits: 4, total: 12000 },
+    MONTHLY:  { visits: 8, total: 20000 },
   },
   2: {
-    ONE_TIME: { visits: 1, total: 13000, cleaning: 7400, transport: 2000, supplies: 1000, fee: 2600 },
-    WEEKLY:   { visits: 4, total: 44000, cleaning: 25000, transport: 5000, supplies: 4000, fee: 10000 },
-    MONTHLY:  { visits: 8, total: 74000, cleaning: 50000, transport: 8000, supplies: 8000, fee: 8000 },
+    ONE_TIME: { visits: 1, total: 8000 },
+    WEEKLY:   { visits: 4, total: 20000 },
+    MONTHLY:  { visits: 8, total: 40000 },
   },
   3: {
-    ONE_TIME: { visits: 1, total: 17000, cleaning: 10100, transport: 2000, supplies: 1500, fee: 3400 },
-    WEEKLY:   { visits: 4, total: 52000, cleaning: 35000, transport: 5000, supplies: 6000, fee: 6000 },
-    MONTHLY:  { visits: 8, total: 90000, cleaning: 60000, transport: 8000, supplies: 12000, fee: 10000 },
+    ONE_TIME: { visits: 1, total: 12000 },
+    WEEKLY:   { visits: 4, total: 30000 },
+    MONTHLY:  { visits: 8, total: 50000 },
   },
   4: {
-    ONE_TIME: { visits: 1, total: 20000, cleaning: 12000, transport: 2000, supplies: 2000, fee: 4000 },
-    WEEKLY:   { visits: 4, total: 60000, cleaning: 40000, transport: 5000, supplies: 8000, fee: 7000 },
-    MONTHLY:  { visits: 8, total: 110000, cleaning: 75000, transport: 8000, supplies: 16000, fee: 11000 },
+    ONE_TIME: { visits: 1, total: 15000 },
+    WEEKLY:   { visits: 4, total: 40000 },
+    MONTHLY:  { visits: 8, total: 40000 },
   },
   5: {
-    ONE_TIME: { visits: 1, total: 25000, cleaning: 16000, transport: 2000, supplies: 2000, fee: 5000 },
-    WEEKLY:   { visits: 4, total: 80000, cleaning: 55000, transport: 5000, supplies: 8000, fee: 12000 },
-    MONTHLY:  { visits: 8, total: 120000, cleaning: 80000, transport: 8000, supplies: 16000, fee: 16000 },
+    ONE_TIME: { visits: 1, total: 20000 },
+    WEEKLY:   { visits: 4, total: 50000 },
+    MONTHLY:  { visits: 8, total: 50000 },
   },
 };
 
@@ -322,14 +322,14 @@ function normalizeFreq(v) {
 function currentFreq() {
   return normalizeFreq(visitsSelect && visitsSelect.value) || 'ONE_TIME';
 }
-function planBreakdown(bedrooms, freq) {
+function planPrice(bedrooms, freq) {
   if (!bedrooms || !CLEANSE_PRICING[bedrooms]) return null;
   const cell = CLEANSE_PRICING[bedrooms][freq || 'ONE_TIME'];
   if (!cell) return null;
   return Object.assign({ bedrooms: bedrooms, freq: freq || 'ONE_TIME' }, cell);
 }
-function currentBreakdown() {
-  return planBreakdown(currentBedrooms(), currentFreq());
+function currentPlanPrice() {
+  return planPrice(currentBedrooms(), currentFreq());
 }
 function nairaFmt(n) { return '₦' + Number(n).toLocaleString(); }
 // The plan holder is a <select>; setting a value that is not an existing option
@@ -347,23 +347,6 @@ function setPlanValue(value) {
   }
   planInput.value = value;
 }
-// Customer-facing itemised rows for a breakdown cell.
-function breakdownRows(b) {
-  return [
-    { label: 'Cleaning service', value: b.cleaning },
-    { label: 'Transport',        value: b.transport },
-    { label: 'Supplies',         value: b.supplies },
-    { label: 'Service fee',      value: b.fee },
-  ];
-}
-function renderBreakdownInto(el, b) {
-  if (!el) return;
-  el.innerHTML = breakdownRows(b).map(function (r) {
-    return '<div style="display:flex;justify-content:space-between;font-size:14px;color:var(--black);">' +
-      '<span>' + r.label + '</span><span>' + nairaFmt(r.value) + '</span></div>';
-  }).join('');
-}
-
 // Calendar and dynamic schedule options
 const bookingDateInput = document.getElementById('booking-date');
 const bookingScheduleSelect = document.getElementById('booking-schedule');
@@ -535,13 +518,12 @@ function updateBookingSummary() {
   const summaryMetaSched = document.getElementById('summary-meta-schedule');
   const summarySchedText = document.getElementById('summary-schedule-text');
   const summaryBreakdown = document.getElementById('summary-breakdown-container');
-  const summaryRows = document.getElementById('summary-breakdown-rows');
   const summaryTotal = document.getElementById('summary-total-price');
   const summaryTotalLabel = document.getElementById('summary-total-label');
   const summaryTotalNote = document.getElementById('summary-total-note');
 
   const bedrooms = currentBedrooms();
-  const b = currentBreakdown();
+  const b = currentPlanPrice();
 
   if (!bedrooms || !b) {
     summaryPlanName.textContent = "No Plan Selected";
@@ -573,9 +555,8 @@ function updateBookingSummary() {
     summaryMetaSched.style.display = 'none';
   }
 
-  // Itemised breakdown
+  // Total only — no itemised split.
   summaryBreakdown.style.display = 'flex';
-  renderBreakdownInto(summaryRows, b);
   summaryTotal.textContent = nairaFmt(b.total);
   if (summaryTotalLabel) {
     summaryTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total' : 'Total / month';
@@ -750,16 +731,14 @@ function updateVerifyStepDetails() {
   }
   document.getElementById('verify-date-time').textContent = `${dateVal}${timeStr ? ', ' + timeStr : ''}`;
 
-  // Plan + itemised breakdown
-  const b = currentBreakdown();
-  const verifyRows = document.getElementById('verify-breakdown-rows');
+  // Plan + total
+  const b = currentPlanPrice();
   const verifyTotal = document.getElementById('verify-total-price');
   const verifyTotalLabel = document.getElementById('verify-total-label');
   const verifyExtras = document.getElementById('verify-extras');
 
   if (!b) {
     if (verifyExtras) verifyExtras.textContent = 'Plan: not selected';
-    if (verifyRows) verifyRows.innerHTML = '';
     if (verifyTotal) verifyTotal.textContent = 'TBD';
     return;
   }
@@ -770,7 +749,6 @@ function updateVerifyStepDetails() {
     : `${bedroomLabel.replace(' Flat', '')} (${meta.title} · ${meta.subtitle})`;
 
   if (verifyExtras) verifyExtras.textContent = `Plan: cleanse.ng ${freqText}`;
-  renderBreakdownInto(verifyRows, b);
   if (verifyTotal) verifyTotal.textContent = nairaFmt(b.total);
   if (verifyTotalLabel) {
     verifyTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total Price' : 'Total / month';
@@ -1678,17 +1656,17 @@ if (bookingForm) {
     const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
 
     // Calculate pricing details from the canonical matrix.
-    const waBreakdown = currentBreakdown();
+    const waPrice = currentPlanPrice();
     let priceDetailsText = "";
     let visitsText = visits;
-    if (waBreakdown) {
-      const wm = FREQ_META[waBreakdown.freq];
+    if (waPrice) {
+      const wm = FREQ_META[waPrice.freq];
       visitsText = wm.short;
-      if (waBreakdown.freq === 'ONE_TIME') {
-        priceDetailsText = `${nairaFmt(waBreakdown.total)} / visit`;
+      if (waPrice.freq === 'ONE_TIME') {
+        priceDetailsText = `${nairaFmt(waPrice.total)} / visit`;
       } else {
-        priceDetailsText = `${nairaFmt(waBreakdown.total)} / month ` +
-          `(${waBreakdown.visits} visits · ${nairaFmt(Math.round(waBreakdown.total / waBreakdown.visits))} per clean)`;
+        priceDetailsText = `${nairaFmt(waPrice.total)} / month ` +
+          `(${waPrice.visits} visits · ${nairaFmt(Math.round(waPrice.total / waPrice.visits))} per clean)`;
       }
     } else {
       priceDetailsText = "Pricing to be confirmed";
