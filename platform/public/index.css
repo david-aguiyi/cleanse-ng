@@ -574,16 +574,16 @@
   }
   .testimonial-name {
     font-family: var(--font-header);
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: -0.005em;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     color: var(--white);
   }
   .testimonial-role {
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 15px;
     color: var(--lavender);
-    opacity: 0.75;
+    opacity: 0.7;
   }
   .testimonial-controls {
     display: flex;
