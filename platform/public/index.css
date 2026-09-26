@@ -5,6 +5,7 @@
     --primary-purple: #3A1D6D;
     --deep-purple: #1A0D33;
     --neon-green: #7CFC00;
+    --green-on-light: #2F7A00; /* neon green deepened to read on light backgrounds (5:1) */
     --lavender: #B5BCFF;
     --light-gray-brand: #EDEDF2;
     --white: #FFFFFF;
@@ -515,6 +516,7 @@
     color: var(--primary-purple);
     font-family: var(--font-header);
   }
+  .eyebrow.eyebrow-green { color: var(--green-on-light); }
   .problem-right p {
     font-size: 17px;
     line-height: 1.7;
