@@ -496,7 +496,8 @@
     /* Responsive */
     @media (max-width: 992px) {
       .policy-layout {
-        grid-template-columns: 1fr;
+        /* minmax(0, …) so wide content (e.g. the pricing table) can't stretch the track past the viewport */
+        grid-template-columns: minmax(0, 1fr);
       }
       .policy-sidebar {
         display: none;
