@@ -258,13 +258,12 @@ function positionSizeIndicator(animate) {
 
 // Ease the new prices up into place, staggered across the three cards.
 function animatePriceSwap() {
-  document.querySelectorAll('.plan-grid .pricing-card').forEach(function (card, i) {
-    card.querySelectorAll('.pc-price-display, .pc-savings').forEach(function (el) {
-      el.classList.remove('is-updating');
-      void el.offsetWidth; // restart the animation
-      el.style.animationDelay = (i * 45) + 'ms';
-      el.classList.add('is-updating');
-    });
+  // Only the price figure moves; labels, per-clean and savings lines stay still.
+  document.querySelectorAll('.plan-grid .pricing-card .price-val').forEach(function (el, i) {
+    el.classList.remove('is-updating');
+    void el.offsetWidth; // restart the animation
+    el.style.animationDelay = (i * 45) + 'ms';
+    el.classList.add('is-updating');
   });
 }
 

@@ -978,20 +978,20 @@
     outline: 2px solid var(--primary-purple);
     outline-offset: 2px;
   }
-  /* Prices ease up into place when the size changes. */
+  /* Only the price figure eases up into place when the size changes.
+     inline-block so the transform applies to the span. */
   @keyframes pc-price-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .pc-price-display.is-updating,
-  .pc-savings.is-updating {
+  .plan-grid .price-val { display: inline-block; }
+  .plan-grid .price-val.is-updating {
     animation: pc-price-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
   }
   @media (prefers-reduced-motion: reduce) {
     .pricing-size-indicator,
     .pricing-size-option { transition: none; }
-    .pc-price-display.is-updating,
-    .pc-savings.is-updating { animation: none; }
+    .plan-grid .price-val.is-updating { animation: none; }
   }
   #pricing .pricing-header { margin-bottom: 36px; }
   .pricing-grid.plan-grid {
