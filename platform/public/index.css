@@ -1136,14 +1136,14 @@
     font-family: var(--font-header);
     font-size: 16px;
     font-weight: 600;
-    color: var(--deep-purple);
+    color: var(--primary-purple);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
   }
-  .faq-q:hover { color: var(--primary-purple); }
+  .faq-q:hover { color: var(--deep-purple); }
   .faq-icon {
     width: 20px;
     height: 20px;
