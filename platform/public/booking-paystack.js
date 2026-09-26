@@ -84,6 +84,29 @@
     return form ? form.querySelector('button[type="submit"]') : null;
   }
 
+  // Inject a tiny button spinner once, so the confirm button shows an obvious
+  // "working" state during the (multi-step) booking + payment round-trips.
+  var _spinInjected = false;
+  function ensureSpinnerCss() {
+    if (_spinInjected) return;
+    _spinInjected = true;
+    var s = document.createElement("style");
+    s.textContent =
+      "@keyframes cl-spin{to{transform:rotate(360deg)}}" +
+      ".cl-spin{display:inline-block;width:14px;height:14px;margin-right:8px;" +
+      "border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;" +
+      "animation:cl-spin .7s linear infinite;vertical-align:-2px}" +
+      "button[type=submit].is-loading{opacity:.92;cursor:progress}";
+    document.head.appendChild(s);
+  }
+  function setBtnLoading(btn, text) {
+    if (!btn) return;
+    ensureSpinnerCss();
+    btn.disabled = true;
+    btn.classList.add("is-loading");
+    btn.innerHTML = '<span class="cl-spin" aria-hidden="true"></span>' + text;
+  }
+
   async function postJSON(url, body) {
     try {
       var res = await fetch(url, {
@@ -128,9 +151,9 @@
 
     var startAt = date + "T" + slotToHour(slot) + ":00:00+01:00";
     var btn = submitBtn();
-    var original = btn ? btn.textContent : "";
-    if (btn) { btn.disabled = true; btn.textContent = "Redirecting to payment…"; }
-    setMsg("Creating your booking…", false);
+    var original = btn ? btn.innerHTML : "";
+    setBtnLoading(btn, "Creating your booking…");
+    setMsg("Creating your booking… this takes a few seconds.", false);
 
     try {
       var q = await postJSON("/api/v1/quotes", {
@@ -151,6 +174,8 @@
       if (!b.ok) throw new Error((b.error && b.error.message) || "Could not create your booking.");
 
       var ref = b.data.booking_reference;
+      setBtnLoading(btn, "Redirecting to payment…");
+      setMsg("Booking confirmed — taking you to secure payment…", false);
       var p = await postJSON("/api/v1/bookings/" + encodeURIComponent(ref) + "/payments", {});
       if (!p.ok) throw new Error((p.error && p.error.message) || "Could not start payment.");
 
@@ -158,7 +183,7 @@
       window.location.href = p.data.authorization_url;
     } catch (err) {
       setMsg((err && err.message) || "Something went wrong. Please try again.", true);
-      if (btn) { btn.disabled = false; btn.textContent = original; }
+      if (btn) { btn.disabled = false; btn.classList.remove("is-loading"); btn.innerHTML = original; }
     }
   }
 })();

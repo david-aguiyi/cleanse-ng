@@ -244,6 +244,34 @@
     font-weight: 400;
     font-family: var(--font-header);
   }
+  .hero-proof {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  .hero-proof-count {
+    font-family: var(--font-header);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--neon-green);
+    padding-right: 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .hero-proof-label {
+    font-family: var(--font-header);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--lavender);
+  }
   .hero-right {
     position: relative;
     overflow: hidden;
