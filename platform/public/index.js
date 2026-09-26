@@ -87,48 +87,6 @@ document.querySelectorAll('[data-wa-link]').forEach(function (el) {
   el.rel = 'noopener noreferrer';
 });
 
-// Hero areas fade in, name by name, as they scroll into view, and fade back
-// out (last name first) as they leave. .reveal-ready (hidden) is in the
-// markup; toggling .is-revealed plays the fade.
-(function () {
-  const areas = document.querySelector('.hero-areas.reveal-ready');
-  if (!areas) return;
-  if (!('IntersectionObserver' in window)) { areas.classList.add('is-revealed'); return; }
-  const items = function () {
-    return Array.prototype.filter.call(
-      areas.querySelectorAll('.hero-areas-label, .hero-areas-row > i, .hero-areas-list li'),
-      function (el) { return getComputedStyle(el).display !== 'none'; }
-    );
-  };
-  const setShown = function (shown) {
-    if (shown === areas.classList.contains('is-revealed')) return;
-    const els = items();
-    els.forEach(function (el, i) {
-      el.style.transitionDelay = (shown ? i * 70 : (els.length - 1 - i) * 40) + 'ms';
-    });
-    areas.classList.toggle('is-revealed', shown);
-  };
-  new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) { setShown(entry.intersectionRatio >= 0.6); });
-  }, { threshold: [0, 0.6] }).observe(areas);
-})();
-
-// .link-draw underlines draw in when scrolled into view and undraw when they
-// leave. .line-ready is added here, so without JS the underline just shows.
-(function () {
-  const links = document.querySelectorAll('.link-draw');
-  if (!links.length || !('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      entry.target.classList.toggle('is-drawn', entry.intersectionRatio >= 1);
-    });
-  }, { threshold: [0, 1] });
-  links.forEach(function (link) {
-    link.classList.add('line-ready');
-    io.observe(link);
-  });
-})();
-
 // Testimonial slider
 let testimonialInterval;
 let activeSlides = [];
