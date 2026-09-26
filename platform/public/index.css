@@ -185,6 +185,22 @@
     font-weight: 700;
     color: var(--neon-green);
   }
+  /* Brand swoosh under key headline phrases (drawn by brand-swoosh.js).
+     On dark sections the phrase is white and the neon swoosh carries the
+     emphasis, as in the logo artwork. */
+  [data-swoosh] {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .hero h1 em[data-swoosh],
+  .final-cta h2 em[data-swoosh] { color: var(--white); }
+  /* Room for each swoosh below its phrase, reserved up front (in em, so it
+     holds at every size) so nothing shifts when the script adds the swoosh. */
+  .hero h1 [data-swoosh] { padding-bottom: 0.48em; }
+  .problem-left h2 [data-swoosh] { padding-bottom: 0.33em; }
+  .testimonials h2 [data-swoosh] { padding-bottom: 0.19em; }
+  .final-cta h2 [data-swoosh] { padding-bottom: 0.67em; }
   .hero-line {
     display: inline-block;
     white-space: nowrap;
