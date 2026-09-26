@@ -236,17 +236,21 @@
     border-bottom-color: var(--neon-green);
     background-position: 0 0;
   }
-  .hero-sub-strong {
+  .hero-sub b {
     color: var(--white);
-    font-size: 16px;
-    margin-top: -8px;
+    font-weight: 600;
+  }
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
   }
   .hero-trust {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 20px;
+    gap: 8px 22px;
     list-style: none;
-    margin-top: -4px;
   }
   .hero-trust li {
     display: inline-flex;
@@ -255,69 +259,66 @@
     font-family: var(--font-header);
     font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--lavender);
+    letter-spacing: 0.02em;
+    color: var(--white);
   }
-  .hero-trust i {
+  .hero-trust i,
+  .hero-areas > i {
+    width: 12px;
+    text-align: center;
     font-size: 11px;
     color: var(--neon-green);
+    flex-shrink: 0;
   }
   .hero-areas {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: baseline;
+    gap: 8px;
     max-width: 480px;
-    margin-top: 8px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
-  .hero-areas-label {
-    font-family: var(--font-header);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--lavender);
-    opacity: 0.75;
-  }
-  /* Every item gets a leading dot; the list is pulled left by one dot + gap and
-     clipped by .hero-areas, so wrapped lines never start with a dot. */
-  .hero-areas { overflow: hidden; }
+  /* Every area gets a leading dot; the list is pulled left by one dot + its
+     margins and clipped, so wrapped lines never start with a dot. */
+  .hero-areas-clip { overflow: hidden; }
   .hero-areas-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 0;
+    gap: 4px 0;
     list-style: none;
-    margin-left: -28px;
+    margin-left: -22px;
   }
   .hero-areas-list li {
     display: inline-flex;
     align-items: center;
     font-family: var(--font-header);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    color: var(--white);
     letter-spacing: 0.01em;
+    color: var(--lavender);
   }
   .hero-areas-list li::before {
     content: "";
-    width: 4px;
-    height: 4px;
-    margin: 0 12px;
+    width: 3px;
+    height: 3px;
+    margin: 0 9px 0 10px;
     border-radius: 50%;
-    background: var(--neon-green);
+    background: var(--lavender);
+    opacity: 0.6;
   }
+  /* "100+ homes served" sits on the photo as a frosted label. */
   .hero-proof {
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+    z-index: 2;
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    width: fit-content;
-    padding: 9px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 10px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.035);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
+    background: rgba(26, 13, 51, 0.72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
   .hero-proof-count {
     font-family: var(--font-header);
@@ -334,6 +335,14 @@
     font-weight: 500;
     letter-spacing: 0.05em;
     color: var(--lavender);
+  }
+  /* Phones: photo first, then the message. */
+  @media (max-width: 900px) {
+    .hero .hero-right { order: -1; min-height: 300px; }
+    .hero .hero-left { padding-top: 40px; }
+    .hero-proof { left: 16px; bottom: 16px; padding: 8px 14px; gap: 10px; }
+    .hero-proof-count { font-size: 14px; padding-right: 10px; }
+    .hero-proof-label { font-size: 12px; }
   }
   .hero-right {
     position: relative;
@@ -380,6 +389,13 @@
   .problem-left h2 em {
     font-style: italic;
     color: var(--primary-purple);
+  }
+  .problem-lead {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--mid-gray);
+    max-width: 460px;
+    margin: -20px 0 32px;
   }
   .problem-points {
     display: flex;
