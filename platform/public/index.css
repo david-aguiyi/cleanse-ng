@@ -1073,10 +1073,6 @@
     max-width: 620px;
     font-weight: 400;
   }
-  .trust-content p b {
-    color: var(--deep-purple);
-    font-weight: 600;
-  }
   .trust-content p.trust-signoff {
     font-family: var(--font-header);
     font-size: clamp(20px, 2.4vw, 26px);
