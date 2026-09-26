@@ -203,6 +203,11 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-left">
+      <!-- Desktop: sits above the headline. Phones: lifted onto the photo (index.css). -->
+      <p class="hero-proof">
+        <span class="hero-proof-count">100+</span>
+        <span class="hero-proof-label">homes served across Ibadan</span>
+      </p>
       <h1><span class="hero-line">A cleaning</span><br><span class="hero-line">experience</span><br><span class="hero-line"><em>you can trust.</em></span></h1>
       <p class="hero-sub">Book vetted, trained Cleanse Pros for a professional home-cleaning experience designed around <b>care, consistency and peace of mind.</b></p>
       <div class="hero-actions" style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
@@ -216,16 +221,19 @@
           <li><i class="fa-solid fa-check" aria-hidden="true"></i>Trusted</li>
         </ul>
         <div class="hero-areas">
-          <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-          <div class="hero-areas-clip">
-            <ul class="hero-areas-list" aria-label="Areas we serve">
-              <li>Bodija</li>
-              <li>Jericho</li>
-              <li>Iyaganku GRA</li>
-              <li>Oluyole</li>
-              <li>Akobo</li>
-              <li>GRA</li>
-            </ul>
+          <p class="hero-areas-label">Serving Ibadan's finest neighbourhoods</p>
+          <div class="hero-areas-row">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <div class="hero-areas-clip">
+              <ul class="hero-areas-list" aria-label="Areas we serve">
+                <li>Bodija</li>
+                <li>Jericho</li>
+                <li>Iyaganku GRA</li>
+                <li>Oluyole</li>
+                <li>Akobo</li>
+                <li>GRA</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -234,10 +242,6 @@
       <img src="./hero_lifestyle_image.jpg" alt="Woman in a lime-green top holding her hands out in front of the cleanse.ng logo" fetchpriority="high"
         loading="eager" onerror="this.src='./hero_lifestyle_image.png'">
       <div class="hero-right-overlay"></div>
-      <p class="hero-proof">
-        <span class="hero-proof-count">100+</span>
-        <span class="hero-proof-label">homes served across Ibadan</span>
-      </p>
       <!-- Fallback background pattern if image fails -->
       <style>
         .hero-right:not(:has(img[style*="none"])) {

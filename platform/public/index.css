@@ -243,8 +243,7 @@
   .hero-meta {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 4px;
+    gap: 14px;
   }
   .hero-trust {
     display: flex;
@@ -260,65 +259,80 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: var(--white);
+    color: var(--lavender);
   }
   .hero-trust i,
-  .hero-areas > i {
+  .hero-areas-row > i {
     width: 12px;
     text-align: center;
     font-size: 11px;
     color: var(--neon-green);
     flex-shrink: 0;
   }
+  /* Areas. Desktop: hairline, small label, names with neon dots. */
   .hero-areas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 480px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .hero-areas-label {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.75;
+  }
+  .hero-areas-row {
     display: flex;
     align-items: baseline;
     gap: 8px;
-    max-width: 480px;
   }
+  .hero-areas-row > i { display: none; }
   /* Every area gets a leading dot; the list is pulled left by one dot + its
      margins and clipped, so wrapped lines never start with a dot. */
   .hero-areas-clip { overflow: hidden; }
   .hero-areas-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 0;
+    gap: 6px 0;
     list-style: none;
-    margin-left: -22px;
+    margin-left: -28px;
   }
   .hero-areas-list li {
     display: inline-flex;
     align-items: center;
     font-family: var(--font-header);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: var(--lavender);
+    color: var(--white);
   }
   .hero-areas-list li::before {
     content: "";
-    width: 3px;
-    height: 3px;
-    margin: 0 9px 0 10px;
+    width: 4px;
+    height: 4px;
+    margin: 0 12px;
     border-radius: 50%;
-    background: var(--lavender);
-    opacity: 0.6;
+    background: var(--neon-green);
   }
-  /* "100+ homes served" sits on the photo as a frosted label. */
+  /* "100+ homes served". Desktop: a pill above the headline. */
   .hero-proof {
-    position: absolute;
-    left: 32px;
-    bottom: 32px;
-    z-index: 2;
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: fit-content;
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 999px;
-    background: rgba(26, 13, 51, 0.72);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.035);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
   }
   .hero-proof-count {
     font-family: var(--font-header);
@@ -336,13 +350,40 @@
     letter-spacing: 0.05em;
     color: var(--lavender);
   }
-  /* Phones: photo first, then the message. */
+  /* Phones only: photo first, the pill lifted onto the photo, and the
+     trust + areas lines compacted. Desktop keeps the layout above. */
   @media (max-width: 900px) {
     .hero .hero-right { order: -1; min-height: 300px; }
-    .hero .hero-left { padding-top: 40px; }
-    .hero-proof { left: 16px; bottom: 16px; padding: 8px 14px; gap: 10px; }
+    .hero .hero-left { position: relative; padding-top: 40px; }
+    .hero-proof {
+      position: absolute;
+      left: 16px;
+      top: -16px;
+      transform: translateY(-100%);
+      z-index: 2;
+      padding: 8px 14px;
+      gap: 10px;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(26, 13, 51, 0.72);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
     .hero-proof-count { font-size: 14px; padding-right: 10px; }
     .hero-proof-label { font-size: 12px; }
+    .hero-meta { gap: 10px; }
+    .hero-trust li { color: var(--white); }
+    .hero-areas { margin-top: 0; padding-top: 0; border-top: none; }
+    .hero-areas-label { display: none; }
+    .hero-areas-row > i { display: inline-block; }
+    .hero-areas-list { gap: 4px 0; margin-left: -22px; }
+    .hero-areas-list li { font-size: 13px; color: var(--lavender); }
+    .hero-areas-list li::before {
+      width: 3px;
+      height: 3px;
+      margin: 0 9px 0 10px;
+      background: var(--lavender);
+      opacity: 0.6;
+    }
   }
   .hero-right {
     position: relative;
