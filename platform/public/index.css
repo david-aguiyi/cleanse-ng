@@ -92,6 +92,35 @@
   .topbar a { color: var(--neon-green); text-decoration: underline; }
 
   /* ── NAV ── */
+  /* ── WHATSAPP BAR ── */
+  .wa-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--deep-purple);
+    color: var(--lavender);
+    font-family: var(--font-header);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .wa-topbar i {
+    font-size: 14px;
+    color: var(--neon-green);
+  }
+  .wa-topbar-num {
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .wa-topbar:hover { color: var(--white); }
+  .wa-topbar:hover .wa-topbar-num { color: var(--neon-green); }
   nav {
     display: flex;
     align-items: center;
