@@ -4,10 +4,14 @@
  * - Logos: added under every .brand-logo wordmark. Each draws once, the
  *   first time it is fully in view, and redraws when hovered.
  * - Headlines: added under any [data-swoosh] word or phrase. It draws once
- *   the phrase is fully in view (below the sticky nav) and resets after it
- *   has left the screen, so it draws again on the way back.
- * - Only one swoosh draws at a time: a new draw waits in a queue until the
- *   previous one has finished, so animations never compete.
+ *   the reader has scrolled to it (fully below the sticky nav and out of
+ *   the bottom quarter of the screen) and resets after it has left the
+ *   screen, so it draws again on the way back.
+ * - Staggered reveals: the items of a [data-reveal] block (the hero area
+ *   list) fade up one by one when the block is fully in view, and fade out
+ *   in reverse when it leaves.
+ * - Only one animation plays at a time: each waits in a shared queue until
+ *   the previous one has finished, so animations never compete.
  *
  * Geometry was traced from the brand artwork (547x160 px), where the
  * wordmark spans x 41-497 (456 px wide) with its baseline at y 96. The
@@ -28,7 +32,12 @@
     "C288,122 318,116.5 360,115.5 C395,114.5 420,119 436,123.5";
   var SVG_NS = "http://www.w3.org/2000/svg";
   var DRAW_MS = 1100, GAP_MS = 150;
-  var NAV_CLEARANCE = "-80px 0px 0px 0px"; // headlines must be fully below the sticky nav
+  var REVEAL_STEP_MS = 70, REVEAL_ITEM_MS = 600;
+  // Headlines draw once fully below the sticky nav AND up out of the bottom
+  // quarter of the screen, i.e. once the reader has actually scrolled to them.
+  var HEADLINE_ZONE = "-80px 0px -25% 0px";
+  // Staggered reveals only need to be fully below the sticky nav.
+  var REVEAL_ZONE = "-80px 0px 0px 0px";
 
   var reduceMotion = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -50,29 +59,37 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- One-at-a-time draw queue ---------- */
+  /* ---------- One-at-a-time animation queue ---------- */
 
   var queueFreeAt = 0;
 
-  function requestDraw(svg) {
-    if (svg._pending || svg.classList.contains("is-drawn")) return;
+  // Run `play` on `el` when the queue is free, reserving `ms` for it.
+  function enqueue(el, ms, play) {
+    if (el._pending) return;
     var now = performance.now();
     var start = Math.max(now, queueFreeAt);
-    svg._slot = { start: start, end: start + DRAW_MS + GAP_MS };
-    queueFreeAt = svg._slot.end;
-    svg._pending = setTimeout(function () {
-      svg._pending = null;
-      svg.classList.add("is-drawn");
+    el._slot = { start: start, end: start + ms + GAP_MS };
+    queueFreeAt = el._slot.end;
+    el._pending = setTimeout(function () {
+      el._pending = null;
+      play();
     }, start - now);
   }
 
-  function cancelDraw(svg) {
-    if (!svg._pending) return;
-    clearTimeout(svg._pending);
-    svg._pending = null;
+  function dequeue(el) {
+    if (!el._pending) return;
+    clearTimeout(el._pending);
+    el._pending = null;
     // Give the slot back if nothing was queued after it.
-    if (svg._slot && svg._slot.end === queueFreeAt) queueFreeAt = svg._slot.start;
+    if (el._slot && el._slot.end === queueFreeAt) queueFreeAt = el._slot.start;
   }
+
+  function requestDraw(svg) {
+    if (svg.classList.contains("is-drawn")) return;
+    enqueue(svg, DRAW_MS, function () { svg.classList.add("is-drawn"); });
+  }
+
+  function cancelDraw(svg) { dequeue(svg); }
 
   // Back to hidden instantly (no reverse animation).
   function resetDraw(svg) {
@@ -201,7 +218,7 @@
     });
 
     // Headlines: draw when fully in view below the nav; reset once gone.
-    var wordIO = observer(NAV_CLEARANCE, function (entry) {
+    var wordIO = observer(HEADLINE_ZONE, function (entry) {
       var svg = entry.target._swoosh;
       if (fullyVisible(entry)) requestDraw(svg);
       else if (!entry.isIntersecting) resetDraw(svg);
@@ -217,6 +234,35 @@
       host._swoosh = svg;
       if (wordIO) wordIO.observe(host);
       else svg.classList.add("is-drawn");
+    });
+
+    // Staggered reveals: items fade up one by one (queued), and fade out in
+    // reverse when the block leaves. .reveal-ready is in the markup, so the
+    // hidden state is there from first paint.
+    Array.prototype.forEach.call(document.querySelectorAll("[data-reveal]"), function (block) {
+      var items = function () {
+        return Array.prototype.filter.call(block.querySelectorAll("[data-reveal-item]"),
+          function (el) { return getComputedStyle(el).display !== "none"; });
+      };
+      var show = function (on) {
+        var els = items();
+        els.forEach(function (el, i) {
+          el.style.transitionDelay = (on ? i * REVEAL_STEP_MS : (els.length - 1 - i) * 40) + "ms";
+        });
+        block.classList.toggle("is-revealed", on);
+      };
+      var revealIO = observer(REVEAL_ZONE, function (entry) {
+        if (fullyVisible(entry)) {
+          if (!block.classList.contains("is-revealed")) {
+            enqueue(block, items().length * REVEAL_STEP_MS + REVEAL_ITEM_MS, function () { show(true); });
+          }
+        } else if (!entry.isIntersecting) {
+          dequeue(block);
+          if (block.classList.contains("is-revealed")) show(false);
+        } else dequeue(block);
+      });
+      if (revealIO) revealIO.observe(block);
+      else block.classList.add("is-revealed");
     });
   }
 

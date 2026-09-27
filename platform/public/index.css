@@ -336,6 +336,22 @@
     border-radius: 50%;
     background: var(--neon-green);
   }
+  /* Areas fade up name by name (brand-swoosh.js toggles .is-revealed, queued
+     with the swooshes). Hidden state is in the markup so nothing flashes.
+     The transition of the state being entered is the one that plays. */
+  .hero-areas.reveal-ready [data-reveal-item] {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .hero-areas.reveal-ready.is-revealed [data-reveal-item] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-areas.reveal-ready [data-reveal-item] { opacity: 1; transform: none; transition: none; }
+  }
   /* "100+ homes served". Desktop: a pill above the headline. */
   .hero-proof {
     display: inline-flex;
