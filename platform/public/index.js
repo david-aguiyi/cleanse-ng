@@ -233,10 +233,12 @@ function positionSizeIndicator(animate) {
 // Ease the new prices up into place, staggered across the three cards.
 function animatePriceSwap() {
   // Only the price figure moves; labels, per-clean and savings lines stay still.
+  // Cascade step comes from the shared --stagger motion token.
+  const stagger = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stagger')) || 70;
   document.querySelectorAll('.plan-grid .pricing-card .price-val').forEach(function (el, i) {
     el.classList.remove('is-updating');
     void el.offsetWidth; // restart the animation
-    el.style.animationDelay = (i * 45) + 'ms';
+    el.style.animationDelay = (i * stagger) + 'ms';
     el.classList.add('is-updating');
   });
 }
