@@ -135,6 +135,25 @@
     letter-spacing: 0.01em;
   }
   .nav-cta:hover { background: var(--deep-purple); }
+  /* Dark site nav: the logo sits on deep purple exactly as in the brand
+     artwork (white "cleanse", neon ".ng" and swoosh). */
+  nav.site-nav {
+    background: var(--deep-purple);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .site-nav .nav-logo { color: var(--white); }
+  .site-nav .nav-links a { color: var(--lavender); }
+  .site-nav .nav-links a:hover { color: var(--white); }
+  .site-nav .nav-cta {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+  }
+  .site-nav .nav-cta:hover {
+    background: var(--white);
+    color: var(--deep-purple);
+  }
 
   /* ── HERO ── */
   .hero {
@@ -166,6 +185,23 @@
     font-weight: 700;
     color: var(--neon-green);
   }
+  /* Brand swoosh under key headline phrases (drawn by brand-swoosh.js).
+     On dark sections the phrase is white and the neon swoosh carries the
+     emphasis, as in the logo artwork. */
+  [data-swoosh] {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .hero h1 em[data-swoosh],
+  .final-cta h2 em[data-swoosh] { color: var(--white); }
+  /* Room for each swoosh below its phrase, reserved up front (in em, so it
+     holds at every size) so nothing shifts when the script adds the swoosh. */
+  .hero h1 [data-swoosh] { padding-bottom: 0.48em; }
+  .problem-left h2 [data-swoosh] { padding-bottom: 0.33em; }
+  .testimonials h2 [data-swoosh] { padding-bottom: 0.19em; }
+  .final-cta h2 [data-swoosh] { padding-bottom: 0.67em; }
+  .pricing-header [data-swoosh] { padding-bottom: 0.5em; }
   .hero-line {
     display: inline-block;
     white-space: nowrap;
@@ -236,14 +272,71 @@
     border-bottom-color: var(--neon-green);
     background-position: 0 0;
   }
-  .hero-areas {
-    font-size: 12px;
-    color: var(--lavender);
-    opacity: 0.8;
-    letter-spacing: 0.06em;
-    font-weight: 400;
-    font-family: var(--font-header);
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
+  .hero-areas-row > i {
+    width: 12px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--neon-green);
+    flex-shrink: 0;
+  }
+  /* Areas. Desktop: hairline, small label, names with neon dots. */
+  .hero-areas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 480px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .hero-areas-label {
+    font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.75;
+  }
+  .hero-areas-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .hero-areas-row > i { display: none; }
+  /* Every area gets a leading dot; the list is pulled left by one dot + its
+     margins and clipped, so wrapped lines never start with a dot. */
+  .hero-areas-clip { overflow: hidden; }
+  .hero-areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+    list-style: none;
+    margin-left: -28px;
+  }
+  .hero-areas-list li {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--white);
+  }
+  .hero-areas-list li::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    margin: 0 12px;
+    border-radius: 50%;
+    background: var(--neon-green);
+  }
+  /* "100+ homes served". Desktop: a pill above the headline. */
   .hero-proof {
     display: inline-flex;
     align-items: center;
@@ -271,6 +364,40 @@
     font-weight: 500;
     letter-spacing: 0.05em;
     color: var(--lavender);
+  }
+  /* Phones only: photo first, the pill lifted onto the photo, and the
+     areas line compacted. Desktop keeps the layout above. */
+  @media (max-width: 900px) {
+    .hero .hero-right { order: -1; min-height: 300px; }
+    .hero .hero-left { position: relative; padding-top: 40px; }
+    .hero-proof {
+      position: absolute;
+      left: 16px;
+      top: -16px;
+      transform: translateY(-100%);
+      z-index: 2;
+      padding: 6px 12px;
+      gap: 8px;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(26, 13, 51, 0.72);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .hero-proof-count { font-size: 12px; padding-right: 8px; }
+    .hero-proof-label { font-size: 10.5px; letter-spacing: 0.04em; }
+    .hero-meta { gap: 10px; }
+    .hero-areas { margin-top: 0; padding-top: 0; border-top: none; }
+    .hero-areas-label { display: none; }
+    .hero-areas-row > i { display: inline-block; }
+    .hero-areas-list { gap: 4px 0; margin-left: -22px; }
+    .hero-areas-list li { font-size: 13px; color: var(--lavender); }
+    .hero-areas-list li::before {
+      width: 3px;
+      height: 3px;
+      margin: 0 9px 0 10px;
+      background: var(--lavender);
+      opacity: 0.6;
+    }
   }
   .hero-right {
     position: relative;
@@ -318,6 +445,15 @@
     font-style: italic;
     color: var(--primary-purple);
   }
+  .problem-right p.problem-right-lead {
+    font-family: var(--font-header);
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin-bottom: -12px;
+  }
   .problem-points {
     display: flex;
     flex-direction: column;
@@ -354,12 +490,40 @@
     color: var(--primary-purple);
     font-family: var(--font-header);
   }
+  .eyebrow.eyebrow-green { color: var(--neon-green); }
+  /* Text link with a static hairline underline the width of the text. */
+  .link-draw {
+    position: relative;
+    align-self: flex-start;
+    padding: 4px 0 8px;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .link-draw::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .link-draw:hover { color: var(--primary-purple); }
   .problem-right p {
     font-size: 17px;
     line-height: 1.7;
     color: var(--mid-gray);
     font-weight: 400;
     max-width: 420px;
+  }
+  .problem-point b,
+  .problem-right p b {
+    color: var(--deep-purple);
+    font-weight: 600;
   }
   .problem-right p em {
     font-style: italic;
@@ -402,13 +566,24 @@
   }
   .testimonial-quote::before { content: '\201C'; }
   .testimonial-quote::after { content: '\201D'; }
+  /* Name on one line, title/location beneath it. */
   .testimonial-author {
-    font-size: 13px;
-    color: var(--neon-green);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .testimonial-name {
     font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--white);
+  }
+  .testimonial-role {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--lavender);
+    opacity: 0.75;
   }
   .testimonial-controls {
     display: flex;
@@ -744,6 +919,118 @@
     letter-spacing: 0.02em;
   }
   .pc-btn:hover { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
+
+  /* ── SIZE-FIRST PLANS: pick a home size, compare 3 plans side by side ── */
+  .pricing-size-picker {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pricing-size-label {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+  }
+  .pricing-size-toggle {
+    position: relative;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(58, 29, 109, 0.06);
+    border: 1px solid var(--border);
+  }
+  /* One purple pill that glides under the active size (positioned by index.js). */
+  .pricing-size-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: var(--primary-purple);
+    box-shadow: 0 2px 10px rgba(58, 29, 109, 0.28);
+    transition:
+      transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+      width 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform, width;
+    pointer-events: none;
+  }
+  .pricing-size-indicator.no-anim { transition: none; }
+  .pricing-size-option {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px 22px;
+    border-radius: 999px;
+    transition: color 0.35s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pricing-size-option:hover { color: var(--deep-purple); }
+  .pricing-size-option.active { color: var(--white); }
+  /* Before JS positions the pill, fall back to a static highlight. */
+  .pricing-size-toggle:not(.has-indicator) .pricing-size-option.active {
+    background: var(--primary-purple);
+  }
+  .pricing-size-option:focus { outline: none; }
+  .pricing-size-option:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+  }
+  /* Only the price figure eases up into place when the size changes.
+     inline-block so the transform applies to the span. */
+  @keyframes pc-price-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .plan-grid .price-val { display: inline-block; }
+  .plan-grid .price-val.is-updating {
+    animation: pc-price-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-size-indicator,
+    .pricing-size-option { transition: none; }
+    .plan-grid .price-val.is-updating { animation: none; }
+  }
+  #pricing .pricing-header { margin-bottom: 36px; }
+  .pricing-grid.plan-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+  .pricing-grid.plan-grid .pricing-card:nth-child(2) { border-right: 1px solid var(--border); }
+  .pc-sub {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mid-gray);
+    margin-top: -12px;
+  }
+  .pricing-card.featured .pc-sub { color: var(--lavender); }
+  @media (max-width: 760px) {
+    .pricing-grid.plan-grid { grid-template-columns: 1fr; }
+    .pricing-grid.plan-grid .pricing-card,
+    .pricing-grid.plan-grid .pricing-card:nth-child(2) {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      gap: 18px;
+    }
+    .pricing-grid.plan-grid .pricing-card:last-child { border-bottom: none; }
+    /* Empty savings slot only exists to align cards side by side. */
+    .pricing-grid.plan-grid .pc-savings:empty { display: none; }
+  }
+  @media (max-width: 480px) {
+    .pricing-size-toggle { width: 100%; }
+    .pricing-size-option { flex: 1; padding: 10px 0; font-size: 14px; }
+  }
   .pricing-card.featured .pc-btn {
     background: transparent;
     color: var(--neon-green);
@@ -794,6 +1081,14 @@
     line-height: 1.65;
     max-width: 620px;
     font-weight: 400;
+  }
+  .trust-content p.trust-signoff {
+    font-family: var(--font-header);
+    font-size: clamp(20px, 2.4vw, 26px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin-top: 4px;
   }
   .trust-content .btn-ghost {
     margin-top: 12px;
@@ -849,14 +1144,14 @@
     font-family: var(--font-header);
     font-size: 16px;
     font-weight: 600;
-    color: var(--deep-purple);
+    color: var(--primary-purple);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
   }
-  .faq-q:hover { color: var(--primary-purple); }
+  .faq-q:hover { color: var(--deep-purple); }
   .faq-icon {
     width: 20px;
     height: 20px;
@@ -883,7 +1178,9 @@
     font-weight: 400;
     max-width: 680px;
   }
-  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner p + p { margin-top: 10px; }
+  .faq-a-inner b { color: var(--deep-purple); font-weight: 600; }
+  .faq-item.open .faq-a { max-height: 480px; }
 
   /* ── FOOTER ── */
   footer {
@@ -2282,6 +2579,14 @@
     font-size: 17.5px;
     color: var(--lavender);
     line-height: 1.65;
+  }
+  .final-cta p.final-cta-signoff {
+    font-family: var(--font-header);
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--neon-green);
+    letter-spacing: -0.01em;
   }
   .final-cta-actions {
     display: flex;

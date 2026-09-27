@@ -163,80 +163,115 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-// Dynamic Pricing Toggle (Per Visit / Weekly / Monthly)
-const pricingFreqToggle = document.getElementById('pricing-freq-toggle');
-let selectedPricingFreq = 'ONE_TIME';
+// Pricing section: pick a home size, then compare all three plans side by side.
+// Prices come from the canonical CLEANSE_PRICING matrix (defined below), so the
+// cards, the booking modal and the server all agree.
+const pricingSizeToggle = document.getElementById('pricing-size-toggle');
+let selectedPricingBedrooms = 2;
 
-// Update the marketing pricing cards to a frequency code. Prices come from the
-// canonical CLEANSE_PRICING matrix (defined below), so cards, the booking modal
-// and the server all agree. Accepts a legacy boolean (isMonthly) too.
-function updatePricing(freq) {
-  if (freq === true) freq = 'MONTHLY';
-  else if (freq === false) freq = 'ONE_TIME';
-  if (!FREQ_META[freq]) freq = 'ONE_TIME';
-  selectedPricingFreq = freq;
+function updatePricing(bedrooms) {
+  if (bedrooms && CLEANSE_PRICING[bedrooms]) selectedPricingBedrooms = bedrooms;
+  const row = CLEANSE_PRICING[selectedPricingBedrooms];
 
-  const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
-  const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
-  const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
-  const savingsElements = document.querySelectorAll('.pc-savings');
+  // "Best value" only when one plan is strictly the cheapest per clean.
+  const perClean = FREQ_ORDER.map(function (f) { return row[f].total / row[f].visits; });
+  const lowest = Math.min.apply(null, perClean);
+  const cheapest = FREQ_ORDER.filter(function (f, i) { return perClean[i] === lowest; });
+  const bestFreq = cheapest.length === 1 ? cheapest[0] : null;
 
-  primaryPriceElements.forEach(function (el, i) {
-    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
-    if (cell) el.textContent = nairaFmt(cell.total);
-  });
-  primaryUnitElements.forEach(function (el) {
-    el.textContent = freq === 'ONE_TIME' ? ' / visit' : ' / month';
-  });
-  secondaryPriceElements.forEach(function (el) {
-    el.textContent = '';
-    el.style.display = 'none';
-  });
-  savingsElements.forEach(function (el, i) {
-    const one = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1].ONE_TIME;
-    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
-    const saving = (one && cell && freq !== 'ONE_TIME') ? (one.total * cell.visits - cell.total) : 0;
-    if (saving > 0) {
-      el.textContent = 'Save ' + nairaFmt(saving) + '/mo';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-    } else {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(5px)';
+  document.querySelectorAll('.pricing-card[data-freq]').forEach(function (card) {
+    const freq = card.getAttribute('data-freq');
+    const cell = row[freq];
+    if (!cell) return;
+    card.querySelector('.price-val').textContent = nairaFmt(cell.total);
+    const perCleanEl = card.querySelector('.pc-per-clean');
+    if (perCleanEl) perCleanEl.textContent = nairaFmt(Math.round(cell.total / cell.visits)) + ' per clean';
+    const savingsEl = card.querySelector('.pc-savings');
+    if (savingsEl) {
+      const saving = row.ONE_TIME.total * cell.visits - cell.total;
+      savingsEl.textContent = saving > 0 ? 'You save ' + nairaFmt(saving) + ' a month' : '';
+      savingsEl.style.visibility = saving > 0 ? 'visible' : 'hidden';
     }
+    const badge = card.querySelector('.badge-most-booked');
+    if (badge) badge.style.display = freq === bestFreq ? '' : 'none';
   });
 
-  if (pricingFreqToggle) {
-    pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
-      const on = btn.getAttribute('data-freq') === freq;
+  if (pricingSizeToggle) {
+    pricingSizeToggle.querySelectorAll('.pricing-size-option').forEach(function (btn) {
+      const on = Number(btn.getAttribute('data-bedrooms')) === selectedPricingBedrooms;
       btn.classList.toggle('active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    positionSizeIndicator(true);
   }
 }
 
-if (pricingFreqToggle) {
-  pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      updatePricing(btn.getAttribute('data-freq'));
-    });
+// Glide the single purple pill under the active size button. Without
+// `animate` it snaps into place (first paint, resizes, late font loads).
+function positionSizeIndicator(animate) {
+  if (!pricingSizeToggle) return;
+  let pill = pricingSizeToggle.querySelector('.pricing-size-indicator');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'pricing-size-indicator';
+    pill.setAttribute('aria-hidden', 'true');
+    pricingSizeToggle.prepend(pill);
+    pricingSizeToggle.classList.add('has-indicator');
+    animate = false;
+  }
+  const active = pricingSizeToggle.querySelector('.pricing-size-option.active');
+  if (!active) return;
+  pill.classList.toggle('no-anim', !animate);
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+  if (!animate) {
+    void pill.offsetWidth; // commit the snap before re-enabling transitions
+    pill.classList.remove('no-anim');
+  }
+}
+
+// Ease the new prices up into place, staggered across the three cards.
+function animatePriceSwap() {
+  // Only the price figure moves; labels, per-clean and savings lines stay still.
+  document.querySelectorAll('.plan-grid .pricing-card .price-val').forEach(function (el, i) {
+    el.classList.remove('is-updating');
+    void el.offsetWidth; // restart the animation
+    el.style.animationDelay = (i * 45) + 'ms';
+    el.classList.add('is-updating');
   });
 }
 
-// "Book Appointment" on a pricing card: carry the card's bedroom size AND the
-// currently selected frequency into the modal, so we never re-ask for either.
-document.querySelectorAll('.pricing-card .pc-btn').forEach(function (btn) {
+if (pricingSizeToggle) {
+  pricingSizeToggle.querySelectorAll('.pricing-size-option').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const next = Number(btn.getAttribute('data-bedrooms'));
+      if (next === selectedPricingBedrooms) return;
+      updatePricing(next);
+      animatePriceSwap();
+    });
+  });
+  positionSizeIndicator(false);
+  // Button widths shift with breakpoints and web-font loading; keep the pill fitted.
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { positionSizeIndicator(false); }).observe(pricingSizeToggle);
+  } else {
+    window.addEventListener('resize', function () { positionSizeIndicator(false); });
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { positionSizeIndicator(false); });
+  }
+}
+
+// "Book" on a plan card: carry the selected home size AND that card's plan into
+// the modal, so we never re-ask for either.
+document.querySelectorAll('.pricing-card[data-freq] .pc-btn').forEach(function (btn) {
   btn.addEventListener('click', function (e) {
     e.preventDefault();
-    const card = btn.closest('.pricing-card');
-    const label = card && card.querySelector('.pc-label');
-    const bedrooms = bedroomsFromText(label && label.textContent);
-    if (!bedrooms) { openBookingModal(''); return; }
-    const freq = FREQ_META[selectedPricingFreq] ? selectedPricingFreq : 'ONE_TIME';
+    const freq = btn.closest('.pricing-card').getAttribute('data-freq');
     // Suffix carries a marker normalizeFreq() understands, so the modal resolves
     // the exact frequency (Once a week -> WEEKLY, Twice a week -> MONTHLY).
     const suffix = freq === 'WEEKLY' ? ' (4 visits/mo)' : freq === 'MONTHLY' ? ' (8 visits/mo)' : '';
-    openBookingModal(bedrooms + ' Bedroom — ' + FREQ_META[freq].title + suffix);
+    openBookingModal(selectedPricingBedrooms + ' Bedroom — ' + FREQ_META[freq].title + suffix);
   });
 });
 
@@ -265,7 +300,7 @@ const frequencyCardsContainer = document.getElementById('frequency-cards-contain
 const CLEANSE_PRICING = {
   1: {
     ONE_TIME: { visits: 1, total: 5000 },
-    WEEKLY:   { visits: 4, total: 12000 },
+    WEEKLY:   { visits: 4, total: 15000 },
     MONTHLY:  { visits: 8, total: 20000 },
   },
   2: {
@@ -281,12 +316,12 @@ const CLEANSE_PRICING = {
   4: {
     ONE_TIME: { visits: 1, total: 15000 },
     WEEKLY:   { visits: 4, total: 40000 },
-    MONTHLY:  { visits: 8, total: 40000 },
+    MONTHLY:  { visits: 8, total: 60000 },
   },
   5: {
     ONE_TIME: { visits: 1, total: 20000 },
     WEEKLY:   { visits: 4, total: 50000 },
-    MONTHLY:  { visits: 8, total: 50000 },
+    MONTHLY:  { visits: 8, total: 75000 },
   },
 };
 
@@ -846,6 +881,25 @@ function parseTestimonialsCSV(csvText) {
   return list;
 }
 
+// "Chidinma · GRA, Ibadan" -> name on one line, title/location beneath it.
+// Mirrors the static markup in home.html.
+function buildTestimonialAuthor(author) {
+  const parts = String(author || '').split(/\s+[·•|–]\s+/);
+  const el = document.createElement('div');
+  el.className = 'testimonial-author';
+  const name = document.createElement('span');
+  name.className = 'testimonial-name';
+  name.textContent = parts[0].trim();
+  el.appendChild(name);
+  if (parts.length > 1) {
+    const role = document.createElement('span');
+    role.className = 'testimonial-role';
+    role.textContent = parts.slice(1).join(' · ').trim();
+    el.appendChild(role);
+  }
+  return el;
+}
+
 function renderTestimonials(list) {
   const track = document.querySelector('.testimonial-track');
   const dotsContainer = document.querySelector('.t-dots');
@@ -862,12 +916,8 @@ function renderTestimonials(list) {
     quoteEl.className = 'testimonial-quote';
     quoteEl.textContent = item.quote;
 
-    const authorEl = document.createElement('p');
-    authorEl.className = 'testimonial-author';
-    authorEl.textContent = item.author;
-
     slide.appendChild(quoteEl);
-    slide.appendChild(authorEl);
+    slide.appendChild(buildTestimonialAuthor(item.author));
     track.appendChild(slide);
 
     const dot = document.createElement('div');
@@ -1386,6 +1436,13 @@ if (wizardNextBtn) {
         phoneInput.reportValidity();
         return;
       }
+      // Area is required; if it were skipped here, the final submit would be
+      // silently blocked by the browser once this step is hidden.
+      const areaSelect = document.getElementById('booking-area');
+      if (areaSelect && !areaSelect.checkValidity()) {
+        areaSelect.reportValidity();
+        return;
+      }
       if (!locationInput.checkValidity()) {
         locationInput.reportValidity();
         return;
@@ -1563,26 +1620,13 @@ if (policyModal) {
   });
 }
 
-// Intercept click on Book Appointment buttons
-document.querySelectorAll('a[data-wa-link]').forEach(btn => {
-  // Only intercept buttons that are styled for modal booking (pc-btn and nav-cta)
-  if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta')) {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      let planName = '';
-      const card = btn.closest('.pricing-card');
-      if (card) {
-        let bedroomLabel = card.querySelector('.pc-label').textContent.trim();
-        if (bedroomLabel === "4 Bedroom+") bedroomLabel = "4 Bedroom";
-        planName = `${bedroomLabel} — ${FREQ_META[selectedPricingFreq].title}`;
-        openBookingModal(planName);
-      } else {
-        // Nav button opens the modal with no plan selected, allowing choice
-        openBookingModal("");
-      }
-    });
-  }
+// Nav "Book" buttons and [data-open-booking] CTAs open the modal with no plan
+// selected, allowing choice. (Pricing-card buttons are wired next to updatePricing.)
+document.querySelectorAll('a[data-wa-link].nav-cta, [data-open-booking]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openBookingModal("");
+  });
 });
 
 if (bookingForm) {
@@ -1655,36 +1699,42 @@ if (bookingForm) {
 
     const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
 
+    const areaSelect = document.getElementById('booking-area');
+    const area = areaSelect && areaSelect.selectedIndex > 0
+      ? _sanitize(areaSelect.options[areaSelect.selectedIndex].text, 50)
+      : 'Not specified';
+
     // Calculate pricing details from the canonical matrix.
     const waPrice = currentPlanPrice();
+    let homeText = selectedPlan;
+    let planText = visits;
     let priceDetailsText = "";
-    let visitsText = visits;
     if (waPrice) {
-      const wm = FREQ_META[waPrice.freq];
-      visitsText = wm.short;
+      homeText = `${waPrice.bedrooms} Bedroom ${propertyType}`;
+      planText = FREQ_META[waPrice.freq].short;
       if (waPrice.freq === 'ONE_TIME') {
         priceDetailsText = `${nairaFmt(waPrice.total)} / visit`;
       } else {
         priceDetailsText = `${nairaFmt(waPrice.total)} / month ` +
-          `(${waPrice.visits} visits · ${nairaFmt(Math.round(waPrice.total / waPrice.visits))} per clean)`;
+          `(${nairaFmt(Math.round(waPrice.total / waPrice.visits))} per clean)`;
       }
     } else {
-      priceDetailsText = "Pricing to be confirmed";
+      priceDetailsText = "To be confirmed";
     }
 
     // Construct WhatsApp message template
-    let waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n`;
-    waMessage += `• *Plan:* ${selectedPlan}\n` +
-      `• *Visits per Month:* ${visitsText}\n` +
-      `• *Pricing:* ${priceDetailsText}\n` +
+    let waMessage = `Hello Cleanse! I'd like to book a clean:\n\n`;
+    waMessage += `• *Home:* ${homeText}\n` +
+      `• *Plan:* ${planText}\n` +
+      `• *Price:* ${priceDetailsText}\n` +
+      `• *Date:* ${preferredDate}\n` +
+      `• *Time:* ${schedule}\n` +
+      `• *Area:* ${area}\n` +
+      `• *Address:* ${location}\n` +
       `• *Name:* ${fullName}\n` +
-      `• *Email:* ${email}\n` +
       `• *Phone:* ${sanitizedPhone}\n` +
-      `• *Home Address:* ${location}\n` +
-      `• *Property Type:* ${propertyType}\n` +
-      `• *Preferred Date:* ${preferredDate}\n` +
-      `• *Preferred Schedule:* ${schedule}\n` +
-      `• *Preferences:* ${preferences}`;
+      `• *Email:* ${email}\n` +
+      `• *Notes:* ${preferences}`;
 
     const whatsappUrl = _getWaUrl(waMessage);
 
@@ -2216,7 +2266,7 @@ window.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('cleanse_promo_applied', 'true');
       
       // Update homepage pricing cards and booking steps instantly
-      updatePricing(selectedPricingFreq);
+      updatePricing();
       updateFrequencyCards();
       updateBookingSummary();
 
