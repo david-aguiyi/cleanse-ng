@@ -461,6 +461,16 @@
     font-style: italic;
     color: var(--primary-purple);
   }
+  /* Desktop and larger: exactly two lines, "A well-kept home should feel" /
+     "effortless.". The first line (about 14.2em wide) never wraps, and the
+     size follows the column width (cqi) so it always fits, up to 52px. */
+  @media (min-width: 901px) {
+    .problem-left { container-type: inline-size; }
+    .problem-left h2 {
+      white-space: nowrap;
+      font-size: min(52px, 6.8cqi);
+    }
+  }
   .problem-right p.problem-right-lead {
     font-family: var(--font-header);
     font-size: clamp(22px, 2.2vw, 28px);
@@ -507,6 +517,15 @@
     font-family: var(--font-header);
   }
   .eyebrow.eyebrow-green { color: var(--neon-green); }
+  /* The column paragraph rule (17px, max 420px) also hits this label; keep it
+     on one line at every width; it only shrinks on very small phones. */
+  .problem-right p.eyebrow {
+    white-space: nowrap;
+    max-width: none;
+  }
+  @media (max-width: 480px) {
+    .problem-right p.eyebrow { font-size: clamp(12px, 4.8vw, 17px); }
+  }
   /* Text link with a static hairline underline the width of the text. */
   .link-draw {
     position: relative;
