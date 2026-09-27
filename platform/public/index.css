@@ -26,10 +26,23 @@
     
     --serif: var(--font-header);
     --sans: var(--font-body);
+
+    /* Motion: one system for the whole site. Every transition and animation
+       uses these, and brand-swoosh.js reads them too, so timing never drifts. */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);  /* quick start, long soft settle */
+    --ease-draw: cubic-bezier(0.65, 0, 0.35, 1); /* pen strokes only */
+    --dur-hover: 200ms;   /* hover and colour changes */
+    --dur-ui: 450ms;      /* interface state changes */
+    --dur-reveal: 700ms;  /* scroll reveals */
+    --dur-draw: 1100ms;   /* swoosh pen draw */
+    --stagger: 70ms;      /* cascade step */
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
   html {
-    scroll-behavior: smooth;
+    scroll-padding-top: 96px; /* anchor jumps land below the sticky nav */
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -117,7 +130,7 @@
     font-size: 14px;
     font-family: var(--font-header);
     font-weight: 500;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .nav-links a:hover { color: var(--primary-purple); }
   .nav-cta {
@@ -131,7 +144,7 @@
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     letter-spacing: 0.01em;
   }
   .nav-cta:hover { background: var(--deep-purple); }
@@ -148,7 +161,7 @@
     background: var(--neon-green);
     color: var(--deep-purple);
     font-weight: 600;
-    transition: background 0.2s, color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
   }
   .site-nav .nav-cta:hover {
     background: var(--white);
@@ -230,7 +243,7 @@
     border: none;
     cursor: pointer;
     display: inline-block;
-    transition: background 0.2s, transform 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
     letter-spacing: 0.01em;
     white-space: nowrap;
   }
@@ -252,7 +265,7 @@
     background: linear-gradient(110deg, rgba(58, 29, 109, 0.08) 50%, transparent 50%);
     background-size: 250% 100%;
     background-position: 100% 0;
-    transition: color 0.2s, background-position 0.6s ease-in-out;
+    transition: color var(--dur-hover) var(--ease-out), background-position var(--dur-ui) var(--ease-out);
     cursor: pointer;
   }
   .btn-ghost:hover {
@@ -265,7 +278,7 @@
     background: linear-gradient(110deg, rgba(255, 255, 255, 0.15) 50%, transparent 50%);
     background-size: 250% 100%;
     background-position: 100% 0;
-    transition: color 0.2s, border-color 0.2s, background-position 0.6s ease-in-out;
+    transition: color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), background-position var(--dur-ui) var(--ease-out);
   }
   .hero .btn-ghost:hover {
     color: var(--neon-green);
@@ -342,12 +355,12 @@
   .hero-areas.reveal-ready [data-reveal-item] {
     opacity: 0;
     transform: translateY(8px);
-    transition: opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
   }
   .hero-areas.reveal-ready.is-revealed [data-reveal-item] {
     opacity: 1;
     transform: none;
-    transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
   }
   @media (prefers-reduced-motion: reduce) {
     .hero-areas.reveal-ready [data-reveal-item] { opacity: 1; transform: none; transition: none; }
@@ -536,7 +549,7 @@
     font-weight: 600;
     color: var(--deep-purple);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .link-draw::after {
     content: "";
@@ -585,7 +598,7 @@
   }
   .testimonial-slide {
     display: none;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn var(--dur-ui) var(--ease-out);
   }
   .testimonial-slide.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -637,7 +650,7 @@
     justify-content: center;
     cursor: pointer;
     font-size: 18px;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
   }
   .t-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--neon-green); color: var(--neon-green); }
   .t-dots { display: flex; gap: 8px; }
@@ -646,7 +659,7 @@
     height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.25);
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     cursor: pointer;
   }
   .t-dot.active { background: var(--neon-green); }
@@ -776,7 +789,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     background: var(--off-white);
   }
   .pricing-card:last-child { border-right: none; }
@@ -829,7 +842,7 @@
     font-weight: 600;
     color: var(--mid-gray);
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
     user-select: none;
   }
   .toggle-label.active {
@@ -866,7 +879,7 @@
     bottom: 0;
     background-color: var(--off-white-dark);
     border: 1px solid var(--border);
-    transition: .3s;
+    transition: all var(--dur-ui) var(--ease-out);
     border-radius: 34px;
   }
   .toggle-slider:before {
@@ -877,7 +890,7 @@
     left: 3px;
     bottom: 3px;
     background-color: var(--primary-purple);
-    transition: .3s;
+    transition: all var(--dur-ui) var(--ease-out);
     border-radius: 50%;
   }
   input:checked + .toggle-slider {
@@ -902,7 +915,7 @@
     color: var(--deep-purple);
     font-weight: 700;
     line-height: 1.1;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .pricing-card.featured .pc-price-primary {
     color: var(--white);
@@ -921,7 +934,7 @@
     font-size: 14px;
     color: var(--mid-gray);
     font-weight: 500;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .pricing-card.featured .pc-price-secondary {
     color: var(--lavender);
@@ -950,7 +963,7 @@
     border: 1px solid var(--border);
     background: none;
     color: var(--deep-purple);
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out);
     letter-spacing: 0.02em;
   }
   .pc-btn:hover { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
@@ -988,8 +1001,8 @@
     background: var(--primary-purple);
     box-shadow: 0 2px 10px rgba(58, 29, 109, 0.28);
     transition:
-      transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-      width 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+      transform var(--dur-ui) var(--ease-out),
+      width var(--dur-ui) var(--ease-out);
     will-change: transform, width;
     pointer-events: none;
   }
@@ -1006,7 +1019,7 @@
     cursor: pointer;
     padding: 10px 22px;
     border-radius: 999px;
-    transition: color 0.35s ease;
+    transition: color var(--dur-ui) var(--ease-out);
     white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
   }
@@ -1029,7 +1042,7 @@
   }
   .plan-grid .price-val { display: inline-block; }
   .plan-grid .price-val.is-updating {
-    animation: pc-price-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+    animation: pc-price-in var(--dur-ui) var(--ease-out) both;
   }
   @media (prefers-reduced-motion: reduce) {
     .pricing-size-indicator,
@@ -1131,7 +1144,7 @@
     border: 1.5px solid var(--deep-purple);
     padding: 12px 24px;
     background: transparent;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s, gap 0.2s;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), gap var(--dur-hover) var(--ease-out);
   }
   .trust-content .btn-ghost:hover {
     background-color: var(--primary-purple);
@@ -1197,13 +1210,13 @@
     font-size: 20px;
     line-height: 1;
     color: var(--primary-purple);
-    transition: transform 0.25s;
+    transition: transform var(--dur-ui) var(--ease-out);
   }
   .faq-item.open .faq-icon { transform: rotate(45deg); }
   .faq-a {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    transition: max-height var(--dur-ui) var(--ease-out), padding var(--dur-ui) var(--ease-out);
   }
   .faq-a-inner {
     padding-bottom: 22px;
@@ -1269,7 +1282,7 @@
     font-size: 14px;
     color: var(--lavender);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .footer-col ul a:hover { color: #fff; }
   .footer-bottom {
@@ -1349,7 +1362,7 @@
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--dur-ui) var(--ease-out), visibility var(--dur-ui) var(--ease-out);
     padding: 12px;
     overflow-y: auto;
   }
@@ -1370,7 +1383,7 @@
     grid-template-columns: 1.15fr 1.05fr;
     position: relative;
     transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform var(--dur-ui) var(--ease-out), max-width var(--dur-ui) var(--ease-out), height var(--dur-ui) var(--ease-out);
     overflow: hidden;
   }
   .booking-modal-overlay.active .booking-modal-content {
@@ -1402,7 +1415,7 @@
     justify-content: center;
     cursor: pointer;
     z-index: 100;
-    transition: background 0.2s, color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
   }
   .booking-modal-close:hover {
     background: var(--neon-green);
@@ -1486,7 +1499,7 @@
     font-family: var(--font-body);
     font-size: 13px;
     border-radius: 0;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
   }
   .form-group select {
     appearance: none;
@@ -1523,7 +1536,7 @@
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--dur-ui) var(--ease-out);
     margin-top: -12px;
   }
   .custom-visits-container.active {
@@ -1540,7 +1553,7 @@
     width: 100%;
     opacity: 0;
     transform: translateX(0);
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
   }
   .booking-wizard-step.active {
     display: flex;
@@ -1591,7 +1604,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: color 0.3s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .progress-step.active {
     color: var(--primary-purple);
@@ -1632,7 +1645,7 @@
     align-items: center;
     gap: 4px;
     padding: 8px 0;
-    transition: color 0.2s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .btn-wizard-back:hover {
     color: var(--deep-purple);
@@ -1657,7 +1670,7 @@
     border: 1px solid var(--border);
     color: var(--black);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     border-radius: 20px;
     box-shadow: 0 2px 4px rgba(26, 13, 51, 0.04);
     white-space: nowrap;
@@ -1714,7 +1727,7 @@
     color: var(--primary-purple);
     font-weight: bold;
     padding: 2px 6px;
-    transition: opacity 0.2s;
+    transition: opacity var(--dur-hover) var(--ease-out);
   }
   .calendar-nav-btn:hover {
     opacity: 0.7;
@@ -1779,7 +1792,7 @@
     background: var(--neon-green);
     border-radius: 1px;
     opacity: 0.85;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .calendar-day-cell.selectable:hover::after {
     height: 4px;
@@ -1805,7 +1818,7 @@
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition: opacity var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
     z-index: 10;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
@@ -1841,7 +1854,7 @@
     padding: 6px 0 0;
     min-height: 20px;
     color: #ef4444;
-    transition: opacity 0.25s ease;
+    transition: opacity var(--dur-ui) var(--ease-out);
   }
   .inline-validation-msg {
     color: #ef4444;
@@ -1982,7 +1995,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .frequency-card:hover {
     border-color: var(--primary-purple);
@@ -2031,7 +2044,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     font-size: 11px;
     color: transparent;
     font-weight: bold;
@@ -2074,7 +2087,7 @@
     gap: 24px;
     height: 100%;
     padding: 40px 20px;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn var(--dur-ui) var(--ease-out);
   }
   .booking-success-state.active {
     display: flex;
@@ -2286,7 +2299,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
     flex: 1;
     box-sizing: border-box;
     margin: 0 !important;
@@ -2346,7 +2359,7 @@
     box-sizing: border-box;
     background: var(--white);
     color: var(--black);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
   }
   .waitlist-input:focus {
     outline: none;
@@ -2390,7 +2403,7 @@
   }
 
   .btn-brutal-bounce {
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out) !important;
   }
   
   .btn-brutal-bounce:hover {
@@ -2415,7 +2428,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     text-align: center;
     font-family: var(--font-header);
     font-weight: 600;
@@ -2480,7 +2493,7 @@
     font-size: 16px;
     box-shadow: 0 4px 12px rgba(124, 252, 0, 0.25);
     text-transform: uppercase;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
     white-space: nowrap;
   }
   
@@ -2516,7 +2529,7 @@
     border-top: none;
     border-left: none;
     border-right: none;
-    transition: opacity 0.2s;
+    transition: opacity var(--dur-hover) var(--ease-out);
     white-space: nowrap;
   }
   
@@ -2572,7 +2585,7 @@
     justify-content: center !important;
     box-shadow: none !important;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
     line-height: 1 !important;
     padding-bottom: 2px !important;
   }
@@ -2645,7 +2658,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    transition: background 0.2s, transform 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
   }
   .final-cta .btn-primary:hover {
     background: var(--white);
