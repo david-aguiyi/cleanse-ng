@@ -233,10 +233,12 @@ function positionSizeIndicator(animate) {
 // Ease the new prices up into place, staggered across the three cards.
 function animatePriceSwap() {
   // Only the price figure moves; labels, per-clean and savings lines stay still.
+  // Cascade step comes from the shared --stagger motion token.
+  const stagger = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stagger')) || 70;
   document.querySelectorAll('.plan-grid .pricing-card .price-val').forEach(function (el, i) {
     el.classList.remove('is-updating');
     void el.offsetWidth; // restart the animation
-    el.style.animationDelay = (i * 45) + 'ms';
+    el.style.animationDelay = (i * stagger) + 'ms';
     el.classList.add('is-updating');
   });
 }
@@ -271,7 +273,7 @@ document.querySelectorAll('.pricing-card[data-freq] .pc-btn').forEach(function (
     // Suffix carries a marker normalizeFreq() understands, so the modal resolves
     // the exact frequency (Once a week -> WEEKLY, Twice a week -> MONTHLY).
     const suffix = freq === 'WEEKLY' ? ' (4 visits/mo)' : freq === 'MONTHLY' ? ' (8 visits/mo)' : '';
-    openBookingModal(selectedPricingBedrooms + ' Bedroom — ' + FREQ_META[freq].title + suffix);
+    openBookingModal(selectedPricingBedrooms + ' Bedroom · ' + FREQ_META[freq].title + suffix);
   });
 });
 
@@ -526,7 +528,7 @@ function updateFrequencyCards() {
       });
       card.classList.add('active');
       visitsSelect.value = code;
-      setPlanValue(sizeLabel + ' — ' + meta.title);
+      setPlanValue(sizeLabel + ' · ' + meta.title);
       const step1ValMsg = document.getElementById('step1-validation-msg');
       if (step1ValMsg) step1ValMsg.textContent = '';
       updateBookingSummary();
@@ -536,7 +538,7 @@ function updateFrequencyCards() {
   });
 
   // Keep planInput in sync with the current selection.
-  setPlanValue(sizeLabel + ' — ' + FREQ_META[visitsSelect.value].title);
+  setPlanValue(sizeLabel + ' · ' + FREQ_META[visitsSelect.value].title);
 
   let noticeEl = document.getElementById('frequency-promo-notice');
   if (noticeEl) noticeEl.remove();
@@ -1501,7 +1503,7 @@ if (apartmentSizeInput) {
   apartmentSizeInput.addEventListener('change', () => {
     const size = apartmentSizeInput.value;
     if (size) {
-      planInput.value = `${size} — Pay Per Visit`;
+      planInput.value = `${size} · Pay Per Visit`;
     } else {
       planInput.value = "";
     }
@@ -1799,7 +1801,7 @@ if (customSubmitBtn) {
     if (numRooms && numRooms.trim() !== "") {
       customModal.classList.remove('active');
       document.body.style.overflow = '';
-      openBookingModal(`${numRooms} Bedrooms — Custom Plan`);
+      openBookingModal(`${numRooms} Bedrooms · Custom Plan`);
     }
   });
 }
