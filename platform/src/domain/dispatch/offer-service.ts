@@ -27,10 +27,10 @@ function payoutKobo(totalKobo: number): number {
 }
 
 /**
- * Cleaner payout for a booking = the compiled "Cleaning service" cut from the
- * booking's own price breakdown (per-visit for one-time; the whole-plan total
- * for weekly/monthly subscriptions). Falls back to the legacy flat-share calc
- * for older bookings priced before the itemised breakdown existed.
+ * Cleaner payout for a booking = the "Cleaning service" (CLEANING) cut from the
+ * booking's own price breakdown, for bookings priced while the itemised
+ * breakdown existed. Current bookings carry a single PLAN line, so they use the
+ * configured flat share (CLEANER_PAYOUT_BPS) of the booking total.
  */
 function cleanerPayoutKobo(booking: { total_kobo: number | string; price_snapshot?: unknown }): number {
   const snap = booking.price_snapshot as { line_items?: Array<Record<string, unknown>> } | null;

@@ -163,65 +163,119 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-// Dynamic Pricing Toggle (Per Visit / Weekly / Monthly)
-const pricingFreqToggle = document.getElementById('pricing-freq-toggle');
-let selectedPricingFreq = 'ONE_TIME';
+// Pricing section: pick a home size, then compare all three plans side by side.
+// Prices come from the canonical CLEANSE_PRICING matrix (defined below), so the
+// cards, the booking modal and the server all agree.
+const pricingSizeToggle = document.getElementById('pricing-size-toggle');
+let selectedPricingBedrooms = 2;
 
-// Update the marketing pricing cards to a frequency code. Prices come from the
-// canonical CLEANSE_PRICING matrix (defined below), so cards, the booking modal
-// and the server all agree. Accepts a legacy boolean (isMonthly) too.
-function updatePricing(freq) {
-  if (freq === true) freq = 'MONTHLY';
-  else if (freq === false) freq = 'ONE_TIME';
-  if (!FREQ_META[freq]) freq = 'ONE_TIME';
-  selectedPricingFreq = freq;
+function updatePricing(bedrooms) {
+  if (bedrooms && CLEANSE_PRICING[bedrooms]) selectedPricingBedrooms = bedrooms;
+  const row = CLEANSE_PRICING[selectedPricingBedrooms];
 
-  const primaryPriceElements = document.querySelectorAll('.pc-price-primary .price-val');
-  const primaryUnitElements = document.querySelectorAll('.pc-price-primary .price-unit');
-  const secondaryPriceElements = document.querySelectorAll('.pc-price-secondary');
-  const savingsElements = document.querySelectorAll('.pc-savings');
+  // "Best value" only when one plan is strictly the cheapest per clean.
+  const perClean = FREQ_ORDER.map(function (f) { return row[f].total / row[f].visits; });
+  const lowest = Math.min.apply(null, perClean);
+  const cheapest = FREQ_ORDER.filter(function (f, i) { return perClean[i] === lowest; });
+  const bestFreq = cheapest.length === 1 ? cheapest[0] : null;
 
-  primaryPriceElements.forEach(function (el, i) {
-    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
-    if (cell) el.textContent = nairaFmt(cell.total);
-  });
-  primaryUnitElements.forEach(function (el) {
-    el.textContent = freq === 'ONE_TIME' ? ' / visit' : ' / month';
-  });
-  secondaryPriceElements.forEach(function (el) {
-    el.textContent = '';
-    el.style.display = 'none';
-  });
-  savingsElements.forEach(function (el, i) {
-    const one = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1].ONE_TIME;
-    const cell = CLEANSE_PRICING[i + 1] && CLEANSE_PRICING[i + 1][freq];
-    const saving = (one && cell && freq !== 'ONE_TIME') ? (one.total * cell.visits - cell.total) : 0;
-    if (saving > 0) {
-      el.textContent = 'Save ' + nairaFmt(saving) + '/mo';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-    } else {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(5px)';
+  document.querySelectorAll('.pricing-card[data-freq]').forEach(function (card) {
+    const freq = card.getAttribute('data-freq');
+    const cell = row[freq];
+    if (!cell) return;
+    card.querySelector('.price-val').textContent = nairaFmt(cell.total);
+    const perCleanEl = card.querySelector('.pc-per-clean');
+    if (perCleanEl) perCleanEl.textContent = nairaFmt(Math.round(cell.total / cell.visits)) + ' per clean';
+    const savingsEl = card.querySelector('.pc-savings');
+    if (savingsEl) {
+      const saving = row.ONE_TIME.total * cell.visits - cell.total;
+      savingsEl.textContent = saving > 0 ? 'You save ' + nairaFmt(saving) + ' a month' : '';
+      savingsEl.style.visibility = saving > 0 ? 'visible' : 'hidden';
     }
+    const badge = card.querySelector('.badge-most-booked');
+    if (badge) badge.style.display = freq === bestFreq ? '' : 'none';
   });
 
-  if (pricingFreqToggle) {
-    pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
-      const on = btn.getAttribute('data-freq') === freq;
+  if (pricingSizeToggle) {
+    pricingSizeToggle.querySelectorAll('.pricing-size-option').forEach(function (btn) {
+      const on = Number(btn.getAttribute('data-bedrooms')) === selectedPricingBedrooms;
       btn.classList.toggle('active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    positionSizeIndicator(true);
   }
 }
 
-if (pricingFreqToggle) {
-  pricingFreqToggle.querySelectorAll('.pricing-freq-option').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      updatePricing(btn.getAttribute('data-freq'));
-    });
+// Glide the single purple pill under the active size button. Without
+// `animate` it snaps into place (first paint, resizes, late font loads).
+function positionSizeIndicator(animate) {
+  if (!pricingSizeToggle) return;
+  let pill = pricingSizeToggle.querySelector('.pricing-size-indicator');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'pricing-size-indicator';
+    pill.setAttribute('aria-hidden', 'true');
+    pricingSizeToggle.prepend(pill);
+    pricingSizeToggle.classList.add('has-indicator');
+    animate = false;
+  }
+  const active = pricingSizeToggle.querySelector('.pricing-size-option.active');
+  if (!active) return;
+  pill.classList.toggle('no-anim', !animate);
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+  if (!animate) {
+    void pill.offsetWidth; // commit the snap before re-enabling transitions
+    pill.classList.remove('no-anim');
+  }
+}
+
+// Ease the new prices up into place, staggered across the three cards.
+function animatePriceSwap() {
+  // Only the price figure moves; labels, per-clean and savings lines stay still.
+  // Cascade step comes from the shared --stagger motion token.
+  const stagger = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stagger')) || 70;
+  document.querySelectorAll('.plan-grid .pricing-card .price-val').forEach(function (el, i) {
+    el.classList.remove('is-updating');
+    void el.offsetWidth; // restart the animation
+    el.style.animationDelay = (i * stagger) + 'ms';
+    el.classList.add('is-updating');
   });
 }
+
+if (pricingSizeToggle) {
+  pricingSizeToggle.querySelectorAll('.pricing-size-option').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const next = Number(btn.getAttribute('data-bedrooms'));
+      if (next === selectedPricingBedrooms) return;
+      updatePricing(next);
+      animatePriceSwap();
+    });
+  });
+  positionSizeIndicator(false);
+  // Button widths shift with breakpoints and web-font loading; keep the pill fitted.
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { positionSizeIndicator(false); }).observe(pricingSizeToggle);
+  } else {
+    window.addEventListener('resize', function () { positionSizeIndicator(false); });
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { positionSizeIndicator(false); });
+  }
+}
+
+// "Book" on a plan card: carry the selected home size AND that card's plan into
+// the modal, so we never re-ask for either.
+document.querySelectorAll('.pricing-card[data-freq] .pc-btn').forEach(function (btn) {
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const freq = btn.closest('.pricing-card').getAttribute('data-freq');
+    // Suffix carries a marker normalizeFreq() understands, so the modal resolves
+    // the exact frequency (Once a week -> WEEKLY, Twice a week -> MONTHLY).
+    const suffix = freq === 'WEEKLY' ? ' (4 visits/mo)' : freq === 'MONTHLY' ? ' (8 visits/mo)' : '';
+    openBookingModal(selectedPricingBedrooms + ' Bedroom · ' + FREQ_META[freq].title + suffix);
+  });
+});
 
 // Booking Modal Logic
 const modal = document.getElementById('booking-modal');
@@ -241,42 +295,42 @@ const frequencySection = document.getElementById('frequency-section');
 const frequencyCardsContainer = document.getElementById('frequency-cards-container');
 
 // --- Canonical booking pricing (mirror of platform/src/domain/pricing/plan-pricing.ts) ---
-// Values in NAIRA. The four parts ALWAYS sum to `total`. If you change a number
-// here, change the server matrix too — the SERVER total is what Paystack charges,
-// and the two must match or the customer sees one price and is charged another.
+// Values in NAIRA. If you change a number here, change the server matrix too —
+// the SERVER total is what Paystack charges, and the two must match or the
+// customer sees one price and is charged another.
 // For WEEKLY/MONTHLY, `total` is the whole month (charged upfront).
 const CLEANSE_PRICING = {
   1: {
-    ONE_TIME: { visits: 1, total: 9000, cleaning: 4500, transport: 2000, supplies: 700, fee: 1800 },
-    WEEKLY:   { visits: 4, total: 32000, cleaning: 15000, transport: 5000, supplies: 2800, fee: 9200 },
-    MONTHLY:  { visits: 8, total: 49000, cleaning: 30000, transport: 8000, supplies: 5600, fee: 5400 },
+    ONE_TIME: { visits: 1, total: 5000 },
+    WEEKLY:   { visits: 4, total: 15000 },
+    MONTHLY:  { visits: 8, total: 20000 },
   },
   2: {
-    ONE_TIME: { visits: 1, total: 13000, cleaning: 7400, transport: 2000, supplies: 1000, fee: 2600 },
-    WEEKLY:   { visits: 4, total: 44000, cleaning: 25000, transport: 5000, supplies: 4000, fee: 10000 },
-    MONTHLY:  { visits: 8, total: 74000, cleaning: 50000, transport: 8000, supplies: 8000, fee: 8000 },
+    ONE_TIME: { visits: 1, total: 8000 },
+    WEEKLY:   { visits: 4, total: 20000 },
+    MONTHLY:  { visits: 8, total: 40000 },
   },
   3: {
-    ONE_TIME: { visits: 1, total: 17000, cleaning: 10100, transport: 2000, supplies: 1500, fee: 3400 },
-    WEEKLY:   { visits: 4, total: 52000, cleaning: 35000, transport: 5000, supplies: 6000, fee: 6000 },
-    MONTHLY:  { visits: 8, total: 90000, cleaning: 60000, transport: 8000, supplies: 12000, fee: 10000 },
+    ONE_TIME: { visits: 1, total: 12000 },
+    WEEKLY:   { visits: 4, total: 30000 },
+    MONTHLY:  { visits: 8, total: 50000 },
   },
   4: {
-    ONE_TIME: { visits: 1, total: 20000, cleaning: 12000, transport: 2000, supplies: 2000, fee: 4000 },
-    WEEKLY:   { visits: 4, total: 60000, cleaning: 40000, transport: 5000, supplies: 8000, fee: 7000 },
-    MONTHLY:  { visits: 8, total: 110000, cleaning: 75000, transport: 8000, supplies: 16000, fee: 11000 },
+    ONE_TIME: { visits: 1, total: 15000 },
+    WEEKLY:   { visits: 4, total: 40000 },
+    MONTHLY:  { visits: 8, total: 60000 },
   },
   5: {
-    ONE_TIME: { visits: 1, total: 25000, cleaning: 16000, transport: 2000, supplies: 2000, fee: 5000 },
-    WEEKLY:   { visits: 4, total: 80000, cleaning: 55000, transport: 5000, supplies: 8000, fee: 12000 },
-    MONTHLY:  { visits: 8, total: 120000, cleaning: 80000, transport: 8000, supplies: 16000, fee: 16000 },
+    ONE_TIME: { visits: 1, total: 20000 },
+    WEEKLY:   { visits: 4, total: 50000 },
+    MONTHLY:  { visits: 8, total: 75000 },
   },
 };
 
 const FREQ_META = {
-  ONE_TIME: { code: 'ONE_TIME', title: 'Per visit', subtitle: 'Single visit',        short: 'Per visit' },
-  WEEKLY:   { code: 'WEEKLY',   title: 'Weekly',    subtitle: '4 visits / month',     short: 'Weekly (4 visits/mo)' },
-  MONTHLY:  { code: 'MONTHLY',  title: 'Monthly',   subtitle: '8 visits / month',     short: 'Monthly (8 visits/mo)' },
+  ONE_TIME: { code: 'ONE_TIME', title: 'Per visit',    subtitle: 'One-off clean',       short: 'Per visit' },
+  WEEKLY:   { code: 'WEEKLY',   title: 'Once a week',  subtitle: '4 visits / month',     short: 'Once a week (4 visits/mo)' },
+  MONTHLY:  { code: 'MONTHLY',  title: 'Twice a week', subtitle: '8 visits / month',     short: 'Twice a week (8 visits/mo)' },
 };
 const FREQ_ORDER = ['ONE_TIME', 'WEEKLY', 'MONTHLY'];
 
@@ -305,14 +359,14 @@ function normalizeFreq(v) {
 function currentFreq() {
   return normalizeFreq(visitsSelect && visitsSelect.value) || 'ONE_TIME';
 }
-function planBreakdown(bedrooms, freq) {
+function planPrice(bedrooms, freq) {
   if (!bedrooms || !CLEANSE_PRICING[bedrooms]) return null;
   const cell = CLEANSE_PRICING[bedrooms][freq || 'ONE_TIME'];
   if (!cell) return null;
   return Object.assign({ bedrooms: bedrooms, freq: freq || 'ONE_TIME' }, cell);
 }
-function currentBreakdown() {
-  return planBreakdown(currentBedrooms(), currentFreq());
+function currentPlanPrice() {
+  return planPrice(currentBedrooms(), currentFreq());
 }
 function nairaFmt(n) { return '₦' + Number(n).toLocaleString(); }
 // The plan holder is a <select>; setting a value that is not an existing option
@@ -330,23 +384,6 @@ function setPlanValue(value) {
   }
   planInput.value = value;
 }
-// Customer-facing itemised rows for a breakdown cell.
-function breakdownRows(b) {
-  return [
-    { label: 'Cleaning service', value: b.cleaning },
-    { label: 'Transport',        value: b.transport },
-    { label: 'Supplies',         value: b.supplies },
-    { label: 'Service fee',      value: b.fee },
-  ];
-}
-function renderBreakdownInto(el, b) {
-  if (!el) return;
-  el.innerHTML = breakdownRows(b).map(function (r) {
-    return '<div style="display:flex;justify-content:space-between;font-size:14px;color:var(--black);">' +
-      '<span>' + r.label + '</span><span>' + nairaFmt(r.value) + '</span></div>';
-  }).join('');
-}
-
 // Calendar and dynamic schedule options
 const bookingDateInput = document.getElementById('booking-date');
 const bookingScheduleSelect = document.getElementById('booking-schedule');
@@ -491,7 +528,7 @@ function updateFrequencyCards() {
       });
       card.classList.add('active');
       visitsSelect.value = code;
-      setPlanValue(sizeLabel + ' — ' + meta.title);
+      setPlanValue(sizeLabel + ' · ' + meta.title);
       const step1ValMsg = document.getElementById('step1-validation-msg');
       if (step1ValMsg) step1ValMsg.textContent = '';
       updateBookingSummary();
@@ -501,7 +538,7 @@ function updateFrequencyCards() {
   });
 
   // Keep planInput in sync with the current selection.
-  setPlanValue(sizeLabel + ' — ' + FREQ_META[visitsSelect.value].title);
+  setPlanValue(sizeLabel + ' · ' + FREQ_META[visitsSelect.value].title);
 
   let noticeEl = document.getElementById('frequency-promo-notice');
   if (noticeEl) noticeEl.remove();
@@ -518,13 +555,12 @@ function updateBookingSummary() {
   const summaryMetaSched = document.getElementById('summary-meta-schedule');
   const summarySchedText = document.getElementById('summary-schedule-text');
   const summaryBreakdown = document.getElementById('summary-breakdown-container');
-  const summaryRows = document.getElementById('summary-breakdown-rows');
   const summaryTotal = document.getElementById('summary-total-price');
   const summaryTotalLabel = document.getElementById('summary-total-label');
   const summaryTotalNote = document.getElementById('summary-total-note');
 
   const bedrooms = currentBedrooms();
-  const b = currentBreakdown();
+  const b = currentPlanPrice();
 
   if (!bedrooms || !b) {
     summaryPlanName.textContent = "No Plan Selected";
@@ -556,9 +592,8 @@ function updateBookingSummary() {
     summaryMetaSched.style.display = 'none';
   }
 
-  // Itemised breakdown
+  // Total only — no itemised split.
   summaryBreakdown.style.display = 'flex';
-  renderBreakdownInto(summaryRows, b);
   summaryTotal.textContent = nairaFmt(b.total);
   if (summaryTotalLabel) {
     summaryTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total' : 'Total / month';
@@ -733,16 +768,14 @@ function updateVerifyStepDetails() {
   }
   document.getElementById('verify-date-time').textContent = `${dateVal}${timeStr ? ', ' + timeStr : ''}`;
 
-  // Plan + itemised breakdown
-  const b = currentBreakdown();
-  const verifyRows = document.getElementById('verify-breakdown-rows');
+  // Plan + total
+  const b = currentPlanPrice();
   const verifyTotal = document.getElementById('verify-total-price');
   const verifyTotalLabel = document.getElementById('verify-total-label');
   const verifyExtras = document.getElementById('verify-extras');
 
   if (!b) {
     if (verifyExtras) verifyExtras.textContent = 'Plan: not selected';
-    if (verifyRows) verifyRows.innerHTML = '';
     if (verifyTotal) verifyTotal.textContent = 'TBD';
     return;
   }
@@ -753,7 +786,6 @@ function updateVerifyStepDetails() {
     : `${bedroomLabel.replace(' Flat', '')} (${meta.title} · ${meta.subtitle})`;
 
   if (verifyExtras) verifyExtras.textContent = `Plan: cleanse.ng ${freqText}`;
-  renderBreakdownInto(verifyRows, b);
   if (verifyTotal) verifyTotal.textContent = nairaFmt(b.total);
   if (verifyTotalLabel) {
     verifyTotalLabel.textContent = b.freq === 'ONE_TIME' ? 'Total Price' : 'Total / month';
@@ -851,6 +883,25 @@ function parseTestimonialsCSV(csvText) {
   return list;
 }
 
+// "Chidinma · GRA, Ibadan" -> name on one line, title/location beneath it.
+// Mirrors the static markup in home.html.
+function buildTestimonialAuthor(author) {
+  const parts = String(author || '').split(/\s+[·•|–]\s+/);
+  const el = document.createElement('div');
+  el.className = 'testimonial-author';
+  const name = document.createElement('span');
+  name.className = 'testimonial-name';
+  name.textContent = parts[0].trim();
+  el.appendChild(name);
+  if (parts.length > 1) {
+    const role = document.createElement('span');
+    role.className = 'testimonial-role';
+    role.textContent = parts.slice(1).join(' · ').trim();
+    el.appendChild(role);
+  }
+  return el;
+}
+
 function renderTestimonials(list) {
   const track = document.querySelector('.testimonial-track');
   const dotsContainer = document.querySelector('.t-dots');
@@ -867,12 +918,8 @@ function renderTestimonials(list) {
     quoteEl.className = 'testimonial-quote';
     quoteEl.textContent = item.quote;
 
-    const authorEl = document.createElement('p');
-    authorEl.className = 'testimonial-author';
-    authorEl.textContent = item.author;
-
     slide.appendChild(quoteEl);
-    slide.appendChild(authorEl);
+    slide.appendChild(buildTestimonialAuthor(item.author));
     track.appendChild(slide);
 
     const dot = document.createElement('div');
@@ -1155,10 +1202,13 @@ function openBookingModal(planName) {
       apartmentSizeGroup.style.display = 'none';
     }
 
-    if (planName.includes('Monthly Subscription') || planName.includes('Custom Plan')) {
-      _currentWizardStep = 3; // Skip Size and Plan selection, go straight to Date/Time
+    // If the plan already carries a resolvable frequency (e.g. booked from a
+    // pricing card with the Per visit / Once a week / Twice a week toggle set),
+    // skip BOTH the size and plan steps and go straight to Date/Time.
+    if (planName.includes('Custom Plan') || normalizeFreq(planName)) {
+      _currentWizardStep = 3; // Skip Size + Plan selection, go straight to Date/Time
     } else {
-      _currentWizardStep = 2; // Skip Size selection, go to Plan selection to pick frequency
+      _currentWizardStep = 2; // Size known; go to Plan selection to pick frequency
     }
   } else {
     planInput.value = "";
@@ -1388,6 +1438,13 @@ if (wizardNextBtn) {
         phoneInput.reportValidity();
         return;
       }
+      // Area is required; if it were skipped here, the final submit would be
+      // silently blocked by the browser once this step is hidden.
+      const areaSelect = document.getElementById('booking-area');
+      if (areaSelect && !areaSelect.checkValidity()) {
+        areaSelect.reportValidity();
+        return;
+      }
       if (!locationInput.checkValidity()) {
         locationInput.reportValidity();
         return;
@@ -1446,7 +1503,7 @@ if (apartmentSizeInput) {
   apartmentSizeInput.addEventListener('change', () => {
     const size = apartmentSizeInput.value;
     if (size) {
-      planInput.value = `${size} — Pay Per Visit`;
+      planInput.value = `${size} · Pay Per Visit`;
     } else {
       planInput.value = "";
     }
@@ -1565,26 +1622,13 @@ if (policyModal) {
   });
 }
 
-// Intercept click on Book Appointment buttons
-document.querySelectorAll('a[data-wa-link]').forEach(btn => {
-  // Only intercept buttons that are styled for modal booking (pc-btn and nav-cta)
-  if (btn.classList.contains('pc-btn') || btn.classList.contains('nav-cta')) {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      let planName = '';
-      const card = btn.closest('.pricing-card');
-      if (card) {
-        let bedroomLabel = card.querySelector('.pc-label').textContent.trim();
-        if (bedroomLabel === "4 Bedroom+") bedroomLabel = "4 Bedroom";
-        planName = `${bedroomLabel} — ${FREQ_META[selectedPricingFreq].title}`;
-        openBookingModal(planName);
-      } else {
-        // Nav button opens the modal with no plan selected, allowing choice
-        openBookingModal("");
-      }
-    });
-  }
+// Nav "Book" buttons and [data-open-booking] CTAs open the modal with no plan
+// selected, allowing choice. (Pricing-card buttons are wired next to updatePricing.)
+document.querySelectorAll('a[data-wa-link].nav-cta, [data-open-booking]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openBookingModal("");
+  });
 });
 
 if (bookingForm) {
@@ -1657,36 +1701,42 @@ if (bookingForm) {
 
     const sanitizedPhone = phone.replace(/[^\d\s+\-()]/g, '');
 
+    const areaSelect = document.getElementById('booking-area');
+    const area = areaSelect && areaSelect.selectedIndex > 0
+      ? _sanitize(areaSelect.options[areaSelect.selectedIndex].text, 50)
+      : 'Not specified';
+
     // Calculate pricing details from the canonical matrix.
-    const waBreakdown = currentBreakdown();
+    const waPrice = currentPlanPrice();
+    let homeText = selectedPlan;
+    let planText = visits;
     let priceDetailsText = "";
-    let visitsText = visits;
-    if (waBreakdown) {
-      const wm = FREQ_META[waBreakdown.freq];
-      visitsText = wm.short;
-      if (waBreakdown.freq === 'ONE_TIME') {
-        priceDetailsText = `${nairaFmt(waBreakdown.total)} / visit`;
+    if (waPrice) {
+      homeText = `${waPrice.bedrooms} Bedroom ${propertyType}`;
+      planText = FREQ_META[waPrice.freq].short;
+      if (waPrice.freq === 'ONE_TIME') {
+        priceDetailsText = `${nairaFmt(waPrice.total)} / visit`;
       } else {
-        priceDetailsText = `${nairaFmt(waBreakdown.total)} / month ` +
-          `(${waBreakdown.visits} visits · ${nairaFmt(Math.round(waBreakdown.total / waBreakdown.visits))} per clean)`;
+        priceDetailsText = `${nairaFmt(waPrice.total)} / month ` +
+          `(${nairaFmt(Math.round(waPrice.total / waPrice.visits))} per clean)`;
       }
     } else {
-      priceDetailsText = "Pricing to be confirmed";
+      priceDetailsText = "To be confirmed";
     }
 
     // Construct WhatsApp message template
-    let waMessage = `Hello cleanse.ng! I'd like to book a cleaning plan:\n\n`;
-    waMessage += `• *Plan:* ${selectedPlan}\n` +
-      `• *Visits per Month:* ${visitsText}\n` +
-      `• *Pricing:* ${priceDetailsText}\n` +
+    let waMessage = `Hello Cleanse! I'd like to book a clean:\n\n`;
+    waMessage += `• *Home:* ${homeText}\n` +
+      `• *Plan:* ${planText}\n` +
+      `• *Price:* ${priceDetailsText}\n` +
+      `• *Date:* ${preferredDate}\n` +
+      `• *Time:* ${schedule}\n` +
+      `• *Area:* ${area}\n` +
+      `• *Address:* ${location}\n` +
       `• *Name:* ${fullName}\n` +
-      `• *Email:* ${email}\n` +
       `• *Phone:* ${sanitizedPhone}\n` +
-      `• *Home Address:* ${location}\n` +
-      `• *Property Type:* ${propertyType}\n` +
-      `• *Preferred Date:* ${preferredDate}\n` +
-      `• *Preferred Schedule:* ${schedule}\n` +
-      `• *Preferences:* ${preferences}`;
+      `• *Email:* ${email}\n` +
+      `• *Notes:* ${preferences}`;
 
     const whatsappUrl = _getWaUrl(waMessage);
 
@@ -1751,7 +1801,7 @@ if (customSubmitBtn) {
     if (numRooms && numRooms.trim() !== "") {
       customModal.classList.remove('active');
       document.body.style.overflow = '';
-      openBookingModal(`${numRooms} Bedrooms — Custom Plan`);
+      openBookingModal(`${numRooms} Bedrooms · Custom Plan`);
     }
   });
 }
@@ -2218,7 +2268,7 @@ window.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('cleanse_promo_applied', 'true');
       
       // Update homepage pricing cards and booking steps instantly
-      updatePricing(selectedPricingFreq);
+      updatePricing();
       updateFrequencyCards();
       updateBookingSummary();
 
