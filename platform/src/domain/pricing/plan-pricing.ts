@@ -34,7 +34,7 @@ const N = (naira: number) => naira * 100;
 const MATRIX: Record<number, Record<PlanFrequency, PlanPrice>> = {
   1: {
     ONE_TIME: { visits: 1, totalKobo: N(5000) },
-    WEEKLY: { visits: 4, totalKobo: N(12000) },
+    WEEKLY: { visits: 4, totalKobo: N(15000) },
     MONTHLY: { visits: 8, totalKobo: N(20000) },
   },
   2: {
@@ -50,12 +50,12 @@ const MATRIX: Record<number, Record<PlanFrequency, PlanPrice>> = {
   4: {
     ONE_TIME: { visits: 1, totalKobo: N(15000) },
     WEEKLY: { visits: 4, totalKobo: N(40000) },
-    MONTHLY: { visits: 8, totalKobo: N(40000) },
+    MONTHLY: { visits: 8, totalKobo: N(60000) },
   },
   5: {
     ONE_TIME: { visits: 1, totalKobo: N(20000) },
     WEEKLY: { visits: 4, totalKobo: N(50000) },
-    MONTHLY: { visits: 8, totalKobo: N(50000) },
+    MONTHLY: { visits: 8, totalKobo: N(75000) },
   },
 };
 

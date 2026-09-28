@@ -18,13 +18,18 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
+  // Paystack checkout is switched off for now: with this false, the final
+  // "Confirm booking" falls through to index.js, which opens WhatsApp with the
+  // booking details prefilled. Set to true to take payment online again.
+  var PAYSTACK_ENABLED = false;
+
   ready(function () {
     // All plans are bookable: per-visit, weekly (4 visits/mo) and monthly
     // (8 visits/mo). The frequency cards are built by index.js from the
     // canonical price matrix; we simply read the selected frequency at submit
     // time and send it so Paystack charges exactly what the summary shows.
     var form = document.getElementById("booking-plan-form");
-    if (form) form.addEventListener("submit", onSubmit, true); // capture: runs before index.js
+    if (form && PAYSTACK_ENABLED) form.addEventListener("submit", onSubmit, true); // capture: runs before index.js
 
     // Repoint "Book" nav/hero CTAs (which index.js wires to WhatsApp) to open the
     // booking modal instead, so every "Book" entry point uses the new flow.
@@ -175,7 +180,7 @@
 
       var ref = b.data.booking_reference;
       setBtnLoading(btn, "Redirecting to payment…");
-      setMsg("Booking confirmed — taking you to secure payment…", false);
+      setMsg("Booking confirmed, taking you to secure payment…", false);
       var p = await postJSON("/api/v1/bookings/" + encodeURIComponent(ref) + "/payments", {});
       if (!p.ok) throw new Error((p.error && p.error.message) || "Could not start payment.");
 
