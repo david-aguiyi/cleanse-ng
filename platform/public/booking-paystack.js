@@ -180,7 +180,7 @@
 
       var ref = b.data.booking_reference;
       setBtnLoading(btn, "Redirecting to payment…");
-      setMsg("Booking confirmed — taking you to secure payment…", false);
+      setMsg("Booking confirmed, taking you to secure payment…", false);
       var p = await postJSON("/api/v1/bookings/" + encodeURIComponent(ref) + "/payments", {});
       if (!p.ok) throw new Error((p.error && p.error.message) || "Could not start payment.");
 
