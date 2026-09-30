@@ -1806,10 +1806,35 @@ if (customSubmitBtn) {
   });
 }
 
-// Specialized Services Modal Logic
+// Specialized Services Modal Logic & Sliding Pill Indicator
 const specModal = document.getElementById('specialized-services-modal');
 const specLinks = document.querySelectorAll('[data-open-specialized]');
 const specCloseBtn = document.getElementById('specialized-modal-close-btn');
+const specTabs = document.querySelector('.spec-tabs');
+const specTabBtns = document.querySelectorAll('.spec-tab-btn');
+const specPanels = document.querySelectorAll('.spec-panel');
+
+function positionSpecIndicator(animate) {
+  if (!specTabs) return;
+  let pill = specTabs.querySelector('.spec-tab-indicator');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'spec-tab-indicator';
+    pill.setAttribute('aria-hidden', 'true');
+    specTabs.prepend(pill);
+    specTabs.classList.add('has-indicator');
+    animate = false;
+  }
+  const active = specTabs.querySelector('.spec-tab-btn.active');
+  if (!active) return;
+  pill.classList.toggle('no-anim', !animate);
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+  if (!animate) {
+    void pill.offsetWidth;
+    pill.classList.remove('no-anim');
+  }
+}
 
 specLinks.forEach(link => {
   link.addEventListener('click', (e) => {
@@ -1817,6 +1842,10 @@ specLinks.forEach(link => {
     if (specModal) {
       specModal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      // Snap pill into position once modal is visible
+      requestAnimationFrame(() => {
+        positionSpecIndicator(false);
+      });
     }
   });
 });
@@ -1838,9 +1867,6 @@ if (specModal) {
 }
 
 // Specialized modal tab switching
-const specTabBtns = document.querySelectorAll('.spec-tab-btn');
-const specPanels = document.querySelectorAll('.spec-panel');
-
 specTabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.getAttribute('data-spec-tab');
@@ -1853,7 +1879,15 @@ specTabBtns.forEach(btn => {
     btn.setAttribute('aria-selected', 'true');
     const panel = document.getElementById('spec-panel-' + target);
     if (panel) panel.classList.add('active');
+    // Glide the purple pill under the newly active button
+    positionSpecIndicator(true);
   });
+});
+
+window.addEventListener('resize', () => {
+  if (specModal && specModal.classList.contains('active')) {
+    positionSpecIndicator(false);
+  }
 });
 
 // Clear step3 / step4 validation errors on input changes
