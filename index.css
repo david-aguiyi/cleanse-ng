@@ -26,10 +26,23 @@
     
     --serif: var(--font-header);
     --sans: var(--font-body);
+
+    /* Motion: one system for the whole site. Every transition and animation
+       uses these, and brand-swoosh.js reads them too, so timing never drifts. */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);  /* quick start, long soft settle */
+    --ease-draw: cubic-bezier(0.65, 0, 0.35, 1); /* pen strokes only */
+    --dur-hover: 200ms;   /* hover and colour changes */
+    --dur-ui: 450ms;      /* interface state changes */
+    --dur-reveal: 700ms;  /* scroll reveals */
+    --dur-draw: 1100ms;   /* swoosh pen draw */
+    --stagger: 70ms;      /* cascade step */
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
   html {
-    scroll-behavior: smooth;
+    scroll-padding-top: 96px; /* anchor jumps land below the sticky nav */
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -117,7 +130,7 @@
     font-size: 14px;
     font-family: var(--font-header);
     font-weight: 500;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .nav-links a:hover { color: var(--primary-purple); }
   .nav-cta {
@@ -131,10 +144,29 @@
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     letter-spacing: 0.01em;
   }
   .nav-cta:hover { background: var(--deep-purple); }
+  /* Dark site nav: the logo sits on deep purple exactly as in the brand
+     artwork (white "cleanse", neon ".ng" and swoosh). */
+  nav.site-nav {
+    background: var(--deep-purple);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .site-nav .nav-logo { color: var(--white); }
+  .site-nav .nav-links a { color: var(--lavender); }
+  .site-nav .nav-links a:hover { color: var(--white); }
+  .site-nav .nav-cta {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    font-weight: 600;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
+  }
+  .site-nav .nav-cta:hover {
+    background: var(--white);
+    color: var(--deep-purple);
+  }
 
   /* ── HERO ── */
   .hero {
@@ -166,6 +198,23 @@
     font-weight: 700;
     color: var(--neon-green);
   }
+  /* Brand swoosh under key headline phrases (drawn by brand-swoosh.js).
+     On dark sections the phrase is white and the neon swoosh carries the
+     emphasis, as in the logo artwork. */
+  [data-swoosh] {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .hero h1 em[data-swoosh],
+  .final-cta h2 em[data-swoosh] { color: var(--white); }
+  /* Room for each swoosh below its phrase, reserved up front (in em, so it
+     holds at every size) so nothing shifts when the script adds the swoosh. */
+  .hero h1 [data-swoosh] { padding-bottom: 0.48em; }
+  .problem-left h2 [data-swoosh] { padding-bottom: 0.33em; }
+  .testimonials h2 [data-swoosh] { padding-bottom: 0.19em; }
+  .final-cta h2 [data-swoosh] { padding-bottom: 0.67em; }
+  .pricing-header [data-swoosh] { padding-bottom: 0.5em; }
   .hero-line {
     display: inline-block;
     white-space: nowrap;
@@ -194,7 +243,7 @@
     border: none;
     cursor: pointer;
     display: inline-block;
-    transition: background 0.2s, transform 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
     letter-spacing: 0.01em;
     white-space: nowrap;
   }
@@ -216,7 +265,7 @@
     background: linear-gradient(110deg, rgba(58, 29, 109, 0.08) 50%, transparent 50%);
     background-size: 250% 100%;
     background-position: 100% 0;
-    transition: color 0.2s, background-position 0.6s ease-in-out;
+    transition: color var(--dur-hover) var(--ease-out), background-position var(--dur-ui) var(--ease-out);
     cursor: pointer;
   }
   .btn-ghost:hover {
@@ -229,20 +278,155 @@
     background: linear-gradient(110deg, rgba(255, 255, 255, 0.15) 50%, transparent 50%);
     background-size: 250% 100%;
     background-position: 100% 0;
-    transition: color 0.2s, border-color 0.2s, background-position 0.6s ease-in-out;
+    transition: color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), background-position var(--dur-ui) var(--ease-out);
   }
   .hero .btn-ghost:hover {
     color: var(--neon-green);
     border-bottom-color: var(--neon-green);
     background-position: 0 0;
   }
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .hero-areas-row > i {
+    width: 12px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--neon-green);
+    flex-shrink: 0;
+  }
+  /* Areas. Desktop: hairline, small label, names with neon dots. */
   .hero-areas {
-    font-size: 12px;
-    color: var(--lavender);
-    opacity: 0.8;
-    letter-spacing: 0.06em;
-    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 480px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .hero-areas-label {
     font-family: var(--font-header);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.75;
+  }
+  .hero-areas-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .hero-areas-row > i { display: none; }
+  /* Every area gets a leading dot; the list is pulled left by one dot + its
+     margins and clipped, so wrapped lines never start with a dot. */
+  .hero-areas-clip { overflow: hidden; }
+  .hero-areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+    list-style: none;
+    margin-left: -28px;
+  }
+  .hero-areas-list li {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-header);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--white);
+  }
+  .hero-areas-list li::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    margin: 0 12px;
+    border-radius: 50%;
+    background: var(--neon-green);
+  }
+  /* Areas fade up name by name (brand-swoosh.js toggles .is-revealed, queued
+     with the swooshes). Hidden state is in the markup so nothing flashes.
+     The transition of the state being entered is the one that plays. */
+  .hero-areas.reveal-ready [data-reveal-item] {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+  }
+  .hero-areas.reveal-ready.is-revealed [data-reveal-item] {
+    opacity: 1;
+    transform: none;
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-areas.reveal-ready [data-reveal-item] { opacity: 1; transform: none; transition: none; }
+  }
+  /* "100+ homes served". Desktop: a pill above the headline. */
+  .hero-proof {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  .hero-proof-count {
+    font-family: var(--font-header);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--neon-green);
+    padding-right: 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .hero-proof-label {
+    font-family: var(--font-header);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--lavender);
+  }
+  /* Phones only: photo first, the pill lifted onto the photo, and the
+     areas line compacted. Desktop keeps the layout above. */
+  @media (max-width: 900px) {
+    .hero .hero-right { order: -1; min-height: 300px; }
+    .hero .hero-left { position: relative; padding-top: 40px; }
+    .hero-proof {
+      position: absolute;
+      left: 16px;
+      top: -16px;
+      transform: translateY(-100%);
+      z-index: 2;
+      padding: 6px 12px;
+      gap: 8px;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(26, 13, 51, 0.72);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .hero-proof-count { font-size: 12px; padding-right: 8px; }
+    .hero-proof-label { font-size: 10.5px; letter-spacing: 0.04em; }
+    .hero-meta { gap: 10px; }
+    .hero-areas { margin-top: 0; padding-top: 0; border-top: none; }
+    .hero-areas-label { display: none; }
+    .hero-areas-row > i { display: inline-block; }
+    .hero-areas-list { gap: 4px 0; margin-left: -22px; }
+    .hero-areas-list li { font-size: 13px; color: var(--lavender); }
+    .hero-areas-list li::before {
+      width: 3px;
+      height: 3px;
+      margin: 0 9px 0 10px;
+      background: var(--lavender);
+      opacity: 0.6;
+    }
   }
   .hero-right {
     position: relative;
@@ -290,6 +474,25 @@
     font-style: italic;
     color: var(--primary-purple);
   }
+  /* Desktop and larger: exactly two lines, "A well-kept home should feel" /
+     "effortless.". The first line (about 14.2em wide) never wraps, and the
+     size follows the column width (cqi) so it always fits, up to 52px. */
+  @media (min-width: 901px) {
+    .problem-left { container-type: inline-size; }
+    .problem-left h2 {
+      white-space: nowrap;
+      font-size: min(52px, 6.8cqi);
+    }
+  }
+  .problem-right p.problem-right-lead {
+    font-family: var(--font-header);
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin-bottom: -12px;
+  }
   .problem-points {
     display: flex;
     flex-direction: column;
@@ -326,12 +529,49 @@
     color: var(--primary-purple);
     font-family: var(--font-header);
   }
+  .eyebrow.eyebrow-green { color: var(--neon-green); }
+  /* The column paragraph rule (17px, max 420px) also hits this label; keep it
+     on one line at every width; it only shrinks on very small phones. */
+  .problem-right p.eyebrow {
+    white-space: nowrap;
+    max-width: none;
+  }
+  @media (max-width: 480px) {
+    .problem-right p.eyebrow { font-size: clamp(12px, 4.8vw, 17px); }
+  }
+  /* Text link with a static hairline underline the width of the text. */
+  .link-draw {
+    position: relative;
+    align-self: flex-start;
+    padding: 4px 0 8px;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    text-decoration: none;
+    transition: color var(--dur-hover) var(--ease-out);
+  }
+  .link-draw::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .link-draw:hover { color: var(--primary-purple); }
   .problem-right p {
     font-size: 17px;
     line-height: 1.7;
     color: var(--mid-gray);
     font-weight: 400;
     max-width: 420px;
+  }
+  .problem-point b,
+  .problem-right p b {
+    color: var(--deep-purple);
+    font-weight: 600;
   }
   .problem-right p em {
     font-style: italic;
@@ -358,7 +598,7 @@
   }
   .testimonial-slide {
     display: none;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn var(--dur-ui) var(--ease-out);
   }
   .testimonial-slide.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -374,13 +614,24 @@
   }
   .testimonial-quote::before { content: '\201C'; }
   .testimonial-quote::after { content: '\201D'; }
+  /* Name on one line, title/location beneath it. */
   .testimonial-author {
-    font-size: 13px;
-    color: var(--neon-green);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .testimonial-name {
     font-family: var(--font-header);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--white);
+  }
+  .testimonial-role {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--lavender);
+    opacity: 0.75;
   }
   .testimonial-controls {
     display: flex;
@@ -399,7 +650,7 @@
     justify-content: center;
     cursor: pointer;
     font-size: 18px;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
   }
   .t-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--neon-green); color: var(--neon-green); }
   .t-dots { display: flex; gap: 8px; }
@@ -408,7 +659,7 @@
     height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.25);
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     cursor: pointer;
   }
   .t-dot.active { background: var(--neon-green); }
@@ -538,7 +789,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    transition: background 0.2s;
+    transition: background var(--dur-hover) var(--ease-out);
     background: var(--off-white);
   }
   .pricing-card:last-child { border-right: none; }
@@ -591,7 +842,7 @@
     font-weight: 600;
     color: var(--mid-gray);
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
     user-select: none;
   }
   .toggle-label.active {
@@ -628,7 +879,7 @@
     bottom: 0;
     background-color: var(--off-white-dark);
     border: 1px solid var(--border);
-    transition: .3s;
+    transition: all var(--dur-ui) var(--ease-out);
     border-radius: 34px;
   }
   .toggle-slider:before {
@@ -639,7 +890,7 @@
     left: 3px;
     bottom: 3px;
     background-color: var(--primary-purple);
-    transition: .3s;
+    transition: all var(--dur-ui) var(--ease-out);
     border-radius: 50%;
   }
   input:checked + .toggle-slider {
@@ -664,7 +915,7 @@
     color: var(--deep-purple);
     font-weight: 700;
     line-height: 1.1;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .pricing-card.featured .pc-price-primary {
     color: var(--white);
@@ -683,15 +934,15 @@
     font-size: 14px;
     color: var(--mid-gray);
     font-weight: 500;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .pricing-card.featured .pc-price-secondary {
     color: var(--lavender);
   }
   .pc-savings {
     display: inline-block;
-    background: #d1fae5;
-    color: #065f46;
+    background: var(--neon-green);
+    color: var(--deep-purple);
     font-size: 11px;
     padding: 4px 10px;
     font-weight: 700;
@@ -712,10 +963,122 @@
     border: 1px solid var(--border);
     background: none;
     color: var(--deep-purple);
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out);
     letter-spacing: 0.02em;
   }
   .pc-btn:hover { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
+
+  /* ── SIZE-FIRST PLANS: pick a home size, compare 3 plans side by side ── */
+  .pricing-size-picker {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pricing-size-label {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+  }
+  .pricing-size-toggle {
+    position: relative;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(58, 29, 109, 0.06);
+    border: 1px solid var(--border);
+  }
+  /* One purple pill that glides under the active size (positioned by index.js). */
+  .pricing-size-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: var(--primary-purple);
+    box-shadow: 0 2px 10px rgba(58, 29, 109, 0.28);
+    transition:
+      transform var(--dur-ui) var(--ease-out),
+      width var(--dur-ui) var(--ease-out);
+    will-change: transform, width;
+    pointer-events: none;
+  }
+  .pricing-size-indicator.no-anim { transition: none; }
+  .pricing-size-option {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px 22px;
+    border-radius: 999px;
+    transition: color var(--dur-ui) var(--ease-out);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pricing-size-option:hover { color: var(--deep-purple); }
+  .pricing-size-option.active { color: var(--white); }
+  /* Before JS positions the pill, fall back to a static highlight. */
+  .pricing-size-toggle:not(.has-indicator) .pricing-size-option.active {
+    background: var(--primary-purple);
+  }
+  .pricing-size-option:focus { outline: none; }
+  .pricing-size-option:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+  }
+  /* Only the price figure eases up into place when the size changes.
+     inline-block so the transform applies to the span. */
+  @keyframes pc-price-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .plan-grid .price-val { display: inline-block; }
+  .plan-grid .price-val.is-updating {
+    animation: pc-price-in var(--dur-ui) var(--ease-out) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-size-indicator,
+    .pricing-size-option { transition: none; }
+    .plan-grid .price-val.is-updating { animation: none; }
+  }
+  #pricing .pricing-header { margin-bottom: 36px; }
+  .pricing-grid.plan-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+  .pricing-grid.plan-grid .pricing-card:nth-child(2) { border-right: 1px solid var(--border); }
+  .pc-sub {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mid-gray);
+    margin-top: -12px;
+  }
+  .pricing-card.featured .pc-sub { color: var(--lavender); }
+  @media (max-width: 760px) {
+    .pricing-grid.plan-grid { grid-template-columns: 1fr; }
+    .pricing-grid.plan-grid .pricing-card,
+    .pricing-grid.plan-grid .pricing-card:nth-child(2) {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      gap: 18px;
+    }
+    .pricing-grid.plan-grid .pricing-card:last-child { border-bottom: none; }
+    /* Empty savings slot only exists to align cards side by side. */
+    .pricing-grid.plan-grid .pc-savings:empty { display: none; }
+  }
+  @media (max-width: 480px) {
+    .pricing-size-toggle { width: 100%; }
+    .pricing-size-option { flex: 1; padding: 10px 0; font-size: 14px; }
+  }
   .pricing-card.featured .pc-btn {
     background: transparent;
     color: var(--neon-green);
@@ -725,6 +1088,182 @@
     background: var(--neon-green);
     color: var(--deep-purple);
     border-color: var(--neon-green);
+  }
+
+  /* ── SPECIALIZED SERVICES SECTION (CUSTOM QUOTES) ── */
+  .specialized-services-section {
+    padding: 80px 24px 100px;
+    background: var(--off-white-dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .specialized-container {
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+  .specialized-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .specialized-eyebrow {
+    font-family: var(--font-header);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--primary-purple);
+    margin-bottom: 8px;
+  }
+  .specialized-heading {
+    font-family: var(--font-header);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: var(--deep-purple);
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .specialized-heading span {
+    display: block;
+  }
+  .specialized-sub {
+    font-size: 16px;
+    color: var(--mid-gray);
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .specialized-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .specialized-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out);
+  }
+  .specialized-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(58, 29, 109, 0.08);
+    border-color: rgba(58, 29, 109, 0.28);
+  }
+  .specialized-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .specialized-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(58, 29, 109, 0.08);
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .specialized-badge {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(58, 29, 109, 0.06);
+    color: var(--primary-purple);
+  }
+  .specialized-card-title {
+    font-family: var(--font-header);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    margin-bottom: 10px;
+  }
+  .specialized-card-desc {
+    font-size: 14px;
+    color: var(--mid-gray);
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .quote-reqs-box {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    flex-grow: 1;
+  }
+  .quote-reqs-title {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .quote-reqs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quote-reqs-list li {
+    font-size: 13px;
+    color: var(--charcoal);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.45;
+  }
+  .quote-reqs-list li i {
+    color: #25D366;
+    font-size: 13px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .specialized-card-action {
+    margin-top: auto;
+  }
+  .btn-wa-quote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: var(--primary-purple);
+    color: var(--white);
+    font-family: var(--font-header);
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
+  }
+  .btn-wa-quote i {
+    font-size: 18px;
+    color: #25D366;
+  }
+  .btn-wa-quote:hover {
+    background: var(--deep-purple);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 960px) {
+    .specialized-grid {
+      grid-template-columns: 1fr;
+      max-width: 540px;
+      margin: 0 auto;
+    }
   }
 
   /* ── TRUST SECTION ── */
@@ -767,13 +1306,21 @@
     max-width: 620px;
     font-weight: 400;
   }
+  .trust-content p.trust-signoff {
+    font-family: var(--font-header);
+    font-size: clamp(20px, 2.4vw, 26px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin-top: 4px;
+  }
   .trust-content .btn-ghost {
     margin-top: 12px;
     color: var(--deep-purple);
     border: 1.5px solid var(--deep-purple);
     padding: 12px 24px;
     background: transparent;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s, gap 0.2s;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), gap var(--dur-hover) var(--ease-out);
   }
   .trust-content .btn-ghost:hover {
     background-color: var(--primary-purple);
@@ -821,14 +1368,14 @@
     font-family: var(--font-header);
     font-size: 16px;
     font-weight: 600;
-    color: var(--deep-purple);
+    color: var(--primary-purple);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
   }
-  .faq-q:hover { color: var(--primary-purple); }
+  .faq-q:hover { color: var(--deep-purple); }
   .faq-icon {
     width: 20px;
     height: 20px;
@@ -839,13 +1386,13 @@
     font-size: 20px;
     line-height: 1;
     color: var(--primary-purple);
-    transition: transform 0.25s;
+    transition: transform var(--dur-ui) var(--ease-out);
   }
   .faq-item.open .faq-icon { transform: rotate(45deg); }
   .faq-a {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    transition: max-height var(--dur-ui) var(--ease-out), padding var(--dur-ui) var(--ease-out);
   }
   .faq-a-inner {
     padding-bottom: 22px;
@@ -855,7 +1402,9 @@
     font-weight: 400;
     max-width: 680px;
   }
-  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner p + p { margin-top: 10px; }
+  .faq-a-inner b { color: var(--deep-purple); font-weight: 600; }
+  .faq-item.open .faq-a { max-height: 480px; }
 
   /* ── FOOTER ── */
   footer {
@@ -909,7 +1458,7 @@
     font-size: 14px;
     color: var(--lavender);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .footer-col ul a:hover { color: #fff; }
   .footer-bottom {
@@ -989,7 +1538,7 @@
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--dur-ui) var(--ease-out), visibility var(--dur-ui) var(--ease-out);
     padding: 12px;
     overflow-y: auto;
   }
@@ -1010,7 +1559,7 @@
     grid-template-columns: 1.15fr 1.05fr;
     position: relative;
     transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform var(--dur-ui) var(--ease-out), max-width var(--dur-ui) var(--ease-out), height var(--dur-ui) var(--ease-out);
     overflow: hidden;
   }
   .booking-modal-overlay.active .booking-modal-content {
@@ -1042,7 +1591,7 @@
     justify-content: center;
     cursor: pointer;
     z-index: 100;
-    transition: background 0.2s, color 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
   }
   .booking-modal-close:hover {
     background: var(--neon-green);
@@ -1126,7 +1675,7 @@
     font-family: var(--font-body);
     font-size: 13px;
     border-radius: 0;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
   }
   .form-group select {
     appearance: none;
@@ -1163,7 +1712,7 @@
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--dur-ui) var(--ease-out);
     margin-top: -12px;
   }
   .custom-visits-container.active {
@@ -1180,7 +1729,7 @@
     width: 100%;
     opacity: 0;
     transform: translateX(0);
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
   }
   .booking-wizard-step.active {
     display: flex;
@@ -1231,7 +1780,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: color 0.3s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .progress-step.active {
     color: var(--primary-purple);
@@ -1272,7 +1821,7 @@
     align-items: center;
     gap: 4px;
     padding: 8px 0;
-    transition: color 0.2s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .btn-wizard-back:hover {
     color: var(--deep-purple);
@@ -1297,7 +1846,7 @@
     border: 1px solid var(--border);
     color: var(--black);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     border-radius: 20px;
     box-shadow: 0 2px 4px rgba(26, 13, 51, 0.04);
     white-space: nowrap;
@@ -1354,7 +1903,7 @@
     color: var(--primary-purple);
     font-weight: bold;
     padding: 2px 6px;
-    transition: opacity 0.2s;
+    transition: opacity var(--dur-hover) var(--ease-out);
   }
   .calendar-nav-btn:hover {
     opacity: 0.7;
@@ -1419,7 +1968,7 @@
     background: var(--neon-green);
     border-radius: 1px;
     opacity: 0.85;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .calendar-day-cell.selectable:hover::after {
     height: 4px;
@@ -1445,7 +1994,7 @@
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition: opacity var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
     z-index: 10;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
@@ -1481,7 +2030,7 @@
     padding: 6px 0 0;
     min-height: 20px;
     color: #ef4444;
-    transition: opacity 0.25s ease;
+    transition: opacity var(--dur-ui) var(--ease-out);
   }
   .inline-validation-msg {
     color: #ef4444;
@@ -1622,7 +2171,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
   }
   .frequency-card:hover {
     border-color: var(--primary-purple);
@@ -1671,7 +2220,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     font-size: 11px;
     color: transparent;
     font-weight: bold;
@@ -1714,7 +2263,7 @@
     gap: 24px;
     height: 100%;
     padding: 40px 20px;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn var(--dur-ui) var(--ease-out);
   }
   .booking-success-state.active {
     display: flex;
@@ -1926,7 +2475,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
     flex: 1;
     box-sizing: border-box;
     margin: 0 !important;
@@ -1986,7 +2535,7 @@
     box-sizing: border-box;
     background: var(--white);
     color: var(--black);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
   }
   .waitlist-input:focus {
     outline: none;
@@ -2030,7 +2579,7 @@
   }
 
   .btn-brutal-bounce {
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out) !important;
   }
   
   .btn-brutal-bounce:hover {
@@ -2055,7 +2604,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--dur-hover) var(--ease-out);
     text-align: center;
     font-family: var(--font-header);
     font-weight: 600;
@@ -2120,7 +2669,7 @@
     font-size: 16px;
     box-shadow: 0 4px 12px rgba(124, 252, 0, 0.25);
     text-transform: uppercase;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
     white-space: nowrap;
   }
   
@@ -2156,7 +2705,7 @@
     border-top: none;
     border-left: none;
     border-right: none;
-    transition: opacity 0.2s;
+    transition: opacity var(--dur-hover) var(--ease-out);
     white-space: nowrap;
   }
   
@@ -2212,7 +2761,7 @@
     justify-content: center !important;
     box-shadow: none !important;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--dur-hover) var(--ease-out);
     line-height: 1 !important;
     padding-bottom: 2px !important;
   }
@@ -2255,6 +2804,14 @@
     color: var(--lavender);
     line-height: 1.65;
   }
+  .final-cta p.final-cta-signoff {
+    font-family: var(--font-header);
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--neon-green);
+    letter-spacing: -0.01em;
+  }
   .final-cta-actions {
     display: flex;
     gap: 16px;
@@ -2277,7 +2834,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    transition: background 0.2s, transform 0.2s;
+    transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
   }
   .final-cta .btn-primary:hover {
     background: var(--white);
