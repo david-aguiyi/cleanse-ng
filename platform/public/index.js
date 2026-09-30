@@ -1806,6 +1806,56 @@ if (customSubmitBtn) {
   });
 }
 
+// Specialized Services Modal Logic
+const specModal = document.getElementById('specialized-services-modal');
+const specLinks = document.querySelectorAll('[data-open-specialized]');
+const specCloseBtn = document.getElementById('specialized-modal-close-btn');
+
+specLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (specModal) {
+      specModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+});
+
+if (specCloseBtn && specModal) {
+  specCloseBtn.addEventListener('click', () => {
+    specModal.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+}
+
+if (specModal) {
+  specModal.addEventListener('click', (e) => {
+    if (e.target === specModal) {
+      specModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+}
+
+// Specialized modal tab switching
+const specTabBtns = document.querySelectorAll('.spec-tab-btn');
+const specPanels = document.querySelectorAll('.spec-panel');
+
+specTabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.getAttribute('data-spec-tab');
+    specTabBtns.forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    specPanels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    const panel = document.getElementById('spec-panel-' + target);
+    if (panel) panel.classList.add('active');
+  });
+});
+
 // Clear step3 / step4 validation errors on input changes
 ['booking-name', 'booking-email', 'booking-phone', 'booking-location', 'booking-agree-policy'].forEach(id => {
   const el = document.getElementById(id);
