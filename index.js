@@ -2398,3 +2398,114 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ═══════════════════════════════════════
+// CONTINUOUS HERO SLIDESHOW
+// ═══════════════════════════════════════
+function initHeroSlideshow() {
+  const track = document.getElementById('hero-slides-track');
+  const container = document.getElementById('hero-slideshow');
+  const dots = document.querySelectorAll('#hero-slide-indicators .hero-dot');
+  if (!track || !container) return;
+
+  let currentIndex = 0;
+  const totalSlides = 4; // 2 originals + 2 continuous clones
+  const realCount = 2;
+  const intervalMs = 4500;
+  let timer = null;
+  let isTransitioning = false;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function updateDots(activeRealIndex) {
+    dots.forEach((dot, idx) => {
+      if (idx === activeRealIndex) {
+        dot.classList.add('active');
+        dot.setAttribute('aria-current', 'true');
+      } else {
+        dot.classList.remove('active');
+        dot.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function goToSlide(index, animate = true) {
+    // Reduced motion disables the CSS transition, so transitionend never fires: jump straight to the real slide
+    if (reduceMotion.matches) {
+      animate = false;
+      index = index % realCount;
+    }
+    if (!animate) {
+      track.classList.add('no-anim');
+    } else {
+      track.classList.remove('no-anim');
+      isTransitioning = true;
+    }
+
+    const offsetPct = -(index * (100 / totalSlides));
+    track.style.transform = `translate3d(${offsetPct}%, 0, 0)`;
+
+    if (!animate) {
+      void track.offsetHeight; // Force reflow to commit instant jump
+      track.classList.remove('no-anim');
+    }
+
+    currentIndex = index;
+    updateDots(index % realCount);
+  }
+
+  function nextSlide() {
+    if (isTransitioning) return;
+    goToSlide(currentIndex + 1, true);
+  }
+
+  track.addEventListener('transitionend', (e) => {
+    if (e.target !== track || e.propertyName !== 'transform') return;
+    isTransitioning = false;
+    // Seamless continuous loop: when reaching clone at index 2, snap to index 0 without animation
+    if (currentIndex >= realCount) {
+      goToSlide(currentIndex % realCount, false);
+    }
+  });
+
+  function startAutoplay() {
+    stopAutoplay();
+    timer = setInterval(nextSlide, intervalMs);
+  }
+
+  function stopAutoplay() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const target = parseInt(dot.getAttribute('data-slide'), 10);
+      if (isNaN(target) || isTransitioning) return;
+      goToSlide(target, true);
+      startAutoplay();
+    });
+  });
+
+  container.addEventListener('mouseenter', stopAutoplay);
+  container.addEventListener('mouseleave', startAutoplay);
+  container.addEventListener('touchstart', stopAutoplay, { passive: true });
+  container.addEventListener('touchend', startAutoplay, { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopAutoplay();
+    } else {
+      startAutoplay();
+    }
+  });
+
+  startAutoplay();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeroSlideshow);
+} else {
+  initHeroSlideshow();
+}
+

@@ -169,7 +169,8 @@
   ]
 }
 </script>
-  <link rel="preload" href="./hero_lifestyle_image.png" as="image" fetchpriority="high">
+  <link rel="preload" href="./hero_slide_1.jpg" as="image" fetchpriority="high">
+  <link rel="preload" href="./hero_slide_2.jpg" as="image">
   <link rel="preload" href="./welcome_helper.png" as="image" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -241,16 +242,26 @@
         </div>
       </div>
     </div>
-    <div class="hero-right">
-      <img src="./hero_lifestyle_image.jpg" alt="Woman in a lime-green top holding her hands out in front of the cleanse.ng logo" fetchpriority="high"
-        loading="eager" onerror="this.src='./hero_lifestyle_image.png'">
+    <div class="hero-right" id="hero-slideshow" aria-label="Cleanse Pros in action">
+      <div class="hero-slides-track" id="hero-slides-track">
+        <div class="hero-slide">
+          <img src="./hero_slide_1.jpg" alt="Vetted Cleanse Pro mopping a pristine tiled living room in Ibadan" fetchpriority="high" loading="eager">
+        </div>
+        <div class="hero-slide">
+          <img src="./hero_slide_2.jpg" alt="Two trained Cleanse Pros cleaning modern kitchen cabinets and extractor hood" loading="eager">
+        </div>
+        <div class="hero-slide" aria-hidden="true">
+          <img src="./hero_slide_1.jpg" alt="" loading="lazy">
+        </div>
+        <div class="hero-slide" aria-hidden="true">
+          <img src="./hero_slide_2.jpg" alt="" loading="lazy">
+        </div>
+      </div>
       <div class="hero-right-overlay"></div>
-      <!-- Fallback background pattern if image fails -->
-      <style>
-        .hero-right:not(:has(img[style*="none"])) {
-          background: linear-gradient(135deg, var(--deep-purple) 0%, var(--primary-purple) 100%);
-        }
-      </style>
+      <div class="hero-slide-indicators" id="hero-slide-indicators" aria-label="Slide indicators">
+        <button type="button" class="hero-dot active" data-slide="0" aria-label="Show slide 1"></button>
+        <button type="button" class="hero-dot" data-slide="1" aria-label="Show slide 2"></button>
+      </div>
     </div>
   </section>
 
