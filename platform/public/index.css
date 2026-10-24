@@ -499,6 +499,10 @@
     width: 26px;
     background: var(--neon-green);
   }
+  /* Phones: a slim pill whose centre lines up with the "100+ homes" pill (16px inset, ~32px tall). */
+  @media (max-width: 900px) {
+    .hero-slide-indicators { bottom: 23px; right: 16px; height: 18px; padding: 0 9px; gap: 6px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .hero-slides-track { transition: none !important; }
   }
