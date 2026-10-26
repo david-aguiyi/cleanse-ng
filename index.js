@@ -1890,6 +1890,99 @@ window.addEventListener('resize', () => {
   }
 });
 
+// ═══════════════════════════════════════
+// PRICING SERVICE TABS (Regular / Deep / Move-in-out / Post-fumigation)
+// ═══════════════════════════════════════
+const svcTabs = document.querySelector('.svc-tabs');
+const svcTabBtns = document.querySelectorAll('.svc-tab-btn');
+const svcPanels = document.querySelectorAll('.svc-panel');
+
+// Same gliding pill as the size picker; uses x and y so it still works when
+// the tabs wrap into two rows on phones.
+function positionSvcIndicator(animate) {
+  if (!svcTabs) return;
+  let pill = svcTabs.querySelector('.svc-tab-indicator');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'svc-tab-indicator';
+    pill.setAttribute('aria-hidden', 'true');
+    svcTabs.prepend(pill);
+    svcTabs.classList.add('has-indicator');
+    animate = false;
+  }
+  const active = svcTabs.querySelector('.svc-tab-btn.active');
+  if (!active) return;
+  pill.classList.toggle('no-anim', !animate);
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.height = active.offsetHeight + 'px';
+  pill.style.transform = 'translate(' + active.offsetLeft + 'px, ' + active.offsetTop + 'px)';
+  if (!animate) {
+    void pill.offsetWidth;
+    pill.classList.remove('no-anim');
+  }
+}
+
+function selectSvcTab(name, animate, focus) {
+  const btn = document.querySelector('.svc-tab-btn[data-svc-tab="' + name + '"]');
+  if (!btn) return false;
+  svcTabBtns.forEach(b => {
+    const on = b === btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.tabIndex = on ? 0 : -1;
+  });
+  svcPanels.forEach(p => {
+    const on = p.id === 'svc-panel-' + name;
+    p.classList.toggle('active', on);
+    p.hidden = !on;
+  });
+  if (focus) btn.focus();
+  positionSvcIndicator(animate);
+  return true;
+}
+
+if (svcTabs) {
+  svcTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => selectSvcTab(btn.getAttribute('data-svc-tab'), true));
+  });
+  // Arrow keys move between tabs (WAI-ARIA tabs pattern)
+  svcTabs.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const list = Array.from(svcTabBtns);
+    const i = list.findIndex(b => b.classList.contains('active'));
+    const next = list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+    e.preventDefault();
+    selectSvcTab(next.getAttribute('data-svc-tab'), true, true);
+  });
+
+  // Deep links: /#deep-cleaning, /#move-in-move-out-cleaning, /#post-fumigation-cleaning
+  const svcHashes = {
+    '#regular-cleaning': 'regular',
+    '#deep-cleaning': 'deep',
+    '#move-in-move-out-cleaning': 'move',
+    '#post-fumigation-cleaning': 'fumigation'
+  };
+  function applySvcHash() {
+    const name = svcHashes[window.location.hash];
+    if (name && selectSvcTab(name, false)) {
+      const pricing = document.getElementById('pricing');
+      if (pricing) pricing.scrollIntoView();
+    }
+  }
+  window.addEventListener('hashchange', applySvcHash);
+  applySvcHash();
+
+  positionSvcIndicator(false);
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => positionSvcIndicator(false)).observe(svcTabs);
+  } else {
+    window.addEventListener('resize', () => positionSvcIndicator(false));
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => positionSvcIndicator(false));
+  }
+}
+
 // Clear step3 / step4 validation errors on input changes
 ['booking-name', 'booking-email', 'booking-phone', 'booking-location', 'booking-agree-policy'].forEach(id => {
   const el = document.getElementById(id);

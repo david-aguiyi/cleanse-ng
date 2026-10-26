@@ -1331,6 +1331,233 @@
     color: #25D366;
   }
 
+  /* ── PRICING SERVICE TABS ── */
+  .svc-tabs-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 36px;
+  }
+  .svc-tabs {
+    position: relative;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(58, 29, 109, 0.06);
+    border: 1px solid var(--border);
+  }
+  /* Purple pill that glides under the active service (positioned by index.js) */
+  .svc-tab-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: var(--primary-purple);
+    box-shadow: 0 2px 10px rgba(58, 29, 109, 0.28);
+    transition:
+      transform var(--dur-ui) var(--ease-out),
+      width var(--dur-ui) var(--ease-out);
+    will-change: transform, width;
+    pointer-events: none;
+  }
+  .svc-tab-indicator.no-anim { transition: none; }
+  .svc-tab-btn {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-header);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color var(--dur-ui) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .svc-tab-btn i { font-size: 14px; }
+  .svc-tab-btn:hover { color: var(--deep-purple); }
+  .svc-tab-btn.active { color: var(--white); }
+  .svc-tabs:not(.has-indicator) .svc-tab-btn.active { background: var(--primary-purple); }
+  .svc-tab-btn:focus { outline: none; }
+  .svc-tab-btn:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+  }
+  .svc-panel[hidden] { display: none; }
+  .svc-panel.active { animation: pc-price-in var(--dur-ui) var(--ease-out) both; }
+  #svc-panel-regular .pricing-size-picker { margin: 0 0 36px; }
+
+  .svc-card {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    max-width: 1040px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+  }
+  .svc-card-main {
+    padding: 36px 32px;
+    background: var(--off-white);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .svc-card-title {
+    font-family: var(--font-header);
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--deep-purple);
+    margin: 0;
+  }
+  .svc-card-desc {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--mid-gray);
+    margin: 0;
+  }
+  .svc-price {
+    font-family: var(--font-header);
+    color: var(--deep-purple);
+    margin-top: 6px;
+  }
+  .svc-price-from {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mid-gray);
+  }
+  .svc-price-val {
+    font-size: clamp(30px, 3.2vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .svc-price-note {
+    font-size: 13.5px;
+    color: var(--mid-gray);
+    margin: -8px 0 0;
+  }
+  .svc-included {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 9px;
+  }
+  .svc-included li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--charcoal);
+  }
+  .svc-included li i {
+    color: var(--primary-purple);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .svc-card-side {
+    padding: 36px 32px;
+    background: var(--deep-purple);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .svc-side-label {
+    font-family: var(--font-header);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    margin: 0;
+  }
+  .svc-needs {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    display: grid;
+    gap: 9px;
+  }
+  .svc-needs li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.86);
+  }
+  .svc-needs li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon-green);
+  }
+  .svc-cta {
+    margin-top: auto;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .svc-card-side .svc-cta {
+    background: var(--neon-green);
+    color: var(--deep-purple);
+    border: 1px solid var(--neon-green);
+    font-size: 14px;
+    padding: 14px 20px;
+  }
+  .svc-card-side .svc-cta:hover {
+    background: transparent;
+    color: var(--neon-green);
+  }
+  .svc-cta i { font-size: 17px; }
+  .svc-more {
+    align-self: center;
+    font-family: var(--font-header);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--lavender);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding-bottom: 2px;
+    transition: color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out);
+  }
+  .svc-more:hover { color: var(--neon-green); border-bottom-color: var(--neon-green); }
+  @media (max-width: 760px) {
+    .svc-card { grid-template-columns: 1fr; }
+    .svc-card-main, .svc-card-side { padding: 28px 22px; }
+  }
+  /* Phones: tabs wrap into a tidy 2 x 2 grid */
+  @media (max-width: 600px) {
+    .svc-tabs-wrap { margin-top: 28px; }
+    .svc-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      border-radius: 22px;
+    }
+    .svc-tab-btn { padding: 11px 8px; font-size: 13.5px; gap: 6px; }
+    .svc-tab-indicator { border-radius: 18px; }
+    .svc-tab-btn { border-radius: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .svc-tab-indicator, .svc-tab-btn { transition: none; }
+    .svc-panel.active { animation: none; }
+  }
+
   /* ── TRUST SECTION ── */
   .trust {
     display: flex;
