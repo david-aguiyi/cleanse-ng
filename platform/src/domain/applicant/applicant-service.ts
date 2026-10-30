@@ -10,12 +10,14 @@ import type { AdminContext } from "@/auth/admin";
 import type { CleanerApplicationInput, UpdateApplicationInput } from "@/validation/schemas";
 
 export async function submitApplication(input: CleanerApplicationInput, sourceIp: string) {
-  const { consent: _consent, website: _website, whatsapp, ...answers } = input;
+  const { consent: _consent, website: _website, whatsapp, address, ...answers } = input;
   const { data, error } = await serviceClient()
     .from("cleaner_applications")
     .insert({
       ...answers,
       whatsapp_e164: whatsapp,
+      // The "area" column holds the free-text home address applicants type in.
+      area: address,
       landmark: answers.landmark || null,
       heard_from: answers.heard_from || null,
       consent_at: new Date().toISOString(),
@@ -29,7 +31,6 @@ export async function submitApplication(input: CleanerApplicationInput, sourceIp
 
 export interface ApplicationListFilters {
   status?: string;
-  area?: string;
   search?: string;
   limit?: number;
 }
@@ -42,8 +43,11 @@ export async function listApplications(filters: ApplicationListFilters) {
     .limit(Math.min(filters.limit ?? 200, 500));
 
   if (filters.status) query = query.eq("status", filters.status);
-  if (filters.area) query = query.eq("area", filters.area);
-  if (filters.search) query = query.ilike("full_name", `%${filters.search.trim()}%`);
+  if (filters.search) {
+    // Match name or address; strip characters that would break the or() filter.
+    const term = filters.search.trim().replace(/[,()%*]/g, " ");
+    query = query.or(`full_name.ilike.%${term}%,area.ilike.%${term}%`);
+  }
 
   const { data, error } = await query;
   if (error) throw new AppError("INTERNAL_ERROR", "Could not load applications.");

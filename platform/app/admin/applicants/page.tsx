@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listApplications, ageFromDob } from "@/domain/applicant/applicant-service";
-import { APPLICATION_AREAS, APPLICATION_STATUSES } from "@/validation/schemas";
+import { APPLICATION_STATUSES } from "@/validation/schemas";
 import { lagos } from "../format";
 import { STATUS_PILL } from "./status";
 import AdminBar from "../AdminBar";
@@ -13,14 +13,13 @@ export const dynamic = "force-dynamic";
 export default async function AdminApplicants({
   searchParams,
 }: {
-  searchParams: { status?: string; area?: string; q?: string };
+  searchParams: { status?: string; q?: string };
 }) {
   const admin = await getAdminContext();
   if (!admin) redirect("/admin/login?next=/admin/applicants");
 
   const applications = await listApplications({
     status: searchParams.status,
-    area: searchParams.area,
     search: searchParams.q,
   });
 
@@ -44,15 +43,7 @@ export default async function AdminApplicants({
               </option>
             ))}
           </select>
-          <select name="area" defaultValue={searchParams.area ?? ""}>
-            <option value="">All areas</option>
-            {APPLICATION_AREAS.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
-          <input name="q" placeholder="Search name…" defaultValue={searchParams.q ?? ""} />
+          <input name="q" placeholder="Search name or address…" defaultValue={searchParams.q ?? ""} />
           <button type="submit" className="btn-ghost">
             Filter
           </button>
@@ -65,7 +56,7 @@ export default async function AdminApplicants({
                 <th>Applicant</th>
                 <th>Applied</th>
                 <th>Status</th>
-                <th>Area</th>
+                <th>Address</th>
                 <th>Age</th>
                 <th>Gender</th>
                 <th>Experience</th>
@@ -94,7 +85,7 @@ export default async function AdminApplicants({
                   <td>
                     <span className={`pill ${STATUS_PILL[a.status] ?? "neutral"}`}>{a.status}</span>
                   </td>
-                  <td>{a.area}</td>
+                  <td style={{ maxWidth: 240 }}>{a.area}</td>
                   <td>{ageFromDob(a.date_of_birth)}</td>
                   <td>{a.gender}</td>
                   <td>{a.experience}</td>

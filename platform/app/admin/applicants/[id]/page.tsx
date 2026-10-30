@@ -73,7 +73,7 @@ export default async function ApplicantDetail({ params }: { params: { id: string
             <Row k="Date of birth" v={`${a.date_of_birth} (age ${ageFromDob(a.date_of_birth)})`} />
             <Row k="Gender" v={a.gender} />
             <Row k="Children" v={a.has_children} />
-            <Row k="Area" v={a.area} />
+            <Row k="Home address" v={a.area} />
             <Row k="Nearest landmark" v={a.landmark} />
             <Row k="Languages" v={list(a.languages)} />
             <Row k="Heard about us" v={a.heard_from} />

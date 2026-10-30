@@ -120,9 +120,6 @@ export const initPaymentSchema = z.object({
 // --------------------------------------------------------------------------
 // Cleanse Pro applications (public /become-a-cleanse-pro form)
 // --------------------------------------------------------------------------
-export const APPLICATION_AREAS = [
-  "Bodija", "Jericho", "Oluyole", "Akobo", "Iyaganku", "GRA", "Other",
-] as const;
 export const APPLICATION_LANGUAGES = ["English", "Yoruba", "Pidgin", "Igbo", "Hausa", "Other"] as const;
 export const APPLICATION_PLACES = [
   "Private homes", "Hotel", "Office", "Cleaning company", "None",
@@ -165,7 +162,7 @@ export const cleanerApplicationSchema = z.object({
     .refine((v) => ageOn(v) <= 80, { message: "Please check your date of birth." }),
   gender: z.enum(["Female", "Male", "Prefer not to say"]),
   has_children: z.enum(["Yes", "No", "Prefer not to say"]),
-  area: z.enum(APPLICATION_AREAS),
+  address: z.string().trim().min(5, "Please type your home address.").max(200),
   landmark: z.string().trim().max(200).optional().default(""),
   languages: z.array(z.enum(APPLICATION_LANGUAGES)).min(1, "Choose at least one language."),
   heard_from: z.string().trim().max(200).optional().default(""),
