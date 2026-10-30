@@ -127,6 +127,16 @@ export const APPLICATION_PLACES = [
 export const APPLICATION_DAYS = [
   "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
 ] as const;
+export const APPLICATION_EDUCATION = [
+  "No formal education",
+  "Primary school (First School Leaving Certificate)",
+  "Junior secondary school (JSS)",
+  "Senior secondary school completed (WAEC / NECO / SSCE)",
+  "Vocational or trade training",
+  "OND or NCE",
+  "HND or bachelor's degree",
+  "Master's degree or higher",
+] as const;
 export const APPLICATION_STATUSES = ["NEW", "REVIEWING", "SHORTLISTED", "REJECTED", "HIRED"] as const;
 
 /** Accepts 0803..., 234803... or +234803... and normalises to +234 E.164. */
@@ -166,6 +176,7 @@ export const cleanerApplicationSchema = z.object({
   landmark: z.string().trim().max(200).optional().default(""),
   languages: z.array(z.enum(APPLICATION_LANGUAGES)).min(1, "Choose at least one language."),
   heard_from: z.string().trim().max(200).optional().default(""),
+  education: z.enum(APPLICATION_EDUCATION),
   experience: z.enum(["None", "Under 1 year", "1 to 3 years", "3+ years"]),
   experience_places: z.array(z.enum(APPLICATION_PLACES)).min(1),
   available_days: z.array(z.enum(APPLICATION_DAYS)).min(1, "Choose at least one day."),

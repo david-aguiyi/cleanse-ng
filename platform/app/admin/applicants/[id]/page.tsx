@@ -81,6 +81,7 @@ export default async function ApplicantDetail({ params }: { params: { id: string
 
           <div className="card">
             <h3>Experience and practicalities</h3>
+            <Row k="Education" v={a.education} />
             <Row k="Experience" v={a.experience} />
             <Row k="Cleaned before at" v={list(a.experience_places)} />
             <Row k="Days available" v={list(a.available_days)} />

@@ -17,7 +17,7 @@
   var LABELS = {
     full_name: 'your full name', whatsapp: 'your WhatsApp number', date_of_birth: 'your date of birth',
     gender: 'your gender', has_children: 'whether you have children', address: 'your home address',
-    languages: 'the languages you speak', experience: 'your experience', experience_places: 'where you have cleaned before',
+    languages: 'the languages you speak', education: 'your highest level of education', experience: 'your experience', experience_places: 'where you have cleaned before',
     available_days: 'the days you can work', start_when: 'how soon you can start', transport: 'how you will get to jobs',
     has_smartphone: 'the smartphone question', has_valid_id: 'the ID question', willing_guarantor: 'the guarantor question',
     can_give_references: 'the references question', willing_training: 'the training question',
@@ -43,7 +43,7 @@
       full_name: val('full_name'), whatsapp: val('whatsapp'), date_of_birth: val('date_of_birth'),
       gender: val('gender'), has_children: val('has_children'), address: val('address'),
       landmark: val('landmark'), languages: checked('languages'), heard_from: val('heard_from'),
-      experience: val('experience'), experience_places: checked('experience_places'),
+      education: val('education'), experience: val('experience'), experience_places: checked('experience_places'),
       available_days: checked('available_days'), start_when: val('start_when'), transport: val('transport'),
       has_smartphone: yesNo('has_smartphone'), has_valid_id: yesNo('has_valid_id'),
       willing_guarantor: yesNo('willing_guarantor'), can_give_references: yesNo('can_give_references'),
