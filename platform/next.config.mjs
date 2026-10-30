@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Admin-only files read at runtime by route handlers (not in public/).
+    outputFileTracingIncludes: {
+      "/admin/invoices/maker": ["./private/invoice-maker.html"],
+    },
+  },
   eslint: {
     // CI runs `next lint` as its own gate (see blueprint §17.3).
     ignoreDuringBuilds: false,

@@ -207,3 +207,21 @@ export const updateApplicationSchema = z
     message: "Nothing to update.",
   });
 export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
+
+// --------------------------------------------------------------------------
+// Admin invoice maker: saved invoice state (shape owned by private/invoice-maker.html)
+// --------------------------------------------------------------------------
+export const invoiceSaveSchema = z.object({
+  data: z
+    .object({
+      client: z.string().max(200).default(""),
+      addr: z.string().max(300).default(""),
+      items: z
+        .array(z.object({ d: z.string().max(300).optional(), a: z.union([z.number(), z.string().max(40)]).optional() }).passthrough())
+        .min(1)
+        .max(50),
+    })
+    .passthrough()
+    .refine((d) => JSON.stringify(d).length <= 50_000, { message: "Invoice is too large." }),
+});
+export type InvoiceSaveInput = z.infer<typeof invoiceSaveSchema>;
