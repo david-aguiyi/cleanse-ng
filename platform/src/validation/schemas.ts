@@ -116,3 +116,86 @@ export const initPaymentSchema = z.object({
   // total from Postgres (Blueprint §8.1). No amount is accepted from the client.
   callback_path: z.string().trim().startsWith("/").max(300).optional(),
 });
+
+// --------------------------------------------------------------------------
+// Cleanse Pro applications (public /become-a-cleanse-pro form)
+// --------------------------------------------------------------------------
+export const APPLICATION_AREAS = [
+  "Bodija", "Jericho", "Oluyole", "Akobo", "Iyaganku", "GRA", "Other",
+] as const;
+export const APPLICATION_LANGUAGES = ["English", "Yoruba", "Pidgin", "Igbo", "Hausa", "Other"] as const;
+export const APPLICATION_PLACES = [
+  "Private homes", "Hotel", "Office", "Cleaning company", "None",
+] as const;
+export const APPLICATION_DAYS = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+] as const;
+export const APPLICATION_STATUSES = ["NEW", "REVIEWING", "SHORTLISTED", "REJECTED", "HIRED"] as const;
+
+/** Accepts 0803..., 234803... or +234803... and normalises to +234 E.164. */
+const NigerianPhone = z.preprocess(
+  (v) => {
+    if (typeof v !== "string") return v;
+    const d = v.replace(/[^\d+]/g, "");
+    if (/^0\d{10}$/.test(d)) return "+234" + d.slice(1);
+    if (/^234\d{10}$/.test(d)) return "+" + d;
+    return d;
+  },
+  z.string().regex(/^\+234\d{10}$/, "Enter a valid Nigerian phone number, e.g. 08031234567")
+);
+
+function ageOn(dob: string, now = new Date()): number {
+  const b = new Date(dob + "T00:00:00Z");
+  let age = now.getUTCFullYear() - b.getUTCFullYear();
+  const m = now.getUTCMonth() - b.getUTCMonth();
+  if (m < 0 || (m === 0 && now.getUTCDate() < b.getUTCDate())) age -= 1;
+  return age;
+}
+
+const shortText = (max: number) => z.string().trim().min(1).max(max);
+const longText = z.string().trim().min(1, "Please answer this question.").max(2000);
+
+export const cleanerApplicationSchema = z.object({
+  full_name: z.string().trim().min(2).max(120),
+  whatsapp: NigerianPhone,
+  date_of_birth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter your date of birth.")
+    .refine((v) => ageOn(v) >= 18, { message: "You must be 18 or older to apply." })
+    .refine((v) => ageOn(v) <= 80, { message: "Please check your date of birth." }),
+  gender: z.enum(["Female", "Male", "Prefer not to say"]),
+  has_children: z.enum(["Yes", "No", "Prefer not to say"]),
+  area: z.enum(APPLICATION_AREAS),
+  landmark: z.string().trim().max(200).optional().default(""),
+  languages: z.array(z.enum(APPLICATION_LANGUAGES)).min(1, "Choose at least one language."),
+  heard_from: z.string().trim().max(200).optional().default(""),
+  experience: z.enum(["None", "Under 1 year", "1 to 3 years", "3+ years"]),
+  experience_places: z.array(z.enum(APPLICATION_PLACES)).min(1),
+  available_days: z.array(z.enum(APPLICATION_DAYS)).min(1, "Choose at least one day."),
+  start_when: z.enum(["Immediately", "Within 1 week", "Within 2 weeks", "In a month or more"]),
+  transport: z.enum(["Own transport", "Keke or bus", "Okada"]),
+  has_smartphone: z.boolean(),
+  has_valid_id: z.boolean(),
+  willing_guarantor: z.boolean(),
+  can_give_references: z.boolean(),
+  willing_training: z.boolean(),
+  why_cleanse: longText,
+  arrival_time: shortText(100),
+  found_money: longText,
+  days_per_week: shortText(100),
+  attention_check: shortText(100),
+  consent: z.literal(true, { errorMap: () => ({ message: "Please agree to the privacy notice." }) }),
+  // Honeypot: real people never see or fill this field.
+  website: z.string().max(0).optional().default(""),
+});
+export type CleanerApplicationInput = z.infer<typeof cleanerApplicationSchema>;
+
+export const updateApplicationSchema = z
+  .object({
+    status: z.enum(APPLICATION_STATUSES).optional(),
+    note: z.string().trim().min(1).max(2000).optional(),
+  })
+  .refine((v) => v.status !== undefined || v.note !== undefined, {
+    message: "Nothing to update.",
+  });
+export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;

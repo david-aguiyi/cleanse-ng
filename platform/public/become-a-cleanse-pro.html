@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var allowed = ['cleanse.ng', 'vercel.app', 'localhost', '127.0.0.1', '::1'];
+      var isLocal = window.location.protocol === 'file:';
+      var host = window.location.hostname;
+      var isAllowed = allowed.some(function (d) { return host === d || host.endsWith('.' + d); });
+      if (isLocal || (host && !isAllowed)) {
+        document.documentElement.style.display = 'none';
+        window.location.href = 'https://cleanse.ng';
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="./favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="./favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.svg">
+  <title>Become a Cleanse Pro · Cleaning Jobs in Ibadan · Cleanse.ng</title>
+  <meta name="description" content="Apply to become a Cleanse Pro: home cleaning jobs in Ibadan with Cleanse.ng. Reliable work, training before your first job. Applying is free.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cleanse.ng/become-a-cleanse-pro">
+  <meta property="og:title" content="Become a Cleanse Pro · Cleaning Jobs in Ibadan">
+  <meta property="og:description" content="Home cleaning jobs in Ibadan with Cleanse.ng. Apply in about 5 minutes. Applying is free.">
+  <meta property="og:image" content="https://cleanse.ng/og-image.jpg">
+  <meta property="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://cleanse.ng/become-a-cleanse-pro">
+  <meta name="robots" content="index, follow">
+  <meta property="og:site_name" content="Cleanse.ng">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body { background: var(--off-white); }
+    .apply-wrap { max-width: 760px; margin: 0 auto; padding: 56px 20px 80px; }
+    .apply-hero h1 {
+      font-family: var(--font-header); font-weight: 700; color: var(--deep-purple);
+      font-size: clamp(34px, 6vw, 52px); line-height: 1.08; letter-spacing: -0.025em; margin: 16px 0 14px;
+    }
+    .apply-hero p { color: var(--mid-gray); font-size: 17px; line-height: 1.6; margin: 0 0 10px; }
+    .apply-hero .apply-small { font-size: 14px; }
+    .article-badge {
+      display: inline-flex; align-items: center; font-family: var(--font-header); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary-purple);
+      background: rgba(58, 29, 109, 0.08); padding: 6px 12px; border-radius: 999px;
+    }
+    .apply-form { margin-top: 36px; display: grid; gap: 20px; }
+    .apply-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px 26px; display: grid; gap: 18px;
+    }
+    .apply-card h2 {
+      font-family: var(--font-header); font-size: 20px; font-weight: 700; color: var(--deep-purple);
+      margin: 0; display: flex; align-items: center; gap: 12px;
+    }
+    .apply-card h2 span {
+      display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+      background: var(--deep-purple); color: var(--neon-green); font-size: 14px;
+    }
+    .apply-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .apply-span { grid-column: 1 / -1; }
+    .apply-field {
+      display: grid; gap: 7px; font-family: var(--font-header); font-size: 14.5px; font-weight: 600;
+      color: var(--deep-purple); border: none; padding: 0; margin: 0; min-width: 0;
+    }
+    .apply-field legend { padding: 0; margin-bottom: 9px; }
+    .apply-field small { font-family: var(--font-body); font-weight: 400; color: var(--mid-gray); font-size: 13px; }
+    .apply-field input[type="text"], .apply-field input[type="tel"], .apply-field input[type="date"],
+    .apply-field select, .apply-field textarea {
+      width: 100%; box-sizing: border-box; font: 400 16px var(--font-body); color: var(--charcoal);
+      background: var(--off-white); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+      transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
+    }
+    .apply-field textarea { resize: vertical; line-height: 1.5; }
+    .apply-field input:focus, .apply-field select:focus, .apply-field textarea:focus {
+      outline: none; border-color: var(--primary-purple); box-shadow: 0 0 0 3px rgba(58, 29, 109, 0.14);
+    }
+    .apply-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .apply-chips label, .apply-yn label {
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      font: 500 14.5px var(--font-body); color: var(--charcoal);
+      background: var(--off-white); border: 1px solid var(--border); border-radius: 999px; padding: 9px 15px;
+      transition: border-color var(--dur-hover) var(--ease-out), background var(--dur-hover) var(--ease-out);
+    }
+    .apply-chips label:has(input:checked), .apply-yn label:has(input:checked) {
+      border-color: var(--primary-purple); background: rgba(58, 29, 109, 0.08); color: var(--deep-purple);
+    }
+    .apply-chips input, .apply-yn input { accent-color: var(--primary-purple); margin: 0; }
+    .apply-yesno { display: grid; gap: 14px; }
+    .apply-yn { border: none; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px; }
+    .apply-yn legend {
+      float: left; width: 100%; margin-bottom: 10px; padding: 0;
+      font: 600 14.5px var(--font-header); color: var(--deep-purple); line-height: 1.4;
+    }
+    .apply-check { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.55; color: var(--mid-gray); cursor: pointer; }
+    .apply-check input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--primary-purple); flex-shrink: 0; }
+    .apply-error { background: #fdecea; color: #8a1c13; border-radius: 10px; padding: 12px 14px; font-size: 14.5px; }
+    .apply-submit { width: 100%; justify-content: center; font-size: 16px; padding: 16px; border: none; cursor: pointer; }
+    .apply-submit:disabled { opacity: 0.6; cursor: wait; }
+    .apply-card[hidden], .apply-form[hidden], .apply-error[hidden] { display: none; }
+    .apply-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .apply-done { margin-top: 36px; text-align: center; justify-items: center; }
+    .apply-done > i { font-size: 44px; color: var(--primary-purple); }
+    .apply-done p { color: var(--mid-gray); max-width: 52ch; margin: 0; line-height: 1.6; }
+    .apply-done:focus { outline: none; }
+    @media (max-width: 600px) {
+      .apply-wrap { padding: 36px 16px 64px; }
+      .apply-card { padding: 22px 18px; }
+      .apply-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="site-nav">
+    <a class="nav-logo brand-logo" href="index.html" style="text-decoration: none;">
+      <span style="font-family: var(--font-header); font-weight: 700; font-size: 24px; letter-spacing: -0.03em;">cleanse<span style="color: #7CFC00;">.ng</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="#" data-wa-link>Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="#" data-wa-link>Book Now</a>
+  </nav>
+
+  <main class="apply-wrap">
+    <header class="apply-hero">
+      <span class="article-badge"><i class="fa-solid fa-briefcase" style="margin-right: 6px;"></i> Now recruiting in Ibadan</span>
+      <h1>Become a <em data-swoosh>Cleanse Pro</em></h1>
+      <p>Cleanse is a managed home cleaning service in Ibadan. We're looking for reliable, honest people who take pride in their work. Fill in this form and our team will read every application and contact the people we'd like to meet on WhatsApp.</p>
+      <p class="apply-small">It takes about 5 minutes. Applying is free: Cleanse never asks applicants for money.</p>
+    </header>
+
+    <form id="apply-form" class="apply-form" novalidate>
+      <!-- Honeypot: hidden from people, bots fill it in -->
+      <div class="apply-hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <section class="apply-card">
+        <h2><span>1</span> About you</h2>
+        <div class="apply-grid">
+          <label class="apply-field">Full name
+            <input type="text" name="full_name" autocomplete="name" required maxlength="120">
+          </label>
+          <label class="apply-field">WhatsApp phone number
+            <input type="tel" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="e.g. 08031234567" required>
+          </label>
+          <label class="apply-field">Date of birth
+            <input type="date" name="date_of_birth" required>
+            <small>You must be 18 or older.</small>
+          </label>
+          <label class="apply-field">Gender
+            <select name="gender" required>
+              <option value="">Choose…</option><option>Female</option><option>Male</option><option>Prefer not to say</option>
+            </select>
+          </label>
+          <label class="apply-field">Do you have children?
+            <select name="has_children" required>
+              <option value="">Choose…</option><option>Yes</option><option>No</option><option>Prefer not to say</option>
+            </select>
+          </label>
+          <label class="apply-field">Which area of Ibadan do you live in?
+            <select name="area" required>
+              <option value="">Choose…</option><option>Bodija</option><option>Jericho</option><option>Oluyole</option><option>Akobo</option><option>Iyaganku</option><option>GRA</option><option>Other</option>
+            </select>
+          </label>
+          <label class="apply-field apply-span">Nearest landmark to your home
+            <input type="text" name="landmark" maxlength="200" placeholder="e.g. opposite Bodija Market">
+          </label>
+        </div>
+        <fieldset class="apply-field">
+          <legend>Which languages do you speak well?</legend>
+          <div class="apply-chips" data-group="languages">
+            <label><input type="checkbox" value="English"> English</label>
+            <label><input type="checkbox" value="Yoruba"> Yoruba</label>
+            <label><input type="checkbox" value="Pidgin"> Pidgin</label>
+            <label><input type="checkbox" value="Igbo"> Igbo</label>
+            <label><input type="checkbox" value="Hausa"> Hausa</label>
+            <label><input type="checkbox" value="Other"> Other</label>
+          </div>
+        </fieldset>
+        <label class="apply-field">How did you hear about Cleanse?
+          <input type="text" name="heard_from" maxlength="200" placeholder="e.g. a friend, Instagram, WhatsApp status">
+        </label>
+      </section>
+
+      <section class="apply-card">
+        <h2><span>2</span> Experience and availability</h2>
+        <div class="apply-grid">
+          <label class="apply-field">How much cleaning experience do you have?
+            <select name="experience" required>
+              <option value="">Choose…</option><option>None</option><option>Under 1 year</option><option>1 to 3 years</option><option>3+ years</option>
+            </select>
+          </label>
+          <label class="apply-field">How soon can you start?
+            <select name="start_when" required>
+              <option value="">Choose…</option><option>Immediately</option><option>Within 1 week</option><option>Within 2 weeks</option><option>In a month or more</option>
+            </select>
+          </label>
+          <label class="apply-field">How will you get to jobs around Ibadan?
+            <select name="transport" required>
+              <option value="">Choose…</option><option>Own transport</option><option>Keke or bus</option><option>Okada</option>
+            </select>
+          </label>
+        </div>
+        <fieldset class="apply-field">
+          <legend>Where have you cleaned before?</legend>
+          <div class="apply-chips" data-group="experience_places">
+            <label><input type="checkbox" value="Private homes"> Private homes</label>
+            <label><input type="checkbox" value="Hotel"> Hotel</label>
+            <label><input type="checkbox" value="Office"> Office</label>
+            <label><input type="checkbox" value="Cleaning company"> Cleaning company</label>
+            <label><input type="checkbox" value="None"> None yet</label>
+          </div>
+        </fieldset>
+        <fieldset class="apply-field">
+          <legend>Which days can you work?</legend>
+          <div class="apply-chips" data-group="available_days">
+            <label><input type="checkbox" value="Monday"> Mon</label>
+            <label><input type="checkbox" value="Tuesday"> Tue</label>
+            <label><input type="checkbox" value="Wednesday"> Wed</label>
+            <label><input type="checkbox" value="Thursday"> Thu</label>
+            <label><input type="checkbox" value="Friday"> Fri</label>
+            <label><input type="checkbox" value="Saturday"> Sat</label>
+            <label><input type="checkbox" value="Sunday"> Sun</label>
+          </div>
+        </fieldset>
+        <div class="apply-yesno">
+          <fieldset class="apply-yn"><legend>Do you have a smartphone with WhatsApp?</legend><label><input type="radio" name="has_smartphone" value="yes"> Yes</label><label><input type="radio" name="has_smartphone" value="no"> No</label></fieldset>
+          <fieldset class="apply-yn"><legend>Do you have a valid ID (NIN slip, voter's card, driver's licence or international passport)?</legend><label><input type="radio" name="has_valid_id" value="yes"> Yes</label><label><input type="radio" name="has_valid_id" value="no"> No</label></fieldset>
+          <fieldset class="apply-yn"><legend>If you are accepted, are you willing to provide a guarantor?</legend><label><input type="radio" name="willing_guarantor" value="yes"> Yes</label><label><input type="radio" name="willing_guarantor" value="no"> No</label></fieldset>
+          <fieldset class="apply-yn"><legend>Can you give us 2 references (past employers or people who know your work)?</legend><label><input type="radio" name="can_give_references" value="yes"> Yes</label><label><input type="radio" name="can_give_references" value="no"> No</label></fieldset>
+          <fieldset class="apply-yn"><legend>Are you willing to attend training before your first job?</legend><label><input type="radio" name="willing_training" value="yes"> Yes</label><label><input type="radio" name="willing_training" value="no"> No</label></fieldset>
+        </div>
+      </section>
+
+      <section class="apply-card">
+        <h2><span>3</span> A few questions</h2>
+        <label class="apply-field">Why do you want to work with Cleanse?
+          <textarea name="why_cleanse" rows="4" maxlength="2000" required></textarea>
+        </label>
+        <label class="apply-field">A job starts at 8:00am. What time would you arrive?
+          <input type="text" name="arrival_time" maxlength="100" required>
+        </label>
+        <label class="apply-field">While cleaning, you find money under the bed. What do you do?
+          <textarea name="found_money" rows="3" maxlength="2000" required></textarea>
+        </label>
+        <label class="apply-field">How many days a week can you commit for the next 3 months?
+          <input type="text" name="days_per_week" maxlength="100" required>
+        </label>
+        <label class="apply-field"><span>To show you've read this far, type the word <strong>CLEAN</strong> in capital letters.</span>
+          <input type="text" name="attention_check" maxlength="100" autocomplete="off" required>
+        </label>
+      </section>
+
+      <section class="apply-card apply-consent">
+        <label class="apply-check"><input type="checkbox" name="consent" required>
+          <span>I agree that Cleanse can store and use the details in this form to review my application and contact me. My details will not be shared outside Cleanse, and I can ask for them to be deleted at any time on WhatsApp.</span>
+        </label>
+        <div class="apply-error" id="apply-error" role="alert" hidden></div>
+        <button type="submit" class="btn-primary apply-submit" id="apply-submit">Send my application</button>
+      </section>
+    </form>
+
+    <section class="apply-card apply-done" id="apply-done" hidden tabindex="-1">
+      <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+      <h2>Application received</h2>
+      <p>Thank you for applying to become a Cleanse Pro. Our team reads every application. If you're a good fit, we'll contact you on WhatsApp to arrange the next step.</p>
+      <a class="btn-ghost" href="/">Back to cleanse.ng</a>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand brand-logo">
+          <span style="font-family: var(--font-header); font-weight: 700; font-size: 24px; letter-spacing: -0.03em; color: #FFFFFF;">cleanse<span style="color: #7CFC00;">.ng</span></span>
+        </div>
+        <p class="footer-tagline">Life, put together.<br><br>Ibadan, Oyo State.</p>
+        <div class="footer-contact">
+          <span>WhatsApp: <a href="#" id="wa-display-num" data-wa-link>+234 913 066 3739</a></span>
+          <span>TikTok: <a href="https://www.tiktok.com/@cleansenigeria" target="_blank" rel="noopener noreferrer">@cleansenigeria</a></span>
+          <span>Instagram: <a href="https://www.instagram.com/cleansenigeria" target="_blank" rel="noopener noreferrer">@cleansenigeria</a></span>
+          <span>Google: <a href="https://g.page/r/CdaX0CuzWX5NECE/review" target="_blank" rel="noopener noreferrer">Leave a review ★</a></span>
+          <span>Working hours: 8am - 6pm daily</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="/cleaning-services-ibadan#regular-cleaning">Regular Cleaning</a></li>
+          <li><a href="/cleaning-services-ibadan#deep-cleaning">Deep Cleaning</a></li>
+          <li><a href="/cleaning-services-ibadan#move-in-move-out-cleaning">Move-in / Move-out Cleaning</a></li>
+          <li><a href="/cleaning-services-ibadan#post-fumigation-cleaning">Post-fumigation Cleaning</a></li>
+          <li><a href="/cleaning-subscription-plans-ibadan">Cleaning Subscriptions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Locations & Guides</h4>
+        <ul>
+          <li><a href="cleaning-services-ibadan.html">Cleaning Services in Ibadan</a></li>
+          <li><a href="jericho-house-cleaning.html">Jericho, Ibadan</a></li>
+          <li><a href="bodija-house-cleaning.html">Bodija, Ibadan</a></li>
+          <li><a href="oluyole-house-cleaning.html">Oluyole, Ibadan</a></li>
+          <li><a href="akobo-house-cleaning.html">Akobo, Ibadan</a></li>
+          <li><a href="iyaganku-house-cleaning.html">Iyaganku, Ibadan</a></li>
+          <li><a href="best-cleaning-services-ibadan.html">Best Cleaning Services in Ibadan</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="index.html#faq">FAQ</a></li>
+          <li><a href="#" data-wa-link>Contact</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="customer.html" target="_blank">Customer Policy</a></li>
+          <li><a href="/become-a-cleanse-pro">Become a Cleanse Pro</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 cleanse.ng. All rights reserved.</span>
+      <span>Ibadan, Oyo State, Nigeria</span>
+    </div>
+  </footer>
+
+  <script src="./index.js"></script>
+  <script src="./brand-swoosh.js" defer></script>
+  <script src="./apply.js" defer></script>
+</body>
+
+</html>
