@@ -1131,3 +1131,23 @@ select r.id, p.property_bedrooms, 'ONE_TIME', p.amount_kobo,
        2000, '2026-09-16T00:00:00Z'::timestamptz, true
 from regular_service r cross join price_seed p;
 
+-- ============================
+-- migrations/0012_site_settings.sql
+-- ============================
+create table if not exists site_settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamptz not null default now(),
+  updated_by uuid references admin_users(id)
+);
+
+insert into site_settings (key, value)
+values ('whatsapp_number', '"08167734221"'::jsonb)
+on conflict (key) do nothing;
+
+alter table site_settings enable row level security;
+
+create policy "site_settings_public_read" on site_settings
+  for select to anon, authenticated
+  using (true);
+

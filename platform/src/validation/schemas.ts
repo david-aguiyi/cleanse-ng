@@ -225,3 +225,12 @@ export const invoiceSaveSchema = z.object({
     .refine((d) => JSON.stringify(d).length <= 50_000, { message: "Invoice is too large." }),
 });
 export type InvoiceSaveInput = z.infer<typeof invoiceSaveSchema>;
+
+// --------------------------------------------------------------------------
+// Site Settings
+// --------------------------------------------------------------------------
+export const updateSettingsSchema = z.object({
+  whatsapp_number: z.string().trim().min(7).max(30),
+});
+export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>;
+

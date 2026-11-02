@@ -46,8 +46,11 @@ function _getWaNum() {
   return _sc._p.map(function (p) { return atob(p); }).join('');
 }
 
+var _activeWaDigits = _getWaNum();
+var _activeWaDisplay = null;
+
 function _getWaUrl(message) {
-  return 'https://wa.me/' + _getWaNum() + (message ? '?text=' + encodeURIComponent(message) : '');
+  return 'https://wa.me/' + (_activeWaDigits || _getWaNum()) + (message ? '?text=' + encodeURIComponent(message) : '');
 }
 
 function _sanitize(str, maxLen) {
@@ -78,14 +81,53 @@ function _checkRateLimit() {
 
 var _modalOpenTime = 0;
 
-// Initialize all obfuscated WhatsApp links at runtime
-document.querySelectorAll('[data-wa-link]').forEach(function (el) {
-  var defaultMsg = 'Hi Cleanse.ng, I am interested in your services.';
-  var msg = el.getAttribute('data-wa-msg') || el.getAttribute('data-wa-message') || defaultMsg;
-  el.href = _getWaUrl(msg);
-  el.target = '_blank';
-  el.rel = 'noopener noreferrer';
-});
+function _applyWaLinks() {
+  document.querySelectorAll('[data-wa-link]').forEach(function (el) {
+    var defaultMsg = 'Hi Cleanse.ng, I am interested in your services.';
+    var msg = el.getAttribute('data-wa-msg') || el.getAttribute('data-wa-message') || defaultMsg;
+    el.href = _getWaUrl(msg);
+    el.target = '_blank';
+    el.rel = 'noopener noreferrer';
+  });
+  if (_activeWaDisplay) {
+    document.querySelectorAll('#wa-display-num, [data-wa-display]').forEach(function (el) {
+      el.textContent = _activeWaDisplay;
+    });
+  }
+}
+
+// 1. Initial run with built-in obfuscated number
+_applyWaLinks();
+
+// 2. Instant cache check (0ms delay if previously loaded)
+try {
+  var _cached = JSON.parse(localStorage.getItem('_cleanse_wa_config') || 'null');
+  if (_cached && _cached.digits) {
+    _activeWaDigits = _cached.digits;
+    _activeWaDisplay = _cached.display;
+    _applyWaLinks();
+  }
+} catch (e) {}
+
+// 3. Background sync with live admin settings
+if (typeof fetch === 'function') {
+  fetch('/api/v1/public/settings')
+    .then(function (res) { return res.json(); })
+    .then(function (json) {
+      if (json && json.ok && json.data && json.data.whatsapp) {
+        var wa = json.data.whatsapp;
+        if (wa.digits && wa.digits !== _activeWaDigits) {
+          _activeWaDigits = wa.digits;
+          _activeWaDisplay = wa.display;
+          _applyWaLinks();
+        }
+        try {
+          localStorage.setItem('_cleanse_wa_config', JSON.stringify(wa));
+        } catch (e) {}
+      }
+    })
+    .catch(function () {});
+}
 
 // Testimonial slider
 let testimonialInterval;
