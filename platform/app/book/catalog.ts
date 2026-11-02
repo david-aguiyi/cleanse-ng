@@ -34,4 +34,4 @@ export const EXTRAS = [
   { code: "WINDOWS", name: "Interior windows" },
 ];
 
-export const WHATSAPP_HELP = "https://wa.me/2349130663739";
+export const WHATSAPP_HELP = "https://wa.me/2348167734221";
