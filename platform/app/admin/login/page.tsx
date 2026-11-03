@@ -62,9 +62,6 @@ function LoginForm() {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
-        <p className="muted" style={{ marginTop: 14 }}>
-          MFA enrolment is a production hardening step (Blueprint §6.1).
-        </p>
       </div>
     </div>
   );
