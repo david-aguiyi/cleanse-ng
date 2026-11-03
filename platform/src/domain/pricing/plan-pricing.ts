@@ -35,7 +35,7 @@ const MATRIX: Record<number, Record<PlanFrequency, PlanPrice>> = {
   1: {
     ONE_TIME: { visits: 1, totalKobo: N(5000) },
     WEEKLY: { visits: 4, totalKobo: N(15000) },
-    MONTHLY: { visits: 8, totalKobo: N(20000) },
+    MONTHLY: { visits: 8, totalKobo: N(30000) },
   },
   2: {
     ONE_TIME: { visits: 1, totalKobo: N(8000) },
@@ -45,7 +45,7 @@ const MATRIX: Record<number, Record<PlanFrequency, PlanPrice>> = {
   3: {
     ONE_TIME: { visits: 1, totalKobo: N(12000) },
     WEEKLY: { visits: 4, totalKobo: N(30000) },
-    MONTHLY: { visits: 8, totalKobo: N(50000) },
+    MONTHLY: { visits: 8, totalKobo: N(60000) },
   },
   4: {
     ONE_TIME: { visits: 1, totalKobo: N(15000) },

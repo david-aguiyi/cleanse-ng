@@ -47,7 +47,7 @@ export async function updateWhatsappSetting(
   if (!parsed) {
     throw new AppError(
       "VALIDATION_ERROR",
-      "Please enter a valid Nigerian phone number (e.g. 08167734221 or +234 816 773 4221).",
+      "Please enter a valid Nigerian phone number (e.g. 09130663739 or +234 913 066 3739).",
       400
     );
   }

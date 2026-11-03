@@ -9,7 +9,7 @@ create table if not exists site_settings (
 
 -- Seed current WhatsApp contact number
 insert into site_settings (key, value)
-values ('whatsapp_number', '"08167734221"'::jsonb)
+values ('whatsapp_number', '"09130663739"'::jsonb)
 on conflict (key) do nothing;
 
 alter table site_settings enable row level security;

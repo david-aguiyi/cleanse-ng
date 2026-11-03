@@ -35,8 +35,8 @@ document.addEventListener('keydown', function (e) {
 const _sc = {
   // WhatsApp number — encoded and split for obfuscation
   // To change your number: update these base64 segments
-  // Current: 234 + 816773 + 4221 = 2348167734221
-  _p: ['MjM0', 'ODE2Nzcz', 'NDIyMQ=='],
+  // Current: 234 + 816773 + 4221 = 2349130663739
+  _p: ['MjM0', 'OTEzMDY2', 'MzczOQ=='],
   maxSubmissions: 3,      // Max form submissions per window
   windowMs: 300000,       // Rate limit window (5 minutes)
   minFormTimeMs: 3000,    // Minimum time to fill form (3 seconds)
@@ -345,7 +345,7 @@ const CLEANSE_PRICING = {
   1: {
     ONE_TIME: { visits: 1, total: 5000 },
     WEEKLY:   { visits: 4, total: 15000 },
-    MONTHLY:  { visits: 8, total: 20000 },
+    MONTHLY:  { visits: 8, total: 30000 },
   },
   2: {
     ONE_TIME: { visits: 1, total: 8000 },
@@ -355,7 +355,7 @@ const CLEANSE_PRICING = {
   3: {
     ONE_TIME: { visits: 1, total: 12000 },
     WEEKLY:   { visits: 4, total: 30000 },
-    MONTHLY:  { visits: 8, total: 50000 },
+    MONTHLY:  { visits: 8, total: 60000 },
   },
   4: {
     ONE_TIME: { visits: 1, total: 15000 },

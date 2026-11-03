@@ -13,8 +13,8 @@ export async function PUT(req: NextRequest, ctx: { params: { id: string } }) {
   const requestId = newRequestId();
   try {
     const admin = await requireAdmin();
-    const { data } = invoiceSaveSchema.parse(await req.json());
-    const invoice = await updateInvoice(ctx.params.id, data, admin);
+    const { data, num } = invoiceSaveSchema.parse(await req.json());
+    const invoice = await updateInvoice(ctx.params.id, data, admin, num);
     return ok(invoice, requestId);
   } catch (err) {
     return handleError(err, requestId);

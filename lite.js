@@ -5,7 +5,7 @@
 (function () {
   // ── SECURITY & WHATSAPP OBFUSCATION ──
   const _sc = {
-    _p: ['MjM0', 'ODE2Nzcz', 'NDIyMQ==']
+    _p: ['MjM0', 'OTEzMDY2', 'MzczOQ==']
   };
 
   function getWaNum() {

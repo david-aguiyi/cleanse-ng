@@ -112,7 +112,7 @@ export default async function ConfirmedPage({
           {paid && (
             <a
               className="btn-primary"
-              href={`https://wa.me/2348167734221?text=${encodeURIComponent(
+              href={`https://wa.me/2349130663739?text=${encodeURIComponent(
                 `Hi Cleanse, I just booked a cleaning (ref ${booking.public_reference}). `
               )}`}
               target="_blank"

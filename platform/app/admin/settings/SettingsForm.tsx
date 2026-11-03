@@ -183,8 +183,8 @@ export default function SettingsForm({
             Change WhatsApp Number
           </h3>
           <p style={{ margin: 0, fontSize: 13, color: "var(--mid-gray)" }}>
-            Type any Nigerian number in standard format (e.g. <code>08167734221</code> or{" "}
-            <code>+234 816 773 4221</code>). Saving immediately redirects all customer WhatsApp buttons
+            Type any Nigerian number in standard format (e.g. <code>09130663739</code> or{" "}
+            <code>+234 913 066 3739</code>). Saving immediately redirects all customer WhatsApp buttons
             and footer links across the website to this number.
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function SettingsForm({
             type="text"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            placeholder="08167734221"
+            placeholder="09130663739"
             style={{
               width: "100%",
               maxWidth: 380,
@@ -250,7 +250,7 @@ export default function SettingsForm({
         ) : (
           inputVal.trim().length > 0 && (
             <div style={{ fontSize: 13, color: "#DC2626" }}>
-              ⚠️ Please enter an 11-digit Nigerian phone number (e.g. 0816 773 4221).
+              ⚠️ Please enter an 11-digit Nigerian phone number (e.g. 0913 066 3739).
             </div>
           )
         )}

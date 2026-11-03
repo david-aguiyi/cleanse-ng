@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAdminContext } from "@/auth/admin";
 import { getInvoice, latestInvoiceDefaults } from "@/domain/invoice/invoice-service";
+import { getSiteSettings } from "@/domain/settings/settings-service";
 import { AppError } from "@/http/errors";
 
 export const runtime = "nodejs";
@@ -24,10 +25,12 @@ export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   // The repo is public, so bank details are never in the maker file: a new
   // invoice copies them (and deposit/materials settings) from the latest saved one.
-  let boot: { id: string | null; num: string | null; data: unknown; defaults?: unknown } = {
+  const settings = await getSiteSettings();
+  let boot: { id: string | null; num: string | null; data: unknown; defaults?: unknown; contactPhone?: string } = {
     id: null,
     num: null,
     data: null,
+    contactPhone: settings.whatsapp.display,
   };
   if (!id) {
     boot.defaults = await latestInvoiceDefaults();

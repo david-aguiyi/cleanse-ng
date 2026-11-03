@@ -47,7 +47,7 @@ export default async function CleanerLayout({ children }: { children: React.Reac
             </p>
             <a
               className="btn-primary"
-              href="https://wa.me/2348167734221?text=Hi%20Cleanse%2C%20my%20cleaner%20account%20was%20blocked."
+              href="https://wa.me/2349130663739?text=Hi%20Cleanse%2C%20my%20cleaner%20account%20was%20blocked."
               target="_blank"
               rel="noreferrer"
               style={{ marginTop: 12, display: "inline-block" }}

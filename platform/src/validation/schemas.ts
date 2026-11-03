@@ -212,9 +212,11 @@ export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 // Admin invoice maker: saved invoice state (shape owned by private/invoice-maker.html)
 // --------------------------------------------------------------------------
 export const invoiceSaveSchema = z.object({
+  num: z.string().trim().max(50).optional(),
   data: z
     .object({
       client: z.string().max(200).default(""),
+      phone: z.string().max(50).default(""),
       addr: z.string().max(300).default(""),
       items: z
         .array(z.object({ d: z.string().max(300).optional(), a: z.union([z.number(), z.string().max(40)]).optional() }).passthrough())

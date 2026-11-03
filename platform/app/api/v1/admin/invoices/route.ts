@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
   const requestId = newRequestId();
   try {
     const admin = await requireAdmin();
-    const { data } = invoiceSaveSchema.parse(await req.json());
-    const invoice = await createInvoice(data, admin);
+    const { data, num } = invoiceSaveSchema.parse(await req.json());
+    const invoice = await createInvoice(data, admin, num);
     return ok(invoice, requestId, 201);
   } catch (err) {
     return handleError(err, requestId);

@@ -107,7 +107,10 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 
     <section class="card">
       <h2>Client</h2>
-      <label class="fld"><span>Client name <span class="opt">(optional)</span></span><input id="client" placeholder="Leave blank to hide"></label>
+      <div class="row2 sm1">
+        <label class="fld"><span>Client name <span class="opt">(optional)</span></span><input id="client" placeholder="Leave blank to hide"></label>
+        <label class="fld"><span>Client phone <span class="opt">(optional)</span></span><input id="phone" type="tel" placeholder="e.g. 08012345678"></label>
+      </div>
       <label class="fld">Address<input id="addr" placeholder="e.g. 12 Awolowo Avenue"></label>
       <label class="fld">Area<input id="area" placeholder="e.g. Bodija, Ibadan"></label>
       <div class="row2 row-beds">
@@ -610,7 +613,7 @@ const FREQ = [['Once weekly', 4], ['Twice weekly', 8], ['Three times weekly', 12
 const KINDS = ['Residential Home', 'Apartment', 'Duplex', 'Bungalow', 'Terrace House'];
 const SERVICES = ['Residential Home Cleaning', 'Deep Cleaning', 'Move-in Cleaning', 'Move-out Cleaning', 'Post-Fumigation Cleaning'];
 const DEFAULT = () => ({
-  num: 'CLN-001', date: todayISO(), client: '', addr: '', area: 'Ibadan', beds: 2, kind: 'Residential Home',
+  num: 'CLN-001', date: todayISO(), client: '', phone: '', addr: '', area: 'Ibadan', beds: 2, kind: 'Residential Home',
   svc: 'Residential Home Cleaning', svcCustom: '', billing: 'monthly', freq: 'Once weekly', sessions: 4, mat: 'cleanse', equip: 'cleanse',
   items: [{ d: 'Monthly Cleaning Service', a: 40000, auto: true }], dep: 50,
   accName: 'Cleanse Limited', bank: '', accNo: '', terms: null
@@ -665,8 +668,9 @@ function derive(st) {
   const monthly = st.billing === 'monthly', beds = Math.max(1, parseInt(st.beds, 10) || 1);
   const propType = (WORDS[beds] || beds) + '-Bedroom ' + st.kind;
   const client = [];
-  if (st.client.trim()) client.push({ k: 'Client', v: st.client.trim(), wt: 1 });
-  if (st.addr.trim()) client.push({ k: 'Address', v: st.addr.trim(), wt: 1 });
+  if (st.client && st.client.trim()) client.push({ k: 'Client', v: st.client.trim(), wt: 1 });
+  if (st.phone && st.phone.trim()) client.push({ k: 'Client Phone', v: st.phone.trim(), wt: 1 });
+  if (st.addr && st.addr.trim()) client.push({ k: 'Address', v: st.addr.trim(), wt: 1 });
   if (st.area.trim()) client.push({ k: 'Property Location', v: st.area.trim(), wt: 1 });
   client.push({ k: 'Property Type', v: propType, wt: 1.5 });
   const by = v => 'Provided by ' + (v === 'client' ? 'client' : 'Cleanse.ng');
@@ -686,8 +690,9 @@ function derive(st) {
     : [{ k: dep + '% Initial Deposit', v: naira(depAmt) }, { k: (100 - dep) + '% Final Payment', v: naira(total - depAmt) }, { k: 'Total', v: naira(total), strong: true, noRule: true }];
   const termsText = st.terms == null ? autoTerms(st) : st.terms;
   const terms = termsText.split('\n').map(s => s.trim().replace(/^\d+[.)]\s*/, '')).filter(Boolean);
+  const cleansePhone = (SRV && SRV.contactPhone) ? SRV.contactPhone : '+234 913 066 3739';
   return { num: st.num.trim() || 'CLN-001', date: fmtDate(st.date), client, svcRows, items, total, payRows, terms,
-    accName: st.accName.trim(), bank: st.bank.trim(), accNo: st.accNo.trim() };
+    cleansePhone, accName: st.accName.trim(), bank: st.bank.trim(), accNo: st.accNo.trim() };
 }
 
 /* ---------- layout (mm) ---------- */
@@ -715,7 +720,7 @@ function layout(st) {
     if (pages.length === 1) {
       P.push({ t: 'rect', x: 0, y: 0, w: PW, h: 36, fill: COL.purple });
       P.push(mark(X0, 21, 30));
-      P.push({ t: 'text', x: X0, y: 29, s: 'Professional Home Cleaning Services', f: 'SatReg', pt: 10, c: COL.lav2 });
+      P.push({ t: 'text', x: X0, y: 29, s: 'Professional Home Cleaning Services · WhatsApp: ' + D.cleansePhone, f: 'SatReg', pt: 8.5, c: COL.lav2 });
       P.push({ t: 'text', x: X1, y: 16.5, s: 'SERVICE INVOICE', f: 'ClashSemi', pt: 15, c: COL.white, align: 'right', tr: 0.45 });
       P.push({ t: 'runs', x: X1, y: 23.6, align: 'right', runs: [{ s: 'Invoice Number: ', f: 'SatReg', pt: 9.5, c: COL.lav2 }, { s: D.num, f: 'SatBold', pt: 9.5, c: COL.white }] });
       if (D.date) P.push({ t: 'runs', x: X1, y: 28.8, align: 'right', runs: [{ s: 'Invoice Date: ', f: 'SatReg', pt: 9.5, c: COL.lav2 }, { s: D.date, f: 'SatBold', pt: 9.5, c: COL.white }] });
@@ -728,7 +733,7 @@ function layout(st) {
     }
     P.push({ t: 'rect', x: 0, y: footTop, w: PW, h: FOOT, fill: COL.purple });
     P.push({ t: 'text', x: X0, y: footTop + 9, s: 'Thank you for choosing Cleanse.ng.', f: 'ClashSemi', pt: 12, c: COL.white });
-    P.push({ t: 'text', x: X0, y: footTop + 14.4, s: 'A cleaner space. A better experience.', f: 'SatReg', pt: 9.5, c: COL.lav2 });
+    P.push({ t: 'text', x: X0, y: footTop + 14.4, s: 'A cleaner space. A better experience. · WhatsApp: ' + D.cleansePhone, f: 'SatReg', pt: 8.5, c: COL.lav2 });
     P.push(mark(X1, footTop + 11.6, 13, 'right'));
   }
   function place(fn, gap) {
@@ -891,7 +896,7 @@ fillSelect($('beds'), [1, 2, 3, 4, 5, 6].map(n => [n, String(n)]));
 fillSelect($('kind'), KINDS.map(k => [k, k]));
 fillSelect($('svc'), SERVICES.map(k => [k, k]).concat([['__custom', 'Other (type it)']]));
 fillSelect($('freq'), FREQ.map(([k]) => [k, k]));
-const SIMPLE = ['num', 'date', 'client', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'mat', 'equip', 'dep', 'accName', 'bank', 'accNo'];
+const SIMPLE = ['num', 'date', 'client', 'phone', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'mat', 'equip', 'dep', 'accName', 'bank', 'accNo'];
 
 function fillForm() {
   SIMPLE.forEach(k => { const el = $(k); if (el) el.value = S[k] == null ? '' : S[k]; });
@@ -973,10 +978,12 @@ function clearMsg() { if (!$('msg').hidden && !$('msg').dataset.sticky) msg('');
 
 /* ---------- save to cleanse.ng (admin mode) ---------- */
 async function saveInvoice() {
-  const data = Object.assign({}, S); delete data.num;
+  const data = Object.assign({}, S);
+  const customNum = (S.num && S.num !== 'New' && String(S.num).trim()) ? String(S.num).trim() : undefined;
+  delete data.num;
   const res = await fetch(SRV.id ? '/api/v1/admin/invoices/' + SRV.id : '/api/v1/admin/invoices', {
     method: SRV.id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
-    body: JSON.stringify({ data })
+    body: JSON.stringify({ data, num: customNum })
   });
   let j = null; try { j = await res.json(); } catch (e) {}
   if (res.status === 401) throw new Error('You have been signed out. Sign in to the dashboard again, then save.');
@@ -1062,7 +1069,7 @@ $('yesNew').addEventListener('click', () => {
 // The first charge follows the service until someone types their own wording.
 if (S.items[0] && S.items[0].auto) S.items[0].d = autoItemLabel(S);
 fillForm();
-if (SRV) { const n = $('num'); n.readOnly = true; n.title = 'Assigned by cleanse.ng when the invoice is first saved'; updSave(); }
+if (SRV) { const n = $('num'); n.readOnly = false; n.placeholder = 'Auto-assigned (or type custom)'; n.title = 'Assigned by cleanse.ng when saved, or type a custom invoice number'; updSave(); }
 render();
 fontsReady.then(() => render());
 })();

@@ -32,25 +32,52 @@ function summarise(data: InvoiceData) {
   };
 }
 
-export async function createInvoice(data: InvoiceData, admin: AdminContext) {
+export async function createInvoice(data: InvoiceData, admin: AdminContext, customNum?: string) {
+  const insertPayload: Record<string, unknown> = {
+    ...summarise(data),
+    created_by: admin.adminId,
+    updated_by: admin.adminId,
+  };
+  if (customNum && customNum.trim()) {
+    insertPayload.invoice_number = customNum.trim().toUpperCase();
+  }
   const { data: row, error } = await serviceClient()
     .from("invoices")
-    .insert({ ...summarise(data), created_by: admin.adminId, updated_by: admin.adminId })
+    .insert(insertPayload)
     .select("id, invoice_number")
     .single();
-  if (error || !row) throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
+  if (error) {
+    if (error.code === "23505") {
+      throw new AppError("VALIDATION_ERROR", `Invoice number "${customNum}" already exists.`, 400);
+    }
+    throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
+  }
+  if (!row) throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
   return row as { id: string; invoice_number: string };
 }
 
-export async function updateInvoice(id: string, data: InvoiceData, admin: AdminContext) {
+export async function updateInvoice(id: string, data: InvoiceData, admin: AdminContext, customNum?: string) {
   if (!UUID.test(id)) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
+  const updatePayload: Record<string, unknown> = {
+    ...summarise(data),
+    updated_by: admin.adminId,
+    updated_at: new Date().toISOString(),
+  };
+  if (customNum && customNum.trim()) {
+    updatePayload.invoice_number = customNum.trim().toUpperCase();
+  }
   const { data: row, error } = await serviceClient()
     .from("invoices")
-    .update({ ...summarise(data), updated_by: admin.adminId, updated_at: new Date().toISOString() })
+    .update(updatePayload)
     .eq("id", id)
     .select("id, invoice_number")
     .maybeSingle();
-  if (error) throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
+  if (error) {
+    if (error.code === "23505") {
+      throw new AppError("VALIDATION_ERROR", `Invoice number "${customNum}" already exists.`, 400);
+    }
+    throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
+  }
   if (!row) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
   return row as { id: string; invoice_number: string };
 }
