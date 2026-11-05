@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { naira, waDigits, humanEvent } from "@app/admin/format";
+import { naira, waDigits, humanEvent, shortDate } from "@app/admin/format";
 
 describe("admin format helpers", () => {
   it("formats kobo as naira", () => {
@@ -14,5 +14,11 @@ describe("admin format helpers", () => {
   it("humanises event types", () => {
     expect(humanEvent("booking.confirmed")).toBe("Booking Confirmed");
     expect(humanEvent("cleaner.on_the_way")).toBe("Cleaner On The Way");
+  });
+
+  it("formats ISO date to short date string", () => {
+    expect(shortDate("2026-11-05")).toBe("5 Nov 2026");
+    expect(shortDate("2026-01-31")).toBe("31 Jan 2026");
+    expect(shortDate(null)).toBe("—");
   });
 });

@@ -112,7 +112,7 @@ export async function latestInvoiceDefaults(): Promise<Record<string, unknown>> 
 export async function listInvoices(search?: string) {
   let query = serviceClient()
     .from("invoices")
-    .select("id, invoice_number, created_at, updated_at, client_name, client_address, total_naira, creator:admin_users!invoices_created_by_fkey(full_name)")
+    .select("id, invoice_number, created_at, updated_at, client_name, client_address, total_naira, data, creator:admin_users!invoices_created_by_fkey(full_name)")
     .order("created_at", { ascending: false })
     .limit(300);
   if (search && search.trim()) {

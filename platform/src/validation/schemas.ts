@@ -218,6 +218,8 @@ export const invoiceSaveSchema = z.object({
       client: z.string().max(200).default(""),
       phone: z.string().max(50).default(""),
       addr: z.string().max(300).default(""),
+      startDate: z.string().max(40).optional(),
+      endDate: z.string().max(40).optional(),
       items: z
         .array(z.object({ d: z.string().max(300).optional(), a: z.union([z.number(), z.string().max(40)]).optional() }).passthrough())
         .min(1)

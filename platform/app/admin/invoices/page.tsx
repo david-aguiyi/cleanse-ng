@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listInvoices } from "@/domain/invoice/invoice-service";
-import { lagos } from "../format";
+import { lagos, shortDate } from "../format";
 import AdminBar from "../AdminBar";
 
 export const runtime = "nodejs";
@@ -40,6 +40,7 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
               <tr>
                 <th>Invoice</th>
                 <th>Client</th>
+                <th>Contract Period</th>
                 <th>Total</th>
                 <th>Created</th>
                 <th>By</th>
@@ -48,31 +49,69 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
             <tbody>
               {invoices.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
+                  <td colSpan={6} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
                     No saved invoices yet. Tap “New invoice” to make the first one.
                   </td>
                 </tr>
               )}
-              {invoices.map((inv: Record<string, any>) => (
-                <tr key={inv.id}>
-                  <td>
-                    <Link className="ref" href={`/admin/invoices/${inv.id}`}>
-                      {inv.invoice_number}
-                    </Link>
-                  </td>
-                  <td>
-                    {inv.client_name || inv.client_address || "—"}
-                    {inv.client_name && inv.client_address && (
-                      <div className="muted" style={{ fontSize: 12 }}>
-                        {inv.client_address}
-                      </div>
-                    )}
-                  </td>
-                  <td>{naira(inv.total_naira)}</td>
-                  <td>{lagos(inv.created_at)}</td>
-                  <td>{inv.creator?.full_name ?? "—"}</td>
-                </tr>
-              ))}
+              {invoices.map((inv: Record<string, any>) => {
+                const data = (inv.data || {}) as Record<string, any>;
+                const start = data.startDate as string | undefined;
+                const end = data.endDate as string | undefined;
+                const isSingleDay = !end || start === end;
+                const today = new Date().toISOString().slice(0, 10);
+                return (
+                  <tr key={inv.id}>
+                    <td>
+                      <Link className="ref" href={`/admin/invoices/${inv.id}`}>
+                        {inv.invoice_number}
+                      </Link>
+                    </td>
+                    <td>
+                      {inv.client_name || inv.client_address || "—"}
+                      {inv.client_name && inv.client_address && (
+                        <div className="muted" style={{ fontSize: 12 }}>
+                          {inv.client_address}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      {start ? (
+                        <div>
+                          <div style={{ fontWeight: 500 }}>
+                            {shortDate(start)}
+                            {!isSingleDay && ` – ${shortDate(end)}`}
+                          </div>
+                          <div style={{ marginTop: 3 }}>
+                            {isSingleDay ? (
+                              <span className="pill neutral" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                {start === today ? "Today" : start > today ? "Scheduled" : "Single day"}
+                              </span>
+                            ) : start > today ? (
+                              <span className="pill neutral" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                Upcoming
+                              </span>
+                            ) : end && end >= today ? (
+                              <span className="pill pay-success" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                Active
+                              </span>
+                            ) : (
+                              <span className="pill neutral" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                Completed
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
+                    </td>
+                    <td>{naira(inv.total_naira)}</td>
+                    <td>{lagos(inv.created_at)}</td>
+                    <td>{inv.creator?.full_name ?? "—"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

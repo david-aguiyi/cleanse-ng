@@ -1,5 +1,16 @@
 /** Pure display helpers for the admin control centre. */
 
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+export function shortDate(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso.trim());
+  if (!m || !m[1] || !m[2] || !m[3]) return iso;
+  const monthIdx = +m[2] - 1;
+  const monthName = MONTH_NAMES[monthIdx] ?? m[2];
+  return `${+m[3]} ${monthName} ${m[1]}`;
+}
+
 export function naira(kobo: number): string {
   return `₦${Math.round(kobo / 100).toLocaleString("en-NG")}`;
 }

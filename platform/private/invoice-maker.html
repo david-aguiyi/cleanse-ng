@@ -131,6 +131,10 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
         <label class="fld">Frequency<select id="freq"></select></label>
         <label class="fld">Sessions a month<input id="sessions" type="number" inputmode="numeric" min="1" max="31"></label>
       </div>
+      <div class="row2 sm1" id="contractDatesRow">
+        <label class="fld">Start date<input id="startDate" type="date"></label>
+        <label class="fld">End date<input id="endDate" type="date"></label>
+      </div>
       <div class="row2">
         <label class="fld">Cleaning materials<select id="mat"><option value="cleanse">Cleanse.ng</option><option value="client">Client</option></select></label>
         <label class="fld">Cleaning equipment<select id="equip"><option value="cleanse">Cleanse.ng</option><option value="client">Client</option></select></label>
@@ -612,12 +616,40 @@ const nextNum = s => { const m = /^(.*?)(\d+)(\D*)$/.exec(String(s).trim()); if 
 const FREQ = [['Once weekly', 4], ['Twice weekly', 8], ['Three times weekly', 12], ['Every two weeks', 2], ['Monday to Friday', 20]];
 const KINDS = ['Residential Home', 'Apartment', 'Duplex', 'Bungalow', 'Terrace House'];
 const SERVICES = ['Residential Home Cleaning', 'Deep Cleaning', 'Move-in Cleaning', 'Move-out Cleaning', 'Post-Fumigation Cleaning'];
-const DEFAULT = () => ({
-  num: 'CLN-001', date: todayISO(), client: '', phone: '', addr: '', area: 'Ibadan', beds: 2, kind: 'Residential Home',
-  svc: 'Residential Home Cleaning', svcCustom: '', billing: 'monthly', freq: 'Once weekly', sessions: 4, mat: 'cleanse', equip: 'cleanse',
-  items: [{ d: 'Monthly Cleaning Service', a: 40000, auto: true }], dep: 50,
-  accName: 'Cleanse Limited', bank: '', accNo: '', terms: null
-});
+
+function isSameDayService(svc, billing) {
+  if (billing === 'oneoff') return true;
+  const s = String(svc || '').toLowerCase();
+  return s.includes('deep') || s.includes('move-in') || s.includes('move-out') || s.includes('fumigation');
+}
+
+function calcEndDate(startDateStr, billing, svc, freq, sessions) {
+  if (!startDateStr) return '';
+  if (isSameDayService(svc, billing)) {
+    return startDateStr;
+  }
+  // Monthly subscription: 1 month ahead from start date
+  const parts = String(startDateStr).split('-').map(Number);
+  if (parts.length !== 3 || isNaN(parts[0]) || isNaN(parts[1]) || isNaN(parts[2])) return startDateStr;
+  const y = parts[0], m = parts[1], d = parts[2];
+  const targetYear = y + Math.floor(m / 12);
+  const targetMonthIdx = m % 12;
+  const daysInTargetMonth = new Date(targetYear, targetMonthIdx + 1, 0).getDate();
+  const targetDay = Math.min(d, daysInTargetMonth);
+  return targetYear + '-' + pad(targetMonthIdx + 1) + '-' + pad(targetDay);
+}
+
+const DEFAULT = () => {
+  const start = todayISO();
+  return {
+    num: 'CLN-001', date: start, client: '', phone: '', addr: '', area: 'Ibadan', beds: 2, kind: 'Residential Home',
+    svc: 'Residential Home Cleaning', svcCustom: '', billing: 'monthly', freq: 'Once weekly', sessions: 4,
+    startDate: start, endDate: calcEndDate(start, 'monthly', 'Residential Home Cleaning', 'Once weekly', 4),
+    mat: 'cleanse', equip: 'cleanse',
+    items: [{ d: 'Monthly Cleaning Service', a: 40000, auto: true }], dep: 50,
+    accName: 'Cleanse Limited', bank: '', accNo: '', terms: null
+  };
+};
 const KEY = 'cleanse-invoice-maker:v1';
 // Admin mode (cleanse.ng/admin/invoices): the server injects window.CLEANSE_INVOICE.
 // The number then comes from the server and invoices are saved there, not on the device.
@@ -632,6 +664,8 @@ if (SRV) {
 } else {
   try { const raw = localStorage.getItem(KEY); S = raw ? Object.assign(DEFAULT(), JSON.parse(raw)) : DEFAULT(); } catch (e) { S = DEFAULT(); }
 }
+if (!S.startDate) S.startDate = S.date || todayISO();
+if (!S.endDate) S.endDate = calcEndDate(S.startDate, S.billing, S.svc, S.freq, S.sessions);
 if (!Array.isArray(S.items) || !S.items.length) S.items = DEFAULT().items;
 let saveT = 0;
 let dirty = false;
@@ -652,6 +686,13 @@ function autoTerms(st) {
   const monthly = st.billing === 'monthly', n = sessionsOf(st), dep = depOf(st);
   const t = [];
   t.push(monthly ? 'The monthly fee covers ' + (n <= 20 ? WORDS[n].toLowerCase() : n) + ' scheduled cleaning session' + (n === 1 ? '' : 's') + '.' : 'The fee covers one cleaning visit.');
+  if (st.startDate) {
+    if (st.endDate && st.startDate !== st.endDate) {
+      t.push('The service contract commences on ' + fmtDate(st.startDate) + ' and runs through ' + fmtDate(st.endDate) + '.');
+    } else {
+      t.push('The scheduled cleaning date is ' + fmtDate(st.startDate) + '.');
+    }
+  }
   if (st.mat === 'cleanse' && st.equip === 'cleanse') t.push('Cleanse.ng provides the necessary cleaning materials and equipment.');
   else if (st.mat === 'client' && st.equip === 'client') t.push('The client provides the cleaning materials and equipment.');
   else if (st.mat === 'cleanse') t.push('Cleanse.ng provides the cleaning materials. The client provides the cleaning equipment.');
@@ -674,11 +715,13 @@ function derive(st) {
   if (st.area.trim()) client.push({ k: 'Property Location', v: st.area.trim(), wt: 1 });
   client.push({ k: 'Property Type', v: propType, wt: 1.5 });
   const by = v => 'Provided by ' + (v === 'client' ? 'client' : 'Cleanse.ng');
+  const isSingleDay = !st.endDate || st.startDate === st.endDate;
   const svcRows = [
     { k: 'Service', v: svcName(st), bold: true },
     { k: 'Property Size', v: beds + ' Bedroom' + (beds === 1 ? '' : 's') },
     { k: 'Frequency', v: monthly ? st.freq : 'One-off visit' },
     { k: monthly ? 'Monthly Sessions' : 'Sessions', v: String(monthly ? sessionsOf(st) : 1) },
+    ...(st.startDate ? [{ k: 'Contract Period', v: isSingleDay ? fmtDate(st.startDate) + ' (Same day)' : fmtDate(st.startDate) + ' – ' + fmtDate(st.endDate) }] : []),
     { k: 'Cleaning Materials', v: by(st.mat) },
     { k: 'Cleaning Equipment', v: by(st.equip) }
   ];
@@ -691,7 +734,7 @@ function derive(st) {
   const termsText = st.terms == null ? autoTerms(st) : st.terms;
   const terms = termsText.split('\n').map(s => s.trim().replace(/^\d+[.)]\s*/, '')).filter(Boolean);
   const cleansePhone = (SRV && SRV.contactPhone) ? SRV.contactPhone : '+234 913 066 3739';
-  return { num: st.num.trim() || 'CLN-001', date: fmtDate(st.date), client, svcRows, items, total, payRows, terms,
+  return { num: st.num.trim() || 'CLN-001', date: fmtDate(st.date), startDate: st.startDate, endDate: st.endDate, client, svcRows, items, total, payRows, terms,
     cleansePhone, accName: st.accName.trim(), bank: st.bank.trim(), accNo: st.accNo.trim() };
 }
 
@@ -896,7 +939,15 @@ fillSelect($('beds'), [1, 2, 3, 4, 5, 6].map(n => [n, String(n)]));
 fillSelect($('kind'), KINDS.map(k => [k, k]));
 fillSelect($('svc'), SERVICES.map(k => [k, k]).concat([['__custom', 'Other (type it)']]));
 fillSelect($('freq'), FREQ.map(([k]) => [k, k]));
-const SIMPLE = ['num', 'date', 'client', 'phone', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'mat', 'equip', 'dep', 'accName', 'bank', 'accNo'];
+const SIMPLE = ['num', 'date', 'client', 'phone', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'startDate', 'endDate', 'mat', 'equip', 'dep', 'accName', 'bank', 'accNo'];
+
+function autoRecalcEndDate() {
+  const currentSvc = S.svc === '__custom' ? S.svcCustom : S.svc;
+  const newEnd = calcEndDate(S.startDate, S.billing, currentSvc, S.freq, S.sessions);
+  S.endDate = newEnd;
+  const el = $('endDate');
+  if (el) el.value = newEnd;
+}
 
 function fillForm() {
   SIMPLE.forEach(k => { const el = $(k); if (el) el.value = S[k] == null ? '' : S[k]; });
@@ -941,16 +992,38 @@ $('f').addEventListener('input', e => {
   const t = e.target, k = t.id;
   if (SIMPLE.includes(k)) {
     S[k] = t.value;
-    if (k === 'freq') { const f = FREQ.find(x => x[0] === t.value); if (f) { S.sessions = f[1]; $('sessions').value = f[1]; } }
-    if (k === 'svc' || k === 'svcCustom') { syncVisibility(); refreshAutoItem(); }
+    if (k === 'startDate') { autoRecalcEndDate(); }
+    if (k === 'freq') { const f = FREQ.find(x => x[0] === t.value); if (f) { S.sessions = f[1]; $('sessions').value = f[1]; } autoRecalcEndDate(); }
+    if (k === 'sessions') { autoRecalcEndDate(); }
+    if (k === 'svc' || k === 'svcCustom') {
+      if (isSameDayService(S.svc, S.billing)) { S.billing = 'oneoff'; $('bill-o').checked = true; $('bill-m').checked = false; }
+      autoRecalcEndDate(); syncVisibility(); refreshAutoItem();
+    }
     changed();
   } else if (t.name === 'billing') {
-    S.billing = t.value; syncVisibility(); refreshAutoItem(); changed();
+    S.billing = t.value; autoRecalcEndDate(); syncVisibility(); refreshAutoItem(); changed();
   } else if (k === 'terms') {
     S.terms = t.value; syncTerms(false); changed(true);
   }
 });
-$('f').addEventListener('change', e => { if (e.target.name === 'billing' || e.target.tagName === 'SELECT') { const t = e.target; if (t.name === 'billing') S.billing = t.value; else if (SIMPLE.includes(t.id)) S[t.id] = t.value; syncVisibility(); refreshAutoItem(); changed(); } });
+$('f').addEventListener('change', e => {
+  const t = e.target, k = t.id;
+  if (t.name === 'billing' || t.tagName === 'SELECT' || k === 'startDate' || k === 'endDate') {
+    if (t.name === 'billing') {
+      S.billing = t.value;
+      autoRecalcEndDate();
+    } else if (SIMPLE.includes(t.id)) {
+      S[t.id] = t.value;
+      if (k === 'startDate') { autoRecalcEndDate(); }
+      if (k === 'svc') {
+        if (isSameDayService(S.svc, S.billing)) { S.billing = 'oneoff'; $('bill-o').checked = true; $('bill-m').checked = false; }
+        autoRecalcEndDate();
+      }
+      if (k === 'freq' || k === 'sessions') { autoRecalcEndDate(); }
+    }
+    syncVisibility(); refreshAutoItem(); changed();
+  }
+});
 $('addItem').addEventListener('click', () => { S.items.push({ d: '', a: '', auto: false }); renderItems(); changed(); const el = document.getElementById('item-d-' + (S.items.length - 1)); if (el) el.focus(); });
 $('jump').addEventListener('click', () => $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' }));
 $('resetTerms').addEventListener('click', () => { S.terms = null; syncTerms(true); changed(); });
