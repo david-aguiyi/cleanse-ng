@@ -348,22 +348,22 @@ const CLEANSE_PRICING = {
     MONTHLY:  { visits: 8, total: 30000 },
   },
   2: {
-    ONE_TIME: { visits: 1, total: 8000 },
-    WEEKLY:   { visits: 4, total: 20000 },
+    ONE_TIME: { visits: 1, total: 10000 },
+    WEEKLY:   { visits: 4, total: 30000 },
     MONTHLY:  { visits: 8, total: 40000 },
   },
   3: {
-    ONE_TIME: { visits: 1, total: 12000 },
+    ONE_TIME: { visits: 1, total: 15000 },
     WEEKLY:   { visits: 4, total: 40000 },
     MONTHLY:  { visits: 8, total: 60000 },
   },
   4: {
-    ONE_TIME: { visits: 1, total: 15000 },
+    ONE_TIME: { visits: 1, total: 20000 },
     WEEKLY:   { visits: 4, total: 50000 },
     MONTHLY:  { visits: 8, total: 70000 },
   },
   5: {
-    ONE_TIME: { visits: 1, total: 20000 },
+    ONE_TIME: { visits: 1, total: 25000 },
     WEEKLY:   { visits: 4, total: 60000 },
     MONTHLY:  { visits: 8, total: 80000 },
   },

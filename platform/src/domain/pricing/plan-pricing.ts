@@ -38,22 +38,22 @@ const MATRIX: Record<number, Record<PlanFrequency, PlanPrice>> = {
     MONTHLY: { visits: 8, totalKobo: N(30000) },
   },
   2: {
-    ONE_TIME: { visits: 1, totalKobo: N(8000) },
-    WEEKLY: { visits: 4, totalKobo: N(20000) },
+    ONE_TIME: { visits: 1, totalKobo: N(10000) },
+    WEEKLY: { visits: 4, totalKobo: N(30000) },
     MONTHLY: { visits: 8, totalKobo: N(40000) },
   },
   3: {
-    ONE_TIME: { visits: 1, totalKobo: N(12000) },
+    ONE_TIME: { visits: 1, totalKobo: N(15000) },
     WEEKLY: { visits: 4, totalKobo: N(40000) },
     MONTHLY: { visits: 8, totalKobo: N(60000) },
   },
   4: {
-    ONE_TIME: { visits: 1, totalKobo: N(15000) },
+    ONE_TIME: { visits: 1, totalKobo: N(20000) },
     WEEKLY: { visits: 4, totalKobo: N(50000) },
     MONTHLY: { visits: 8, totalKobo: N(70000) },
   },
   5: {
-    ONE_TIME: { visits: 1, totalKobo: N(20000) },
+    ONE_TIME: { visits: 1, totalKobo: N(25000) },
     WEEKLY: { visits: 4, totalKobo: N(60000) },
     MONTHLY: { visits: 8, totalKobo: N(80000) },
   },
