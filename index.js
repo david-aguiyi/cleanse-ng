@@ -344,7 +344,7 @@ const frequencyCardsContainer = document.getElementById('frequency-cards-contain
 const CLEANSE_PRICING = {
   1: {
     ONE_TIME: { visits: 1, total: 5000 },
-    WEEKLY:   { visits: 4, total: 15000 },
+    WEEKLY:   { visits: 4, total: 20000 },
     MONTHLY:  { visits: 8, total: 30000 },
   },
   2: {
@@ -354,18 +354,18 @@ const CLEANSE_PRICING = {
   },
   3: {
     ONE_TIME: { visits: 1, total: 12000 },
-    WEEKLY:   { visits: 4, total: 30000 },
+    WEEKLY:   { visits: 4, total: 40000 },
     MONTHLY:  { visits: 8, total: 60000 },
   },
   4: {
     ONE_TIME: { visits: 1, total: 15000 },
-    WEEKLY:   { visits: 4, total: 40000 },
-    MONTHLY:  { visits: 8, total: 60000 },
+    WEEKLY:   { visits: 4, total: 50000 },
+    MONTHLY:  { visits: 8, total: 70000 },
   },
   5: {
     ONE_TIME: { visits: 1, total: 20000 },
-    WEEKLY:   { visits: 4, total: 50000 },
-    MONTHLY:  { visits: 8, total: 75000 },
+    WEEKLY:   { visits: 4, total: 60000 },
+    MONTHLY:  { visits: 8, total: 80000 },
   },
 };
 
