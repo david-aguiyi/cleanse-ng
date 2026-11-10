@@ -4,7 +4,9 @@ import { getApplicantSelectionMessage, buildApplicantWhatsAppUrl } from "@app/ad
 describe("applicant selection message", () => {
   it("interpolates applicant full name in greeting", () => {
     const msg = getApplicantSelectionMessage("Blessing Adebayo");
-    expect(msg).toContain("Good day Blessing Adebayo, this is Cleanse.ng.");
+    expect(msg).toContain(
+      "Good day Blessing Adebayo, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website."
+    );
     expect(msg).toContain("You recently filled our online form to join us as a Cleanse Pro.");
     expect(msg).toContain("You are paid for every job you do, not a monthly salary.");
     expect(msg).toContain("flyer's ₦90,000 a month");
@@ -14,13 +16,19 @@ describe("applicant selection message", () => {
 
   it("handles missing or whitespace-only name gracefully", () => {
     const msg = getApplicantSelectionMessage("   ");
-    expect(msg).toContain("Good day, this is Cleanse.ng.");
+    expect(msg).toContain(
+      "Good day, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website."
+    );
   });
 
   it("builds a valid wa.me URL with prefilled URL-encoded text", () => {
     const url = buildApplicantWhatsAppUrl("+234 801 234 5678", "Blessing Adebayo");
     expect(url.startsWith("https://wa.me/2348012345678?text=")).toBe(true);
-    expect(url).toContain(encodeURIComponent("Good day Blessing Adebayo, this is Cleanse.ng."));
+    expect(url).toContain(
+      encodeURIComponent(
+        "Good day Blessing Adebayo, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website."
+      )
+    );
     expect(url).toContain(encodeURIComponent("flyer's ₦90,000 a month"));
   });
 
@@ -29,3 +37,4 @@ describe("applicant selection message", () => {
     expect(url.startsWith("https://wa.me/2348012345678?text=")).toBe(true);
   });
 });
+

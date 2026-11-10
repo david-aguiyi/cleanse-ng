@@ -6,7 +6,9 @@ import { waDigits } from "../format";
  */
 export function getApplicantSelectionMessage(fullName: string): string {
   const name = fullName ? fullName.trim() : "";
-  const greeting = name ? `Good day ${name}, this is Cleanse.ng.` : `Good day, this is Cleanse.ng.`;
+  const greeting = name
+    ? `Good day ${name}, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`
+    : `Good day, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`;
 
   return `${greeting}
 
@@ -42,3 +44,4 @@ export function buildApplicantWhatsAppUrl(phone: string, fullName: string): stri
   const text = getApplicantSelectionMessage(fullName);
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
 }
+
