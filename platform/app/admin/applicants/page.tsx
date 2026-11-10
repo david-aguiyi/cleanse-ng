@@ -5,6 +5,7 @@ import { listApplications, ageFromDob } from "@/domain/applicant/applicant-servi
 import { APPLICATION_STATUSES } from "@/validation/schemas";
 import { lagos } from "../format";
 import { STATUS_PILL } from "./status";
+import { buildApplicantWhatsAppUrl } from "./applicant-message";
 import AdminBar from "../AdminBar";
 
 export const runtime = "nodejs";
@@ -61,12 +62,13 @@ export default async function AdminApplicants({
                 <th>Gender</th>
                 <th>Experience</th>
                 <th>Days</th>
+                <th>Outreach</th>
               </tr>
             </thead>
             <tbody>
               {applications.length === 0 && (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
+                  <td colSpan={9} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
                     No applications yet. Share cleanse.ng/become-a-cleanse-pro to start receiving them.
                   </td>
                 </tr>
@@ -90,6 +92,26 @@ export default async function AdminApplicants({
                   <td>{a.gender}</td>
                   <td>{a.experience}</td>
                   <td>{(a.available_days ?? []).length}</td>
+                  <td>
+                    <a
+                      href={buildApplicantWhatsAppUrl(a.whatsapp_e164, a.full_name)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="pill ful-cleaner_assigned"
+                      style={{
+                        textDecoration: "none",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                        fontWeight: 600,
+                        fontSize: 12,
+                        padding: "4px 10px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      💬 Send WhatsApp ↗
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

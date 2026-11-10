@@ -5,8 +5,10 @@ import { getApplication, ageFromDob } from "@/domain/applicant/applicant-service
 import { AppError } from "@/http/errors";
 import { lagos, waDigits } from "../../format";
 import { STATUS_PILL } from "../status";
+import { buildApplicantWhatsAppUrl } from "../applicant-message";
 import AdminBar from "../../AdminBar";
 import ReviewActions from "./ReviewActions";
+import ApplicantWhatsAppAction from "./ApplicantWhatsAppAction";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,11 +61,11 @@ export default async function ApplicantDetail({ params }: { params: { id: string
           <span className="pill neutral">Applied {lagos(a.created_at)}</span>
           <a
             className="pill ful-cleaner_assigned"
-            href={`https://wa.me/${waDigits(a.whatsapp_e164)}`}
+            href={buildApplicantWhatsAppUrl(a.whatsapp_e164, a.full_name)}
             target="_blank"
             rel="noreferrer"
           >
-            WhatsApp {a.whatsapp_e164}
+            💬 Send Selection Message ({a.whatsapp_e164}) ↗
           </a>
         </div>
 
@@ -104,7 +106,9 @@ export default async function ApplicantDetail({ params }: { params: { id: string
           </div>
 
           <div className="card">
-            <h3>Review</h3>
+            <h3>Review & Outreach</h3>
+            <ApplicantWhatsAppAction phone={a.whatsapp_e164} fullName={a.full_name} />
+            <div style={{ margin: "18px 0 16px", borderTop: "1px solid var(--border)" }} />
             <ReviewActions applicationId={a.id} initialStatus={a.status} initialNotes={a.admin_notes} />
             <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>
               Hiring them? Mark as HIRED, then <Link href="/admin/cleaners/new">onboard them as a cleaner</Link>.
