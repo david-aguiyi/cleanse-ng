@@ -87,6 +87,30 @@ export async function updateApplication(id: string, patch: UpdateApplicationInpu
   return data;
 }
 
+/** Delete a single application by id (operator action). */
+export async function deleteApplication(id: string) {
+  const { error } = await serviceClient()
+    .from("cleaner_applications")
+    .delete()
+    .eq("id", id);
+  if (error) throw new AppError("INTERNAL_ERROR", "Could not delete application.");
+  return { deleted: true };
+}
+
+/** Clear applications (purge all or purge by status for fresh testing/batches). */
+export async function clearApplications(options?: { status?: string }) {
+  let query = serviceClient().from("cleaner_applications").delete();
+  if (options?.status) {
+    query = query.eq("status", options.status);
+  } else {
+    // Delete all rows in the table
+    query = query.neq("id", "00000000-0000-0000-0000-000000000000");
+  }
+  const { error } = await query;
+  if (error) throw new AppError("INTERNAL_ERROR", "Could not clear applications.");
+  return { cleared: true };
+}
+
 /** Whole years between a YYYY-MM-DD birth date and today. */
 export function ageFromDob(dob: string): number {
   const b = new Date(dob + "T00:00:00Z");

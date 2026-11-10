@@ -145,7 +145,7 @@ export async function listCleaners(filters: CleanerListFilters) {
   let query = db
     .from("cleaners")
     .select(
-      "id, cleaner_code, full_name, phone_e164, account_status, availability, verified, deployment_ready, rating, completed_jobs, created_at"
+      "id, cleaner_code, full_name, phone_e164, account_status, availability, verified, deployment_ready, rating, completed_jobs, work_rate_label, created_at"
     )
     .order("created_at", { ascending: false })
     .limit(Math.min(filters.limit ?? 100, 200));
@@ -234,6 +234,7 @@ export async function createCleaner(input: CreateCleanerInput, admin: AdminConte
       phone_e164: input.phone_e164,
       whatsapp_e164: input.whatsapp_e164 ?? null,
       bio: input.bio ?? null,
+      work_rate_label: input.work_rate_label ?? null,
       account_status: "ONBOARDING",
       availability: "UNAVAILABLE",
       verified: false,
@@ -270,6 +271,7 @@ export async function updateCleaner(id: string, patch: UpdateCleanerInput, admin
     "bio",
     "whatsapp_e164",
     "account_status",
+    "work_rate_label",
     "verified",
     "deployment_ready",
   ] as const) {

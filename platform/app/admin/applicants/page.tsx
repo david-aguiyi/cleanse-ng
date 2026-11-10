@@ -7,6 +7,7 @@ import { lagos } from "../format";
 import { STATUS_PILL } from "./status";
 import { buildApplicantWhatsAppUrl } from "./applicant-message";
 import AdminBar from "../AdminBar";
+import ClearApplicationsButton from "./ClearApplicationsButton";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,11 +29,14 @@ export default async function AdminApplicants({
     <main className="admin-shell">
       <AdminBar who={`${admin.fullName} · ${admin.role}`} active="applicants" />
       <div className="admin-wrap">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <h1 className="admin-h1">Cleanse Pro applicants</h1>
-          <a className="btn-ghost" href="/become-a-cleanse-pro" target="_blank" rel="noreferrer">
-            View application form ↗
-          </a>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <h1 className="admin-h1" style={{ margin: 0 }}>Cleanse Pro applicants</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <ClearApplicationsButton totalCount={applications.length} />
+            <a className="btn-ghost" href="/become-a-cleanse-pro" target="_blank" rel="noreferrer">
+              View application form ↗
+            </a>
+          </div>
         </div>
 
         <form className="filters" method="get">

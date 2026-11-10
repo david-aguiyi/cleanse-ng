@@ -63,6 +63,7 @@ export const createCleanerSchema = z.object({
   phone_e164: E164_CLEANER,
   whatsapp_e164: E164_CLEANER.optional(),
   bio: z.string().trim().max(1000).optional(),
+  work_rate_label: z.string().trim().max(60).optional(),
   zone_codes: z.array(z.string().trim().min(1).max(40)).max(30).default([]),
   service_codes: z.array(z.string().trim().min(1).max(40)).max(30).default([]),
 });
@@ -75,6 +76,7 @@ export const updateCleanerSchema = z
     bio: z.string().trim().max(1000).optional(),
     whatsapp_e164: E164_CLEANER.optional(),
     account_status: z.enum(["ONBOARDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+    work_rate_label: z.string().trim().max(60).nullable().optional(),
     block_reason: z.string().trim().max(500).optional(),
     verified: z.boolean().optional(),
     deployment_ready: z.boolean().optional(),

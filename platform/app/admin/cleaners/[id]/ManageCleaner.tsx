@@ -9,17 +9,21 @@ interface CleanerData {
   account_status: string;
   verified: boolean;
   deployment_ready: boolean;
+  work_rate_label?: string | null;
+  block_reason?: string | null;
   zones: { code: string; name: string }[];
   services: { code: string; name: string }[];
 }
 
 const ACCOUNT_STATES = ["ONBOARDING", "ACTIVE", "SUSPENDED", "INACTIVE"];
+const PRESET_TAGS = ["UNDER_SUPERVISION", "PROBATION", "TRAINEE", "SENIOR", "RELIABLE"];
 
 export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
   const router = useRouter();
   const [status, setStatus] = useState(cleaner.account_status);
   const [verified, setVerified] = useState(cleaner.verified);
   const [ready, setReady] = useState(cleaner.deployment_ready);
+  const [tag, setTag] = useState(cleaner.work_rate_label ?? "");
   const [zoneCodes, setZoneCodes] = useState<string[]>(cleaner.zones.map((z) => z.code));
   const [serviceCodes, setServiceCodes] = useState<string[]>(cleaner.services.map((s) => s.code));
   const [saving, setSaving] = useState(false);
@@ -30,6 +34,8 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
 
   const wouldBeReady = status === "ACTIVE" && verified && ready;
   const isBlocked = status === "SUSPENDED";
+  const isUnderSupervision = tag === "UNDER_SUPERVISION";
+  const isFired = tag === "FIRED" || (isBlocked && cleaner.block_reason?.startsWith("FIRED:"));
 
   async function patch(body: Record<string, unknown>, okText: string) {
     setSaving(true);
@@ -63,7 +69,35 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
 
   async function unblock() {
     setStatus("ACTIVE");
-    await patch({ account_status: "ACTIVE" }, "Cleaner unblocked.");
+    if (tag === "FIRED") setTag("");
+    await patch({ account_status: "ACTIVE", work_rate_label: tag === "FIRED" ? null : tag }, "Cleaner unblocked.");
+  }
+
+  async function fireCleaner() {
+    const reason = window.prompt(
+      "Why are you firing this cleaner? (This will immediately suspend their account, drop availability, and mark them as FIRED)",
+      ""
+    );
+    if (reason === null) return;
+    setStatus("SUSPENDED");
+    setTag("FIRED");
+    await patch(
+      {
+        account_status: "SUSPENDED",
+        work_rate_label: "FIRED",
+        block_reason: `FIRED: ${reason.trim() || "Terminated by admin."}`,
+      },
+      "Cleaner fired and removed from dispatch."
+    );
+  }
+
+  async function toggleSupervision() {
+    const nextTag = isUnderSupervision ? null : "UNDER_SUPERVISION";
+    setTag(nextTag ?? "");
+    await patch(
+      { work_rate_label: nextTag },
+      nextTag ? "Cleaner placed under supervision." : "Cleaner removed from supervision."
+    );
   }
 
   async function save() {
@@ -77,6 +111,7 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
           account_status: status,
           verified,
           deployment_ready: ready,
+          work_rate_label: tag.trim() ? tag.trim().toUpperCase() : null,
           zone_codes: zoneCodes,
           service_codes: serviceCodes,
         }),
@@ -98,23 +133,94 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
 
       <div
         className={`readiness ${isBlocked ? "blocked" : "ready"}`}
-        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}
       >
-        <span>{isBlocked ? "⛔ This cleaner is blocked." : "Cleaner is not blocked."}</span>
-        {isBlocked ? (
-          <button type="button" className="btn-ghost" onClick={unblock} disabled={saving}>
-            Unblock
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={block}
-            disabled={saving}
-            style={{ background: "#b3261e", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontFamily: "var(--font-header)", fontWeight: 700, cursor: "pointer" }}
-          >
-            Block cleaner
-          </button>
-        )}
+        <span>
+          {isFired
+            ? "⛔ This cleaner is FIRED / TERMINATED."
+            : isBlocked
+            ? "⛔ This cleaner is suspended."
+            : isUnderSupervision
+            ? "⚠️ Cleaner is UNDER SUPERVISION."
+            : "Cleaner is active and ready."}
+        </span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {isBlocked ? (
+            <button type="button" className="btn-ghost" onClick={unblock} disabled={saving}>
+              {isFired ? "Rehire / Unsuspend" : "Unblock"}
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={toggleSupervision}
+                disabled={saving}
+                style={{
+                  background: isUnderSupervision ? "#d97706" : "#fef3c7",
+                  color: isUnderSupervision ? "#fff" : "#92400e",
+                  border: "1px solid #d97706",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                {isUnderSupervision ? "✓ Under supervision" : "⚠️ Put under supervision"}
+              </button>
+              <button
+                type="button"
+                onClick={fireCleaner}
+                disabled={saving}
+                style={{
+                  background: "#b3261e",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ⛔ Fire cleaner
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="field" style={{ marginTop: 12 }}>
+        <label htmlFor="tag">Status tag / Performance label</label>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
+          {PRESET_TAGS.map((t) => (
+            <button
+              type="button"
+              key={t}
+              className={`chip ${tag === t ? "selected" : ""}`}
+              onClick={() => setTag(tag === t ? "" : t)}
+              style={{ fontSize: 12, padding: "4px 8px" }}
+            >
+              {t === "UNDER_SUPERVISION" ? "⚠️ UNDER SUPERVISION" : t}
+            </button>
+          ))}
+          {tag && (
+            <button
+              type="button"
+              className="chip"
+              onClick={() => setTag("")}
+              style={{ fontSize: 12, padding: "4px 8px", color: "var(--mid-gray)" }}
+            >
+              ✕ Clear tag
+            </button>
+          )}
+        </div>
+        <input
+          id="tag"
+          placeholder="Custom tag (e.g. UNDER_SUPERVISION, TRAINEE, PROBATION)"
+          value={tag}
+          onChange={(e) => setTag(e.target.value.toUpperCase())}
+        />
       </div>
 
       <div className="field">

@@ -36,6 +36,21 @@ export default async function CleanerDetail({ params }: { params: { id: string }
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0" }}>
           <span className="pill neutral">{c.cleaner_code}</span>
           <span className="pill neutral">{c.account_status}</span>
+          {c.work_rate_label === "UNDER_SUPERVISION" && (
+            <span className="pill" style={{ background: "#fef3c7", color: "#92400e", fontWeight: 700, border: "1px solid #fde68a" }}>
+              ⚠️ Under supervision
+            </span>
+          )}
+          {c.work_rate_label === "FIRED" && (
+            <span className="pill" style={{ background: "#fee2e2", color: "#991b1b", fontWeight: 700, border: "1px solid #fecaca" }}>
+              ⛔ Fired
+            </span>
+          )}
+          {c.work_rate_label && c.work_rate_label !== "UNDER_SUPERVISION" && c.work_rate_label !== "FIRED" && (
+            <span className="pill" style={{ background: "#e0e7ff", color: "#3730a3", fontWeight: 700 }}>
+              🏷️ {c.work_rate_label}
+            </span>
+          )}
           <span className={`pill ${c.ready ? "ful-cleaner_assigned" : "ful-unassigned"}`}>
             {c.ready ? "Deployment ready" : "Not ready"}
           </span>
@@ -43,6 +58,12 @@ export default async function CleanerDetail({ params }: { params: { id: string }
             {c.availability}
           </span>
         </div>
+
+        {c.block_reason && (
+          <div className="notice error" style={{ margin: "10px 0" }}>
+            <strong>Termination / Suspension details:</strong> {c.block_reason}
+          </div>
+        )}
 
         <div className="detail-grid">
           <div className="card">
@@ -99,6 +120,8 @@ export default async function CleanerDetail({ params }: { params: { id: string }
                 account_status: c.account_status,
                 verified: c.verified,
                 deployment_ready: c.deployment_ready,
+                work_rate_label: c.work_rate_label,
+                block_reason: c.block_reason,
                 zones: c.zones,
                 services: c.services,
               }}

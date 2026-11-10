@@ -67,6 +67,13 @@ export default async function ApplicantDetail({ params }: { params: { id: string
           >
             💬 Send Selection Message ({a.whatsapp_e164}) ↗
           </a>
+          <Link
+            className="pill"
+            style={{ background: "#059669", color: "#fff", textDecoration: "none", fontWeight: 700 }}
+            href={`/admin/cleaners/new?applicant_id=${a.id}&name=${encodeURIComponent(a.full_name)}&phone=${encodeURIComponent(a.phone_e164 || a.whatsapp_e164 || "")}&whatsapp=${encodeURIComponent(a.whatsapp_e164 || "")}`}
+          >
+            🚀 Onboard as Cleaner ➔
+          </Link>
         </div>
 
         <div className="detail-grid">
@@ -110,9 +117,15 @@ export default async function ApplicantDetail({ params }: { params: { id: string
             <ApplicantWhatsAppAction phone={a.whatsapp_e164} fullName={a.full_name} />
             <div style={{ margin: "18px 0 16px", borderTop: "1px solid var(--border)" }} />
             <ReviewActions applicationId={a.id} initialStatus={a.status} initialNotes={a.admin_notes} />
-            <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>
-              Hiring them? Mark as HIRED, then <Link href="/admin/cleaners/new">onboard them as a cleaner</Link>.
-            </p>
+            <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+              <Link
+                href={`/admin/cleaners/new?applicant_id=${a.id}&name=${encodeURIComponent(a.full_name)}&phone=${encodeURIComponent(a.phone_e164 || a.whatsapp_e164 || "")}&whatsapp=${encodeURIComponent(a.whatsapp_e164 || "")}`}
+                className="btn-primary"
+                style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+              >
+                🚀 Accept &amp; Onboard as Cleaner ➔
+              </Link>
+            </div>
           </div>
         </div>
       </div>

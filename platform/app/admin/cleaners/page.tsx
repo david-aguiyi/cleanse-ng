@@ -79,6 +79,21 @@ export default async function AdminCleaners({
                     <div className="muted" style={{ fontSize: 12 }}>
                       {c.phone_e164}
                     </div>
+                    {c.work_rate_label === "UNDER_SUPERVISION" && (
+                      <span className="pill" style={{ background: "#fef3c7", color: "#92400e", fontSize: 11, fontWeight: 700, padding: "2px 6px", marginTop: 4, display: "inline-block" }}>
+                        ⚠️ Under supervision
+                      </span>
+                    )}
+                    {c.work_rate_label === "FIRED" && (
+                      <span className="pill" style={{ background: "#fee2e2", color: "#991b1b", fontSize: 11, fontWeight: 700, padding: "2px 6px", marginTop: 4, display: "inline-block" }}>
+                        ⛔ Fired
+                      </span>
+                    )}
+                    {c.work_rate_label && c.work_rate_label !== "UNDER_SUPERVISION" && c.work_rate_label !== "FIRED" && (
+                      <span className="pill" style={{ background: "#e0e7ff", color: "#3730a3", fontSize: 11, fontWeight: 700, padding: "2px 6px", marginTop: 4, display: "inline-block" }}>
+                        🏷️ {c.work_rate_label}
+                      </span>
+                    )}
                   </td>
                   <td>{c.cleaner_code}</td>
                   <td>

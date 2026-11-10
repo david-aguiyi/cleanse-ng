@@ -1,14 +1,43 @@
 import { waDigits } from "../format";
 
 /**
+ * Resolves the appropriate Nigerian time-of-day greeting:
+ * - 04:00 - 11:59: "Good morning"
+ * - 12:00 - 16:59: "Good afternoon"
+ * - 17:00 - 03:59: "Good evening"
+ */
+export function getTimeOfDayGreeting(date = new Date()): string {
+  try {
+    const hourStr = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Africa/Lagos",
+      hour: "numeric",
+      hour12: false,
+    }).format(date);
+    const hour = parseInt(hourStr, 10);
+    if (hour >= 4 && hour < 12) return "Good morning";
+    if (hour >= 12 && hour < 17) return "Good afternoon";
+    return "Good evening";
+  } catch {
+    const hour = date.getHours();
+    if (hour >= 4 && hour < 12) return "Good morning";
+    if (hour >= 12 && hour < 17) return "Good afternoon";
+    return "Good evening";
+  }
+}
+
+/**
  * Pre-formatted outreach message sent to candidates who pass the initial screening.
  * Blueprint §6.1 / Cleanse Pro Onboarding workflow.
  */
-export function getApplicantSelectionMessage(fullName: string): string {
+export function getApplicantSelectionMessage(
+  fullName: string,
+  greetingOverride?: string
+): string {
   const name = fullName ? fullName.trim() : "";
+  const timeGreeting = greetingOverride || getTimeOfDayGreeting();
   const greeting = name
-    ? `Good day ${name}, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`
-    : `Good day, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`;
+    ? `${timeGreeting} ${name}, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`
+    : `${timeGreeting}, this is the General Operations Manager at Cleanse.ng. I am reaching out to you directly regarding the application you submitted on our website.`;
 
   return `${greeting}
 
@@ -36,12 +65,15 @@ Cleanse.ng`;
 /**
  * Builds a direct wa.me link with the prefilled message targeted to the applicant's WhatsApp number.
  */
-export function buildApplicantWhatsAppUrl(phone: string, fullName: string): string {
+export function buildApplicantWhatsAppUrl(
+  phone: string,
+  fullName: string,
+  greetingOverride?: string
+): string {
   let digits = waDigits(phone);
   if (digits.startsWith("0") && digits.length === 11) {
     digits = "234" + digits.slice(1);
   }
-  const text = getApplicantSelectionMessage(fullName);
+  const text = getApplicantSelectionMessage(fullName, greetingOverride);
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
 }
-
