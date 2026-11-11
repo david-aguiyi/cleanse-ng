@@ -1233,3 +1233,16 @@ create index if not exists cleaner_onboardings_applicant_idx
 
 alter table cleaner_onboardings enable row level security;
 
+-- ---------------------------------------------------------------------------
+-- Migration 0014 — Admin-only cleaner temporary credential store
+-- ---------------------------------------------------------------------------
+create table if not exists cleaner_credentials (
+  cleaner_id uuid primary key references cleaners(id) on delete cascade,
+  temporary_password text not null,
+  updated_by uuid references admin_users(id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+
+alter table cleaner_credentials enable row level security;
+revoke all on table cleaner_credentials from public, anon, authenticated;
+

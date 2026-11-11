@@ -86,6 +86,15 @@ export const updateCleanerSchema = z
   .refine((v) => Object.keys(v).length > 0, { message: "No changes provided." });
 export type UpdateCleanerInput = z.infer<typeof updateCleanerSchema>;
 
+/** Admin sets/resets a cleaner's portal password. */
+export const setCleanerPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .max(200, "Password is too long."),
+});
+export type SetCleanerPasswordInput = z.infer<typeof setCleanerPasswordSchema>;
+
 /** Cleaner sets their own availability (Blueprint §7 PUT /cleaner/availability). */
 export const availabilitySchema = z.object({
   available: z.boolean(),

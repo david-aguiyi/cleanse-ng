@@ -197,10 +197,31 @@ export async function getLeaderboard(limit = 200) {
   return rows;
 }
 
-export async function getCleanerAdmin(id: string) {
-  // Same shape as self view is fine for admin; add nothing customer-unsafe here
-  // beyond what admins already see.
-  return getMe(id);
+export async function getCleanerAdmin(id: string, admin: AdminContext) {
+  if (!admin?.adminId) {
+    throw new AppError("UNAUTHORIZED", "Admin access required.");
+  }
+
+  const cleaner = await getMe(id);
+  const db = serviceClient();
+
+  const { data: cred, error: credErr } = await db
+    .from("cleaner_credentials")
+    .select("temporary_password, updated_at")
+    .eq("cleaner_id", id)
+    .maybeSingle();
+
+  const storageReady = !credErr || !isMissingRelationError(credErr);
+  if (credErr && storageReady) {
+    throw new AppError("INTERNAL_ERROR", "Could not load cleaner credentials.");
+  }
+
+  return {
+    ...cleaner,
+    temporary_password: (cred as { temporary_password?: string } | null)?.temporary_password ?? null,
+    password_updated_at: (cred as { updated_at?: string } | null)?.updated_at ?? null,
+    credentials_storage_ready: storageReady,
+  };
 }
 
 /** Onboard a cleaner: create their Auth account and profile + zones/services. */
@@ -250,9 +271,47 @@ export async function createCleaner(input: CreateCleanerInput, admin: AdminConte
 
   await syncZones(cleaner.id, input.zone_codes);
   await syncServices(cleaner.id, input.service_codes);
+  await upsertCleanerCredential(cleaner.id, input.password, admin.adminId, {
+    tolerateMissingTable: true,
+  });
   await audit(admin, "cleaner.created", cleaner.id, { email: input.email });
 
   return { id: cleaner.id, cleaner_code: cleaner.cleaner_code };
+}
+
+/** Update a cleaner's Supabase Auth password and persist the admin-only copy. */
+export async function setCleanerPassword(id: string, password: string, admin: AdminContext) {
+  if (!admin?.adminId) {
+    throw new AppError("UNAUTHORIZED", "Admin access required.");
+  }
+
+  const db = serviceClient();
+  const { data: cleaner, error } = await db
+    .from("cleaners")
+    .select("id, auth_user_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !cleaner) {
+    throw new AppError("CLEANER_NOT_FOUND", "Cleaner not found.");
+  }
+
+  const authUserId = (cleaner as { auth_user_id?: string | null }).auth_user_id;
+  if (!authUserId) {
+    throw new AppError("INTERNAL_ERROR", "Cleaner does not have a linked login account.");
+  }
+
+  const { error: authErr } = await db.auth.admin.updateUserById(authUserId, { password });
+  if (authErr) {
+    throw new AppError("INTERNAL_ERROR", authErr.message || "Could not update login password.");
+  }
+
+  const updatedAt = await upsertCleanerCredential(id, password, admin.adminId, {
+    tolerateMissingTable: false,
+  });
+  await audit(admin, "cleaner.password_updated", id, { password_updated: true });
+
+  return { cleaner_id: id, temporary_password: password, updated_at: updatedAt };
 }
 
 /** Approve/suspend/verify/deployment + profile + zones/services. */
@@ -306,12 +365,55 @@ export async function updateCleaner(id: string, patch: UpdateCleanerInput, admin
   }
 
   await audit(admin, "cleaner.updated", id, { changes: patch });
-  return getCleanerAdmin(id);
+  return getCleanerAdmin(id, admin);
 }
 
 // --------------------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------------------
+function isMissingRelationError(err: { code?: string; message?: string } | null | undefined): boolean {
+  if (!err) return false;
+  return (
+    err.code === "42P01" ||
+    err.code === "PGRST205" ||
+    /cleaner_credentials/i.test(err.message ?? "")
+  );
+}
+
+async function upsertCleanerCredential(
+  cleanerId: string,
+  temporaryPassword: string,
+  adminId: string,
+  options: { tolerateMissingTable: boolean }
+): Promise<string | null> {
+  const updatedAt = new Date().toISOString();
+  const { error } = await serviceClient()
+    .from("cleaner_credentials")
+    .upsert(
+      {
+        cleaner_id: cleanerId,
+        temporary_password: temporaryPassword,
+        updated_by: adminId,
+        updated_at: updatedAt,
+      },
+      { onConflict: "cleaner_id" }
+    );
+
+  if (error) {
+    if (options.tolerateMissingTable && isMissingRelationError(error)) {
+      return null;
+    }
+    if (isMissingRelationError(error)) {
+      throw new AppError(
+        "INTERNAL_ERROR",
+        "Run database migration 0014_cleaner_admin_credentials.sql in Supabase first so cleaner passwords can be stored."
+      );
+    }
+    throw new AppError("INTERNAL_ERROR", "Could not save cleaner credentials.");
+  }
+
+  return updatedAt;
+}
 async function syncZones(cleanerId: string, zoneCodes: string[]) {
   const db = serviceClient();
   const { data: zones } = await db.from("service_zones").select("id, code").in("code", zoneCodes);

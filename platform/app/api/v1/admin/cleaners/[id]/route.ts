@@ -12,8 +12,8 @@ export const dynamic = "force-dynamic";
 export async function GET(_req: NextRequest, ctx: { params: { id: string } }) {
   const requestId = newRequestId();
   try {
-    await requireAdmin();
-    const cleaner = await getCleanerAdmin(ctx.params.id);
+    const admin = await requireAdmin();
+    const cleaner = await getCleanerAdmin(ctx.params.id, admin);
     return ok(cleaner, requestId);
   } catch (err) {
     return handleError(err, requestId);

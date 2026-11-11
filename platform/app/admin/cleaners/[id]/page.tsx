@@ -5,6 +5,7 @@ import { getCleanerAdmin } from "@/domain/cleaner/cleaner-service";
 import { AppError } from "@/http/errors";
 import AdminBar from "../../AdminBar";
 import ManageCleaner from "./ManageCleaner";
+import CleanerCredentials from "./CleanerCredentials";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export default async function CleanerDetail({ params }: { params: { id: string }
 
   let c;
   try {
-    c = await getCleanerAdmin(params.id);
+    c = await getCleanerAdmin(params.id, admin);
   } catch (err) {
     if (err instanceof AppError && err.code === "CLEANER_NOT_FOUND") notFound();
     throw err;
@@ -76,10 +77,13 @@ export default async function CleanerDetail({ params }: { params: { id: string }
               <span className="k">WhatsApp</span>
               <span>{c.whatsapp_e164 ?? "—"}</span>
             </div>
-            <div className="kv">
-              <span className="k">Email</span>
-              <span>{c.email ?? "—"}</span>
-            </div>
+            <CleanerCredentials
+              cleanerId={c.id}
+              email={c.email ?? null}
+              initialPassword={c.temporary_password ?? null}
+              storageReady={c.credentials_storage_ready ?? true}
+              canManagePassword={admin.role === "SUPER_ADMIN" || admin.role === "OPERATIONS"}
+            />
             {c.bio && (
               <div className="kv">
                 <span className="k">Bio</span>
