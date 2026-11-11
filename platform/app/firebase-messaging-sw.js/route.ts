@@ -50,7 +50,7 @@ messaging.onBackgroundMessage(function (payload) {
   const data = payload.data || {};
   const title = (payload.notification && payload.notification.title) || "New Cleanse job available";
   const body = (payload.notification && payload.notification.body) || "";
-  const link = data.deep_link || "/cleaner/home";
+  const link = data.deep_link || "/pro/home";
   self.registration.showNotification(title, {
     body: body,
     icon: "/icons/icon-192.svg",
@@ -63,7 +63,7 @@ messaging.onBackgroundMessage(function (payload) {
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  const link = (event.notification.data && event.notification.data.link) || "/cleaner/home";
+  const link = (event.notification.data && event.notification.data.link) || "/pro/home";
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (list) {
       for (const client of list) {

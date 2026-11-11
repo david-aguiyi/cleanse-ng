@@ -181,6 +181,24 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
       </div>
     </section>
 
+    <section class="card" id="internalTeamCard" hidden>
+      <h2>Team &amp; Job Status (Operator Only — Hidden on PDF)</h2>
+      <label class="fld">Subscription / Job Status
+        <select id="jobStatus">
+          <option value="ACTIVE">Active — Serving (reserves calendar)</option>
+          <option value="PENDING">Pending — Awaiting deposit</option>
+          <option value="PAUSED">Paused — Holds remaining visits</option>
+          <option value="ENDED">Ended — Contract completed</option>
+          <option value="TERMINATED">Terminated — Stopped early</option>
+        </select>
+      </label>
+      <div class="row2 sm1">
+        <label class="fld">Cleanse Pro 1 <span class="opt">(optional)</span><select id="cleaner1"></select></label>
+        <label class="fld">Cleanse Pro 2 <span class="opt">(optional)</span><select id="cleaner2"></select></label>
+      </div>
+      <div class="hint" id="payoutPreview" style="margin:2px 0 8px"></div>
+    </section>
+
     <section class="card">
       <h2>Charges</h2>
       <div id="items"></div>
@@ -776,6 +794,7 @@ const DEFAULT = () => {
     svc: 'Residential Home Cleaning', svcCustom: '', billing: 'monthly', freq: 'Once weekly', sessions: 4,
     startDate: start, endDate: calcEndDate(start, 'monthly', 'Residential Home Cleaning', 'Once weekly', 4),
     visitDays: [], visitSlot: '', scheduledVisits: [], visitsCustom: false, reserveCalendar: true,
+    cleanerIds: [], jobStatus: 'ACTIVE',
     mat: 'cleanse', equip: 'cleanse',
     items: [{ d: 'Monthly Cleaning Service', a: 40000, auto: true }], dep: 50,
     accName: 'Cleanse Limited', bank: '', accNo: '', terms: null
@@ -816,6 +835,8 @@ if (SRV) {
   S = SRV.data ? Object.assign(DEFAULT(), SRV.data)
     : Object.assign(DEFAULT(), SRV.defaults || {}, keep || {}, { client: '', addr: '', area: 'Ibadan', items: [{ d: 'Monthly Cleaning Service', a: '', auto: true }] });
   S.num = SRV.num || 'New';
+  if (SRV.jobStatus) S.jobStatus = SRV.jobStatus;
+  if (Array.isArray(SRV.cleanerIds)) S.cleanerIds = SRV.cleanerIds.slice(0, 2);
 } else {
   try { const raw = localStorage.getItem(KEY); S = raw ? Object.assign(DEFAULT(), JSON.parse(raw)) : DEFAULT(); } catch (e) { S = DEFAULT(); }
 }
@@ -873,21 +894,13 @@ function scheduleMeta(st) {
 }
 function autoTerms(st) {
   const monthly = st.billing === 'monthly', n = sessionsOf(st), dep = depOf(st);
-  const sm = scheduleMeta(st);
   const t = [];
   t.push(monthly ? 'The monthly fee covers ' + (n <= 20 ? WORDS[n].toLowerCase() : n) + ' scheduled cleaning session' + (n === 1 ? '' : 's') + '.' : 'The fee covers one cleaning visit.');
   if (st.startDate) {
     if (st.endDate && st.startDate !== st.endDate) {
-      const schedClause = sm.daysText && sm.slotText
-        ? ' with visits on ' + sm.daysText + ' (' + sm.slotText + ')'
-        : sm.daysText
-          ? ' with visits on ' + sm.daysText
-          : sm.slotText
-            ? ' at ' + sm.slotText
-            : '';
-      t.push('The service contract commences on ' + fmtDate(st.startDate) + ' and runs through ' + fmtDate(st.endDate) + schedClause + '.');
+      t.push('The service contract commences on ' + fmtDate(st.startDate) + ' and runs through ' + fmtDate(st.endDate) + '.');
     } else {
-      t.push('The scheduled cleaning date is ' + fmtDate(st.startDate) + (sm.slotText ? ' (' + sm.slotText + ')' : '') + '.');
+      t.push('The scheduled service date is ' + fmtDate(st.startDate) + '.');
     }
   }
   if (st.mat === 'cleanse' && st.equip === 'cleanse') t.push('Cleanse.ng provides the necessary cleaning materials and equipment.');
@@ -907,35 +920,17 @@ function derive(st) {
   const propType = (WORDS[beds] || beds) + '-Bedroom ' + st.kind;
   const client = [];
   if (st.client && st.client.trim()) client.push({ k: 'Client', v: st.client.trim(), wt: 1 });
-  if (st.phone && st.phone.trim()) client.push({ k: 'Client Phone', v: st.phone.trim(), wt: 1 });
   if (st.addr && st.addr.trim()) client.push({ k: 'Address', v: st.addr.trim(), wt: 1 });
   if (st.area.trim()) client.push({ k: 'Property Location', v: st.area.trim(), wt: 1 });
   client.push({ k: 'Property Type', v: propType, wt: 1.5 });
   const by = v => 'Provided by ' + (v === 'client' ? 'client' : 'Cleanse.ng');
   const isSingleDay = !st.endDate || st.startDate === st.endDate;
-  const sm = scheduleMeta(st);
-  const scheduleRows = [];
-  if (isSingleDay || sm.visits.length <= 1) {
-    if (sm.slotText) scheduleRows.push({ k: 'Serving Time', v: sm.slotText, bold: true });
-    if (sm.visits.length === 1 && sm.visits[0].date && sm.visits[0].date !== st.startDate) {
-      scheduleRows.push({ k: 'Scheduled Date', v: fmtDate(sm.visits[0].date) });
-    }
-  } else {
-    if (sm.daysText || sm.slotText) {
-      scheduleRows.push({ k: 'Serving Schedule', v: [sm.daysText, sm.slotText].filter(Boolean).join(' · '), bold: true });
-    }
-    if (sm.visits.length) {
-      const listStr = sm.visits.map(v => fmtShortDate(v.date) + (sm.uniqueSlots.length > 1 ? ' (' + v.slot + ')' : '')).join(', ');
-      scheduleRows.push({ k: 'Scheduled Dates', v: listStr });
-    }
-  }
   const svcRows = [
     { k: 'Service', v: svcName(st), bold: true },
     { k: 'Property Size', v: beds + ' Bedroom' + (beds === 1 ? '' : 's') },
     { k: 'Frequency', v: monthly ? st.freq : 'One-off visit' },
     { k: monthly ? 'Monthly Sessions' : 'Sessions', v: String(monthly ? sessionsOf(st) : 1) },
     ...(st.startDate ? [{ k: 'Contract Period', v: isSingleDay ? fmtDate(st.startDate) + ' (Same day)' : fmtDate(st.startDate) + ' – ' + fmtDate(st.endDate) }] : []),
-    ...scheduleRows,
     { k: 'Cleaning Materials', v: by(st.mat) },
     { k: 'Cleaning Equipment', v: by(st.equip) }
   ];
@@ -1153,7 +1148,56 @@ fillSelect($('beds'), [1, 2, 3, 4, 5, 6].map(n => [n, String(n)]));
 fillSelect($('kind'), KINDS.map(k => [k, k]));
 fillSelect($('svc'), SERVICES.map(k => [k, k]).concat([['__custom', 'Other (type it)']]));
 fillSelect($('freq'), FREQ.map(([k]) => [k, k]));
-const SIMPLE = ['num', 'date', 'client', 'phone', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'startDate', 'endDate', 'mat', 'equip', 'dep', 'accName', 'bank', 'accNo'];
+const SIMPLE = ['num', 'date', 'client', 'phone', 'addr', 'area', 'beds', 'kind', 'svc', 'svcCustom', 'freq', 'sessions', 'startDate', 'endDate', 'mat', 'equip', 'jobStatus', 'dep', 'accName', 'bank', 'accNo'];
+
+function renderTeamControls() {
+  const card = $('internalTeamCard');
+  if (!card) return;
+  card.hidden = !SRV;
+  if (!SRV) return;
+
+  const list = Array.isArray(SRV.cleaners) ? SRV.cleaners : [];
+  const selected = Array.isArray(S.cleanerIds) ? S.cleanerIds.filter(Boolean).slice(0, 2) : [];
+  const c1 = selected[0] || '';
+  const c2 = selected[1] || '';
+
+  const populate = (el, currentVal, otherVal, placeholder) => {
+    if (!el) return;
+    el.innerHTML = '';
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = list.length ? placeholder : 'No onboarded Cleanse Pros yet';
+    el.appendChild(empty);
+    for (const c of list) {
+      const o = document.createElement('option');
+      o.value = c.id;
+      const tag = c.account_status === 'ONBOARDING' ? ' (Onboarding)' : c.account_status === 'PAUSED' ? ' (Paused)' : '';
+      o.textContent = c.full_name + ' · ' + c.cleaner_code + tag;
+      if (otherVal && c.id === otherVal) o.disabled = true;
+      el.appendChild(o);
+    }
+    el.value = currentVal;
+  };
+
+  populate($('cleaner1'), c1, c2, 'Select primary Cleanse Pro');
+  populate($('cleaner2'), c2, c1, 'None (single cleaner)');
+  renderInternalPayoutPreview();
+}
+
+function renderInternalPayoutPreview() {
+  const box = $('payoutPreview');
+  if (!box) return;
+  const total = Math.max(0, Math.round(totalOf(S)));
+  const sessions = S.billing === 'oneoff' ? 1 : sessionsOf(S);
+  const beds = Math.max(1, parseInt(S.beds, 10) || 1);
+  const perClean = Math.round(total / sessions);
+  const supplies = beds <= 2 ? 800 : 1500;
+  const net = Math.max(0, perClean - supplies);
+  const pool = Math.round(net * 0.70);
+  const count = Array.isArray(S.cleanerIds) ? S.cleanerIds.filter(Boolean).length : 0;
+  const split = count >= 2 ? ' (2 pros: ' + naira(Math.round(pool / 2)) + ' + ' + naira(pool - Math.round(pool / 2)) + ' each/clean)' : ' (full 70%: ' + naira(pool) + '/clean)';
+  box.textContent = 'Job calc → Price/clean: ' + naira(perClean) + ' · Supplies: -' + naira(supplies) + ' · 70% Cleaner pool: ' + naira(pool) + '/clean' + split;
+}
 
 function autoRecalcEndDate() {
   const currentSvc = S.svc === '__custom' ? S.svcCustom : S.svc;
@@ -1415,7 +1459,7 @@ function fillForm() {
   SIMPLE.forEach(k => { const el = $(k); if (el) el.value = S[k] == null ? '' : S[k]; });
   if (!SERVICES.includes(S.svc) && S.svc !== '__custom') { S.svcCustom = S.svc; S.svc = '__custom'; $('svc').value = '__custom'; $('svcCustom').value = S.svcCustom; }
   $('bill-m').checked = S.billing === 'monthly'; $('bill-o').checked = S.billing !== 'monthly';
-  renderItems(); renderScheduleControls(); syncVisibility(); syncTerms(true);
+  renderItems(); renderScheduleControls(); renderTeamControls(); syncVisibility(); syncTerms(true);
 }
 function syncVisibility() {
   $('svcCustomWrap').hidden = S.svc !== '__custom';
@@ -1504,6 +1548,18 @@ $('f').addEventListener('change', e => {
     syncVisibility(); renderScheduleControls(); refreshAutoItem(); changed();
   }
 });
+function syncCleanerSelects() {
+  const c1 = $('cleaner1') ? $('cleaner1').value : '';
+  const c2 = $('cleaner2') ? $('cleaner2').value : '';
+  const next = [];
+  if (c1) next.push(c1);
+  if (c2 && c2 !== c1) next.push(c2);
+  S.cleanerIds = next;
+  renderTeamControls();
+  changed();
+}
+if ($('cleaner1')) $('cleaner1').addEventListener('change', syncCleanerSelects);
+if ($('cleaner2')) $('cleaner2').addEventListener('change', syncCleanerSelects);
 $('reserveCalendar').addEventListener('change', e => {
   S.reserveCalendar = e.target.checked;
   changed();
@@ -1536,6 +1592,7 @@ let lastPages = null;
 function render() {
   const total = naira(totalOf(S));
   $('totalOut').textContent = total; $('barTotal').textContent = total;
+  renderInternalPayoutPreview();
   const pages = layout(S); lastPages = pages;
   const box = $('pages'), cssW = Math.max(240, Math.min(box.clientWidth || 600, 860));
   while (box.children.length < pages.length) { const c = document.createElement('canvas'); c.className = 'sheet'; c.setAttribute('role', 'img'); box.appendChild(c); }
@@ -1568,7 +1625,7 @@ function cleanScheduledVisits(list) {
 }
 
 function validateBeforeSave() {
-  if (S.reserveCalendar === false) {
+  if (S.jobStatus === 'ENDED' || S.jobStatus === 'TERMINATED' || S.reserveCalendar === false) {
     S.scheduledVisits = cleanScheduledVisits(S.scheduledVisits);
     return true;
   }
@@ -1589,11 +1646,14 @@ function validateBeforeSave() {
 /* ---------- save to cleanse.ng (admin mode) ---------- */
 async function saveInvoice() {
   const cleaned = cleanScheduledVisits(S.scheduledVisits);
+  const cleanerIds = Array.isArray(S.cleanerIds) ? Array.from(new Set(S.cleanerIds.filter(Boolean))).slice(0, 2) : [];
   const data = Object.assign({}, S, {
     visitSlot: normSlotVal(S.visitSlot),
     visitDays: Array.isArray(S.visitDays) ? S.visitDays.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6) : [],
     scheduledVisits: cleaned,
     reserveCalendar: S.reserveCalendar !== false,
+    cleanerIds,
+    jobStatus: S.jobStatus || 'ACTIVE',
   });
   const customNum = (S.num && S.num !== 'New' && String(S.num).trim()) ? String(S.num).trim() : undefined;
   delete data.num;

@@ -215,7 +215,7 @@ export default function CleanerCredentials({
             <button
               type="button"
               style={{ ...smallBtnStyle, fontSize: 11 }}
-              onClick={() => copy("both", `Login URL: ${window.location.origin}/cleaner/login\nEmail: ${email}\nPassword: ${password}`)}
+              onClick={() => copy("both", `Login URL: ${window.location.origin}/pro/login\nEmail: ${email}\nPassword: ${password}`)}
             >
               {copied === "both" ? "Copied login message ✓" : "Copy email & password"}
             </button>

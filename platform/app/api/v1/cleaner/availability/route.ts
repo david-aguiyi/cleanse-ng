@@ -1,23 +1,21 @@
 import { NextRequest } from "next/server";
 import { requireCleaner } from "@/auth/cleaner";
-import { setAvailability } from "@/domain/cleaner/cleaner-service";
-import { availabilitySchema } from "@/validation/schemas";
-import { ok, handleError } from "@/http/response";
+import { AppError } from "@/http/errors";
+import { handleError } from "@/http/response";
 import { newRequestId } from "@/observability/logger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// PUT /api/v1/cleaner/availability — set AVAILABLE / UNAVAILABLE.
-// Setting AVAILABLE is rejected unless the cleaner is ACTIVE + verified +
-// deployment-ready (Stage 4 exit criterion).
-export async function PUT(req: NextRequest) {
+// PUT /api/v1/cleaner/availability — disabled for cleaners (schedules are operator-assigned).
+export async function PUT(_req: NextRequest) {
   const requestId = newRequestId();
   try {
-    const ctx = await requireCleaner();
-    const { available } = availabilitySchema.parse(await req.json());
-    const result = await setAvailability(ctx.cleanerId, available);
-    return ok(result, requestId);
+    await requireCleaner();
+    throw new AppError(
+      "FORBIDDEN",
+      "Availability toggles are disabled. Your schedule is assigned directly by the Cleanse office."
+    );
   } catch (err) {
     return handleError(err, requestId);
   }

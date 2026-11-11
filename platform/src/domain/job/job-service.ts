@@ -7,6 +7,8 @@
 import "server-only";
 import { serviceClient } from "@/db/service-client";
 import { AppError } from "@/http/errors";
+import { recordBookingJobEarning } from "@/domain/payout/payout-service";
+import { isAddressUnlockedForTimestamp } from "@/domain/job/pricing";
 
 const STAGE_ORDER = ["ASSIGNED", "ON_THE_WAY", "ARRIVED", "IN_PROGRESS", "COMPLETED"] as const;
 type Stage = (typeof STAGE_ORDER)[number];
@@ -31,8 +33,10 @@ export interface CleanerJobView {
   completion_report: Record<string, any> | null;
   fulfilment_status: string;
   customer_first_name: string;
-  customer_whatsapp: string;
-  address_line1: string;
+  address_unlocked: boolean;
+  address_unlock_label: string;
+  zone_name: string | null;
+  address_line1: string | null;
   estate: string | null;
   landmark: string | null;
   directions: string | null;
@@ -71,7 +75,7 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
   const { data: bookingRow } = await db
     .from("bookings")
     .select(
-      "id, public_reference, property_bedrooms, scheduled_start_at, fulfilment_status, customer:customers(full_name, whatsapp_e164), address:customer_addresses(address_line1, estate, landmark, directions), service:services(name)"
+      "id, public_reference, property_bedrooms, scheduled_start_at, fulfilment_status, customer:customers(full_name), zone:service_zones(name), address:customer_addresses(address_line1, estate, landmark, directions), service:services(name)"
     )
     .eq("public_reference", reference)
     .maybeSingle();
@@ -89,6 +93,11 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
     .maybeSingle();
   if (!assignment) throw new AppError("FORBIDDEN", "You are not assigned to this job.");
 
+  const gate =
+    assignment.status === "COMPLETED"
+      ? { unlocked: false, unlockTimeLabel: "Completed" }
+      : isAddressUnlockedForTimestamp(booking.scheduled_start_at);
+
   return {
     booking_id: booking.id,
     booking_reference: booking.public_reference,
@@ -103,11 +112,13 @@ export async function getCleanerJob(reference: string, cleanerId: string): Promi
     completion_report: assignment.completion_report ?? null,
     fulfilment_status: booking.fulfilment_status,
     customer_first_name: String(booking.customer?.full_name ?? "").split(" ")[0] ?? "",
-    customer_whatsapp: booking.customer?.whatsapp_e164 ?? "",
-    address_line1: booking.address?.address_line1 ?? "",
-    estate: booking.address?.estate ?? null,
-    landmark: booking.address?.landmark ?? null,
-    directions: booking.address?.directions ?? null,
+    address_unlocked: gate.unlocked,
+    address_unlock_label: gate.unlockTimeLabel,
+    zone_name: booking.zone?.name ?? null,
+    address_line1: gate.unlocked ? booking.address?.address_line1 ?? "" : null,
+    estate: gate.unlocked ? booking.address?.estate ?? null : null,
+    landmark: gate.unlocked ? booking.address?.landmark ?? null : null,
+    directions: gate.unlocked ? booking.address?.directions ?? null : null,
   };
 }
 
@@ -178,7 +189,10 @@ export async function updateJobStatus(
   });
 
   await recomputeBookingFulfilment(bookingId);
-  if (next === "COMPLETED") await rollUpCleanerMetrics(cleanerId);
+  if (next === "COMPLETED") {
+    await rollUpCleanerMetrics(cleanerId);
+    await recordBookingJobEarning(bookingId, cleanerId);
+  }
 
   return { status: next, durationMinutes };
 }

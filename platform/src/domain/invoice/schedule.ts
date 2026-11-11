@@ -208,9 +208,12 @@ export function generateScheduledVisits(params: GenerateVisitsParams): Scheduled
  * Respects `reserveCalendar === false` opt-out and deduplicates identical (date, slot)
  * pairs within a single invoice while validating inputs strictly.
  */
-export function expandInvoiceVisits(data: Record<string, unknown> | null | undefined): ScheduledVisit[] {
+export function expandInvoiceVisits(
+  data: Record<string, unknown> | null | undefined,
+  options?: { includeUnreserved?: boolean }
+): ScheduledVisit[] {
   if (!data || typeof data !== "object") return [];
-  if (data.reserveCalendar === false) return [];
+  if (!options?.includeUnreserved && data.reserveCalendar === false) return [];
 
   const fallbackSlot = normalizeSlot(data.visitSlot);
   const explicit = data.scheduledVisits;

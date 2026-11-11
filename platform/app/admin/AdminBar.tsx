@@ -6,17 +6,23 @@ export default function AdminBar({
   active,
 }: {
   who: string;
-  active?: "bookings" | "cleaners" | "applicants" | "onboardings" | "invoices" | "settings";
+  active?: "bookings" | "jobs" | "payouts" | "cleaners" | "applicants" | "onboardings" | "invoices" | "settings";
 }) {
   return (
     <div className="admin-bar">
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
         <Link className="brand" href="/admin/bookings">
           CLEANSE.NG <span>· OPS</span>
         </Link>
-        <nav className="nav-links">
+        <nav className="nav-links" style={{ flexWrap: "wrap" }}>
           <Link href="/admin/bookings" className={active === "bookings" ? "here" : ""}>
             Bookings
+          </Link>
+          <Link href="/admin/jobs" className={active === "jobs" ? "here" : ""}>
+            Jobs
+          </Link>
+          <Link href="/admin/payouts" className={active === "payouts" ? "here" : ""}>
+            Payouts
           </Link>
           <Link href="/admin/cleaners" className={active === "cleaners" ? "here" : ""}>
             Cleaners

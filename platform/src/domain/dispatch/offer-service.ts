@@ -273,7 +273,7 @@ export async function createDispatchRound(
         body: `${booking.property_bedrooms ?? ""}BR · ${zoneName}`,
         offerId: offer.id,
         bookingReference: booking.public_reference,
-        deepLinkPath: `/cleaner/offers/${offer.id}`,
+        deepLinkPath: `/pro/offers/${offer.id}`,
       });
       if (res.delivered > 0) {
         pushSent += res.delivered;

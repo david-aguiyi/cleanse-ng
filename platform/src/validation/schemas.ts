@@ -326,6 +326,8 @@ export const invoiceSaveSchema = z.object({
         )
         .max(62)
         .optional(),
+      cleanerIds: z.array(z.string().uuid()).max(2).optional(),
+      jobStatus: z.enum(["PENDING", "ACTIVE", "PAUSED", "ENDED", "TERMINATED"]).optional(),
       items: z
         .array(z.object({ d: z.string().max(300).optional(), a: z.union([z.number(), z.string().max(40)]).optional() }).passthrough())
         .min(1)
@@ -343,4 +345,46 @@ export const updateSettingsSchema = z.object({
   whatsapp_number: z.string().trim().min(7).max(30),
 });
 export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>;
+
+// --------------------------------------------------------------------------
+// Invoice Jobs & Payouts (V2)
+// --------------------------------------------------------------------------
+export const JOB_STATUS_ENUM = z.enum(["PENDING", "ACTIVE", "PAUSED", "ENDED", "TERMINATED"]);
+
+export const invoiceJobStatusSchema = z.object({
+  status: JOB_STATUS_ENUM,
+  reason: z.string().trim().max(300).optional(),
+});
+export type InvoiceJobStatusInput = z.infer<typeof invoiceJobStatusSchema>;
+
+export const updateInvoiceJobCleanersSchema = z.object({
+  cleaner_ids: z.array(z.string().uuid()).max(2),
+});
+export type UpdateInvoiceJobCleanersInput = z.infer<typeof updateInvoiceJobCleanersSchema>;
+
+export const markVisitServedSchema = z.object({
+  action: z.enum(["SERVED", "UNSERVED", "CANCELLED", "SCHEDULED"]),
+  cleaner_ids: z.array(z.string().uuid()).max(2).optional(),
+  notes: z.string().trim().max(300).optional(),
+});
+export type MarkVisitServedInput = z.infer<typeof markVisitServedSchema>;
+
+export const cleanerBankAccountSchema = z.object({
+  bank_name: z.string().trim().min(2, "Enter bank name.").max(80),
+  account_number: z
+    .string()
+    .trim()
+    .regex(/^\d{10}$/, "Account number must be exactly 10 digits."),
+  account_name: z.string().trim().min(2, "Enter account name.").max(120),
+});
+export type CleanerBankAccountInput = z.infer<typeof cleanerBankAccountSchema>;
+
+export const settlePayoutSchema = z.object({
+  period_key: z.string().trim().regex(/^(\d{4}-\d{2}|all)$/, "Invalid payout period."),
+  cutoff_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid cut-off date."),
+  idempotency_key: z.string().uuid(),
+  reference_note: z.string().trim().max(200).optional(),
+});
+export type SettlePayoutInput = z.infer<typeof settlePayoutSchema>;
+
 

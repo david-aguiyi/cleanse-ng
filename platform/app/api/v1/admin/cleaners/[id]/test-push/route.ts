@@ -20,7 +20,7 @@ export async function POST(_req: NextRequest, ctx: { params: { id: string } }) {
       body: "Your job alerts are working. No action needed.",
       offerId: "test",
       bookingReference: "TEST",
-      deepLinkPath: "/cleaner/home",
+      deepLinkPath: "/pro/home",
     });
     return ok(result, requestId);
   } catch (err) {

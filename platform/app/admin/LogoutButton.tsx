@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { createBrowserSupabase } from "@/auth/supabase-browser";
 
-export default function LogoutButton() {
+export default function LogoutButton({ redirectTo = "/admin/login" }: { redirectTo?: string }) {
   const router = useRouter();
   async function logout() {
     await createBrowserSupabase().auth.signOut();
-    router.replace("/admin/login");
+    router.replace(redirectTo);
     router.refresh();
   }
   return (

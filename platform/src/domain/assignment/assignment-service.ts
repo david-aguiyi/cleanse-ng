@@ -9,6 +9,7 @@ import "server-only";
 import { serviceClient } from "@/db/service-client";
 import { AppError } from "@/http/errors";
 import { logger } from "@/observability/logger";
+import { isAddressUnlockedForTimestamp } from "@/domain/job/pricing";
 
 export interface OfferView {
   id: string;
@@ -24,14 +25,16 @@ export interface OfferView {
   expires_at: string;
   is_active: boolean;
   won: boolean;
-  // Full operational details are present only when this cleaner has won the slot.
+  // Full operational details are present only when this cleaner has won the slot;
+  // exact street address stays locked until 1 hour before job start.
   full_details?: {
     customer_first_name: string;
-    address_line1: string;
+    address_unlocked: boolean;
+    address_unlock_label: string;
+    address_line1: string | null;
     estate: string | null;
     landmark: string | null;
     directions: string | null;
-    customer_whatsapp: string;
   };
 }
 
@@ -121,19 +124,21 @@ export async function getOfferForCleaner(offerId: string, cleanerId: string): Pr
   if (won) {
     const { data: fullRow } = await db
       .from("bookings")
-      .select("customer:customers(full_name, whatsapp_e164), address:customer_addresses(address_line1, estate, landmark, directions)")
+      .select("customer:customers(full_name), address:customer_addresses(address_line1, estate, landmark, directions)")
       .eq("id", offer.booking_id)
       .maybeSingle();
     const full: any = fullRow;
     if (full) {
       const firstName = String(full.customer?.full_name ?? "").split(" ")[0] ?? "";
+      const gate = isAddressUnlockedForTimestamp(offer.booking?.scheduled_start_at);
       view.full_details = {
         customer_first_name: firstName,
-        address_line1: full.address?.address_line1 ?? "",
-        estate: full.address?.estate ?? null,
-        landmark: full.address?.landmark ?? null,
-        directions: full.address?.directions ?? null,
-        customer_whatsapp: full.customer?.whatsapp_e164 ?? "",
+        address_unlocked: gate.unlocked,
+        address_unlock_label: gate.unlockTimeLabel,
+        address_line1: gate.unlocked ? (full.address?.address_line1 ?? "") : null,
+        estate: gate.unlocked ? (full.address?.estate ?? null) : null,
+        landmark: gate.unlocked ? (full.address?.landmark ?? null) : null,
+        directions: gate.unlocked ? (full.address?.directions ?? null) : null,
       };
     }
   }
@@ -170,7 +175,7 @@ export async function acceptOffer(offerId: string, cleanerId: string): Promise<A
       .eq("id", row.booking_id)
       .maybeSingle();
     const ref = booking?.public_reference ?? "";
-    return { result: "WON", bookingReference: ref, jobUrl: `/cleaner/jobs/${ref}` };
+    return { result: "WON", bookingReference: ref, jobUrl: `/pro/jobs/${ref}` };
   }
 
   if (code === "ALREADY_TAKEN" || code === "CLEANER_ALREADY_ON_BOOKING") {

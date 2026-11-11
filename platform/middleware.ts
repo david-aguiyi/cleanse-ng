@@ -37,12 +37,23 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isAdminArea = path.startsWith("/admin") && path !== "/admin/login";
-  const isCleanerArea = path.startsWith("/cleaner") && path !== "/cleaner/login";
 
-  if ((isAdminArea || isCleanerArea) && !user) {
+  // Redirect legacy /cleaner/* routes cleanly to /pro/*.
+  if (path === "/cleaner" || path.startsWith("/cleaner/")) {
+    const proUrl = request.nextUrl.clone();
+    proUrl.pathname = path === "/cleaner" ? "/pro" : `/pro${path.slice("/cleaner".length)}`;
+    return NextResponse.redirect(proUrl, 308);
+  }
+
+  const isAdminArea = path.startsWith("/admin") && path !== "/admin/login";
+  const isProArea =
+    (path === "/pro" || path.startsWith("/pro/")) &&
+    path !== "/pro/login" &&
+    !path.startsWith("/pro/onboard");
+
+  if ((isAdminArea || isProArea) && !user) {
     const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = isCleanerArea ? "/cleaner/login" : "/admin/login";
+    loginUrl.pathname = isProArea ? "/pro/login" : "/admin/login";
     loginUrl.searchParams.set("next", path);
     return NextResponse.redirect(loginUrl);
   }
@@ -51,7 +62,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Run on admin/cleaner pages; skip static assets. API routes enforce their own
+  // Run on admin/pro/legacy-cleaner pages; skip static assets. API routes enforce their own
   // auth via requireAdmin/requireCleaner.
-  matcher: ["/admin/:path*", "/cleaner/:path*"],
+  matcher: ["/admin/:path*", "/pro/:path*", "/cleaner/:path*"],
 };

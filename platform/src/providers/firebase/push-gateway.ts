@@ -22,7 +22,7 @@ export interface JobOfferPush {
   body: string;
   offerId: string;
   bookingReference: string;
-  deepLinkPath: string; // e.g. /cleaner/offers/<id>
+  deepLinkPath: string; // e.g. /pro/offers/<id>
 }
 
 export interface PushSendResult {

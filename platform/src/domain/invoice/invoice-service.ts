@@ -11,9 +11,15 @@ import type { InvoiceSaveInput } from "@/validation/schemas";
 import {
   expandInvoiceVisits,
   lagosMonthStartIso,
+  normalizeSlot,
   toLagosDateAndSlot,
   type CanonicalSlot,
 } from "./schedule";
+import {
+  isMissingJobSchemaError,
+  syncJobFromInvoice,
+} from "@/domain/job/invoice-job-service";
+import { isJobActiveForCalendar } from "@/domain/job/pricing";
 
 type InvoiceData = InvoiceSaveInput["data"];
 
@@ -39,8 +45,9 @@ function summarise(data: InvoiceData) {
 }
 
 export async function createInvoice(data: InvoiceData, admin: AdminContext, customNum?: string) {
+  const summary = summarise(data);
   const insertPayload: Record<string, unknown> = {
-    ...summarise(data),
+    ...summary,
     created_by: admin.adminId,
     updated_by: admin.adminId,
   };
@@ -59,13 +66,19 @@ export async function createInvoice(data: InvoiceData, admin: AdminContext, cust
     throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
   }
   if (!row) throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
-  return row as { id: string; invoice_number: string };
+  const synced = await syncJobFromInvoice(
+    { id: row.id, invoice_number: row.invoice_number, total_naira: summary.total_naira },
+    summary.data as Record<string, unknown>,
+    admin
+  );
+  return { ...(row as { id: string; invoice_number: string }), job_id: synced.jobId ?? null };
 }
 
 export async function updateInvoice(id: string, data: InvoiceData, admin: AdminContext, customNum?: string) {
   if (!UUID.test(id)) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
+  const summary = summarise(data);
   const updatePayload: Record<string, unknown> = {
-    ...summarise(data),
+    ...summary,
     updated_by: admin.adminId,
     updated_at: new Date().toISOString(),
   };
@@ -85,7 +98,12 @@ export async function updateInvoice(id: string, data: InvoiceData, admin: AdminC
     throw new AppError("INTERNAL_ERROR", "Could not save the invoice.");
   }
   if (!row) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
-  return row as { id: string; invoice_number: string };
+  const synced = await syncJobFromInvoice(
+    { id: row.id, invoice_number: row.invoice_number, total_naira: summary.total_naira },
+    summary.data as Record<string, unknown>,
+    admin
+  );
+  return { ...(row as { id: string; invoice_number: string }), job_id: synced.jobId ?? null };
 }
 
 export async function getInvoice(id: string) {
@@ -138,7 +156,16 @@ export async function deleteInvoice(id: string) {
     .eq("id", id)
     .select("id, invoice_number")
     .maybeSingle();
-  if (error) throw new AppError("INTERNAL_ERROR", "Could not delete the invoice.");
+  if (error) {
+    if (error.code === "23503") {
+      throw new AppError(
+        "VALIDATION_ERROR",
+        "Cannot delete an invoice that has served or paid visits. Mark the job Ended or Terminated instead.",
+        400
+      );
+    }
+    throw new AppError("INTERNAL_ERROR", "Could not delete the invoice.");
+  }
   if (!data) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
   return data as { id: string; invoice_number: string };
 }
@@ -158,7 +185,7 @@ export async function listPublicBookedSlots(options?: {
       ? options.excludeInvoiceId
       : null;
 
-  const [invRes, bookRes] = await Promise.all([
+  const [invRes, bookRes, jobsRes, visitsRes] = await Promise.all([
     db
       .from("invoices")
       .select("id, data")
@@ -173,6 +200,16 @@ export async function listPublicBookedSlots(options?: {
       .neq("fulfilment_status", "CANCELLED")
       .gte("scheduled_start_at", `${minDate}T00:00:00+01:00`)
       .limit(500),
+    db
+      .from("invoice_jobs")
+      .select("id, invoice_id, status, reserve_calendar")
+      .limit(500),
+    db
+      .from("invoice_job_visits")
+      .select("job_id, visit_date, slot, status")
+      .gte("visit_date", minDate)
+      .in("status", ["SCHEDULED", "SERVED"])
+      .limit(5000),
   ]);
 
   if (invRes.error) {
@@ -186,9 +223,59 @@ export async function listPublicBookedSlots(options?: {
     slots[date].push(slot);
   };
 
+  const hasJobSchema =
+    !jobsRes.error &&
+    !visitsRes.error &&
+    !isMissingJobSchemaError(jobsRes.error) &&
+    !isMissingJobSchemaError(visitsRes.error);
+
+  const jobByInvoiceId = new Map<
+    string,
+    { id: string; status: string; reserve_calendar: boolean }
+  >();
+  const visitsByJobId = new Map<string, Array<{ visit_date: string; slot: string }>>();
+
+  if (hasJobSchema) {
+    for (const j of (jobsRes.data ?? []) as Array<{
+      id: string;
+      invoice_id: string;
+      status: string;
+      reserve_calendar: boolean;
+    }>) {
+      jobByInvoiceId.set(j.invoice_id, j);
+    }
+    for (const v of (visitsRes.data ?? []) as Array<{
+      job_id: string;
+      visit_date: string;
+      slot: string;
+    }>) {
+      const list = visitsByJobId.get(v.job_id) ?? [];
+      list.push(v);
+      visitsByJobId.set(v.job_id, list);
+    }
+  }
+
   for (const row of invRes.data ?? []) {
     if (excludeId && row.id === excludeId) continue;
-    const visits = expandInvoiceVisits(row.data as Record<string, unknown> | null);
+
+    if (hasJobSchema) {
+      const job = jobByInvoiceId.get(row.id);
+      if (job) {
+        // PENDING, PAUSED, ENDED, and TERMINATED jobs never reserve calendar slots.
+        if (!isJobActiveForCalendar(job.status, job.reserve_calendar)) continue;
+        for (const v of visitsByJobId.get(job.id) ?? []) {
+          const s = normalizeSlot(v.slot);
+          if (s) add(v.visit_date, s);
+        }
+        continue;
+      }
+    }
+
+    const rawData = row.data as Record<string, unknown> | null;
+    const rawStatus = typeof rawData?.jobStatus === "string" ? rawData.jobStatus : "ACTIVE";
+    if (rawStatus !== "ACTIVE") continue;
+
+    const visits = expandInvoiceVisits(rawData);
     for (const v of visits) {
       add(v.date, v.slot);
     }

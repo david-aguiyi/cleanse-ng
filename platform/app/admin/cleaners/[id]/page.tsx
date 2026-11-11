@@ -2,10 +2,12 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { getCleanerAdmin } from "@/domain/cleaner/cleaner-service";
+import { getCleanerEarningsSummary } from "@/domain/payout/payout-service";
 import { AppError } from "@/http/errors";
 import AdminBar from "../../AdminBar";
 import ManageCleaner from "./ManageCleaner";
 import CleanerCredentials from "./CleanerCredentials";
+import PayoutActions from "../../payouts/PayoutActions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +27,7 @@ export default async function CleanerDetail({ params }: { params: { id: string }
     if (err instanceof AppError && err.code === "CLEANER_NOT_FOUND") notFound();
     throw err;
   }
+  const earnings = await getCleanerEarningsSummary(params.id);
 
   return (
     <main className="admin-shell">
@@ -114,6 +117,40 @@ export default async function CleanerDetail({ params }: { params: { id: string }
                 <div className="cap">Cancel</div>
               </div>
             </div>
+
+            <h3 style={{ marginTop: 18 }}>Bank Account &amp; Monthly Payout</h3>
+            {!earnings.schemaReady ? (
+              <p className="muted" style={{ fontSize: 13 }}>
+                Run migration <code>0015_jobs_and_payouts.sql</code> to enable bank &amp; payout tracking.
+              </p>
+            ) : (
+              <div style={{ display: "grid", gap: 10 }}>
+                <div className="kv">
+                  <span className="k">Unpaid Owed Balance</span>
+                  <strong>₦{earnings.unpaidTotalNaira.toLocaleString("en-NG")} ({earnings.unpaidCount} cleans)</strong>
+                </div>
+                <PayoutActions
+                  cleanerId={c.id}
+                  cleanerName={c.full_name}
+                  bankAccount={earnings.bankAccount}
+                  unpaidTotalNaira={earnings.unpaidTotalNaira}
+                  unpaidCount={earnings.unpaidCount}
+                  unpaidByMonth={earnings.unpaidByMonth}
+                  todayIso={earnings.todayIso}
+                />
+                {earnings.payouts.length > 0 && (
+                  <div style={{ marginTop: 6 }}>
+                    <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Recent Paid Settlements</div>
+                    {earnings.payouts.slice(0, 5).map((p) => (
+                      <div key={p.id} className="kv" style={{ fontSize: 12.5 }}>
+                        <span>{p.period_key === "all" ? `Through ${p.cutoff_date}` : p.period_key} · {p.earning_count} cleans</span>
+                        <strong>₦{p.total_amount_naira.toLocaleString("en-NG")} Paid</strong>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="card">

@@ -209,8 +209,7 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
                 </>
               ) : (
                 <p className="muted">
-                  No cleaner assigned yet. Automated dispatch and the cleaner profile panel arrive in
-                  Stages 6–9.
+                  No cleaner assigned yet. Use the Dispatch panel above to rebroadcast or assign an eligible cleaner.
                 </p>
               )}
             </div>

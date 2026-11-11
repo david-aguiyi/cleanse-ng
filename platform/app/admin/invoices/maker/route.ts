@@ -7,6 +7,11 @@ import {
   latestInvoiceDefaults,
   listPublicBookedSlots,
 } from "@/domain/invoice/invoice-service";
+import {
+  isMissingJobSchemaError,
+  listSelectableCleaners,
+} from "@/domain/job/invoice-job-service";
+import { serviceClient } from "@/db/service-client";
 import { getSiteSettings } from "@/domain/settings/settings-service";
 import { AppError } from "@/http/errors";
 
@@ -29,9 +34,10 @@ export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   // The repo is public, so bank details are never in the maker file: a new
   // invoice copies them (and deposit/materials settings) from the latest saved one.
-  const [settings, availability] = await Promise.all([
+  const [settings, availability, cleaners] = await Promise.all([
     getSiteSettings(),
     listPublicBookedSlots({ excludeInvoiceId: id }).catch(() => ({ slots: {}, generatedAt: "" })),
+    listSelectableCleaners().catch(() => []),
   ]);
   let boot: {
     id: string | null;
@@ -40,24 +46,50 @@ export async function GET(req: NextRequest) {
     defaults?: unknown;
     contactPhone?: string;
     bookedSlots?: Record<string, string[]>;
+    cleaners?: typeof cleaners;
+    jobStatus?: string;
+    cleanerIds?: string[];
   } = {
     id: null,
     num: null,
     data: null,
     contactPhone: settings.whatsapp.display,
     bookedSlots: availability.slots,
+    cleaners,
   };
   if (!id) {
     boot.defaults = await latestInvoiceDefaults();
   } else {
     try {
       const inv = await getInvoice(id);
+      let jobStatus: string | undefined;
+      let cleanerIds: string[] | undefined;
+
+      const { data: jobRow, error: jobErr } = await serviceClient()
+        .from("invoice_jobs")
+        .select("id, status")
+        .eq("invoice_id", inv.id)
+        .maybeSingle();
+
+      if (!jobErr && !isMissingJobSchemaError(jobErr) && jobRow) {
+        jobStatus = String(jobRow.status);
+        const { data: links } = await serviceClient()
+          .from("invoice_job_cleaners")
+          .select("cleaner_id, slot_order")
+          .eq("job_id", jobRow.id)
+          .order("slot_order", { ascending: true });
+        cleanerIds = (links ?? []).map((l: { cleaner_id: string }) => l.cleaner_id);
+      }
+
       boot = {
         id: inv.id,
         num: inv.invoice_number,
         data: inv.data,
         contactPhone: settings.whatsapp.display,
         bookedSlots: availability.slots,
+        cleaners,
+        jobStatus,
+        cleanerIds,
       };
     } catch (err) {
       if (err instanceof AppError && err.code === "INVOICE_NOT_FOUND") {

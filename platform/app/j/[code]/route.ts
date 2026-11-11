@@ -20,7 +20,7 @@ export async function GET(_req: NextRequest, ctx: { params: { code: string } }) 
     .maybeSingle();
 
   if (!offer) {
-    return NextResponse.redirect(`${appUrl}/cleaner/home`);
+    return NextResponse.redirect(`${appUrl}/pro/home`);
   }
-  return NextResponse.redirect(`${appUrl}/cleaner/offers/${offer.id}`);
+  return NextResponse.redirect(`${appUrl}/pro/offers/${offer.id}`);
 }

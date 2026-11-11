@@ -21,11 +21,16 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
     <main className="admin-shell">
       <AdminBar who={`${admin.fullName} · ${admin.role}`} active="invoices" />
       <div className="admin-wrap">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
           <h1 className="admin-h1">Invoices</h1>
-          <Link className="btn-primary" href="/admin/invoices/new" style={{ padding: "12px 20px" }}>
-            + New invoice
-          </Link>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Link className="btn-ghost" href="/admin/jobs">
+              Jobs Panel →
+            </Link>
+            <Link className="btn-primary" href="/admin/invoices/new" style={{ padding: "12px 20px" }}>
+              + New invoice
+            </Link>
+          </div>
         </div>
 
         <form className="filters" method="get">
@@ -85,7 +90,12 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
                             {shortDate(start)}
                             {!isSingleDay && ` – ${shortDate(end)}`}
                           </div>
-                          <div style={{ marginTop: 3 }}>
+                          <div style={{ marginTop: 3, display: "flex", gap: 5, flexWrap: "wrap" }}>
+                            {typeof data.jobStatus === "string" && data.jobStatus !== "ACTIVE" && (
+                              <span className="pill ful-unassigned" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                {data.jobStatus}
+                              </span>
+                            )}
                             {isSingleDay ? (
                               <span className="pill neutral" style={{ fontSize: 10, padding: "2px 8px" }}>
                                 {start === today ? "Today" : start > today ? "Scheduled" : "Single day"}

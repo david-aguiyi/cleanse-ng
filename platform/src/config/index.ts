@@ -34,7 +34,7 @@ export const dispatchConfig = {
  * config so operations can tune it without a deploy.
  */
 export const payoutConfig = {
-  cleanerPayoutBps: num("CLEANER_PAYOUT_BPS", 6000), // 60% of customer total (display)
+  cleanerPayoutBps: num("CLEANER_PAYOUT_BPS", 7000), // 70% of customer total (display)
 } as const;
 
 /** SMS cost logging — provider rate varies; store as config (Appendix C). */
