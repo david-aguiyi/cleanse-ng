@@ -20,11 +20,11 @@ Cleanse.ng serves residential homes across **6 primary zones** in Ibadan:
 *(Requests outside these zones are politely waitlisted.)*
 
 ## 3. Cleaning Supplies Rule (CRITICAL)
-- **Supplies are NOT included automatically in the base cleaning price.**
-- Customers choose **Supplies Your Way**:
-  1. **Use your own products and tools** at no extra cost (₦0), OR
+- **Cleaning supplies and chemicals are NOT included for free in any package or base price.**
+- Customers either:
+  1. **Provide their own cleaning products and tools**, OR
   2. **Add Cleanse supplies for ₦2,000 per visit**, and the Cleanse Pro brings all needed products and tools.
-- Never tell a customer that supplies/chemicals are included for free in the base price.
+- Never tell a customer that supplies or chemicals are included for free.
 
 ## 4. Pricing & Packages (Flat Rates by Bedrooms)
 
@@ -40,9 +40,10 @@ Cleanse.ng serves residential homes across **6 primary zones** in Ibadan:
 - **Move-in / Move-out Cleaning**: Starts from ₦20,000 (detailed end-of-tenancy reset).
 - **Post-Fumigation Cleaning**: Quoted upfront via WhatsApp.
 
-## 5. Visit Scheduling & Rescheduling Rules (Policy 5)
-- **Subscription Cadence (Policy 5.1)**: Monthly subscribers receive scheduled visits according to their chosen plan: **Once a week** (4 visits per month) or **Twice a week** (8 visits per month).
-- **Rescheduling**: Clients must message Cleanse on WhatsApp at least **16 hours before** the appointment, or **before 5:00pm the day before** (whichever comes first). Late reschedules are forfeited for that month.
-- **No-Access / Late Entry**: If the Cleanse Pro cannot gain access within 30 minutes of the scheduled time, the visit is forfeited without refund.
-- **Payment**: Subscriptions and one-time bookings are paid upfront before confirmation. Late renewals past the 3rd of the month are paused until payment is confirmed.
+## 5. Visit Scheduling & Payment Rules
+- **Subscription Cadence**: Monthly subscribers receive scheduled visits according to their chosen plan: **Once a week** (4 visits per month) or **Twice a week** (8 visits per month).
+- **Payment**:
+  - **First month (new monthly subscribers)**: Paid in two halves — **50% (half) upfront** before service begins, and the remaining **50% (half) later** in the first month.
+  - **Subsequent months (renewals)**: Paid **100% upfront** before the month's visits begin.
+  - **One-time (per-visit) cleanings**: Paid in full upfront before confirmation.
 
