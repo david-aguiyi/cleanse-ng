@@ -1151,3 +1151,85 @@ create policy "site_settings_public_read" on site_settings
   for select to anon, authenticated
   using (true);
 
+-- ============================
+-- migrations/0013_cleaner_onboarding.sql
+-- ============================
+create table if not exists cleaner_onboardings (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  applicant_id uuid references cleaner_applications(id) on delete set null,
+  cleaner_id uuid references cleaners(id) on delete set null,
+
+  status text not null default 'SUBMITTED'
+    check (status in ('SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED')),
+  admin_notes text,
+  reviewed_by uuid references admin_users(id),
+  reviewed_at timestamptz,
+
+  full_name text not null,
+  photo_url text not null,
+  whatsapp_e164 text not null,
+  date_of_birth date not null,
+  gender text not null,
+  nin_digits varchar(11) not null,
+  nin_document_url text not null,
+
+  street_address text not null,
+  landmark text not null,
+  neighbourhood text not null,
+  lga text not null,
+  city_state text not null default 'Ibadan, Oyo State',
+  directions text,
+  closest_zone text not null,
+  transport_mode text not null,
+  travel_time_hub text not null,
+
+  education_level text not null,
+  religion text,
+  languages text[] not null default '{}',
+  experience_details text,
+  products_used text[] not null default '{}',
+  equipment_used text[] not null default '{}',
+
+  available_days text[] not null default '{}',
+  early_morning_ok boolean not null default true,
+  pair_work_ok boolean not null default true,
+  start_readiness text not null,
+
+  guarantor_name text not null,
+  guarantor_phone text not null,
+  guarantor_relationship text not null,
+  guarantor_occupation text,
+  emergency_name text not null,
+  emergency_phone text not null,
+  emergency_relationship text not null,
+  allergies text,
+
+  why_cleanse text,
+  one_year_goal text,
+  accidental_breakage_response text,
+  referral_source text,
+
+  agreement_version text not null default 'v1.0',
+  agreed_clauses int[] not null default '{}',
+  agreed_at timestamptz not null default now(),
+  source_ip text,
+  user_agent text,
+
+  nin_verified boolean not null default false,
+  guarantor_called boolean not null default false
+);
+
+create index if not exists cleaner_onboardings_created_idx
+  on cleaner_onboardings (created_at desc);
+create index if not exists cleaner_onboardings_status_idx
+  on cleaner_onboardings (status);
+create index if not exists cleaner_onboardings_nin_idx
+  on cleaner_onboardings (nin_digits);
+create index if not exists cleaner_onboardings_applicant_idx
+  on cleaner_onboardings (applicant_id);
+
+alter table cleaner_onboardings enable row level security;
+

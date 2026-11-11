@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listInvoices } from "@/domain/invoice/invoice-service";
+import { lagosTodayIso, summariseInvoiceSchedule } from "@/domain/invoice/schedule";
 import { lagos, shortDate } from "../format";
 import AdminBar from "../AdminBar";
 
@@ -41,6 +42,7 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
                 <th>Invoice</th>
                 <th>Client</th>
                 <th>Contract Period</th>
+                <th>Serving Schedule</th>
                 <th>Total</th>
                 <th>Created</th>
                 <th>By</th>
@@ -49,7 +51,7 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
             <tbody>
               {invoices.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
+                  <td colSpan={7} style={{ textAlign: "center", color: "var(--mid-gray)" }}>
                     No saved invoices yet. Tap “New invoice” to make the first one.
                   </td>
                 </tr>
@@ -59,7 +61,8 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
                 const start = data.startDate as string | undefined;
                 const end = data.endDate as string | undefined;
                 const isSingleDay = !end || start === end;
-                const today = new Date().toISOString().slice(0, 10);
+                const today = lagosTodayIso();
+                const sched = summariseInvoiceSchedule(data);
                 return (
                   <tr key={inv.id}>
                     <td>
@@ -104,6 +107,29 @@ export default async function AdminInvoices({ searchParams }: { searchParams: { 
                         </div>
                       ) : (
                         <span className="muted">—</span>
+                      )}
+                    </td>
+                    <td>
+                      {sched.slotLabel ? (
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: 13 }}>
+                            {sched.daysLabel ? `${sched.daysLabel} · ` : ""}
+                            {sched.slotLabel}
+                          </div>
+                          <div style={{ marginTop: 3, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                            {sched.reservedOnCalendar ? (
+                              <span className="pill pay-success" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                On calendar ({sched.visitCount} {sched.visitCount === 1 ? "visit" : "visits"})
+                              </span>
+                            ) : (
+                              <span className="pill neutral" style={{ fontSize: 10, padding: "2px 8px" }}>
+                                Not on calendar
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="muted" style={{ fontSize: 12 }}>No time set</span>
                       )}
                     </td>
                     <td>{naira(inv.total_naira)}</td>

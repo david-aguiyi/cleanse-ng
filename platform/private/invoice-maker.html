@@ -84,7 +84,25 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .confirm{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:14px;color:var(--lav2)}
 .confirm span{margin-right:auto}
 @media (max-width:380px){.btn{padding:0 12px;font-size:14px}.bar-total strong{font-size:19px}}
-@media (prefers-reduced-motion:no-preference){.btn,.x,.ghost,.seg label{transition:background-color .15s,color .15s,box-shadow .15s}}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:440px){.slots{grid-template-columns:1fr}}
+.pillbtn{min-height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--purple);font-family:var(--bold);font-size:13px;padding:6px;cursor:pointer;text-align:center}
+.pillbtn:hover:not(:disabled):not(.on){background:var(--bg)}
+.pillbtn.on{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:0 0 0 2px var(--ring)}
+.pillbtn:disabled{opacity:.4;cursor:not-allowed}
+.sched-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.visits-list{display:grid;gap:8px}
+.visit-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto 2.6rem;gap:6px;align-items:center}
+.visit-row input,.visit-row select{min-height:40px;font-size:14px;padding:6px 10px}
+.visit-row .x{min-height:40px}
+@media (max-width:480px){.visit-row{grid-template-columns:minmax(0,1fr) 2.6rem}.visit-row .vr-slot{grid-column:1 / 2}}
+.visit-clash{font-size:11.5px;font-family:var(--bold);color:var(--err);background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:4px 8px;white-space:nowrap}
+.clash-banner{background:#FEF2F2;border:1.5px solid #FCA5A5;color:#991B1B;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.4;margin:0 0 12px}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);margin-bottom:12px;font-size:13.5px;color:var(--purple);cursor:pointer;line-height:1.35}
+.chk input{width:18px;height:18px;min-height:0;margin:2px 0 0;accent-color:var(--purple);flex:0 0 auto;cursor:pointer}
+.chk small{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--body)}
+@media (prefers-reduced-motion:no-preference){.btn,.x,.ghost,.seg label,.pillbtn{transition:background-color .15s,color .15s,box-shadow .15s}}
 </style>
 
 <header class="top">
@@ -135,6 +153,28 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
         <label class="fld">Start date<input id="startDate" type="date"></label>
         <label class="fld">End date<input id="endDate" type="date"></label>
       </div>
+      <div class="fld" id="visitDaysWrap">
+        <span>Serving day(s) of the week</span>
+        <div class="days" id="dayPills" role="group" aria-label="Serving days of the week"></div>
+      </div>
+      <div class="fld">
+        <span>Serving time slot</span>
+        <div class="slots" id="slotPills" role="group" aria-label="Serving time slot"></div>
+        <div class="hint" id="sundayNote" hidden style="margin:2px 0 0">Sunday visits run only in the 2pm - 5pm window on the calendar.</div>
+      </div>
+      <div class="fld" id="visitsBox">
+        <div class="sched-head">
+          <span id="visitsLabel">Exact scheduled visit dates</span>
+          <button type="button" class="link" id="resetVisits" hidden>Regenerate from days</button>
+        </div>
+        <div class="visits-list" id="visitList"></div>
+        <button type="button" class="ghost" id="addVisit">+ Add visit date</button>
+      </div>
+      <div class="clash-banner" id="clashWarn" hidden></div>
+      <label class="chk">
+        <input type="checkbox" id="reserveCalendar">
+        <span><strong>Register serving day(s) &amp; time on the booking calendar</strong><small>Marks these slots as booked on cleanse.ng when saved.</small></span>
+      </label>
       <div class="row2">
         <label class="fld">Cleaning materials<select id="mat"><option value="cleanse">Cleanse.ng</option><option value="client">Client</option></select></label>
         <label class="fld">Cleaning equipment<select id="equip"><option value="cleanse">Cleanse.ng</option><option value="client">Client</option></select></label>
@@ -616,6 +656,96 @@ const nextNum = s => { const m = /^(.*?)(\d+)(\D*)$/.exec(String(s).trim()); if 
 const FREQ = [['Once weekly', 4], ['Twice weekly', 8], ['Three times weekly', 12], ['Every two weeks', 2], ['Monday to Friday', 20]];
 const KINDS = ['Residential Home', 'Apartment', 'Duplex', 'Bungalow', 'Terrace House'];
 const SERVICES = ['Residential Home Cleaning', 'Deep Cleaning', 'Move-in Cleaning', 'Move-out Cleaning', 'Post-Fumigation Cleaning'];
+const CANON_SLOTS = ['8am - 11am', '11am - 2pm', '2pm - 5pm'];
+const SUNDAY_SLOT = '2pm - 5pm';
+const WEEKDAY_PILLS = [[1, 'Mon'], [2, 'Tue'], [3, 'Wed'], [4, 'Thu'], [5, 'Fri'], [6, 'Sat'], [0, 'Sun']];
+const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_PLURAL = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const SHEET_ID = '14IMdMV4R_SsgJ2fQ6JmDOpGZynSgCZt4Z31QaGRzD7M';
+
+function normSlotVal(raw) {
+  if (raw == null) return '';
+  const s = String(raw).toLowerCase().replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+  if (!s) return '';
+  if (s.includes('8am') || s.includes('8:00') || s.includes('morning')) return '8am - 11am';
+  if (s.includes('11am') || s.includes('11:00') || s.includes('midday') || s.includes('noon') || s.includes('afternoon')) return '11am - 2pm';
+  if (s.includes('2pm') || s.includes('14:00') || s.includes('3pm') || s.includes('evening')) return '2pm - 5pm';
+  const hhmm = /^(\d{1,2}):\d{2}/.exec(s);
+  if (hhmm) {
+    const h = Number(hhmm[1]);
+    if (h >= 0 && h <= 23) return h < 11 ? '8am - 11am' : h < 14 ? '11am - 2pm' : '2pm - 5pm';
+  }
+  return '';
+}
+
+function weekdayOf(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || '').trim());
+  if (!m) return null;
+  const dt = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  if (dt.getUTCFullYear() !== +m[1] || dt.getUTCMonth() !== +m[2] - 1 || dt.getUTCDate() !== +m[3]) return null;
+  return dt.getUTCDay();
+}
+
+function fmtShortDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || '').trim());
+  if (!m) return '';
+  const wd = weekdayOf(iso);
+  return (wd == null ? '' : DAY_SHORT[wd] + ' ') + (+m[3]) + ' ' + MONTHS_SHORT[+m[2] - 1];
+}
+
+function defaultVisitDaysFor(startDate, freq) {
+  const wd = weekdayOf(startDate);
+  const f = String(freq || '').toLowerCase();
+  if (f.includes('monday to friday')) return [1, 2, 3, 4, 5];
+  const base = wd == null ? 6 : wd;
+  if (f.includes('twice')) return base === 6 ? [3, 6] : [base, (base + 3) % 7].sort((a, b) => a - b);
+  if (f.includes('three')) return [1, 3, 5];
+  return [base];
+}
+
+function generateVisitsFromRule(st) {
+  if (!st.startDate || weekdayOf(st.startDate) == null) return [];
+  const slot = normSlotVal(st.visitSlot);
+  if (!slot) return [];
+  const currentSvc = st.svc === '__custom' ? st.svcCustom : st.svc;
+  const singleDay = isSameDayService(currentSvc, st.billing);
+  const end = (st.endDate && st.endDate >= st.startDate) ? st.endDate : st.startDate;
+  if (singleDay || end === st.startDate) {
+    const wd = weekdayOf(st.startDate);
+    return [{ date: st.startDate, slot: wd === 0 ? SUNDAY_SLOT : slot }];
+  }
+  const days = new Set(
+    (Array.isArray(st.visitDays) ? st.visitDays : [])
+      .map(Number)
+      .filter(n => Number.isInteger(n) && n >= 0 && n <= 6)
+  );
+  if (!days.size) {
+    const startWd = weekdayOf(st.startDate);
+    if (startWd != null) days.add(startWd);
+  }
+  const maxSess = Math.max(1, Math.min(31, parseInt(st.sessions, 10) || 1));
+  const isBiweekly = String(st.freq || '').toLowerCase().includes('two weeks');
+  const sm = st.startDate.split('-').map(Number), em = end.split('-').map(Number);
+  const startMs = Date.UTC(sm[0], sm[1] - 1, sm[2]), endMs = Date.UTC(em[0], em[1] - 1, em[2]);
+  const maxSpan = Math.min(62, Math.floor((endMs - startMs) / 86400000));
+  const out = [];
+  let firstMatchMs = null;
+  for (let off = 0; off <= maxSpan; off++) {
+    const curMs = startMs + off * 86400000;
+    const dt = new Date(curMs);
+    const wd = dt.getUTCDay();
+    if (!days.has(wd)) continue;
+    if (isBiweekly) {
+      if (firstMatchMs === null) firstMatchMs = curMs;
+      if (Math.floor((curMs - firstMatchMs) / (7 * 86400000)) % 2 !== 0) continue;
+    }
+    const iso = dt.getUTCFullYear() + '-' + pad(dt.getUTCMonth() + 1) + '-' + pad(dt.getUTCDate());
+    out.push({ date: iso, slot: wd === 0 ? SUNDAY_SLOT : slot });
+    if (out.length >= maxSess) break;
+  }
+  return out;
+}
 
 function isSameDayService(svc, billing) {
   if (billing === 'oneoff') return true;
@@ -645,11 +775,36 @@ const DEFAULT = () => {
     num: 'CLN-001', date: start, client: '', phone: '', addr: '', area: 'Ibadan', beds: 2, kind: 'Residential Home',
     svc: 'Residential Home Cleaning', svcCustom: '', billing: 'monthly', freq: 'Once weekly', sessions: 4,
     startDate: start, endDate: calcEndDate(start, 'monthly', 'Residential Home Cleaning', 'Once weekly', 4),
+    visitDays: [], visitSlot: '', scheduledVisits: [], visitsCustom: false, reserveCalendar: true,
     mat: 'cleanse', equip: 'cleanse',
     items: [{ d: 'Monthly Cleaning Service', a: 40000, auto: true }], dep: 50,
     accName: 'Cleanse Limited', bank: '', accNo: '', terms: null
   };
 };
+function hydrateSchedule(st, isLegacy) {
+  if (isLegacy) st.reserveCalendar = false;
+  else if (st.reserveCalendar == null) st.reserveCalendar = true;
+  st.visitSlot = normSlotVal(st.visitSlot);
+  st.visitsCustom = Boolean(st.visitsCustom);
+  if (!Array.isArray(st.visitDays)) st.visitDays = [];
+  st.visitDays = Array.from(new Set(st.visitDays.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6)));
+  const currentSvc = st.svc === '__custom' ? st.svcCustom : st.svc;
+  if (!st.visitDays.length) {
+    if (isSameDayService(currentSvc, st.billing)) {
+      const wd = weekdayOf(st.startDate);
+      st.visitDays = wd != null ? [wd] : [];
+    } else {
+      st.visitDays = defaultVisitDaysFor(st.startDate, st.freq);
+    }
+  }
+  if (!Array.isArray(st.scheduledVisits)) st.scheduledVisits = [];
+  st.scheduledVisits = st.scheduledVisits
+    .filter(v => v && weekdayOf(v.date) != null)
+    .map(v => ({ date: String(v.date).trim(), slot: normSlotVal(v.slot) || st.visitSlot }));
+  if (!st.scheduledVisits.length && st.visitSlot && !st.visitsCustom) {
+    st.scheduledVisits = generateVisitsFromRule(st);
+  }
+}
 const KEY = 'cleanse-invoice-maker:v1';
 // Admin mode (cleanse.ng/admin/invoices): the server injects window.CLEANSE_INVOICE.
 // The number then comes from the server and invoices are saved there, not on the device.
@@ -667,6 +822,14 @@ if (SRV) {
 if (!S.startDate) S.startDate = S.date || todayISO();
 if (!S.endDate) S.endDate = calcEndDate(S.startDate, S.billing, S.svc, S.freq, S.sessions);
 if (!Array.isArray(S.items) || !S.items.length) S.items = DEFAULT().items;
+const IS_LEGACY_LOADED = Boolean(
+  SRV && SRV.data &&
+  !normSlotVal(SRV.data.visitSlot) &&
+  !(Array.isArray(SRV.data.scheduledVisits) && SRV.data.scheduledVisits.length > 0) &&
+  SRV.data.reserveCalendar === undefined
+);
+hydrateSchedule(S, IS_LEGACY_LOADED);
+let daysManual = Boolean(SRV && SRV.data && Array.isArray(SRV.data.visitDays) && SRV.data.visitDays.length > 0);
 let saveT = 0;
 let dirty = false;
 function updSave() {
@@ -682,15 +845,49 @@ const autoItemLabel = st => svcName(st) + (st.billing === 'monthly' ? ' (monthly
 function sessionsOf(st) { const n = Math.max(1, Math.min(31, parseInt(st.sessions, 10) || 1)); return n; }
 function totalOf(st) { return st.items.reduce((a, it) => a + parseAmt(it.a), 0); }
 function depOf(st) { const d = parseFloat(st.dep); return isNaN(d) ? 50 : Math.max(1, Math.min(100, d)); }
+function scheduleMeta(st) {
+  const validVisits = Array.isArray(st.scheduledVisits)
+    ? st.scheduledVisits.filter(v => v && weekdayOf(v.date) != null && normSlotVal(v.slot))
+    : [];
+  const visits = validVisits.length ? validVisits : generateVisitsFromRule(st);
+  const wds = new Set();
+  if (Array.isArray(st.visitDays)) {
+    for (const d of st.visitDays) {
+      const n = Number(d);
+      if (Number.isInteger(n) && n >= 0 && n <= 6) wds.add(n);
+    }
+  }
+  if (!wds.size) {
+    for (const v of visits) {
+      const wd = weekdayOf(v.date);
+      if (wd != null) wds.add(wd);
+    }
+  }
+  const orderedDays = [1, 2, 3, 4, 5, 6, 0].filter(d => wds.has(d));
+  const daysText = orderedDays.map(d => DAY_PLURAL[d]).join(', ');
+  const uniqueSlots = Array.from(new Set(visits.map(v => normSlotVal(v.slot)).filter(Boolean)));
+  const slotText = uniqueSlots.length === 1 ? uniqueSlots[0]
+    : uniqueSlots.length > 1 ? uniqueSlots.join(' / ')
+    : normSlotVal(st.visitSlot);
+  return { visits, daysText, slotText, uniqueSlots };
+}
 function autoTerms(st) {
   const monthly = st.billing === 'monthly', n = sessionsOf(st), dep = depOf(st);
+  const sm = scheduleMeta(st);
   const t = [];
   t.push(monthly ? 'The monthly fee covers ' + (n <= 20 ? WORDS[n].toLowerCase() : n) + ' scheduled cleaning session' + (n === 1 ? '' : 's') + '.' : 'The fee covers one cleaning visit.');
   if (st.startDate) {
     if (st.endDate && st.startDate !== st.endDate) {
-      t.push('The service contract commences on ' + fmtDate(st.startDate) + ' and runs through ' + fmtDate(st.endDate) + '.');
+      const schedClause = sm.daysText && sm.slotText
+        ? ' with visits on ' + sm.daysText + ' (' + sm.slotText + ')'
+        : sm.daysText
+          ? ' with visits on ' + sm.daysText
+          : sm.slotText
+            ? ' at ' + sm.slotText
+            : '';
+      t.push('The service contract commences on ' + fmtDate(st.startDate) + ' and runs through ' + fmtDate(st.endDate) + schedClause + '.');
     } else {
-      t.push('The scheduled cleaning date is ' + fmtDate(st.startDate) + '.');
+      t.push('The scheduled cleaning date is ' + fmtDate(st.startDate) + (sm.slotText ? ' (' + sm.slotText + ')' : '') + '.');
     }
   }
   if (st.mat === 'cleanse' && st.equip === 'cleanse') t.push('Cleanse.ng provides the necessary cleaning materials and equipment.');
@@ -716,12 +913,29 @@ function derive(st) {
   client.push({ k: 'Property Type', v: propType, wt: 1.5 });
   const by = v => 'Provided by ' + (v === 'client' ? 'client' : 'Cleanse.ng');
   const isSingleDay = !st.endDate || st.startDate === st.endDate;
+  const sm = scheduleMeta(st);
+  const scheduleRows = [];
+  if (isSingleDay || sm.visits.length <= 1) {
+    if (sm.slotText) scheduleRows.push({ k: 'Serving Time', v: sm.slotText, bold: true });
+    if (sm.visits.length === 1 && sm.visits[0].date && sm.visits[0].date !== st.startDate) {
+      scheduleRows.push({ k: 'Scheduled Date', v: fmtDate(sm.visits[0].date) });
+    }
+  } else {
+    if (sm.daysText || sm.slotText) {
+      scheduleRows.push({ k: 'Serving Schedule', v: [sm.daysText, sm.slotText].filter(Boolean).join(' · '), bold: true });
+    }
+    if (sm.visits.length) {
+      const listStr = sm.visits.map(v => fmtShortDate(v.date) + (sm.uniqueSlots.length > 1 ? ' (' + v.slot + ')' : '')).join(', ');
+      scheduleRows.push({ k: 'Scheduled Dates', v: listStr });
+    }
+  }
   const svcRows = [
     { k: 'Service', v: svcName(st), bold: true },
     { k: 'Property Size', v: beds + ' Bedroom' + (beds === 1 ? '' : 's') },
     { k: 'Frequency', v: monthly ? st.freq : 'One-off visit' },
     { k: monthly ? 'Monthly Sessions' : 'Sessions', v: String(monthly ? sessionsOf(st) : 1) },
     ...(st.startDate ? [{ k: 'Contract Period', v: isSingleDay ? fmtDate(st.startDate) + ' (Same day)' : fmtDate(st.startDate) + ' – ' + fmtDate(st.endDate) }] : []),
+    ...scheduleRows,
     { k: 'Cleaning Materials', v: by(st.mat) },
     { k: 'Cleaning Equipment', v: by(st.equip) }
   ];
@@ -949,15 +1163,266 @@ function autoRecalcEndDate() {
   if (el) el.value = newEnd;
 }
 
+const apiBooked = {};
+const sheetBooked = {};
+if (SRV && SRV.bookedSlots && typeof SRV.bookedSlots === 'object') {
+  Object.assign(apiBooked, SRV.bookedSlots);
+}
+
+function slotCountOn(dateStr, slotStr) {
+  if (!dateStr || !slotStr) return 0;
+  let c = 0;
+  const a = apiBooked[dateStr]; if (Array.isArray(a)) for (const s of a) if (s === slotStr) c++;
+  const b = sheetBooked[dateStr]; if (Array.isArray(b)) for (const s of b) if (s === slotStr) c++;
+  return c;
+}
+
+async function refreshExternalBooked() {
+  const apiUrl = '/api/v1/public/availability' + (SRV && SRV.id ? '?exclude_invoice=' + encodeURIComponent(SRV.id) : '');
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&t=' + Date.now();
+  await Promise.allSettled([
+    fetch(apiUrl, { credentials: 'same-origin', cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        if (!j || !j.ok || !j.data || typeof j.data.slots !== 'object') return;
+        for (const k of Object.keys(apiBooked)) delete apiBooked[k];
+        Object.assign(apiBooked, j.data.slots);
+      })
+      .catch(() => null),
+    fetch(sheetUrl)
+      .then(r => (r.ok ? r.text() : ''))
+      .then(txt => {
+        if (!txt) return;
+        for (const k of Object.keys(sheetBooked)) delete sheetBooked[k];
+        const lines = txt.split(/\r?\n/);
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (!line.trim()) continue;
+          const cols = line.split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
+          if (cols.length < 2) continue;
+          const dVal = cols[0].replace(/\//g, '-');
+          const sVal = normSlotVal(cols[1]);
+          const stVal = (cols[2] || '').toLowerCase();
+          if (weekdayOf(dVal) != null && sVal && (stVal === 'booked' || stVal === 'yes' || stVal === '')) {
+            if (!sheetBooked[dVal]) sheetBooked[dVal] = [];
+            if (!sheetBooked[dVal].includes(sVal)) sheetBooked[dVal].push(sVal);
+          }
+        }
+      })
+      .catch(() => null),
+  ]);
+  renderClashState();
+}
+
+function recalcVisits(force) {
+  if (force) S.visitsCustom = false;
+  const currentSvc = S.svc === '__custom' ? S.svcCustom : S.svc;
+  const singleDay = isSameDayService(currentSvc, S.billing);
+  if (singleDay) {
+    const wd = weekdayOf(S.startDate);
+    if (wd != null) S.visitDays = [wd];
+    if (wd === 0 && S.visitSlot) S.visitSlot = SUNDAY_SLOT;
+  } else if (!daysManual && !S.visitsCustom) {
+    const f = String(S.freq || '').toLowerCase();
+    if (!f.includes('twice') && !f.includes('three') && !f.includes('monday to friday')) {
+      const wd = weekdayOf(S.startDate);
+      if (wd != null) S.visitDays = [wd];
+    }
+  }
+  if (!S.visitsCustom) {
+    S.scheduledVisits = S.visitSlot ? generateVisitsFromRule(S) : [];
+  }
+}
+
+function renderDayPills() {
+  const box = $('dayPills'); if (!box) return;
+  box.innerHTML = '';
+  const selected = new Set(Array.isArray(S.visitDays) ? S.visitDays.map(Number) : []);
+  WEEKDAY_PILLS.forEach(([wd, label]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pillbtn' + (selected.has(wd) ? ' on' : '');
+    btn.textContent = label;
+    btn.setAttribute('aria-pressed', selected.has(wd) ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      daysManual = true;
+      const cur = new Set(Array.isArray(S.visitDays) ? S.visitDays.map(Number) : []);
+      if (cur.has(wd)) {
+        if (cur.size > 1) cur.delete(wd);
+      } else {
+        cur.add(wd);
+      }
+      S.visitDays = [1, 2, 3, 4, 5, 6, 0].filter(d => cur.has(d));
+      S.visitsCustom = false;
+      recalcVisits(false);
+      renderScheduleControls();
+      changed();
+    });
+    box.appendChild(btn);
+  });
+}
+
+function renderSlotPills() {
+  const box = $('slotPills'); if (!box) return;
+  box.innerHTML = '';
+  const currentSvc = S.svc === '__custom' ? S.svcCustom : S.svc;
+  const singleDay = isSameDayService(currentSvc, S.billing);
+  const startIsSunday = singleDay && weekdayOf(S.startDate) === 0;
+  const includesSunday = startIsSunday || (!singleDay && Array.isArray(S.visitDays) && S.visitDays.includes(0));
+  const note = $('sundayNote');
+  if (note) note.hidden = !includesSunday;
+
+  CANON_SLOTS.forEach(slot => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const disabled = startIsSunday && slot !== SUNDAY_SLOT;
+    const isOn = !disabled && S.visitSlot === slot;
+    btn.className = 'pillbtn' + (isOn ? ' on' : '');
+    btn.textContent = slot;
+    btn.disabled = disabled;
+    if (disabled) btn.title = 'Sundays only support 2pm - 5pm';
+    btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      S.visitSlot = slot;
+      S.visitsCustom = false;
+      recalcVisits(true);
+      renderScheduleControls();
+      changed();
+    });
+    box.appendChild(btn);
+  });
+}
+
+function renderClashState() {
+  const listEl = $('visitList');
+  const warn = $('clashWarn');
+  if (!listEl || !warn) return;
+  const clashes = [];
+  const visits = Array.isArray(S.scheduledVisits) ? S.scheduledVisits : [];
+  Array.from(listEl.children).forEach((row, idx) => {
+    const v = visits[idx];
+    const badge = row.querySelector('.visit-clash');
+    const c = v ? slotCountOn(v.date, v.slot) : 0;
+    if (badge) {
+      if (c > 0) {
+        badge.textContent = c > 1 ? 'Booked ×' + c : 'Booked';
+        badge.hidden = false;
+      } else {
+        badge.hidden = true;
+      }
+    }
+    if (c > 0 && v) {
+      clashes.push(fmtShortDate(v.date) + ' · ' + v.slot + (c > 1 ? ' (×' + c + ')' : ''));
+    }
+  });
+  if (clashes.length) {
+    const shown = clashes.slice(0, 4).join(', ');
+    const more = clashes.length > 4 ? ' +' + (clashes.length - 4) + ' more' : '';
+    warn.textContent = 'Calendar overlap: ' + clashes.length + ' scheduled visit' + (clashes.length === 1 ? '' : 's') + ' already ha' + (clashes.length === 1 ? 's' : 've') + ' a booking (' + shown + more + '). You can still save if assigning another team, or pick a different date/time.';
+    warn.hidden = false;
+  } else {
+    warn.hidden = true;
+  }
+}
+
+function renderVisitList() {
+  const box = $('visitList'); if (!box) return;
+  box.innerHTML = '';
+  const visits = Array.isArray(S.scheduledVisits) ? S.scheduledVisits : [];
+  const label = $('visitsLabel');
+  if (label) {
+    label.textContent = visits.length
+      ? 'Exact scheduled visit dates (' + visits.length + ')'
+      : (S.visitSlot ? 'Exact scheduled visit dates (0)' : 'Exact scheduled visit dates (pick a time slot above to generate)');
+  }
+  const rst = $('resetVisits');
+  if (rst) rst.hidden = !S.visitsCustom;
+
+  visits.forEach((v, i) => {
+    const row = document.createElement('div');
+    row.className = 'visit-row';
+
+    const d = document.createElement('input');
+    d.type = 'date';
+    d.value = v.date || '';
+    d.setAttribute('aria-label', 'Visit ' + (i + 1) + ' date');
+
+    const sl = document.createElement('select');
+    sl.className = 'vr-slot';
+    sl.setAttribute('aria-label', 'Visit ' + (i + 1) + ' time slot');
+    if (!normSlotVal(v.slot)) {
+      const blank = document.createElement('option');
+      blank.value = '';
+      blank.textContent = 'Select slot';
+      sl.appendChild(blank);
+    }
+    CANON_SLOTS.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt;
+      o.textContent = opt;
+      sl.appendChild(o);
+    });
+    sl.value = normSlotVal(v.slot) || '';
+
+    const clash = document.createElement('span');
+    clash.className = 'visit-clash';
+    clash.hidden = true;
+
+    const rm = document.createElement('button');
+    rm.type = 'button';
+    rm.className = 'x';
+    rm.textContent = '×';
+    rm.setAttribute('aria-label', 'Remove visit ' + (i + 1));
+
+    d.addEventListener('change', () => {
+      v.date = d.value;
+      if (weekdayOf(v.date) === 0 && !v.slot) v.slot = SUNDAY_SLOT;
+      S.visitsCustom = true;
+      renderClashState();
+      const rb = $('resetVisits'); if (rb) rb.hidden = false;
+      changed();
+    });
+    sl.addEventListener('change', () => {
+      v.slot = normSlotVal(sl.value);
+      S.visitsCustom = true;
+      renderClashState();
+      const rb = $('resetVisits'); if (rb) rb.hidden = false;
+      changed();
+    });
+    rm.addEventListener('click', () => {
+      S.scheduledVisits.splice(i, 1);
+      S.visitsCustom = true;
+      renderVisitList();
+      changed();
+    });
+
+    row.append(d, sl, clash, rm);
+    box.appendChild(row);
+  });
+
+  renderClashState();
+}
+
+function renderScheduleControls() {
+  const rc = $('reserveCalendar');
+  if (rc) rc.checked = S.reserveCalendar !== false;
+  renderDayPills();
+  renderSlotPills();
+  renderVisitList();
+}
+
 function fillForm() {
   SIMPLE.forEach(k => { const el = $(k); if (el) el.value = S[k] == null ? '' : S[k]; });
   if (!SERVICES.includes(S.svc) && S.svc !== '__custom') { S.svcCustom = S.svc; S.svc = '__custom'; $('svc').value = '__custom'; $('svcCustom').value = S.svcCustom; }
   $('bill-m').checked = S.billing === 'monthly'; $('bill-o').checked = S.billing !== 'monthly';
-  renderItems(); syncVisibility(); syncTerms(true);
+  renderItems(); renderScheduleControls(); syncVisibility(); syncTerms(true);
 }
 function syncVisibility() {
   $('svcCustomWrap').hidden = S.svc !== '__custom';
   $('planRow').hidden = S.billing !== 'monthly';
+  const currentSvc = S.svc === '__custom' ? S.svcCustom : S.svc;
+  const dw = $('visitDaysWrap');
+  if (dw) dw.hidden = isSameDayService(currentSvc, S.billing);
 }
 function syncTerms(force) {
   const ta = $('terms'), custom = S.terms != null;
@@ -992,16 +1457,23 @@ $('f').addEventListener('input', e => {
   const t = e.target, k = t.id;
   if (SIMPLE.includes(k)) {
     S[k] = t.value;
-    if (k === 'startDate') { autoRecalcEndDate(); }
-    if (k === 'freq') { const f = FREQ.find(x => x[0] === t.value); if (f) { S.sessions = f[1]; $('sessions').value = f[1]; } autoRecalcEndDate(); }
-    if (k === 'sessions') { autoRecalcEndDate(); }
+    if (k === 'startDate') { autoRecalcEndDate(); recalcVisits(false); renderScheduleControls(); }
+    if (k === 'endDate') { recalcVisits(false); renderScheduleControls(); }
+    if (k === 'freq') {
+      const f = FREQ.find(x => x[0] === t.value);
+      if (f) { S.sessions = f[1]; $('sessions').value = f[1]; }
+      daysManual = false;
+      S.visitDays = defaultVisitDaysFor(S.startDate, S.freq);
+      autoRecalcEndDate(); recalcVisits(true); renderScheduleControls();
+    }
+    if (k === 'sessions') { autoRecalcEndDate(); recalcVisits(false); renderScheduleControls(); }
     if (k === 'svc' || k === 'svcCustom') {
       if (isSameDayService(S.svc, S.billing)) { S.billing = 'oneoff'; $('bill-o').checked = true; $('bill-m').checked = false; }
-      autoRecalcEndDate(); syncVisibility(); refreshAutoItem();
+      autoRecalcEndDate(); recalcVisits(false); syncVisibility(); renderScheduleControls(); refreshAutoItem();
     }
     changed();
   } else if (t.name === 'billing') {
-    S.billing = t.value; autoRecalcEndDate(); syncVisibility(); refreshAutoItem(); changed();
+    S.billing = t.value; autoRecalcEndDate(); recalcVisits(false); syncVisibility(); renderScheduleControls(); refreshAutoItem(); changed();
   } else if (k === 'terms') {
     S.terms = t.value; syncTerms(false); changed(true);
   }
@@ -1011,18 +1483,47 @@ $('f').addEventListener('change', e => {
   if (t.name === 'billing' || t.tagName === 'SELECT' || k === 'startDate' || k === 'endDate') {
     if (t.name === 'billing') {
       S.billing = t.value;
-      autoRecalcEndDate();
+      autoRecalcEndDate(); recalcVisits(false);
     } else if (SIMPLE.includes(t.id)) {
       S[t.id] = t.value;
-      if (k === 'startDate') { autoRecalcEndDate(); }
+      if (k === 'startDate') { autoRecalcEndDate(); recalcVisits(false); }
+      if (k === 'endDate') { recalcVisits(false); }
       if (k === 'svc') {
         if (isSameDayService(S.svc, S.billing)) { S.billing = 'oneoff'; $('bill-o').checked = true; $('bill-m').checked = false; }
-        autoRecalcEndDate();
+        autoRecalcEndDate(); recalcVisits(false);
       }
-      if (k === 'freq' || k === 'sessions') { autoRecalcEndDate(); }
+      if (k === 'freq') {
+        const f = FREQ.find(x => x[0] === t.value);
+        if (f) { S.sessions = f[1]; $('sessions').value = f[1]; }
+        daysManual = false;
+        S.visitDays = defaultVisitDaysFor(S.startDate, S.freq);
+        autoRecalcEndDate(); recalcVisits(true);
+      }
+      if (k === 'sessions') { autoRecalcEndDate(); recalcVisits(false); }
     }
-    syncVisibility(); refreshAutoItem(); changed();
+    syncVisibility(); renderScheduleControls(); refreshAutoItem(); changed();
   }
+});
+$('reserveCalendar').addEventListener('change', e => {
+  S.reserveCalendar = e.target.checked;
+  changed();
+});
+$('addVisit').addEventListener('click', () => {
+  if (!Array.isArray(S.scheduledVisits)) S.scheduledVisits = [];
+  const last = S.scheduledVisits[S.scheduledVisits.length - 1];
+  const fallbackDate = (last && last.date) || S.startDate || todayISO();
+  const wd = weekdayOf(fallbackDate);
+  const slot = S.visitSlot || (last && normSlotVal(last.slot)) || (wd === 0 ? SUNDAY_SLOT : '8am - 11am');
+  S.scheduledVisits.push({ date: fallbackDate, slot: wd === 0 ? SUNDAY_SLOT : slot });
+  S.visitsCustom = true;
+  renderVisitList();
+  changed();
+});
+$('resetVisits').addEventListener('click', () => {
+  S.visitsCustom = false;
+  recalcVisits(true);
+  renderScheduleControls();
+  changed();
 });
 $('addItem').addEventListener('click', () => { S.items.push({ d: '', a: '', auto: false }); renderItems(); changed(); const el = document.getElementById('item-d-' + (S.items.length - 1)); if (el) el.focus(); });
 $('jump').addEventListener('click', () => $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -1049,9 +1550,51 @@ window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(rend
 function msg(text, err) { const m = $('msg'); m.textContent = text; m.className = err ? 'err' : ''; m.hidden = !text; }
 function clearMsg() { if (!$('msg').hidden && !$('msg').dataset.sticky) msg(''); }
 
+function cleanScheduledVisits(list) {
+  const seen = new Set();
+  const out = [];
+  for (const v of (Array.isArray(list) ? list : [])) {
+    if (!v || weekdayOf(v.date) == null) continue;
+    const slot = normSlotVal(v.slot);
+    if (!slot) continue;
+    const date = String(v.date).trim();
+    const key = date + '|' + slot;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ date, slot });
+  }
+  out.sort((a, b) => a.date.localeCompare(b.date) || a.slot.localeCompare(b.slot));
+  return out;
+}
+
+function validateBeforeSave() {
+  if (S.reserveCalendar === false) {
+    S.scheduledVisits = cleanScheduledVisits(S.scheduledVisits);
+    return true;
+  }
+  if (!S.visitsCustom && S.visitSlot) {
+    S.scheduledVisits = generateVisitsFromRule(S);
+  }
+  const valid = cleanScheduledVisits(S.scheduledVisits);
+  if (!valid.length) {
+    msg("Select a serving time slot (or uncheck 'Register serving day(s) & time on the booking calendar').", true);
+    const sp = $('slotPills');
+    if (sp) sp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+  S.scheduledVisits = valid;
+  return true;
+}
+
 /* ---------- save to cleanse.ng (admin mode) ---------- */
 async function saveInvoice() {
-  const data = Object.assign({}, S);
+  const cleaned = cleanScheduledVisits(S.scheduledVisits);
+  const data = Object.assign({}, S, {
+    visitSlot: normSlotVal(S.visitSlot),
+    visitDays: Array.isArray(S.visitDays) ? S.visitDays.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6) : [],
+    scheduledVisits: cleaned,
+    reserveCalendar: S.reserveCalendar !== false,
+  });
   const customNum = (S.num && S.num !== 'New' && String(S.num).trim()) ? String(S.num).trim() : undefined;
   delete data.num;
   const res = await fetch(SRV.id ? '/api/v1/admin/invoices/' + SRV.id : '/api/v1/admin/invoices', {
@@ -1062,16 +1605,25 @@ async function saveInvoice() {
   if (res.status === 401) throw new Error('You have been signed out. Sign in to the dashboard again, then save.');
   if (!j || !j.ok) throw new Error((j && j.error && j.error.message) || 'Could not save the invoice. Try again.');
   SRV.id = j.data.id; SRV.num = j.data.invoice_number; S.num = SRV.num; $('num').value = S.num;
-  dirty = false; updSave(); render();
+  dirty = false; updSave(); renderVisitList(); render();
   try { history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id); } catch (e) {}
   try { if (window.parent !== window) window.parent.postMessage({ type: 'cleanse-invoice-saved', id: SRV.id, num: SRV.num }, location.origin); } catch (e) {}
+  refreshExternalBooked();
   return SRV.num;
 }
 if (SRV) {
   $('saveInv').addEventListener('click', async () => {
     if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
+    if (!validateBeforeSave()) return;
     const b = $('saveInv'); b.disabled = true;
-    try { const n = await saveInvoice(); msg('Saved invoice ' + n + '.'); }
+    try {
+      const n = await saveInvoice();
+      const vc = Array.isArray(S.scheduledVisits) ? S.scheduledVisits.length : 0;
+      const suffix = S.reserveCalendar !== false && vc > 0
+        ? ' · ' + vc + ' visit' + (vc === 1 ? '' : 's') + ' synced to calendar.'
+        : '.';
+      msg('Saved invoice ' + n + suffix);
+    }
     catch (e) { msg(e.message, true); updSave(); }
   });
   window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -1087,6 +1639,7 @@ setTimeout(getDownloads, 0);
 const fileName = st => { const tag = (st.client.trim() || st.addr.trim()).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40); return 'Cleanse_Invoice_' + (st.num.trim() || 'CLN').replace(/[^A-Za-z0-9-]+/g, '-') + (tag ? '_' + tag : '') + '.pdf'; };
 $('dl').addEventListener('click', async () => {
   if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
+  if (SRV && (dirty || !SRV.id) && !validateBeforeSave()) return;
   if (!window.jspdf || !window.jspdf.jsPDF) { msg('The PDF maker did not load. Check your connection and reload the page.', true); return; }
   const btn = $('dl'); btn.disabled = true; btn.textContent = 'Preparing…';
   if (SRV && (dirty || !SRV.id)) {
@@ -1132,6 +1685,7 @@ $('yesNew').addEventListener('click', () => {
   }
   const next = nextNum(S.num);
   S = Object.assign(DEFAULT(), keep, { num: next, addr: '', area: 'Ibadan', items: [{ d: 'Monthly Cleaning Service', a: '', auto: true }] });
+  daysManual = false; hydrateSchedule(S, false);
   $('confirmNew').hidden = true; fillForm(); changed();
   msg('New invoice ' + next + ' started.');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1142,7 +1696,10 @@ $('yesNew').addEventListener('click', () => {
 // The first charge follows the service until someone types their own wording.
 if (S.items[0] && S.items[0].auto) S.items[0].d = autoItemLabel(S);
 fillForm();
-if (SRV) { const n = $('num'); n.readOnly = false; n.placeholder = 'Auto-assigned (or type custom)'; n.title = 'Assigned by cleanse.ng when saved, or type a custom invoice number'; updSave(); }
+if (SRV) {
+  const n = $('num'); n.readOnly = false; n.placeholder = 'Auto-assigned (or type custom)'; n.title = 'Assigned by cleanse.ng when saved, or type a custom invoice number'; updSave();
+  refreshExternalBooked();
+}
 render();
 fontsReady.then(() => render());
 })();

@@ -18,12 +18,15 @@ const GREETING_OPTIONS = [
 export default function ApplicantWhatsAppAction({
   phone,
   fullName,
+  applicantId,
 }: {
   phone: string;
   fullName: string;
+  applicantId?: string;
 }) {
   const [selectedGreeting, setSelectedGreeting] = useState<string>("AUTO");
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
   const autoGreeting = getTimeOfDayGreeting();
@@ -32,6 +35,19 @@ export default function ApplicantWhatsAppAction({
   const message = getApplicantSelectionMessage(fullName, activeGreeting);
   const waUrl = buildApplicantWhatsAppUrl(phone, fullName, activeGreeting);
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://cleanse.ng";
+  const onboardParams = new URLSearchParams();
+  if (applicantId) onboardParams.set("app", applicantId);
+  if (fullName) onboardParams.set("name", fullName);
+  if (phone) onboardParams.set("phone", phone);
+  const onboardUrl = `${origin}/pro/onboard?${onboardParams.toString()}`;
+
+  const firstName = fullName.trim().split(/\s+/)[0] || "there";
+  const cleanDigits = phone.replace(/[^\d]/g, "");
+  const formattedDigits = cleanDigits.startsWith("0") ? "234" + cleanDigits.slice(1) : cleanDigits;
+  const onboardWaMsg = `${activeGreeting} ${firstName}, glad to have you move forward with Cleanse.ng!\n\nPlease complete your official Cleanse Pro Onboarding & Verification Form (with your clear photo, NIN details, address, guarantor info, and agreement) using your personal link below before we confirm your in-person meeting:\n\n${onboardUrl}\n\nCleanse.ng Operations`;
+  const onboardWaUrl = `https://wa.me/${formattedDigits}?text=${encodeURIComponent(onboardWaMsg)}`;
+
   async function copy() {
     try {
       await navigator.clipboard.writeText(message);
@@ -39,6 +55,16 @@ export default function ApplicantWhatsAppAction({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+    }
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(onboardUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      setCopiedLink(false);
     }
   }
 
@@ -122,6 +148,27 @@ export default function ApplicantWhatsAppAction({
           {message}
         </div>
       )}
+
+      {/* Step 2: Onboarding Form Link */}
+      <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed var(--border)" }}>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--deep-purple)", display: "block", marginBottom: 4 }}>
+          If they replied YES — Send Onboarding Form
+        </span>
+        <div className="action-btns">
+          <a
+            className="wa"
+            href={onboardWaUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{ background: "#3a1d6d", display: "inline-flex", alignItems: "center", gap: 6 }}
+          >
+            📋 WhatsApp Onboarding Form ↗
+          </a>
+          <button type="button" onClick={copyLink}>
+            {copiedLink ? "Link Copied ✓" : "Copy Form Link"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

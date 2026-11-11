@@ -211,8 +211,91 @@ export const updateApplicationSchema = z
 export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 
 // --------------------------------------------------------------------------
+// Cleanse Pro Onboarding & 19-Clause Agreement (§2 Vetting & Contractor Agreement)
+// --------------------------------------------------------------------------
+export const cleanerOnboardingSchema = z.object({
+  applicant_id: z.string().uuid().optional().nullable(),
+
+  // 1. About You
+  full_name: z.string().trim().min(2, "Full name is required.").max(120),
+  photo_url: z.string().min(5, "A clear photo of yourself is required."),
+  whatsapp: NigerianPhone,
+  date_of_birth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter your date of birth.")
+    .refine((v) => ageOn(v) >= 18, { message: "You must be 18 or older to join." })
+    .refine((v) => ageOn(v) <= 70, { message: "Please check your date of birth." }),
+  gender: z.enum(["Female", "Male", "Prefer not to say"]),
+  nin_digits: z
+    .string()
+    .trim()
+    .regex(/^\d{11}$/, "NIN must be exactly 11 digits."),
+  nin_document_url: z.string().min(5, "Photo upload of your NIN slip or card is required."),
+
+  // 2. Where You Live (Split Address)
+  street_address: z.string().trim().min(3, "House number and street address are required.").max(200),
+  landmark: z.string().trim().min(2, "Nearest landmark or bus stop is required.").max(200),
+  neighbourhood: z.string().trim().min(2, "Area or neighbourhood is required.").max(100),
+  lga: z.string().trim().min(2, "Local Government Area is required.").max(100),
+  city_state: z.string().trim().default("Ibadan, Oyo State"),
+  directions: z.string().trim().max(500).optional().default(""),
+  closest_zone: z.enum(["Bodija", "Oluyole", "Jericho", "Akobo", "Iyaganku", "Other"]),
+  transport_mode: z.enum(["Bike / Okada", "Bus / Danfo", "Keke / Tricycle", "Car", "Walk"]),
+  travel_time_hub: z.string().trim().min(2, "Estimated travel time is required.").max(100),
+
+  // 3. Background
+  education_level: z.string().trim().min(1, "Highest education level is required.").max(100),
+  religion: z.string().trim().max(100).optional().default(""),
+  languages: z.array(z.string().trim()).min(1, "Select at least one language."),
+  experience_details: z.string().trim().max(2000).optional().default(""),
+  products_used: z.array(z.string().trim()).default([]),
+  equipment_used: z.array(z.string().trim()).default([]),
+
+  // 4. Availability
+  available_days: z.array(z.string().trim()).min(1, "Select which days you can work."),
+  early_morning_ok: z.boolean().default(true),
+  pair_work_ok: z.boolean().default(true),
+  start_readiness: z.string().trim().min(1, "Select when you can start."),
+
+  // 5. Trust and Safety
+  guarantor_name: z.string().trim().min(2, "Guarantor's name is required.").max(120),
+  guarantor_phone: NigerianPhone,
+  guarantor_relationship: z.string().trim().min(2, "Guarantor relationship is required.").max(100),
+  guarantor_occupation: z.string().trim().max(120).optional().default(""),
+  emergency_name: z.string().trim().min(2, "Emergency contact name is required.").max(120),
+  emergency_phone: NigerianPhone,
+  emergency_relationship: z.string().trim().min(2, "Emergency relationship is required.").max(100),
+  allergies: z.string().trim().max(500).optional().default(""),
+
+  // 6. About You & Cleanse
+  why_cleanse: z.string().trim().max(2000).optional().default(""),
+  one_year_goal: z.string().trim().max(2000).optional().default(""),
+  accidental_breakage_response: z.string().trim().max(2000).optional().default(""),
+  referral_source: z.string().trim().max(200).optional().default(""),
+
+  // 7. Agreement (All 19 clauses)
+  agreed_clauses: z
+    .array(z.number().int().min(1).max(19))
+    .refine((arr) => new Set(arr).size === 19, {
+      message: "You must review and agree to all 19 clauses of the Cleanse Pro Agreement.",
+    }),
+  agreement_version: z.string().default("v1.0"),
+});
+export type CleanerOnboardingInput = z.infer<typeof cleanerOnboardingSchema>;
+
+export const updateOnboardingReviewSchema = z.object({
+  status: z.enum(["SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED"]).optional(),
+  admin_notes: z.string().trim().max(2000).optional(),
+  nin_verified: z.boolean().optional(),
+  guarantor_called: z.boolean().optional(),
+});
+export type UpdateOnboardingReviewInput = z.infer<typeof updateOnboardingReviewSchema>;
+
+// --------------------------------------------------------------------------
 // Admin invoice maker: saved invoice state (shape owned by private/invoice-maker.html)
 // --------------------------------------------------------------------------
+const INVOICE_VISIT_SLOT = z.enum(["8am - 11am", "11am - 2pm", "2pm - 5pm"]);
+
 export const invoiceSaveSchema = z.object({
   num: z.string().trim().max(50).optional(),
   data: z
@@ -222,6 +305,18 @@ export const invoiceSaveSchema = z.object({
       addr: z.string().max(300).default(""),
       startDate: z.string().max(40).optional(),
       endDate: z.string().max(40).optional(),
+      reserveCalendar: z.boolean().optional(),
+      visitSlot: z.union([INVOICE_VISIT_SLOT, z.literal("")]).optional(),
+      visitDays: z.array(z.number().int().min(0).max(6)).max(7).optional(),
+      scheduledVisits: z
+        .array(
+          z.object({
+            date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+            slot: INVOICE_VISIT_SLOT,
+          })
+        )
+        .max(62)
+        .optional(),
       items: z
         .array(z.object({ d: z.string().max(300).optional(), a: z.union([z.number(), z.string().max(40)]).optional() }).passthrough())
         .min(1)

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { getApplication, ageFromDob } from "@/domain/applicant/applicant-service";
+import { getOnboardingByApplicant } from "@/domain/cleaner/onboarding-service";
 import { AppError } from "@/http/errors";
 import { lagos, waDigits } from "../../format";
 import { STATUS_PILL } from "../status";
@@ -48,6 +49,13 @@ export default async function ApplicantDetail({ params }: { params: { id: string
     throw err;
   }
 
+  let onboarding: Record<string, any> | null = null;
+  try {
+    onboarding = await getOnboardingByApplicant(a.id);
+  } catch {
+    onboarding = null;
+  }
+
   return (
     <main className="admin-shell">
       <AdminBar who={`${admin.fullName} · ${admin.role}`} active="applicants" />
@@ -59,6 +67,15 @@ export default async function ApplicantDetail({ params }: { params: { id: string
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0" }}>
           <span className={`pill ${STATUS_PILL[a.status] ?? "neutral"}`}>{a.status}</span>
           <span className="pill neutral">Applied {lagos(a.created_at)}</span>
+          {onboarding && (
+            <Link
+              className="pill"
+              style={{ background: "#ede9fe", color: "#4c1d95", textDecoration: "none", fontWeight: 700 }}
+              href={`/admin/onboardings/${onboarding.id}`}
+            >
+              📄 Onboarding Submitted ({onboarding.status}) ↗
+            </Link>
+          )}
           <a
             className="pill ful-cleaner_assigned"
             href={buildApplicantWhatsAppUrl(a.whatsapp_e164, a.full_name)}
@@ -114,7 +131,7 @@ export default async function ApplicantDetail({ params }: { params: { id: string
 
           <div className="card">
             <h3>Review & Outreach</h3>
-            <ApplicantWhatsAppAction phone={a.whatsapp_e164} fullName={a.full_name} />
+            <ApplicantWhatsAppAction phone={a.whatsapp_e164} fullName={a.full_name} applicantId={a.id} />
             <div style={{ margin: "18px 0 16px", borderTop: "1px solid var(--border)" }} />
             <ReviewActions applicationId={a.id} initialStatus={a.status} initialNotes={a.admin_notes} />
             <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--border)" }}>

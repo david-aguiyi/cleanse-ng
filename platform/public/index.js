@@ -480,6 +480,11 @@ const pDiv2 = document.getElementById('p-div-2');
 let _isPlanPreSelected = false;
 let _currentWizardStep = 1;
 
+function getActiveTeamsCount() {
+  const parsed = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+}
+
 function updateSchedulePills(dayOfWeek) {
   if (!bookingSchedulePillsContainer) return;
   bookingSchedulePillsContainer.innerHTML = '';
@@ -487,9 +492,18 @@ function updateSchedulePills(dayOfWeek) {
   const options = dayOfWeek === 0 ? scheduleOptions.sunday : scheduleOptions.weekday;
   const selectedDate = bookingDateInput.value;
   const booked = bookedSlots[selectedDate] || [];
+  const activeTeamsCount = getActiveTeamsCount();
 
-  // Clear current value if not matching the new list or if it is booked
-  const isValid = options.some(opt => opt.value === currentVal && !booked.includes(opt.value));
+  const countForSlot = (slotVal) => {
+    let count = 0;
+    booked.forEach((raw) => {
+      if (normalizeSlot(raw) === slotVal) count += 1;
+    });
+    return count;
+  };
+
+  // Clear current value if not matching the new list or if it has no team capacity left
+  const isValid = options.some(opt => opt.value === currentVal && countForSlot(opt.value) < activeTeamsCount);
   if (!isValid) {
     bookingScheduleSelect.value = '';
   }
@@ -499,7 +513,7 @@ function updateSchedulePills(dayOfWeek) {
     pill.type = 'button';
     pill.className = 'schedule-pill';
 
-    const isBooked = booked.includes(opt.value);
+    const isBooked = countForSlot(opt.value) >= activeTeamsCount;
     if (isBooked) {
       pill.classList.add('disabled');
       pill.disabled = true;
@@ -837,11 +851,83 @@ function updateVerifyStepDetails() {
 // ── CUSTOM INLINE CALENDAR STATE & LOGIC ──
 let calendarYear, calendarMonth;
 const calendarMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-// Local fallback / mock database for booked slots
+const CANONICAL_DAY_SLOTS = ["8am - 11am", "11am - 2pm", "2pm - 5pm"];
+const SUNDAY_ONLY_DAY_SLOT = "2pm - 5pm";
+// Merged availability (Google Sheet + saved Cleanse invoices + confirmed online bookings)
 let bookedSlots = {};
+let sheetBookedSlots = {};
+let platformBookedSlots = {};
+let _lastPlatformSyncAt = 0;
 
 // Google Sheet ID for manual booking sync
 const GOOGLE_SHEET_ID = "14IMdMV4R_SsgJ2fQ6JmDOpGZynSgCZt4Z31QaGRzD7M";
+
+function normalizeDateKey(dateStr) {
+  const s = String(dateStr || '').trim().replace(/\//g, '-');
+  const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
+  if (!m) return '';
+  return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+}
+
+function rebuildBookedSlots() {
+  const merged = {};
+  [sheetBookedSlots, platformBookedSlots].forEach((source) => {
+    if (!source || typeof source !== 'object') return;
+    Object.keys(source).forEach((rawDate) => {
+      const dateKey = normalizeDateKey(rawDate);
+      if (!dateKey) return;
+      const entries = Array.isArray(source[rawDate]) ? source[rawDate] : [];
+      entries.forEach((rawSlot) => {
+        const slot = normalizeSlot(rawSlot);
+        if (!slot) return;
+        if (!merged[dateKey]) merged[dateKey] = [];
+        merged[dateKey].push(slot);
+      });
+    });
+  });
+  bookedSlots = merged;
+  renderCalendar();
+
+  if (bookingDateInput && bookingDateInput.value && bookingSchedulePillsContainer) {
+    const parts = bookingDateInput.value.split('-').map(Number);
+    if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+      const pickedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (!isNaN(pickedDate.getTime())) {
+        updateSchedulePills(pickedDate.getDay());
+        updateBookingSummary();
+      }
+    }
+  }
+}
+
+async function syncPlatformAvailability(force) {
+  const now = Date.now();
+  if (!force && now - _lastPlatformSyncAt < 8000) return;
+  _lastPlatformSyncAt = now;
+
+  try {
+    const response = await fetch(`/api/v1/public/availability?t=${now}`, { cache: 'no-store' });
+    if (!response.ok) return;
+
+    const json = await response.json();
+    const rawSlots = json && json.ok && json.data && json.data.slots;
+    if (!rawSlots || typeof rawSlots !== 'object') return;
+
+    const next = {};
+    Object.keys(rawSlots).forEach((dateKey) => {
+      const normDate = normalizeDateKey(dateKey);
+      if (!normDate) return;
+      const arr = Array.isArray(rawSlots[dateKey]) ? rawSlots[dateKey] : [];
+      const clean = arr.map(normalizeSlot).filter(Boolean);
+      if (clean.length) next[normDate] = clean;
+    });
+
+    platformBookedSlots = next;
+    rebuildBookedSlots();
+  } catch (err) {
+    console.error("Failed to sync platform calendar availability:", err);
+  }
+}
 
 async function syncBookingsFromSpreadsheet() {
   if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.includes("YOUR_SPREADSHEET_ID")) {
@@ -856,12 +942,16 @@ async function syncBookingsFromSpreadsheet() {
 
     const csvText = await response.text();
     parseSpreadsheetCSV(csvText);
-
-    // Refresh the calendar view if it is currently displayed
-    renderCalendar();
   } catch (err) {
     console.error("Failed to sync bookings from Google Sheet:", err);
   }
+}
+
+async function syncAllAvailability(force) {
+  await Promise.allSettled([
+    syncBookingsFromSpreadsheet(),
+    syncPlatformAvailability(Boolean(force)),
+  ]);
 }
 
 async function syncTestimonialsFromSpreadsheet() {
@@ -975,18 +1065,47 @@ function renderTestimonials(list) {
 
 function normalizeSlot(slotStr) {
   if (!slotStr) return "";
-  const s = slotStr.toString().toLowerCase().trim();
-  if (s.includes("8am") || s.includes("morning")) return "8am - 11am";
-  if (s.includes("11am") || s.includes("afternoon")) return "11am - 2pm";
-  return "2pm - 5pm";
+  const s = slotStr.toString().toLowerCase().replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+  if (!s) return "";
+  if (s === "8am - 11am" || s === "8am-11am" || s.includes("8am") || s.includes("8:00") || s.includes("morning")) return "8am - 11am";
+  if (s === "11am - 2pm" || s === "11am-2pm" || s.includes("11am") || s.includes("11:00") || s.includes("midday") || s.includes("noon") || s.includes("afternoon")) return "11am - 2pm";
+  if (s === "2pm - 5pm" || s === "2pm-5pm" || s.includes("2pm") || s.includes("14:00") || s.includes("3pm") || s.includes("evening")) return "2pm - 5pm";
+  const hhmm = /^(\d{1,2}):\d{2}/.exec(s);
+  if (hhmm) {
+    const h = parseInt(hhmm[1], 10);
+    if (h >= 0 && h <= 23) return h < 11 ? "8am - 11am" : h < 14 ? "11am - 2pm" : "2pm - 5pm";
+  }
+  return "";
+}
+
+function getDayAvailability(dateStr, isSunday, activeTeamsCount) {
+  const allowed = isSunday ? [SUNDAY_ONLY_DAY_SLOT] : CANONICAL_DAY_SLOTS;
+  const raw = bookedSlots[dateStr] || [];
+  const counts = {};
+  allowed.forEach((s) => { counts[s] = 0; });
+  raw.forEach((s) => {
+    const norm = normalizeSlot(s);
+    if (norm && Object.prototype.hasOwnProperty.call(counts, norm)) {
+      counts[norm] += 1;
+    }
+  });
+  let usedCapacity = 0;
+  allowed.forEach((s) => {
+    usedCapacity += Math.min(counts[s], activeTeamsCount);
+  });
+  const maxSlots = allowed.length * activeTeamsCount;
+  return {
+    maxSlots,
+    usedCapacity,
+    slotsLeft: Math.max(0, maxSlots - usedCapacity),
+    isFullyBooked: usedCapacity >= maxSlots,
+    isPartiallyBooked: usedCapacity > 0 && usedCapacity < maxSlots,
+  };
 }
 
 function parseSpreadsheetCSV(csvText) {
   const lines = csvText.split(/\r?\n/);
-  if (lines.length <= 1) return; // Header only or empty
-
-  // Reset local bookedSlots before merging
-  bookedSlots = {};
+  const nextSheetSlots = {};
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
@@ -997,23 +1116,23 @@ function parseSpreadsheetCSV(csvText) {
     });
 
     if (cols.length >= 2) {
-      const dateVal = cols[0]; // e.g. "2026-06-25"
+      const normalizedDate = normalizeDateKey(cols[0]); // e.g. "2026-06-25"
       const slotVal = normalizeSlot(cols[1]); // e.g. "8am - 11am"
       const statusVal = cols[2] ? cols[2].toLowerCase() : "";
 
-      if (dateVal && slotVal && (statusVal === "booked" || statusVal === "yes" || statusVal === "")) {
-        const normalizedDate = dateVal.replace(/\//g, '-');
-
-        if (!bookedSlots[normalizedDate]) {
-          bookedSlots[normalizedDate] = [];
+      if (normalizedDate && slotVal && (statusVal === "booked" || statusVal === "yes" || statusVal === "")) {
+        if (!nextSheetSlots[normalizedDate]) {
+          nextSheetSlots[normalizedDate] = [];
         }
-        if (!bookedSlots[normalizedDate].includes(slotVal)) {
-          bookedSlots[normalizedDate].push(slotVal);
+        if (!nextSheetSlots[normalizedDate].includes(slotVal)) {
+          nextSheetSlots[normalizedDate].push(slotVal);
         }
       }
     }
   }
-  console.log("Bookings synced successfully. Updated bookedSlots database:", bookedSlots);
+
+  sheetBookedSlots = nextSheetSlots;
+  rebuildBookedSlots();
 }
 
 function initCustomCalendar() {
@@ -1120,11 +1239,8 @@ function renderCalendar() {
     cell.className = 'calendar-day-cell';
     cell.textContent = day;
 
-    const slotsBooked = bookedSlots[cellDateStr] || [];
-    const activeTeamsCount = parseInt(localStorage.getItem('cleanse_active_teams') || '1', 10);
-    const maxSlots = isCellSunday ? (1 * activeTeamsCount) : (3 * activeTeamsCount);
-    const isFullyBooked = slotsBooked.length >= maxSlots;
-    const isPartiallyBooked = slotsBooked.length > 0 && slotsBooked.length < maxSlots;
+    const activeTeamsCount = getActiveTeamsCount();
+    const { isFullyBooked, isPartiallyBooked, slotsLeft } = getDayAvailability(cellDateStr, isCellSunday, activeTeamsCount);
     const isSelectable = !isCellPast && !isCellToday;
 
     if (isCellToday) {
@@ -1141,7 +1257,6 @@ function renderCalendar() {
         });
       } else {
         cell.classList.add('selectable');
-        const slotsLeft = maxSlots - slotsBooked.length;
         cell.setAttribute('data-tooltip', `${slotsLeft} Available`);
         if (isPartiallyBooked) {
           cell.classList.add('partially-booked');
@@ -1193,6 +1308,7 @@ function renderCalendar() {
 function openBookingModal(planName) {
   _modalOpenTime = Date.now();
   isPromoFlow = false; // Reset to false for standard bookings
+  syncPlatformAvailability(false);
 
   // Clear validation messages
   ['step1-validation-msg', 'step2-validation-msg', 'step3-validation-msg', 'step4-validation-msg', 'coupon-validation-msg', 'calendar-booking-message'].forEach(id => {
@@ -2258,14 +2374,14 @@ window.addEventListener('DOMContentLoaded', () => {
   setupSafariFormSubmitWorkaround();
   restoreSessionState();
 
-  // Initialize testimonial slider & fetch Google Sheet data
+  // Initialize testimonial slider & fetch live calendar/sheet availability
   initTestimonialSlider();
-  syncBookingsFromSpreadsheet();
+  syncAllAvailability(true);
   syncTestimonialsFromSpreadsheet();
 
   // Periodically fetch updates every 5 minutes (300,000 ms)
   setInterval(() => {
-    syncBookingsFromSpreadsheet();
+    syncAllAvailability(true);
     syncTestimonialsFromSpreadsheet();
   }, 300000);
 

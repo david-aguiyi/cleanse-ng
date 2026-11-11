@@ -173,3 +173,4 @@ export default function ClearApplicationsButton({ totalCount }: { totalCount: nu
     </>
   );
 }
+

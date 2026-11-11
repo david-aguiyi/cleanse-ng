@@ -8,6 +8,12 @@ import { serviceClient } from "@/db/service-client";
 import { AppError } from "@/http/errors";
 import type { AdminContext } from "@/auth/admin";
 import type { InvoiceSaveInput } from "@/validation/schemas";
+import {
+  expandInvoiceVisits,
+  lagosMonthStartIso,
+  toLagosDateAndSlot,
+  type CanonicalSlot,
+} from "./schedule";
 
 type InvoiceData = InvoiceSaveInput["data"];
 
@@ -122,4 +128,82 @@ export async function listInvoices(search?: string) {
   const { data, error } = await query;
   if (error) throw new AppError("INTERNAL_ERROR", "Could not load invoices.");
   return data ?? [];
+}
+
+export async function deleteInvoice(id: string) {
+  if (!UUID.test(id)) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
+  const { data, error } = await serviceClient()
+    .from("invoices")
+    .delete()
+    .eq("id", id)
+    .select("id, invoice_number")
+    .maybeSingle();
+  if (error) throw new AppError("INTERNAL_ERROR", "Could not delete the invoice.");
+  if (!data) throw new AppError("INVOICE_NOT_FOUND", "Invoice not found.");
+  return data as { id: string; invoice_number: string };
+}
+
+/**
+ * Aggregates anonymized date -> canonical slot entries from active saved invoices
+ * and confirmed paid online bookings for the public booking calendar & slot pills.
+ * Returns zero PII: strictly { "YYYY-MM-DD": ["8am - 11am", ...] }.
+ */
+export async function listPublicBookedSlots(options?: {
+  excludeInvoiceId?: string | null;
+}): Promise<{ slots: Record<string, CanonicalSlot[]>; generatedAt: string }> {
+  const db = serviceClient();
+  const minDate = lagosMonthStartIso();
+  const excludeId =
+    options?.excludeInvoiceId && UUID.test(options.excludeInvoiceId)
+      ? options.excludeInvoiceId
+      : null;
+
+  const [invRes, bookRes] = await Promise.all([
+    db
+      .from("invoices")
+      .select("id, data")
+      .order("created_at", { ascending: false })
+      .limit(500),
+    db
+      .from("bookings")
+      .select("scheduled_start_at")
+      .eq("payment_status", "SUCCESS")
+      .is("cancelled_at", null)
+      .neq("customer_status", "CANCELLED")
+      .neq("fulfilment_status", "CANCELLED")
+      .gte("scheduled_start_at", `${minDate}T00:00:00+01:00`)
+      .limit(500),
+  ]);
+
+  if (invRes.error) {
+    throw new AppError("INTERNAL_ERROR", "Could not load calendar availability.");
+  }
+
+  const slots: Record<string, CanonicalSlot[]> = {};
+  const add = (date: string, slot: CanonicalSlot) => {
+    if (date < minDate) return;
+    if (!slots[date]) slots[date] = [];
+    slots[date].push(slot);
+  };
+
+  for (const row of invRes.data ?? []) {
+    if (excludeId && row.id === excludeId) continue;
+    const visits = expandInvoiceVisits(row.data as Record<string, unknown> | null);
+    for (const v of visits) {
+      add(v.date, v.slot);
+    }
+  }
+
+  if (!bookRes.error && bookRes.data) {
+    for (const b of bookRes.data) {
+      if (!b.scheduled_start_at) continue;
+      const mapped = toLagosDateAndSlot(String(b.scheduled_start_at));
+      if (mapped) add(mapped.date, mapped.slot);
+    }
+  }
+
+  return {
+    slots,
+    generatedAt: new Date().toISOString(),
+  };
 }

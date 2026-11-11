@@ -6,7 +6,7 @@ export default function AdminBar({
   active,
 }: {
   who: string;
-  active?: "bookings" | "cleaners" | "applicants" | "invoices" | "settings";
+  active?: "bookings" | "cleaners" | "applicants" | "onboardings" | "invoices" | "settings";
 }) {
   return (
     <div className="admin-bar">
@@ -23,6 +23,9 @@ export default function AdminBar({
           </Link>
           <Link href="/admin/applicants" className={active === "applicants" ? "here" : ""}>
             Applicants
+          </Link>
+          <Link href="/admin/onboardings" className={active === "onboardings" ? "here" : ""}>
+            Onboardings
           </Link>
           <Link href="/admin/invoices" className={active === "invoices" ? "here" : ""}>
             Invoices
