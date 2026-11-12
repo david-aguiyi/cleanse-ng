@@ -211,7 +211,7 @@ document.querySelectorAll('.faq-q').forEach(btn => {
 const pricingSizeToggle = document.getElementById('pricing-size-toggle');
 let selectedPricingBedrooms = 2;
 
-function updatePricing(bedrooms) {
+function updatePricing(bedrooms, animateIndicator) {
   if (bedrooms && CLEANSE_PRICING[bedrooms]) selectedPricingBedrooms = bedrooms;
   const row = CLEANSE_PRICING[selectedPricingBedrooms];
 
@@ -225,7 +225,8 @@ function updatePricing(bedrooms) {
     const freq = card.getAttribute('data-freq');
     const cell = row[freq];
     if (!cell) return;
-    card.querySelector('.price-val').textContent = nairaFmt(cell.total);
+    const priceEl = card.querySelector('.price-val');
+    if (priceEl) priceEl.textContent = nairaFmt(cell.total);
     const perCleanEl = card.querySelector('.pc-per-clean');
     if (perCleanEl) perCleanEl.textContent = nairaFmt(Math.round(cell.total / cell.visits)) + ' per clean';
     const savingsEl = card.querySelector('.pc-savings');
@@ -244,7 +245,7 @@ function updatePricing(bedrooms) {
       btn.classList.toggle('active', on);
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    positionSizeIndicator(true);
+    positionSizeIndicator(animateIndicator !== false);
   }
 }
 
@@ -411,6 +412,11 @@ function currentPlanPrice() {
   return planPrice(currentBedrooms(), currentFreq());
 }
 function nairaFmt(n) { return '₦' + Number(n).toLocaleString(); }
+// Sync initial pricing cards from CLEANSE_PRICING immediately on load so stale
+// static HTML can never show an outdated price before another size is clicked.
+if (pricingSizeToggle || document.querySelector('.pricing-card[data-freq]')) {
+  updatePricing(selectedPricingBedrooms, false);
+}
 // The plan holder is a <select>; setting a value that is not an existing option
 // silently blanks it (breaking `required` validation), so ensure the option
 // exists first.
