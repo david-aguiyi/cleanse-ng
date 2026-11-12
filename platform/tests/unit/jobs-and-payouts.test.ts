@@ -22,6 +22,11 @@ import {
   cleanerBankAccountSchema,
   settlePayoutSchema,
 } from "../../src/validation/schemas";
+import {
+  summarizeMonthlyPayouts,
+  resolveSettlementMonthKey,
+  formatMonthLabel,
+} from "../../src/domain/payout/payout-summary";
 
 describe("Jobs, Supplies, 70% Pool & Settlement Rules", () => {
   it("defaults CLEANER_PAYOUT_BPS to 7000 (70%)", () => {
@@ -306,5 +311,99 @@ describe("Jobs, Supplies, 70% Pool & Settlement Rules", () => {
     expect(jobSvc).not.toContain(`"ACTIVE", "ONBOARDING", "PAUSED"`);
     expect(payoutSvc).toContain(`["ACTIVE", "ONBOARDING", "INACTIVE", "SUSPENDED"]`);
     expect(payoutSvc).not.toContain(`"ACTIVE", "ONBOARDING", "PAUSED"`);
+  });
+
+  it("summarizes cumulative total paid, per-month totals, and distinct workers paid per month", () => {
+    const summary = summarizeMonthlyPayouts(
+      [
+        {
+          cleaner_id: "c1",
+          cleaner_name: "Aguiyi David",
+          cleaner_code: "CLN-01",
+          period_key: "2026-10",
+          cutoff_date: "2026-10-31",
+          settled_at: "2026-11-01T10:00:00Z",
+          total_amount_naira: 20000,
+          earning_count: 4,
+        },
+        {
+          cleaner_id: "c1",
+          cleaner_name: "Aguiyi David",
+          cleaner_code: "CLN-01",
+          period_key: "all",
+          cutoff_date: "2026-11-15",
+          settled_at: "2026-11-15T12:00:00Z",
+          total_amount_naira: 12000,
+          earning_count: 2,
+        },
+        {
+          cleaner_id: "c1",
+          cleaner_name: "Aguiyi David",
+          cleaner_code: "CLN-01",
+          period_key: "all",
+          cutoff_date: "2026-11-30",
+          settled_at: "2026-11-30T14:00:00Z",
+          total_amount_naira: 8000,
+          earning_count: 2,
+        },
+        {
+          cleaner_id: "c2",
+          cleaner_name: "Tunde Ade",
+          cleaner_code: "CLN-02",
+          period_key: "2026-11",
+          cutoff_date: "2026-11-30",
+          settled_at: "2026-11-30T15:00:00Z",
+          total_amount_naira: 15000,
+          earning_count: 3,
+        },
+      ],
+      "2026-11"
+    );
+
+    expect(formatMonthLabel("2026-11")).toBe("Nov 2026");
+    expect(
+      resolveSettlementMonthKey({
+        period_key: "2026-10",
+        settled_at: "2026-11-01T10:00:00Z",
+        cutoff_date: "2026-10-31",
+      })
+    ).toBe("2026-10");
+    expect(
+      resolveSettlementMonthKey({
+        period_key: "all",
+        settled_at: "2026-11-15T12:00:00Z",
+        cutoff_date: "2026-11-15",
+      })
+    ).toBe("2026-11");
+
+    expect(summary.cumulative_paid_naira).toBe(55000);
+    expect(summary.cumulative_workers_paid_count).toBe(2);
+    expect(summary.cumulative_cleans_count).toBe(11);
+    expect(summary.cumulative_settlement_count).toBe(4);
+    expect(summary.this_month_paid_naira).toBe(35000);
+    expect(summary.this_month_workers_paid_count).toBe(2);
+
+    expect(summary.months).toHaveLength(2);
+    expect(summary.months[0]).toMatchObject({
+      month_key: "2026-11",
+      month_label: "Nov 2026",
+      total_paid_naira: 35000,
+      cumulative_paid_through_month_naira: 55000,
+      workers_paid_count: 2,
+      settlement_count: 3,
+      cleans_count: 7,
+    });
+    expect(summary.months[0]?.workers[0]).toMatchObject({
+      cleaner_id: "c1",
+      amount_naira: 20000,
+      cleans_count: 4,
+    });
+    expect(summary.months[1]).toMatchObject({
+      month_key: "2026-10",
+      month_label: "Oct 2026",
+      total_paid_naira: 20000,
+      cumulative_paid_through_month_naira: 20000,
+      workers_paid_count: 1,
+    });
   });
 });

@@ -60,10 +60,13 @@ export default async function AdminOverviewPage() {
           href="/admin/payouts"
           className={`ops-kpi-card ${kpis.unpaidPoolNaira > 0 ? "is-warn" : ""}`}
         >
-          <span className="ops-kpi-label">Unpaid 70% Payout Pool</span>
+          <span className="ops-kpi-label">Unpaid Pool &amp; Total Paid</span>
           <span className="ops-kpi-value">{nairaAmount(kpis.unpaidPoolNaira)}</span>
           <span className="ops-kpi-sub">
-            Owed across {kpis.unpaidProsCount} {kpis.unpaidProsCount === 1 ? "Pro" : "Pros"}
+            Owed to {kpis.unpaidProsCount} {kpis.unpaidProsCount === 1 ? "Pro" : "Pros"} ·{" "}
+            {kpis.currentMonthLabel} paid: <strong>{nairaAmount(kpis.paidThisMonthNaira)}</strong> ({kpis.paidThisMonthWorkersCount}{" "}
+            {kpis.paidThisMonthWorkersCount === 1 ? "worker" : "workers"}) · All-time:{" "}
+            {nairaAmount(kpis.paidTotalAllTimeNaira)}
           </span>
         </Link>
       </div>

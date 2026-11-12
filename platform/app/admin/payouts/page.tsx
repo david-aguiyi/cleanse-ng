@@ -27,19 +27,25 @@ export default async function AdminPayoutsPage({
   if (!admin) redirect("/admin/login?next=/admin/payouts");
 
   const overview = await listOperatorPayoutsOverview();
+  const { paidSummary } = overview;
   const totalUnpaid = overview.cleaners.reduce((s, c) => s + c.unpaid_total_naira, 0);
   const cleanersDueList = overview.cleaners.filter((c) => c.unpaid_total_naira > 0);
   const missingBankDueCount = cleanersDueList.filter((c) => !c.bank_account).length;
 
   const requestedView = searchParams.view;
-  const activeView: "due" | "all" | "receipts" =
-    requestedView === "due" || requestedView === "all" || requestedView === "receipts"
+  const activeView: "due" | "monthly" | "all" | "receipts" =
+    requestedView === "due" ||
+    requestedView === "monthly" ||
+    requestedView === "all" ||
+    requestedView === "receipts"
       ? requestedView
       : cleanersDueList.length > 0
         ? "due"
-        : "all";
+        : "monthly";
 
   const displayedCleaners = activeView === "due" ? cleanersDueList : overview.cleaners;
+  const showCleanerCards = activeView === "due" || activeView === "all";
+  const showMonthlyTable = activeView === "monthly" || activeView === "receipts";
 
   return (
     <AdminShell
@@ -47,7 +53,7 @@ export default async function AdminPayoutsPage({
       active="payouts"
       breadcrumbs={[{ label: "Payouts (70%)" }]}
       title="Cleanse Pro Payouts (70% Pool)"
-      subtitle="Transfer to saved bank details, then tap Confirm Paid to zero settled balances and lock immutable payout receipts."
+      subtitle="Transfer to saved bank details, confirm payouts, and track cumulative totals & workers paid in every month."
       actions={
         <Link className="ops-quick-btn" href="/admin/jobs">
           Review Jobs &amp; Visits →
@@ -62,39 +68,55 @@ export default async function AdminPayoutsPage({
       )}
 
       <div className="ops-kpi-grid">
-        <div className={`ops-kpi-card ${totalUnpaid > 0 ? "is-warn" : ""}`}>
-          <span className="ops-kpi-label">Total Unpaid Balance Owed</span>
+        <Link
+          href="/admin/payouts?view=due"
+          className={`ops-kpi-card ${totalUnpaid > 0 ? "is-warn" : ""}`}
+        >
+          <span className="ops-kpi-label">Unpaid Owed Now</span>
           <span className="ops-kpi-value">{nairaAmount(totalUnpaid)}</span>
-          <span className="ops-kpi-sub">Earned from Served cleans not yet settled</span>
-        </div>
-
-        <div className="ops-kpi-card">
-          <span className="ops-kpi-label">Cleanse Pros Due</span>
-          <span className="ops-kpi-value">{cleanersDueList.length}</span>
-          <span className="ops-kpi-sub">Out of {overview.cleaners.length} Cleanse Pros</span>
-        </div>
-
-        <div className={`ops-kpi-card ${missingBankDueCount > 0 ? "is-warn" : ""}`}>
-          <span className="ops-kpi-label">Missing Bank Details</span>
-          <span className="ops-kpi-value">{missingBankDueCount}</span>
           <span className="ops-kpi-sub">
-            {missingBankDueCount > 0
-              ? "Pros owed payout who haven't added bank info"
-              : "All Pros due have bank info"}
+            {cleanersDueList.length} Cleanse {cleanersDueList.length === 1 ? "Pro" : "Pros"} awaiting payout
+            {missingBankDueCount > 0 ? ` · ${missingBankDueCount} missing bank info` : ""}
           </span>
-        </div>
+        </Link>
 
-        <div className="ops-kpi-card">
+        <Link href="/admin/payouts?view=monthly" className="ops-kpi-card">
+          <span className="ops-kpi-label">Paid in {paidSummary.current_month_label}</span>
+          <span className="ops-kpi-value">{nairaAmount(paidSummary.this_month_paid_naira)}</span>
+          <span className="ops-kpi-sub">
+            {paidSummary.this_month_workers_paid_count}{" "}
+            {paidSummary.this_month_workers_paid_count === 1 ? "worker" : "workers"} paid this month
+          </span>
+        </Link>
+
+        <Link href="/admin/payouts?view=monthly" className="ops-kpi-card">
+          <span className="ops-kpi-label">Total Paid (All Time)</span>
+          <span className="ops-kpi-value">{nairaAmount(paidSummary.cumulative_paid_naira)}</span>
+          <span className="ops-kpi-sub">
+            {paidSummary.cumulative_workers_paid_count} unique{" "}
+            {paidSummary.cumulative_workers_paid_count === 1 ? "worker" : "workers"} ·{" "}
+            {paidSummary.cumulative_cleans_count} cleans settled
+          </span>
+        </Link>
+
+        <Link href="/admin/payouts?view=receipts" className="ops-kpi-card">
           <span className="ops-kpi-label">Settlement Receipts</span>
-          <span className="ops-kpi-value">{overview.recentPayouts.length}</span>
-          <span className="ops-kpi-sub">Immutable paid history log</span>
-        </div>
+          <span className="ops-kpi-value">{paidSummary.cumulative_settlement_count}</span>
+          <span className="ops-kpi-sub">Across {paidSummary.months.length} active billing months</span>
+        </Link>
       </div>
 
       <div className="ops-chips">
         <Link href="/admin/payouts?view=due" className={`ops-chip ${activeView === "due" ? "is-active" : ""}`}>
           <span>Awaiting Payment</span>
           <span className="ops-chip-count">{cleanersDueList.length}</span>
+        </Link>
+        <Link
+          href="/admin/payouts?view=monthly"
+          className={`ops-chip ${activeView === "monthly" ? "is-active" : ""}`}
+        >
+          <span>Total Paid by Month</span>
+          <span className="ops-chip-count">{paidSummary.months.length}</span>
         </Link>
         <Link href="/admin/payouts?view=all" className={`ops-chip ${activeView === "all" ? "is-active" : ""}`}>
           <span>All Cleanse Pros</span>
@@ -109,12 +131,100 @@ export default async function AdminPayoutsPage({
         </Link>
       </div>
 
-      {activeView !== "receipts" && (
+      {showMonthlyTable && (
+        <section style={{ marginBottom: 28 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 10, marginBottom: 10 }}>
+            <div>
+              <h2 style={{ fontSize: 16, margin: 0 }}>Cumulative Paid by Month</h2>
+              <p className="muted" style={{ margin: "2px 0 0", fontSize: 13 }}>
+                Total paid each month, how many unique workers were paid, and running all-time cumulative payout.
+              </p>
+            </div>
+            <div style={{ fontFamily: "var(--font-header)", fontWeight: 700, fontSize: 14, color: "var(--deep-purple)" }}>
+              All-time cumulative: {nairaAmount(paidSummary.cumulative_paid_naira)} (
+              {paidSummary.cumulative_workers_paid_count} workers)
+            </div>
+          </div>
+
+          <div className="board">
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Workers Paid</th>
+                  <th>Cleans &amp; Payouts</th>
+                  <th>Paid in Month</th>
+                  <th>Cumulative Total</th>
+                  <th>Breakdown by Worker</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paidSummary.months.length === 0 && (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: "center", padding: 32, color: "var(--mid-gray)" }}>
+                      No confirmed worker payouts yet. Once you tap Confirm Paid on a Pro, monthly cumulative
+                      totals appear here.
+                    </td>
+                  </tr>
+                )}
+                {paidSummary.months.map((m) => (
+                  <tr key={m.month_key}>
+                    <td>
+                      <strong style={{ color: "var(--deep-purple)" }}>{m.month_label}</strong>
+                      <div className="muted" style={{ fontSize: 11.5 }}>
+                        {m.month_key}
+                      </div>
+                    </td>
+                    <td>
+                      <span className="ops-status tone-purple">
+                        {m.workers_paid_count} {m.workers_paid_count === 1 ? "worker paid" : "workers paid"}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 13 }}>
+                      <strong>{m.cleans_count}</strong> cleans · {m.settlement_count}{" "}
+                      {m.settlement_count === 1 ? "payout" : "payouts"}
+                    </td>
+                    <td>
+                      <strong style={{ fontSize: 15, color: "#065f46" }}>
+                        {nairaAmount(m.total_paid_naira)}
+                      </strong>
+                    </td>
+                    <td>
+                      <strong style={{ color: "var(--deep-purple)" }}>
+                        {nairaAmount(m.cumulative_paid_through_month_naira)}
+                      </strong>
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        {m.workers.map((w) => (
+                          <Link
+                            key={w.cleaner_id}
+                            href={`/admin/cleaners/${w.cleaner_id}`}
+                            className="pill neutral"
+                            style={{ textDecoration: "none", fontSize: 11.5 }}
+                          >
+                            {w.cleaner_name} · {nairaAmount(w.amount_naira)}
+                          </Link>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {showCleanerCards && (
         <div style={{ display: "grid", gap: 14 }}>
           {displayedCleaners.length === 0 && (
             <div className="card" style={{ padding: 28, textAlign: "center", color: "var(--mid-gray)" }}>
-              No unpaid balances owed right now! Switch to <strong>All Cleanse Pros</strong> or{" "}
-              <strong>Settlement Receipts</strong> above to inspect past payouts.
+              No unpaid balances owed right now! Click{" "}
+              <Link href="/admin/payouts?view=monthly" style={{ fontWeight: 700 }}>
+                Total Paid by Month
+              </Link>{" "}
+              or <strong>All Cleanse Pros</strong> above to view past payouts.
             </div>
           )}
 
@@ -203,8 +313,8 @@ export default async function AdminPayoutsPage({
         </div>
       )}
 
-      {(activeView === "receipts" || overview.recentPayouts.length > 0) && (
-        <section style={{ marginTop: activeView === "receipts" ? 0 : 28 }}>
+      {(activeView === "receipts" || activeView === "monthly" || overview.recentPayouts.length > 0) && (
+        <section style={{ marginTop: showCleanerCards || showMonthlyTable ? 28 : 0 }}>
           <h2 style={{ fontSize: 16, marginBottom: 10 }}>Recent Settlement Receipts</h2>
           <div className="board">
             <table>

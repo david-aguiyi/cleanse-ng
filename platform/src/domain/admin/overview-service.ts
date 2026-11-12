@@ -7,6 +7,7 @@ import "server-only";
 import { serviceClient } from "@/db/service-client";
 import { lagosTodayIso } from "@/domain/invoice/schedule";
 import { isMissingJobSchemaError } from "@/domain/job/invoice-job-service";
+import { summarizeMonthlyPayouts } from "@/domain/payout/payout-summary";
 
 export interface AdminNavCounts {
   jobsActionNeeded: number;
@@ -68,6 +69,11 @@ export interface AdminOverviewData {
     hiringQueueCount: number;
     unpaidPoolNaira: number;
     unpaidProsCount: number;
+    currentMonthLabel: string;
+    paidThisMonthNaira: number;
+    paidThisMonthWorkersCount: number;
+    paidTotalAllTimeNaira: number;
+    paidWorkersAllTimeCount: number;
   };
   attention: AttentionItem[];
   todayVisits: TodayVisitItem[];
@@ -149,6 +155,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
     applicantsRes,
     earningsRes,
     banksRes,
+    payoutsRes,
   ] = await Promise.all([
     db
       .from("invoice_jobs")
@@ -183,6 +190,9 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       .select("cleaner_id, amount_naira, cleaner:cleaners(id, cleaner_code, full_name)")
       .is("payout_id", null),
     db.from("cleaner_bank_accounts").select("cleaner_id"),
+    db
+      .from("cleaner_payouts")
+      .select("cleaner_id, period_key, cutoff_date, total_amount_naira, earning_count, settled_at"),
   ]);
 
   const jobs =
@@ -362,6 +372,12 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
     contract_end: j.contract_end ?? null,
   }));
 
+  const payoutRows =
+    payoutsRes.error && isMissingJobSchemaError(payoutsRes.error)
+      ? []
+      : ((payoutsRes.data ?? []) as Array<any>);
+  const paidSummary = summarizeMonthlyPayouts(payoutRows, todayIso.slice(0, 7));
+
   return {
     todayIso,
     counts: {
@@ -380,6 +396,11 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       hiringQueueCount: onboardings.length + applicants.length,
       unpaidPoolNaira,
       unpaidProsCount: unpaidByPro.size,
+      currentMonthLabel: paidSummary.current_month_label,
+      paidThisMonthNaira: paidSummary.this_month_paid_naira,
+      paidThisMonthWorkersCount: paidSummary.this_month_workers_paid_count,
+      paidTotalAllTimeNaira: paidSummary.cumulative_paid_naira,
+      paidWorkersAllTimeCount: paidSummary.cumulative_workers_paid_count,
     },
     attention: attention.slice(0, 12),
     todayVisits,

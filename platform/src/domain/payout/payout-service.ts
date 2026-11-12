@@ -11,6 +11,7 @@ import type { AdminContext } from "@/auth/admin";
 import { lagosTodayIso } from "@/domain/invoice/schedule";
 import { isMissingJobSchemaError } from "@/domain/job/invoice-job-service";
 import { splitCleanerPool } from "@/domain/job/pricing";
+import { summarizeMonthlyPayouts, type PaidOverviewSummary } from "./payout-summary";
 import type { CleanerBankAccountInput, SettlePayoutInput } from "@/validation/schemas";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -228,9 +229,11 @@ export async function listOperatorPayoutsOverview(): Promise<{
   todayIso: string;
   cleaners: OperatorCleanerPayoutRow[];
   recentPayouts: Array<PayoutReceipt & { cleaner_id: string; cleaner_name: string; cleaner_code: string }>;
+  paidSummary: PaidOverviewSummary;
 }> {
   const db = serviceClient();
   const todayIso = lagosTodayIso();
+  const currentMonthKey = todayIso.slice(0, 7);
 
   const [cleanersRes, banksRes, unpaidRes, payoutsRes] = await Promise.all([
     db
@@ -248,12 +251,17 @@ export async function listOperatorPayoutsOverview(): Promise<{
       .select(
         "id, cleaner_id, period_key, cutoff_date, total_amount_naira, earning_count, bank_name, account_number, account_name, reference_note, settled_at"
       )
-      .order("settled_at", { ascending: false })
-      .limit(100),
+      .order("settled_at", { ascending: false }),
   ]);
 
   if (isMissingJobSchemaError(banksRes.error) || isMissingJobSchemaError(unpaidRes.error)) {
-    return { schemaReady: false, todayIso, cleaners: [], recentPayouts: [] };
+    return {
+      schemaReady: false,
+      todayIso,
+      cleaners: [],
+      recentPayouts: [],
+      paidSummary: summarizeMonthlyPayouts([], currentMonthKey),
+    };
   }
 
   const cleanersList = (cleanersRes.data ?? []) as Array<{
@@ -306,6 +314,8 @@ export async function listOperatorPayoutsOverview(): Promise<{
     });
   }
 
+  const paidSummary = summarizeMonthlyPayouts(recentPayouts, currentMonthKey);
+
   const rows: OperatorCleanerPayoutRow[] = cleanersList
     .map((c) => {
       const unpaidRows = unpaidByCleaner.get(c.id) ?? [];
@@ -324,7 +334,13 @@ export async function listOperatorPayoutsOverview(): Promise<{
     })
     .sort((a, b) => b.unpaid_total_naira - a.unpaid_total_naira || a.full_name.localeCompare(b.full_name));
 
-  return { schemaReady: true, todayIso, cleaners: rows, recentPayouts };
+  return {
+    schemaReady: true,
+    todayIso,
+    cleaners: rows,
+    recentPayouts: recentPayouts.slice(0, 100),
+    paidSummary,
+  };
 }
 
 /**
