@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { getSiteSettings } from "@/domain/settings/settings-service";
-import AdminBar from "../AdminBar";
+import AdminShell from "../_components/AdminShell";
 import SettingsForm from "./SettingsForm";
 
 export const runtime = "nodejs";
@@ -14,19 +14,17 @@ export default async function AdminSettingsPage() {
   const settings = await getSiteSettings();
 
   return (
-    <main className="admin-shell">
-      <AdminBar who={`${admin.fullName} · ${admin.role}`} active="settings" />
-      <div className="admin-wrap">
-        <h1 className="admin-h1">Website Settings</h1>
-        <p className="muted" style={{ marginBottom: 24 }}>
-          Manage global contact details and settings across Cleanse.ng.
-        </p>
-
-        <SettingsForm
-          initialWhatsapp={settings.whatsapp}
-          updatedAt={settings.updatedAt}
-        />
-      </div>
-    </main>
+    <AdminShell
+      who={`${admin.fullName} · ${admin.role}`}
+      active="settings"
+      breadcrumbs={[{ label: "Website Settings" }]}
+      title="Website Settings"
+      subtitle="Manage the active Cleanse.ng WhatsApp contact number used across marketing pages, client messages, and invoices."
+    >
+      <SettingsForm
+        initialWhatsapp={settings.whatsapp}
+        updatedAt={settings.updatedAt}
+      />
+    </AdminShell>
   );
 }

@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { getBookingDetail } from "@/domain/admin/admin-service";
 import { AppError } from "@/http/errors";
-import AdminBar from "../../AdminBar";
+import AdminShell from "../../_components/AdminShell";
 import CustomerActions from "./CustomerActions";
 import NotesForm from "./NotesForm";
 import DispatchControls from "./DispatchControls";
@@ -50,14 +50,21 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
     .join("\n");
 
   return (
-    <main className="admin-shell">
-      <AdminBar who={`${admin.fullName} · ${admin.role}`} />
-      <div className="admin-wrap">
-        <p className="muted">
-          <Link href="/admin/bookings">← Live bookings</Link>
-        </p>
-        <h1 className="admin-h1">{booking.public_reference}</h1>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0 4px" }}>
+    <AdminShell
+      who={`${admin.fullName} · ${admin.role}`}
+      active="bookings"
+      breadcrumbs={[
+        { label: "Online Bookings", href: "/admin/bookings" },
+        { label: booking.public_reference },
+      ]}
+      title={booking.public_reference}
+      actions={
+        <Link className="ops-quick-btn" href="/admin/jobs">
+          Go to Jobs &amp; Visits →
+        </Link>
+      }
+    >
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "0 0 12px" }}>
           <span className={`pill pay-${String(booking.payment_status).toLowerCase()}`}>
             {booking.payment_status}
           </span>
@@ -268,7 +275,6 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
             </div>
           </div>
         </div>
-      </div>
-    </main>
+    </AdminShell>
   );
 }

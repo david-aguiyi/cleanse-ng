@@ -3,32 +3,22 @@ import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listInvoiceJobs } from "@/domain/job/invoice-job-service";
 import { JOB_STATUSES } from "@/domain/job/pricing";
-import AdminBar from "../AdminBar";
+import AdminShell from "../_components/AdminShell";
+import StatusBadge from "../_components/StatusBadge";
+import { humanJobStatus, nairaAmount, shortDate } from "../format";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function naira(n: number): string {
-  return `₦${Math.round(n || 0).toLocaleString("en-NG")}`;
-}
-
-function shortDate(iso: string): string {
-  const dt = new Date(`${iso}T12:00:00Z`);
-  if (isNaN(dt.getTime())) return iso;
-  return new Intl.DateTimeFormat("en-NG", {
-    timeZone: "Africa/Lagos",
-    day: "numeric",
-    month: "short",
-  }).format(dt);
-}
-
-const STATUS_CLASS: Record<string, string> = {
-  ACTIVE: "pay-success",
-  PENDING: "pay-pending",
-  PAUSED: "ful-unassigned",
-  ENDED: "neutral",
-  TERMINATED: "pay-failed",
-};
+const JOB_FILTER_TABS: Array<{ id: string; label: string }> = [
+  { id: "ALL", label: "All Jobs" },
+  { id: "ACTIVE", label: "Active" },
+  { id: "NEEDS_PRO", label: "Needs Pro" },
+  { id: "PENDING", label: "Awaiting Payment" },
+  { id: "PAUSED", label: "Paused" },
+  { id: "ENDED", label: "Completed" },
+  { id: "TERMINATED", label: "Terminated" },
+];
 
 export default async function AdminJobsPage({
   searchParams,
@@ -38,231 +28,228 @@ export default async function AdminJobsPage({
   const admin = await getAdminContext();
   if (!admin) redirect("/admin/login?next=/admin/jobs");
 
-  const statusFilter = searchParams.status && (JOB_STATUSES as readonly string[]).includes(searchParams.status)
-    ? searchParams.status
-    : undefined;
-  const search = searchParams.q || undefined;
+  const rawFilter = String(searchParams.status ?? "ALL").toUpperCase();
+  const isCustomNeedsPro = rawFilter === "NEEDS_PRO";
+  const dbStatusFilter =
+    !isCustomNeedsPro && (JOB_STATUSES as readonly string[]).includes(rawFilter)
+      ? rawFilter
+      : isCustomNeedsPro
+        ? "ACTIVE"
+        : undefined;
 
+  const search = searchParams.q || undefined;
   const { schemaReady, jobs } = await listInvoiceJobs({
-    status: statusFilter,
+    status: dbStatusFilter,
     search,
   });
 
-  const activeCount = jobs.filter((j) => j.status === "ACTIVE").length;
-  const scheduledTotal = jobs.reduce((s, j) => s + (j.status === "ACTIVE" ? j.visits_scheduled : 0), 0);
-  const totalUnpaidEarned = jobs.reduce((s, j) => s + j.unpaid_earned_naira, 0);
+  const visibleJobs = isCustomNeedsPro
+    ? jobs.filter((j) => j.status === "ACTIVE" && j.cleaners.length === 0)
+    : jobs;
+
+  const activeCount = visibleJobs.filter((j) => j.status === "ACTIVE").length;
+  const needsProCount = visibleJobs.filter((j) => j.status === "ACTIVE" && j.cleaners.length === 0).length;
+  const scheduledTotal = visibleJobs.reduce(
+    (s, j) => s + (j.status === "ACTIVE" ? j.visits_scheduled : 0),
+    0
+  );
+  const totalUnpaidEarned = visibleJobs.reduce((s, j) => s + j.unpaid_earned_naira, 0);
 
   return (
-    <main className="admin-shell">
-      <AdminBar who={`${admin.fullName} · ${admin.role}`} active="jobs" />
-      <div className="admin-wrap">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
+    <AdminShell
+      who={`${admin.fullName} · ${admin.role}`}
+      active="jobs"
+      breadcrumbs={[{ label: "Jobs & Visits" }]}
+      title="Jobs &amp; Visits"
+      subtitle="Automatically created from saved invoices. Assign 1–2 Cleanse Pros, manage contract status, and mark cleans Served."
+      actions={
+        <Link className="btn-primary" href="/admin/invoices/new" style={{ padding: "10px 18px" }}>
+          + New Invoice / Job
+        </Link>
+      }
+    >
+      {!schemaReady && (
+        <div className="notice error" style={{ marginBottom: 16 }}>
+          Database migration <code>0015_jobs_and_payouts.sql</code> has not been applied yet. Run it in
+          Supabase to start syncing saved invoices into Jobs.
+        </div>
+      )}
+
+      <div className="ops-kpi-grid">
+        <div className="ops-kpi-card">
+          <span className="ops-kpi-label">Active Plans</span>
+          <span className="ops-kpi-value">{activeCount}</span>
+          <span className="ops-kpi-sub">{visibleJobs.length} jobs in view</span>
+        </div>
+
+        <Link
+          href="/admin/jobs?status=NEEDS_PRO"
+          className={`ops-kpi-card ${needsProCount > 0 ? "is-warn" : ""}`}
         >
-          <div>
-            <h1 className="admin-h1">Jobs &amp; Subscriptions</h1>
-            <p className="muted" style={{ marginTop: 4 }}>
-              Created automatically from every saved invoice. Shows client contact, serving schedule,
-              assigned Cleanse Pros (up to 2), price per clean, internal supplies, and 70% cut.
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <Link className="btn-ghost" href="/admin/payouts">
-              Payouts Desk →
-            </Link>
-            <Link className="btn-primary" href="/admin/invoices/new" style={{ padding: "12px 20px" }}>
-              + New invoice / job
-            </Link>
-          </div>
+          <span className="ops-kpi-label">Active Without Pro</span>
+          <span className="ops-kpi-value">{needsProCount}</span>
+          <span className="ops-kpi-sub">
+            {needsProCount > 0 ? "Tap to assign Cleanse Pros" : "All active jobs assigned"}
+          </span>
+        </Link>
+
+        <div className="ops-kpi-card">
+          <span className="ops-kpi-label">Upcoming Scheduled Visits</span>
+          <span className="ops-kpi-value">{scheduledTotal}</span>
+          <span className="ops-kpi-sub">Across active plans in view</span>
         </div>
 
-        {!schemaReady && (
-          <div className="notice error" style={{ marginTop: 16 }}>
-            Database migration <code>0015_jobs_and_payouts.sql</code> has not been applied yet. Run it in
-            Supabase to start syncing saved invoices into Jobs.
-          </div>
-        )}
-
-        <div className="stat-row" style={{ marginTop: 18 }}>
-          <div className="stat-card">
-            <div className="n">{activeCount}</div>
-            <div className="l">Active subscriptions</div>
-          </div>
-          <div className="stat-card">
-            <div className="n">{scheduledTotal}</div>
-            <div className="l">Upcoming scheduled cleans</div>
-          </div>
-          <div className="stat-card">
-            <div className="n">{naira(totalUnpaidEarned)}</div>
-            <div className="l">Unpaid 70% earned on listed jobs</div>
-          </div>
-        </div>
-
-        <form
-          method="get"
-          style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 18, alignItems: "center" }}
-        >
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginRight: "auto" }}>
-            <Link
-              href={search ? `/admin/jobs?q=${encodeURIComponent(search)}` : "/admin/jobs"}
-              className={!statusFilter ? "btn-primary" : "btn-ghost"}
-              style={{ padding: "7px 14px", fontSize: 13 }}
-            >
-              All
-            </Link>
-            {JOB_STATUSES.map((st) => {
-              const href = search
-                ? `/admin/jobs?status=${st}&q=${encodeURIComponent(search)}`
-                : `/admin/jobs?status=${st}`;
-              return (
-                <Link
-                  key={st}
-                  href={href}
-                  className={statusFilter === st ? "btn-primary" : "btn-ghost"}
-                  style={{ padding: "7px 14px", fontSize: 13 }}
-                >
-                  {st}
-                </Link>
-              );
-            })}
-          </div>
-          {statusFilter && <input type="hidden" name="status" value={statusFilter} />}
-          <input
-            type="search"
-            name="q"
-            defaultValue={search ?? ""}
-            placeholder="Search invoice #, client, phone, address…"
-            style={{
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid var(--border)",
-              minWidth: 240,
-              fontSize: 14,
-            }}
-          />
-          <button type="submit" className="btn-ghost" style={{ padding: "8px 14px" }}>
-            Filter
-          </button>
-        </form>
-
-        <div className="board" style={{ marginTop: 14 }}>
-          <table>
-            <thead>
-              <tr>
-                <th>Job / Invoice</th>
-                <th>Client &amp; Contact</th>
-                <th>Status</th>
-                <th>Cleanse Pros (max 2)</th>
-                <th>Schedule &amp; Served</th>
-                <th>Price &amp; 70% Cut</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: "center", padding: 36, color: "var(--mid-gray)" }}>
-                    {search || statusFilter
-                      ? "No jobs match that filter."
-                      : "No jobs yet. Save an invoice to create your first job automatically."}
-                  </td>
-                </tr>
-              )}
-              {jobs.map((j) => (
-                <tr key={j.id}>
-                  <td>
-                    <Link className="ref" href={`/admin/jobs/${j.id}`}>
-                      {j.invoice_number}
-                    </Link>
-                    <div style={{ fontWeight: 600, fontSize: 13, marginTop: 2 }}>
-                      {j.service_name}
-                    </div>
-                    <div className="muted" style={{ fontSize: 12 }}>
-                      {j.property_bedrooms}BR · {j.billing === "monthly" ? `${j.sessions_count} sessions/mo` : "One-off"}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: 600 }}>{j.client_name || "Unnamed client"}</div>
-                    {j.client_phone && (
-                      <div style={{ fontSize: 12.5, color: "var(--primary-purple)", fontWeight: 600 }}>
-                        {j.client_phone}
-                      </div>
-                    )}
-                    <div className="muted" style={{ fontSize: 12 }}>
-                      {[j.client_address, j.client_area].filter(Boolean).join(" · ") || "—"}
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`pill ${STATUS_CLASS[j.status] ?? "neutral"}`}>{j.status}</span>
-                    {j.suggested_end && (
-                      <div style={{ marginTop: 4 }}>
-                        <span className="pill ful-unassigned" style={{ fontSize: 10 }}>
-                          Contract ended
-                        </span>
-                      </div>
-                    )}
-                    {j.contract_start && (
-                      <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>
-                        {shortDate(j.contract_start)}
-                        {j.contract_end && j.contract_end !== j.contract_start ? ` – ${shortDate(j.contract_end)}` : ""}
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    {j.cleaners.length === 0 ? (
-                      <span className="muted" style={{ fontSize: 12.5 }}>
-                        Unassigned
-                      </span>
-                    ) : (
-                      <div style={{ display: "grid", gap: 4 }}>
-                        {j.cleaners.map((c) => (
-                          <div key={c.cleaner_id} style={{ fontSize: 13 }}>
-                            <strong>{c.full_name}</strong>{" "}
-                            <span className="muted" style={{ fontSize: 11.5 }}>
-                              ({naira(c.per_clean_share_naira)}/clean)
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>
-                      {j.visits_served} / {j.visits_total} served
-                    </div>
-                    {j.next_visit ? (
-                      <div style={{ fontSize: 12.5, color: "#2f6b00", marginTop: 2 }}>
-                        Next: {shortDate(j.next_visit.visit_date)} · {j.next_visit.slot}
-                      </div>
-                    ) : (
-                      <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>
-                        No upcoming visits
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <div style={{ fontSize: 13 }}>
-                      <strong>{naira(j.price_per_clean_naira)}</strong> / clean
-                    </div>
-                    <div className="muted" style={{ fontSize: 11.5 }}>
-                      Supplies: -{naira(j.supplies_per_visit_naira)} · Inv {naira(j.invoice_total_naira)}
-                    </div>
-                    <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--primary-purple)", marginTop: 2 }}>
-                      70% pool: {naira(j.cleaner_pool_per_clean_naira)}/clean
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Link href="/admin/payouts" className="ops-kpi-card">
+          <span className="ops-kpi-label">Unpaid 70% Pool (Listed)</span>
+          <span className="ops-kpi-value">{nairaAmount(totalUnpaidEarned)}</span>
+          <span className="ops-kpi-sub">Open Payouts Desk →</span>
+        </Link>
       </div>
-    </main>
+
+      <div className="ops-chips">
+        {JOB_FILTER_TABS.map((tab) => {
+          const isCurrent = rawFilter === tab.id;
+          const href =
+            tab.id === "ALL"
+              ? search
+                ? `/admin/jobs?q=${encodeURIComponent(search)}`
+                : "/admin/jobs"
+              : `/admin/jobs?status=${tab.id}${search ? `&q=${encodeURIComponent(search)}` : ""}`;
+          return (
+            <Link key={tab.id} href={href} className={`ops-chip ${isCurrent ? "is-active" : ""}`}>
+              <span>{tab.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+
+      <form className="filters" method="get">
+        {rawFilter !== "ALL" && <input type="hidden" name="status" value={rawFilter} />}
+        <input
+          type="search"
+          name="q"
+          defaultValue={search ?? ""}
+          placeholder="Search invoice #, client, phone, address…"
+        />
+        <button type="submit" className="btn-ghost">
+          Search
+        </button>
+      </form>
+
+      <div className="board">
+        <table>
+          <thead>
+            <tr>
+              <th>Job &amp; Service</th>
+              <th>Client &amp; Location</th>
+              <th>Status &amp; Period</th>
+              <th>Assigned Team</th>
+              <th>Schedule &amp; Progress</th>
+              <th>Economics &amp; 70% Cut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleJobs.length === 0 && (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center", padding: 36, color: "var(--mid-gray)" }}>
+                  {search || rawFilter !== "ALL"
+                    ? "No jobs match that filter."
+                    : "No jobs yet. Save an invoice to create your first job automatically."}
+                </td>
+              </tr>
+            )}
+            {visibleJobs.map((j) => (
+              <tr key={j.id}>
+                <td>
+                  <Link className="ref" href={`/admin/jobs/${j.id}`}>
+                    {j.invoice_number}
+                  </Link>
+                  <div style={{ fontWeight: 700, fontSize: 13, marginTop: 3 }}>
+                    {j.service_name}
+                  </div>
+                  <div className="muted" style={{ fontSize: 12 }}>
+                    {j.property_bedrooms}BR · {j.billing === "monthly" ? `${j.sessions_count} sessions/mo` : "One-off"}
+                  </div>
+                </td>
+                <td>
+                  <div style={{ fontWeight: 700, color: "var(--deep-purple)" }}>
+                    {j.client_name || "Unnamed client"}
+                  </div>
+                  {j.client_phone && (
+                    <div style={{ fontSize: 12.5, color: "var(--primary-purple)", fontWeight: 600 }}>
+                      {j.client_phone}
+                    </div>
+                  )}
+                  <div className="muted" style={{ fontSize: 12 }}>
+                    {[j.client_address, j.client_area].filter(Boolean).join(" · ") || "—"}
+                  </div>
+                </td>
+                <td>
+                  <StatusBadge status={humanJobStatus(j.status)} />
+                  {j.suggested_end && (
+                    <div style={{ marginTop: 5 }}>
+                      <span className="ops-status tone-amber" style={{ fontSize: 11 }}>
+                        Dates ended — Mark Completed
+                      </span>
+                    </div>
+                  )}
+                  {j.contract_start && (
+                    <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>
+                      {shortDate(j.contract_start)}
+                      {j.contract_end && j.contract_end !== j.contract_start
+                        ? ` – ${shortDate(j.contract_end)}`
+                        : ""}
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {j.cleaners.length === 0 ? (
+                    <span className="ops-status tone-red" style={{ fontSize: 11 }}>
+                      Needs Pro
+                    </span>
+                  ) : (
+                    <div style={{ display: "grid", gap: 4 }}>
+                      {j.cleaners.map((c) => (
+                        <div key={c.cleaner_id} style={{ fontSize: 13 }}>
+                          <strong>{c.full_name}</strong>{" "}
+                          <span className="muted" style={{ fontSize: 11.5 }}>
+                            ({nairaAmount(c.per_clean_share_naira)}/clean)
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </td>
+                <td>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>
+                    {j.visits_served} / {j.visits_total} served
+                  </div>
+                  {j.next_visit ? (
+                    <div style={{ fontSize: 12.5, color: "#065f46", fontWeight: 600, marginTop: 2 }}>
+                      Next: {shortDate(j.next_visit.visit_date)} · {j.next_visit.slot}
+                    </div>
+                  ) : (
+                    <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>
+                      No upcoming visits
+                    </div>
+                  )}
+                </td>
+                <td>
+                  <div style={{ fontSize: 13 }}>
+                    <strong>{nairaAmount(j.price_per_clean_naira)}</strong> / clean
+                  </div>
+                  <div className="muted" style={{ fontSize: 11.5 }}>
+                    Supplies: -{nairaAmount(j.supplies_per_visit_naira)} · Inv {nairaAmount(j.invoice_total_naira)}
+                  </div>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--primary-purple)", marginTop: 2 }}>
+                    70% pool: {nairaAmount(j.cleaner_pool_per_clean_naira)}/clean
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </AdminShell>
   );
 }
-

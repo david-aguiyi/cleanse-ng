@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listBookings } from "@/domain/admin/admin-service";
-import AdminBar from "../AdminBar";
+import AdminShell from "../_components/AdminShell";
 import { naira, lagos, minutesSince } from "../format";
 
 export const runtime = "nodejs";
@@ -45,13 +45,28 @@ export default async function AdminBoard({
   ).length;
 
   return (
-    <main className="admin-shell">
-      <AdminBar who={`${admin.fullName} · ${admin.role}`} active="bookings" />
-      <div className="admin-wrap">
-        <h1 className="admin-h1">Live bookings</h1>
-        <p className="muted">
-          {rows.length} shown · {paidUnassigned} paid &amp; awaiting a cleaner
-        </p>
+    <AdminShell
+      who={`${admin.fullName} · ${admin.role}`}
+      active="bookings"
+      breadcrumbs={[{ label: "Online Bookings (Archived)" }]}
+      title="Online Bookings (Archived View)"
+      subtitle="All active Cleanse work now flows through Invoices → Jobs & Visits. Legacy self-checkout records remain readable here."
+      actions={
+        <Link className="ops-quick-btn is-primary" href="/admin/invoices">
+          Go to Invoices →
+        </Link>
+      }
+    >
+      <div className="ops-action-banner tone-amber">
+        <div>
+          <div className="ops-action-title">Online Bookings hidden from active navigation</div>
+          <div className="ops-action-desc">
+            {rows.length} historical booking records · Create new client plans in{" "}
+            <Link href="/admin/invoices/new">Invoices</Link> and manage them in{" "}
+            <Link href="/admin/jobs">Jobs &amp; Visits</Link>.
+          </div>
+        </div>
+      </div>
 
         <form className="filters" method="get">
           <select name="payment_status" defaultValue={searchParams.payment_status ?? ""}>
@@ -134,7 +149,6 @@ export default async function AdminBoard({
             </tbody>
           </table>
         </div>
-      </div>
-    </main>
+    </AdminShell>
   );
 }

@@ -18,7 +18,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--purple);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
-.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 .top{background:var(--purple);color:#fff}
 .top .wrap{padding-block:18px 16px;display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 .mark{font-family:var(--heavy);font-size:28px;letter-spacing:-.01em;line-height:1}
@@ -105,12 +105,13 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 @media (prefers-reduced-motion:no-preference){.btn,.x,.ghost,.seg label,.pillbtn{transition:background-color .15s,color .15s,box-shadow .15s}}
 </style>
 
-<header class="top">
+<header class="top" id="topHeader">
   <div class="wrap">
     <div class="mark">cleanse<span>.ng</span></div>
     <div class="top-t">Invoice maker</div>
   </div>
 </header>
+<script>if (new URLSearchParams(location.search).get('embedded') === '1') { var h = document.getElementById('topHeader'); if (h) h.hidden = true; }</script>
 
 <main class="wrap app">
   <form id="f" autocomplete="off" novalidate>
@@ -1666,7 +1667,10 @@ async function saveInvoice() {
   if (!j || !j.ok) throw new Error((j && j.error && j.error.message) || 'Could not save the invoice. Try again.');
   SRV.id = j.data.id; SRV.num = j.data.invoice_number; S.num = SRV.num; $('num').value = S.num;
   dirty = false; updSave(); renderVisitList(); render();
-  try { history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id); } catch (e) {}
+  try {
+    var embQ = new URLSearchParams(location.search).get('embedded') === '1' ? '&embedded=1' : '';
+    history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id + embQ);
+  } catch (e) {}
   try { if (window.parent !== window) window.parent.postMessage({ type: 'cleanse-invoice-saved', id: SRV.id, num: SRV.num }, location.origin); } catch (e) {}
   refreshExternalBooked();
   return SRV.num;
