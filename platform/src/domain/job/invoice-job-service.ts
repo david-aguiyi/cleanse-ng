@@ -86,11 +86,14 @@ export async function listSelectableCleaners(): Promise<SelectableCleaner[]> {
   const { data, error } = await serviceClient()
     .from("cleaners")
     .select("id, cleaner_code, full_name, account_status, verified")
-    .in("account_status", ["ACTIVE", "ONBOARDING", "PAUSED"])
+    .in("account_status", ["ACTIVE", "ONBOARDING", "INACTIVE"])
     .order("full_name", { ascending: true });
 
-  if (error) return [];
-  const orderWeight: Record<string, number> = { ACTIVE: 0, ONBOARDING: 1, PAUSED: 2 };
+  if (error) {
+    console.error("listSelectableCleaners.error", error.message);
+    return [];
+  }
+  const orderWeight: Record<string, number> = { ACTIVE: 0, ONBOARDING: 1, INACTIVE: 2 };
   return ((data ?? []) as SelectableCleaner[]).sort(
     (a, b) =>
       (orderWeight[a.account_status] ?? 9) - (orderWeight[b.account_status] ?? 9) ||

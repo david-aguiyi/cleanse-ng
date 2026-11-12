@@ -292,4 +292,19 @@ describe("Jobs, Supplies, 70% Pool & Settlement Rules", () => {
     expect(serialized).not.toContain("14000");
     expect(derived.client.some((row: { k: string }) => /phone/i.test(row.k))).toBe(false);
   });
+
+  it("queries valid cleaner_account_status enum values (never invalid PAUSED)", () => {
+    const jobSvc = fs.readFileSync(
+      path.resolve(__dirname, "../../src/domain/job/invoice-job-service.ts"),
+      "utf8"
+    );
+    const payoutSvc = fs.readFileSync(
+      path.resolve(__dirname, "../../src/domain/payout/payout-service.ts"),
+      "utf8"
+    );
+    expect(jobSvc).toContain(`["ACTIVE", "ONBOARDING", "INACTIVE"]`);
+    expect(jobSvc).not.toContain(`"ACTIVE", "ONBOARDING", "PAUSED"`);
+    expect(payoutSvc).toContain(`["ACTIVE", "ONBOARDING", "INACTIVE", "SUSPENDED"]`);
+    expect(payoutSvc).not.toContain(`"ACTIVE", "ONBOARDING", "PAUSED"`);
+  });
 });

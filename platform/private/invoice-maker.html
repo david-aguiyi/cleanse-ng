@@ -1171,7 +1171,7 @@ function renderTeamControls() {
     for (const c of list) {
       const o = document.createElement('option');
       o.value = c.id;
-      const tag = c.account_status === 'ONBOARDING' ? ' (Onboarding)' : c.account_status === 'PAUSED' ? ' (Paused)' : '';
+      const tag = c.account_status === 'ONBOARDING' ? ' (Onboarding)' : c.account_status === 'INACTIVE' ? ' (Inactive)' : '';
       o.textContent = c.full_name + ' · ' + c.cleaner_code + tag;
       if (otherVal && c.id === otherVal) o.disabled = true;
       el.appendChild(o);

@@ -236,7 +236,7 @@ export async function listOperatorPayoutsOverview(): Promise<{
     db
       .from("cleaners")
       .select("id, cleaner_code, full_name, account_status")
-      .in("account_status", ["ACTIVE", "ONBOARDING", "PAUSED", "SUSPENDED"])
+      .in("account_status", ["ACTIVE", "ONBOARDING", "INACTIVE", "SUSPENDED"])
       .order("full_name", { ascending: true }),
     db.from("cleaner_bank_accounts").select("cleaner_id, bank_name, account_number, account_name, updated_at"),
     db
