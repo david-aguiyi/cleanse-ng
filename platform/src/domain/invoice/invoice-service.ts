@@ -46,6 +46,42 @@ function summarise(data: InvoiceData) {
 
 export async function createInvoice(data: InvoiceData, admin: AdminContext, customNum?: string) {
   const summary = summarise(data);
+
+  // De-duplication guard: if an invoice for the same admin, same client, same address,
+  // and same total was created in the last 30 seconds without an explicit custom number,
+  // treat this as an accidental double submission (e.g. rapid double-click or simultaneous
+  // Save + Download PDF) and return the existing invoice row.
+  if (!customNum || !customNum.trim()) {
+    const thirtySecsAgo = new Date(Date.now() - 30_000).toISOString();
+    const { data: recent } = await serviceClient()
+      .from("invoices")
+      .select("id, invoice_number, client_name, client_address, total_naira, created_at")
+      .eq("created_by", admin.adminId)
+      .eq("total_naira", summary.total_naira)
+      .gte("created_at", thirtySecsAgo)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (
+      recent &&
+      (recent.client_name || "").trim().toLowerCase() === (summary.client_name || "").trim().toLowerCase() &&
+      (recent.client_address || "").trim().toLowerCase() === (summary.client_address || "").trim().toLowerCase()
+    ) {
+      const { data: existingJob } = await serviceClient()
+        .from("invoice_jobs")
+        .select("id")
+        .eq("invoice_id", recent.id)
+        .maybeSingle();
+
+      return {
+        id: recent.id as string,
+        invoice_number: recent.invoice_number as string,
+        job_id: existingJob?.id ?? null,
+      };
+    }
+  }
+
   const insertPayload: Record<string, unknown> = {
     ...summary,
     created_by: admin.adminId,

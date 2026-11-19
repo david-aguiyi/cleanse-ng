@@ -1645,41 +1645,53 @@ function validateBeforeSave() {
 }
 
 /* ---------- save to cleanse.ng (admin mode) ---------- */
+let saveInFlight = null;
 async function saveInvoice() {
-  const cleaned = cleanScheduledVisits(S.scheduledVisits);
-  const cleanerIds = Array.isArray(S.cleanerIds) ? Array.from(new Set(S.cleanerIds.filter(Boolean))).slice(0, 2) : [];
-  const data = Object.assign({}, S, {
-    visitSlot: normSlotVal(S.visitSlot),
-    visitDays: Array.isArray(S.visitDays) ? S.visitDays.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6) : [],
-    scheduledVisits: cleaned,
-    reserveCalendar: S.reserveCalendar !== false,
-    cleanerIds,
-    jobStatus: S.jobStatus || 'ACTIVE',
-  });
-  const customNum = (S.num && S.num !== 'New' && String(S.num).trim()) ? String(S.num).trim() : undefined;
-  delete data.num;
-  const res = await fetch(SRV.id ? '/api/v1/admin/invoices/' + SRV.id : '/api/v1/admin/invoices', {
-    method: SRV.id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
-    body: JSON.stringify({ data, num: customNum })
-  });
-  let j = null; try { j = await res.json(); } catch (e) {}
-  if (res.status === 401) throw new Error('You have been signed out. Sign in to the dashboard again, then save.');
-  if (!j || !j.ok) throw new Error((j && j.error && j.error.message) || 'Could not save the invoice. Try again.');
-  SRV.id = j.data.id; SRV.num = j.data.invoice_number; S.num = SRV.num; $('num').value = S.num;
-  dirty = false; updSave(); renderVisitList(); render();
-  try {
-    var embQ = new URLSearchParams(location.search).get('embedded') === '1' ? '&embedded=1' : '';
-    history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id + embQ);
-  } catch (e) {}
-  try { if (window.parent !== window) window.parent.postMessage({ type: 'cleanse-invoice-saved', id: SRV.id, num: SRV.num }, location.origin); } catch (e) {}
-  refreshExternalBooked();
-  return SRV.num;
+  if (saveInFlight) return saveInFlight;
+  saveInFlight = (async () => {
+    try {
+      const cleaned = cleanScheduledVisits(S.scheduledVisits);
+      const cleanerIds = Array.isArray(S.cleanerIds) ? Array.from(new Set(S.cleanerIds.filter(Boolean))).slice(0, 2) : [];
+      const data = Object.assign({}, S, {
+        visitSlot: normSlotVal(S.visitSlot),
+        visitDays: Array.isArray(S.visitDays) ? S.visitDays.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6) : [],
+        scheduledVisits: cleaned,
+        reserveCalendar: S.reserveCalendar !== false,
+        cleanerIds,
+        jobStatus: S.jobStatus || 'ACTIVE',
+      });
+      const customNum = (S.num && S.num !== 'New' && String(S.num).trim()) ? String(S.num).trim() : undefined;
+      delete data.num;
+      const res = await fetch(SRV.id ? '/api/v1/admin/invoices/' + SRV.id : '/api/v1/admin/invoices', {
+        method: SRV.id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+        body: JSON.stringify({ data, num: customNum })
+      });
+      let j = null; try { j = await res.json(); } catch (e) {}
+      if (res.status === 401) throw new Error('You have been signed out. Sign in to the dashboard again, then save.');
+      if (!j || !j.ok) throw new Error((j && j.error && j.error.message) || 'Could not save the invoice. Try again.');
+      SRV.id = j.data.id; SRV.num = j.data.invoice_number; S.num = SRV.num; $('num').value = S.num;
+      dirty = false; updSave(); renderVisitList(); render();
+      try {
+        var embQ = new URLSearchParams(location.search).get('embedded') === '1' ? '&embedded=1' : '';
+        history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id + embQ);
+      } catch (e) {}
+      try { if (window.parent !== window) window.parent.postMessage({ type: 'cleanse-invoice-saved', id: SRV.id, num: SRV.num }, location.origin); } catch (e) {}
+      refreshExternalBooked();
+      return SRV.num;
+    } finally {
+      saveInFlight = null;
+    }
+  })();
+  return saveInFlight;
 }
 if (SRV) {
   $('saveInv').addEventListener('click', async () => {
+    if (saveInFlight) return;
     if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
     if (!validateBeforeSave()) return;
     const b = $('saveInv'); b.disabled = true;
+    const prevText = b.textContent;
+    b.textContent = 'Saving…';
     try {
       const n = await saveInvoice();
       const vc = Array.isArray(S.scheduledVisits) ? S.scheduledVisits.length : 0;
@@ -1688,7 +1700,8 @@ if (SRV) {
         : '.';
       msg('Saved invoice ' + n + suffix);
     }
-    catch (e) { msg(e.message, true); updSave(); }
+    catch (e) { msg(e.message, true); }
+    finally { b.disabled = false; b.textContent = prevText; updSave(); }
   });
   window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 }
@@ -1703,10 +1716,10 @@ setTimeout(getDownloads, 0);
 const fileName = st => { const tag = (st.client.trim() || st.addr.trim()).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40); return 'Cleanse_Invoice_' + (st.num.trim() || 'CLN').replace(/[^A-Za-z0-9-]+/g, '-') + (tag ? '_' + tag : '') + '.pdf'; };
 $('dl').addEventListener('click', async () => {
   if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
-  if (SRV && (dirty || !SRV.id) && !validateBeforeSave()) return;
+  if (SRV && (dirty || !SRV.id || saveInFlight) && !validateBeforeSave()) return;
   if (!window.jspdf || !window.jspdf.jsPDF) { msg('The PDF maker did not load. Check your connection and reload the page.', true); return; }
   const btn = $('dl'); btn.disabled = true; btn.textContent = 'Preparing…';
-  if (SRV && (dirty || !SRV.id)) {
+  if (SRV && (dirty || !SRV.id || saveInFlight)) {
     try { await saveInvoice(); }
     catch (e) { msg(e.message, true); btn.disabled = false; btn.textContent = 'Download PDF'; return; }
   }
