@@ -343,6 +343,7 @@ export async function listInvoiceJobs(filters?: {
   let query = db
     .from("invoice_jobs")
     .select("*")
+    .order("invoice_number", { ascending: false })
     .order("updated_at", { ascending: false })
     .limit(300);
 
@@ -479,6 +480,13 @@ export async function listInvoiceJobs(filters?: {
       updated_at: j.updated_at,
     };
   });
+
+  out.sort((a, b) =>
+    (b.invoice_number || "").localeCompare(a.invoice_number || "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  );
 
   return { schemaReady: true, jobs: out };
 }

@@ -173,6 +173,7 @@ export async function listInvoices(search?: string) {
   let query = serviceClient()
     .from("invoices")
     .select("id, invoice_number, created_at, updated_at, client_name, client_address, total_naira, data, creator:admin_users!invoices_created_by_fkey(full_name)")
+    .order("invoice_number", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(300);
   if (search && search.trim()) {
@@ -181,7 +182,13 @@ export async function listInvoices(search?: string) {
   }
   const { data, error } = await query;
   if (error) throw new AppError("INTERNAL_ERROR", "Could not load invoices.");
-  return data ?? [];
+  const rows = [...(data ?? [])];
+  return rows.sort((a, b) =>
+    (b.invoice_number || "").localeCompare(a.invoice_number || "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  );
 }
 
 export async function deleteInvoice(id: string) {
