@@ -2,21 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminContext } from "@/auth/admin";
 import { listOperatorPayoutsOverview } from "@/domain/payout/payout-service";
+import { formatMonthLabel } from "@/domain/payout/payout-summary";
 import AdminShell from "../_components/AdminShell";
 import StatusBadge from "../_components/StatusBadge";
-import { humanCleanerStatus, nairaAmount } from "../format";
+import { humanCleanerStatus, lagos, nairaAmount, shortDate } from "../format";
 import PayoutActions from "./PayoutActions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function lagosDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-NG", {
-    timeZone: "Africa/Lagos",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(iso));
-}
 
 export default async function AdminPayoutsPage({
   searchParams,
@@ -62,8 +55,7 @@ export default async function AdminPayoutsPage({
     >
       {!overview.schemaReady && (
         <div className="notice error" style={{ marginBottom: 16 }}>
-          Database migration <code>0015_jobs_and_payouts.sql</code> has not been applied yet. Run it in
-          Supabase to enable payout tracking and settlements.
+          Payout tracking is not enabled in this environment yet. Ask the technical owner to enable it.
         </div>
       )}
 
@@ -274,7 +266,10 @@ export default async function AdminPayoutsPage({
                     {c.last_payout && (
                       <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>
                         Last settled: {nairaAmount(c.last_payout.total_amount_naira)} (
-                        {c.last_payout.period_key}) on {lagosDate(c.last_payout.settled_at)}
+                        {c.last_payout.period_key === "all"
+                          ? `Through ${shortDate(c.last_payout.cutoff_date)}`
+                          : formatMonthLabel(c.last_payout.period_key)}
+                        ) on {lagos(c.last_payout.settled_at)}
                       </div>
                     )}
                   </div>
@@ -305,6 +300,7 @@ export default async function AdminPayoutsPage({
                   unpaidTotalNaira={c.unpaid_total_naira}
                   unpaidCount={c.unpaid_count}
                   unpaidByMonth={c.unpaid_by_month}
+                  unpaidEarnings={c.unpaid_earnings}
                   todayIso={overview.todayIso}
                 />
               </div>
@@ -313,7 +309,7 @@ export default async function AdminPayoutsPage({
         </div>
       )}
 
-      {(activeView === "receipts" || activeView === "monthly" || overview.recentPayouts.length > 0) && (
+      {(activeView === "receipts" || activeView === "monthly") && (
         <section style={{ marginTop: showCleanerCards || showMonthlyTable ? 28 : 0 }}>
           <h2 style={{ fontSize: 16, marginBottom: 10 }}>Recent Settlement Receipts</h2>
           <div className="board">
@@ -339,7 +335,7 @@ export default async function AdminPayoutsPage({
                 )}
                 {overview.recentPayouts.map((p) => (
                   <tr key={p.id}>
-                    <td>{lagosDate(p.settled_at)}</td>
+                    <td>{lagos(p.settled_at)}</td>
                     <td>
                       <Link className="ref" href={`/admin/cleaners/${p.cleaner_id}`}>
                         {p.cleaner_name}
@@ -350,7 +346,7 @@ export default async function AdminPayoutsPage({
                     </td>
                     <td>
                       <span className="ops-status tone-green">
-                        {p.period_key === "all" ? `Through ${p.cutoff_date}` : p.period_key}
+                        {p.period_key === "all" ? `Through ${shortDate(p.cutoff_date)}` : formatMonthLabel(p.period_key)}
                       </span>
                     </td>
                     <td>{p.earning_count}</td>

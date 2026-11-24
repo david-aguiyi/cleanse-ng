@@ -212,6 +212,17 @@ export async function getCleanerEarningsSummary(cleanerId: string): Promise<Clea
   };
 }
 
+export interface OperatorUnpaidEarningRow {
+  id: string;
+  job_label: string;
+  earned_on: string;
+  gross_clean_naira: number;
+  supplies_deducted_naira: number;
+  net_pool_naira: number;
+  share_bps: number;
+  amount_naira: number;
+}
+
 export interface OperatorCleanerPayoutRow {
   cleaner_id: string;
   cleaner_code: string;
@@ -221,6 +232,7 @@ export interface OperatorCleanerPayoutRow {
   unpaid_total_naira: number;
   unpaid_count: number;
   unpaid_by_month: MonthBucket[];
+  unpaid_earnings: OperatorUnpaidEarningRow[];
   last_payout: PayoutReceipt | null;
 }
 
@@ -244,8 +256,11 @@ export async function listOperatorPayoutsOverview(): Promise<{
     db.from("cleaner_bank_accounts").select("cleaner_id, bank_name, account_number, account_name, updated_at"),
     db
       .from("cleaner_visit_earnings")
-      .select("cleaner_id, earned_on, amount_naira")
-      .is("payout_id", null),
+      .select(
+        "id, cleaner_id, job_label, earned_on, gross_clean_naira, supplies_deducted_naira, net_pool_naira, share_bps, amount_naira"
+      )
+      .is("payout_id", null)
+      .order("earned_on", { ascending: false }),
     db
       .from("cleaner_payouts")
       .select(
@@ -277,10 +292,19 @@ export async function listOperatorPayoutsOverview(): Promise<{
     bankByCleaner.set(b.cleaner_id, b);
   }
 
-  const unpaidByCleaner = new Map<string, Array<{ earned_on: string; amount_naira: number }>>();
-  for (const e of (unpaidRes.data ?? []) as Array<{ cleaner_id: string; earned_on: string; amount_naira: number }>) {
+  const unpaidByCleaner = new Map<string, OperatorUnpaidEarningRow[]>();
+  for (const e of (unpaidRes.data ?? []) as Array<Record<string, any>>) {
     const arr = unpaidByCleaner.get(e.cleaner_id) ?? [];
-    arr.push({ earned_on: e.earned_on, amount_naira: Number(e.amount_naira || 0) });
+    arr.push({
+      id: e.id,
+      job_label: e.job_label ?? "Cleaning job",
+      earned_on: e.earned_on,
+      gross_clean_naira: Number(e.gross_clean_naira || 0),
+      supplies_deducted_naira: Number(e.supplies_deducted_naira || 0),
+      net_pool_naira: Number(e.net_pool_naira || 0),
+      share_bps: Number(e.share_bps || 10000),
+      amount_naira: Number(e.amount_naira || 0),
+    });
     unpaidByCleaner.set(e.cleaner_id, arr);
   }
 
@@ -329,6 +353,7 @@ export async function listOperatorPayoutsOverview(): Promise<{
         unpaid_total_naira: unpaidTotal,
         unpaid_count: unpaidRows.length,
         unpaid_by_month: summarizeMonths(unpaidRows),
+        unpaid_earnings: unpaidRows,
         last_payout: lastPayoutByCleaner.get(c.id) ?? null,
       };
     })

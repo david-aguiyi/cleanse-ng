@@ -70,8 +70,7 @@ export default async function AdminJobsPage({
     >
       {!schemaReady && (
         <div className="notice error" style={{ marginBottom: 16 }}>
-          Database migration <code>0015_jobs_and_payouts.sql</code> has not been applied yet. Run it in
-          Supabase to start syncing saved invoices into Jobs.
+          Job syncing is not enabled in this environment yet. Ask the technical owner to enable it.
         </div>
       )}
 
@@ -134,6 +133,15 @@ export default async function AdminJobsPage({
         <button type="submit" className="btn-ghost">
           Search
         </button>
+        {search && (
+          <Link
+            href={rawFilter !== "ALL" ? `/admin/jobs?status=${rawFilter}` : "/admin/jobs"}
+            className="btn-ghost"
+            style={{ fontSize: 13 }}
+          >
+            Clear
+          </Link>
+        )}
       </form>
 
       <div className="board">

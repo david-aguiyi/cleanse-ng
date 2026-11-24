@@ -29,13 +29,15 @@ export function nairaAmount(amount: number | null | undefined): string {
 
 export function lagos(iso: string | null | undefined): string {
   if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
   return new Intl.DateTimeFormat("en-NG", {
     timeZone: "Africa/Lagos",
     day: "numeric",
     month: "short",
     hour: "numeric",
     minute: "2-digit",
-  }).format(new Date(iso));
+  }).format(d);
 }
 
 export function humanEvent(type: string): string {
@@ -121,4 +123,34 @@ export function humanApplicantStatus(status: string | null | undefined): HumanSt
 
 export function humanOnboardingStatus(status: string | null | undefined): HumanStatus {
   return lookupStatus(ONBOARDING_STATUS_MAP, status);
+}
+
+const CLEANER_TAG_MAP: Record<string, string> = {
+  UNDER_SUPERVISION: "Under Supervision",
+  PROBATION: "Probation",
+  TRAINEE: "Trainee",
+  SENIOR: "Senior",
+  RELIABLE: "Reliable",
+  FIRED: "Terminated",
+};
+
+export function humanCleanerTag(tag: string | null | undefined): string {
+  const key = String(tag ?? "").trim().toUpperCase();
+  if (!key) return "";
+  return CLEANER_TAG_MAP[key] ?? key.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export function friendlyAuthError(raw: string | null | undefined): string {
+  const msg = String(raw ?? "").toLowerCase();
+  if (!msg) return "Could not sign you in. Please try again.";
+  if (msg.includes("invalid login credentials")) {
+    return "Email or password is incorrect. Double-check your details and try again.";
+  }
+  if (msg.includes("email not confirmed")) {
+    return "Your email address isn't verified yet. Ask the account owner to confirm it.";
+  }
+  if (msg.includes("too many requests") || msg.includes("rate limit")) {
+    return "Too many sign-in attempts. Please wait a minute and try again.";
+  }
+  return "Could not sign you in right now. Check your email, password, and internet connection.";
 }

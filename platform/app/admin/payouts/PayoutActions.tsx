@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { MonthBucket, CleanerBankAccount } from "@/domain/payout/payout-service";
+import type {
+  MonthBucket,
+  CleanerBankAccount,
+  OperatorUnpaidEarningRow,
+} from "@/domain/payout/payout-service";
+import { formatMonthLabel } from "@/domain/payout/payout-summary";
+import { shortDate } from "../format";
 
 interface Props {
   cleanerId: string;
@@ -11,6 +17,7 @@ interface Props {
   unpaidTotalNaira: number;
   unpaidCount: number;
   unpaidByMonth: MonthBucket[];
+  unpaidEarnings: OperatorUnpaidEarningRow[];
   todayIso: string;
 }
 
@@ -55,6 +62,7 @@ export default function PayoutActions({
   unpaidTotalNaira,
   unpaidCount,
   unpaidByMonth,
+  unpaidEarnings,
   todayIso,
 }: Props) {
   const router = useRouter();
@@ -62,7 +70,13 @@ export default function PayoutActions({
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showBreakdown, setShowBreakdown] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  const visibleEarnings =
+    selectedScope === "all"
+      ? unpaidEarnings
+      : unpaidEarnings.filter((e) => e.earned_on.slice(0, 7) === selectedScope);
   const [idemKey, setIdemKey] = useState<string>(() => crypto.randomUUID());
 
   const activeBucket =
@@ -173,51 +187,149 @@ export default function PayoutActions({
         </div>
       ) : (
         <div className="notice error" style={{ margin: 0, fontSize: 12.5 }}>
-          No bank account added yet in <code>/pro/profile</code>.
+          No bank account saved yet. Ask {cleanerName} to add their bank details in the Pro Portal.
         </div>
       )}
 
       {unpaidCount > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-          <select
-            value={selectedScope}
-            onChange={(e) => setSelectedScope(e.target.value)}
-            style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", fontSize: 13 }}
-          >
-            <option value="all">
-              All unpaid up to {todayIso} (₦{unpaidTotalNaira.toLocaleString("en-NG")} · {unpaidCount})
-            </option>
-            {unpaidByMonth.map((m) => (
-              <option key={m.month_key} value={m.month_key}>
-                {m.month_key} (₦{m.total_naira.toLocaleString("en-NG")} · {m.visit_count})
+        <>
+          <div className="muted" style={{ fontSize: 12 }}>
+            <strong>Step 1:</strong> Transfer{" "}
+            <strong>₦{activeBucket.totalNaira.toLocaleString("en-NG")}</strong> in your bank app.{" "}
+            <strong>Step 2:</strong> Click <strong>Confirm Paid</strong> below to record the receipt.
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+            <select
+              value={selectedScope}
+              onChange={(e) => setSelectedScope(e.target.value)}
+              style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", fontSize: 13 }}
+            >
+              <option value="all">
+                All unpaid up to {shortDate(todayIso)} (₦{unpaidTotalNaira.toLocaleString("en-NG")} · {unpaidCount})
               </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Transfer ref / note (optional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            style={{
-              flex: "1 1 160px",
-              padding: "6px 10px",
-              borderRadius: 8,
-              border: "1px solid var(--border)",
-              fontSize: 13,
-            }}
-          />
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={settle}
-            disabled={busy || !bankAccount || activeBucket.totalNaira <= 0}
-            style={{ padding: "8px 14px", fontSize: 13 }}
-          >
-            {busy
-              ? "Settling…"
-              : `Confirm Paid (₦${activeBucket.totalNaira.toLocaleString("en-NG")})`}
-          </button>
-        </div>
+              {unpaidByMonth.map((m) => (
+                <option key={m.month_key} value={m.month_key}>
+                  {formatMonthLabel(m.month_key)} (₦{m.total_naira.toLocaleString("en-NG")} · {m.visit_count})
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Transfer ref / note (optional)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              style={{
+                flex: "1 1 160px",
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: "1px solid var(--border)",
+                fontSize: 13,
+              }}
+            />
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={settle}
+              disabled={busy || !bankAccount || activeBucket.totalNaira <= 0}
+              style={{ padding: "8px 14px", fontSize: 13 }}
+            >
+              {busy
+                ? "Settling…"
+                : `Confirm Paid (₦${activeBucket.totalNaira.toLocaleString("en-NG")})`}
+            </button>
+          </div>
+
+          {visibleEarnings.length > 0 && (
+            <div>
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={() => setShowBreakdown((v) => !v)}
+                style={{ fontSize: 12.5, padding: "2px 0" }}
+              >
+                {showBreakdown
+                  ? `Hide served jobs breakdown (${visibleEarnings.length}) ▴`
+                  : `View ${visibleEarnings.length} served clean${visibleEarnings.length === 1 ? "" : "s"} breakdown ▾`}
+              </button>
+
+              {showBreakdown && (
+                <div
+                  style={{
+                    marginTop: 8,
+                    border: "1px solid var(--border, #e5e7eb)",
+                    borderRadius: 8,
+                    overflowX: "auto",
+                    background: "#fff",
+                  }}
+                >
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+                    <thead>
+                      <tr style={{ background: "var(--off-white, #f7f7fb)", textAlign: "left" }}>
+                        <th style={{ padding: "7px 10px" }}>Served Date</th>
+                        <th style={{ padding: "7px 10px" }}>Job</th>
+                        <th style={{ padding: "7px 10px", textAlign: "right" }}>Clean Fee</th>
+                        <th style={{ padding: "7px 10px", textAlign: "right" }}>Supplies</th>
+                        <th style={{ padding: "7px 10px", textAlign: "right" }}>Pro Cut (70%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleEarnings.map((e) => (
+                        <tr key={e.id} style={{ borderTop: "1px solid var(--border, #e5e7eb)" }}>
+                          <td style={{ padding: "7px 10px", whiteSpace: "nowrap" }}>{shortDate(e.earned_on)}</td>
+                          <td style={{ padding: "7px 10px" }}>
+                            <span style={{ fontWeight: 600, color: "var(--deep-purple)" }}>{e.job_label}</span>
+                            {e.share_bps < 10000 && (
+                              <span className="muted" style={{ marginLeft: 6, fontSize: 11.5 }}>
+                                ({Math.round(e.share_bps / 100)}% team split)
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: "7px 10px", textAlign: "right", whiteSpace: "nowrap" }}>
+                            ₦{e.gross_clean_naira.toLocaleString("en-NG")}
+                          </td>
+                          <td style={{ padding: "7px 10px", textAlign: "right", whiteSpace: "nowrap" }}>
+                            {e.supplies_deducted_naira > 0
+                              ? `-₦${e.supplies_deducted_naira.toLocaleString("en-NG")}`
+                              : "₦0"}
+                          </td>
+                          <td
+                            style={{
+                              padding: "7px 10px",
+                              textAlign: "right",
+                              fontWeight: 700,
+                              color: "var(--deep-purple)",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            ₦{e.amount_naira.toLocaleString("en-NG")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr style={{ borderTop: "1px solid var(--border, #e5e7eb)", background: "var(--off-white, #f7f7fb)" }}>
+                        <td colSpan={4} style={{ padding: "7px 10px", fontWeight: 700, textAlign: "right" }}>
+                          Total ({visibleEarnings.length} clean{visibleEarnings.length === 1 ? "" : "s"}):
+                        </td>
+                        <td
+                          style={{
+                            padding: "7px 10px",
+                            textAlign: "right",
+                            fontWeight: 800,
+                            color: "var(--deep-purple)",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          ₦{activeBucket.totalNaira.toLocaleString("en-NG")}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       {msg && (

@@ -174,7 +174,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
       <div class="clash-banner" id="clashWarn" hidden></div>
       <label class="chk">
         <input type="checkbox" id="reserveCalendar">
-        <span><strong>Register serving day(s) &amp; time on the booking calendar</strong><small>Marks these slots as booked on cleanse.ng when saved.</small></span>
+        <span><strong>Sync visits to booking calendar &amp; Pro schedules (recommended)</strong><small>Marks these slots as booked on cleanse.ng and adds visits to Jobs &amp; Pro schedules when saved.</small></span>
       </label>
       <div class="row2">
         <label class="fld">Cleaning materials<select id="mat"><option value="cleanse">Cleanse.ng</option><option value="client">Client</option></select></label>
@@ -215,7 +215,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
         <label class="fld">Account name<input id="accName"></label>
         <label class="fld">Bank<input id="bank"></label>
       </div>
-      <label class="fld">Account number<input id="accNo" inputmode="numeric"></label>
+      <label class="fld">Account number<input id="accNo" inputmode="numeric" maxlength="10" placeholder="10-digit NUBAN account number"></label>
     </section>
 
     <section class="card">
@@ -223,7 +223,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
       <label class="fld"><span>One term per line</span><textarea id="terms"></textarea></label>
       <div class="hint"><span id="termsState">These update with your choices above.</span><button type="button" class="link" id="resetTerms" hidden>Reset to default</button></div>
     </section>
-    <p class="note">Your last invoice stays saved on this device, so you can pick up where you stopped.</p>
+    <p class="note">Click <strong>Save invoice</strong> to save changes and sync to Jobs &amp; Visits and the booking calendar.</p>
   </form>
 
   <section class="preview" id="preview" aria-label="Invoice preview">
@@ -854,10 +854,17 @@ hydrateSchedule(S, IS_LEGACY_LOADED);
 let daysManual = Boolean(SRV && SRV.data && Array.isArray(SRV.data.visitDays) && SRV.data.visitDays.length > 0);
 let saveT = 0;
 let dirty = false;
+let saveInFlight = null;
 function updSave() {
   const b = $('saveInv'); if (!b || !SRV) return;
-  b.hidden = false; const saved = SRV.id && !dirty;
-  b.disabled = saved; b.querySelector('.lg').textContent = saved ? 'Saved ✓' : 'Save invoice'; b.querySelector('.sm').textContent = saved ? 'Saved' : 'Save';
+  b.hidden = false;
+  const saving = Boolean(saveInFlight);
+  const saved = !saving && Boolean(SRV.id && !dirty);
+  b.disabled = saving || saved;
+  const lg = b.querySelector('.lg');
+  const sm = b.querySelector('.sm');
+  if (lg) lg.textContent = saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save invoice';
+  if (sm) sm.textContent = saving ? 'Saving…' : saved ? 'Saved' : 'Save';
 }
 const persist = () => { if (SRV) { dirty = true; updSave(); return; } clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }, 250); };
 
@@ -1197,7 +1204,7 @@ function renderInternalPayoutPreview() {
   const pool = Math.round(net * 0.70);
   const count = Array.isArray(S.cleanerIds) ? S.cleanerIds.filter(Boolean).length : 0;
   const split = count >= 2 ? ' (2 pros: ' + naira(Math.round(pool / 2)) + ' + ' + naira(pool - Math.round(pool / 2)) + ' each/clean)' : ' (full 70%: ' + naira(pool) + '/clean)';
-  box.textContent = 'Job calc → Price/clean: ' + naira(perClean) + ' · Supplies: -' + naira(supplies) + ' · 70% Cleaner pool: ' + naira(pool) + '/clean' + split;
+  box.textContent = 'Pro payout preview (70% after supplies): Fee ' + naira(perClean) + ' · Supplies: -' + naira(supplies) + ' · Cleaner pool: ' + naira(pool) + '/clean' + split;
 }
 
 function autoRecalcEndDate() {
@@ -1626,6 +1633,18 @@ function cleanScheduledVisits(list) {
 }
 
 function validateBeforeSave() {
+  if (!String(S.client || '').trim() && !String(S.addr || '').trim()) {
+    msg('Enter the client name or service address before saving.', true);
+    const cl = $('client');
+    if (cl) { cl.focus(); cl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return false;
+  }
+  if (S.billing === 'monthly' && S.startDate && S.endDate && S.endDate < S.startDate) {
+    msg('Contract End date cannot be earlier than the Start date.', true);
+    const ed = $('endDate');
+    if (ed) { ed.focus(); ed.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return false;
+  }
   if (S.jobStatus === 'ENDED' || S.jobStatus === 'TERMINATED' || S.reserveCalendar === false) {
     S.scheduledVisits = cleanScheduledVisits(S.scheduledVisits);
     return true;
@@ -1635,7 +1654,7 @@ function validateBeforeSave() {
   }
   const valid = cleanScheduledVisits(S.scheduledVisits);
   if (!valid.length) {
-    msg("Select a serving time slot (or uncheck 'Register serving day(s) & time on the booking calendar').", true);
+    msg("Select a serving time slot (or uncheck 'Sync visits to booking calendar & Pro schedules').", true);
     const sp = $('slotPills');
     if (sp) sp.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return false;
@@ -1645,10 +1664,10 @@ function validateBeforeSave() {
 }
 
 /* ---------- save to cleanse.ng (admin mode) ---------- */
-let saveInFlight = null;
 async function saveInvoice() {
   if (saveInFlight) return saveInFlight;
   saveInFlight = (async () => {
+    updSave();
     try {
       const cleaned = cleanScheduledVisits(S.scheduledVisits);
       const cleanerIds = Array.isArray(S.cleanerIds) ? Array.from(new Set(S.cleanerIds.filter(Boolean))).slice(0, 2) : [];
@@ -1670,7 +1689,7 @@ async function saveInvoice() {
       if (res.status === 401) throw new Error('You have been signed out. Sign in to the dashboard again, then save.');
       if (!j || !j.ok) throw new Error((j && j.error && j.error.message) || 'Could not save the invoice. Try again.');
       SRV.id = j.data.id; SRV.num = j.data.invoice_number; S.num = SRV.num; $('num').value = S.num;
-      dirty = false; updSave(); renderVisitList(); render();
+      dirty = false; renderVisitList(); render();
       try {
         var embQ = new URLSearchParams(location.search).get('embedded') === '1' ? '&embedded=1' : '';
         history.replaceState(null, '', '/admin/invoices/maker?id=' + SRV.id + embQ);
@@ -1680,6 +1699,7 @@ async function saveInvoice() {
       return SRV.num;
     } finally {
       saveInFlight = null;
+      updSave();
     }
   })();
   return saveInFlight;
@@ -1689,9 +1709,6 @@ if (SRV) {
     if (saveInFlight) return;
     if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
     if (!validateBeforeSave()) return;
-    const b = $('saveInv'); b.disabled = true;
-    const prevText = b.textContent;
-    b.textContent = 'Saving…';
     try {
       const n = await saveInvoice();
       const vc = Array.isArray(S.scheduledVisits) ? S.scheduledVisits.length : 0;
@@ -1701,18 +1718,12 @@ if (SRV) {
       msg('Saved invoice ' + n + suffix);
     }
     catch (e) { msg(e.message, true); }
-    finally { b.disabled = false; b.textContent = prevText; updSave(); }
+    finally { updSave(); }
   });
   window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 }
 
 /* ---------- download ---------- */
-let dlCap = null; // promise once asked
-function getDownloads() {
-  if (!dlCap && window.claude && typeof window.claude.use === 'function') dlCap = window.claude.use('downloads').catch(() => null);
-  return dlCap || Promise.resolve(null);
-}
-setTimeout(getDownloads, 0);
 const fileName = st => { const tag = (st.client.trim() || st.addr.trim()).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40); return 'Cleanse_Invoice_' + (st.num.trim() || 'CLN').replace(/[^A-Za-z0-9-]+/g, '-') + (tag ? '_' + tag : '') + '.pdf'; };
 $('dl').addEventListener('click', async () => {
   if (!(totalOf(S) > 0)) { msg('Add a charge amount first.', true); return; }
@@ -1726,23 +1737,10 @@ $('dl').addEventListener('click', async () => {
   try {
     await fontsReady;
     const D = derive(S), blob = buildPDF(layout(S), D), name = fileName(S);
-    const cap = await getDownloads();
-    if (cap) {
-      try { await cap.save({ filename: name, data: blob }); msg('Saved ' + name); }
-      catch (e) {
-        const c = e && e.code;
-        if (c === 'declined') msg('Download cancelled.');
-        else if (c === 'rate_limited') msg('A save prompt is already open. Finish that one first.', true);
-        else msg('This view cannot save files. Open the invoice maker in your browser and try again.', true);
-      }
-    } else if (window.claude) {
-      msg('This view cannot save files. Open the invoice maker in your browser and try again.', true);
-    } else {
-      const url = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-      msg('Downloaded ' + name);
-    }
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    msg('Downloaded ' + name);
   } catch (e) {
     msg('Something went wrong making the PDF. Try again.', true);
   } finally { btn.disabled = false; btn.textContent = 'Download PDF'; }

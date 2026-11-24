@@ -70,6 +70,15 @@ export default async function AdminOnboardings({
         <button type="submit" className="btn-ghost">
           Search
         </button>
+        {searchParams.q && (
+          <Link
+            href={statusFilter ? `/admin/onboardings?status=${statusFilter}` : "/admin/onboardings"}
+            className="btn-ghost"
+            style={{ fontSize: 13 }}
+          >
+            Clear
+          </Link>
+        )}
       </form>
 
       <div className="board">

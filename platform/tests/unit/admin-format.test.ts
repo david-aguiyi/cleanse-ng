@@ -5,11 +5,14 @@ import {
   waDigits,
   humanEvent,
   shortDate,
+  lagos,
   humanJobStatus,
   humanVisitStatus,
   humanCleanerStatus,
+  humanCleanerTag,
   humanApplicantStatus,
   humanOnboardingStatus,
+  friendlyAuthError,
 } from "@app/admin/format";
 
 describe("admin format helpers", () => {
@@ -52,5 +55,13 @@ describe("admin format helpers", () => {
     expect(humanApplicantStatus("NEW")).toEqual({ label: "New", tone: "amber" });
     expect(humanOnboardingStatus("SUBMITTED")).toEqual({ label: "Needs Review", tone: "amber" });
     expect(humanOnboardingStatus("CUSTOM_STATE")).toEqual({ label: "Custom State", tone: "neutral" });
+  });
+
+  it("handles invalid dates safely and maps cleaner tags & auth errors", () => {
+    expect(lagos(null)).toBe("—");
+    expect(lagos("not-a-date")).toBe("—");
+    expect(humanCleanerTag("UNDER_SUPERVISION")).toBe("Under Supervision");
+    expect(humanCleanerTag("TRAINEE")).toBe("Trainee");
+    expect(friendlyAuthError("Invalid login credentials")).toContain("Email or password is incorrect");
   });
 });

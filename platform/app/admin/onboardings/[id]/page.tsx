@@ -229,8 +229,7 @@ export default async function OnboardingDetailPage({ params }: { params: { id: s
         <div className="card">
           <h3>7. Signed Cleanse Pro Agreement ({agreedIds.length}/19 Clauses)</h3>
           <div className="notice info" style={{ marginBottom: 12, fontSize: 13 }}>
-            <strong>Version:</strong> {ob.agreement_version} · <strong>Signed at:</strong>{" "}
-            {lagos(ob.agreed_at)} · <strong>IP:</strong> {ob.source_ip || "—"}
+            <strong>Signed agreement ({ob.agreement_version})</strong> · {lagos(ob.agreed_at)}
           </div>
           <div style={{ maxHeight: 380, overflowY: "auto", paddingRight: 6 }}>
             {AGREEMENT_CLAUSES.map((c) => {

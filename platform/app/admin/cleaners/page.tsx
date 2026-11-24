@@ -80,6 +80,15 @@ export default async function AdminCleaners({
         <button type="submit" className="btn-ghost">
           Search
         </button>
+        {searchParams.q && (
+          <Link
+            href={statusFilter ? `/admin/cleaners?status=${statusFilter}` : "/admin/cleaners"}
+            className="btn-ghost"
+            style={{ fontSize: 13 }}
+          >
+            Clear
+          </Link>
+        )}
       </form>
 
       <div className="board">

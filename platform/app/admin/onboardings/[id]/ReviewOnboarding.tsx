@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ZONES, SERVICES } from "@app/book/catalog";
+import { humanOnboardingStatus } from "../../format";
 
 interface Props {
   id: string;
@@ -153,12 +154,17 @@ export default function ReviewOnboarding({
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
-          {STATUSES.map((s) => (
+          {(cleanerId ? STATUSES : STATUSES.filter((s) => s !== "APPROVED")).map((s) => (
             <option key={s} value={s}>
-              {s.replace(/_/g, " ")}
+              {humanOnboardingStatus(s).label}
             </option>
           ))}
         </select>
+        {!cleanerId && (
+          <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+            To approve and create their Pro login, use the green <strong>Approve &amp; Create Cleaner Account</strong> button below.
+          </div>
+        )}
       </div>
 
       <div className="field">
@@ -212,6 +218,9 @@ export default function ReviewOnboarding({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              <div className="muted" style={{ fontSize: 11.5, marginTop: 3 }}>
+                Auto-suggested from their name — verify or edit before creating, then share with the Pro.
+              </div>
             </div>
             <div className="field">
               <label htmlFor="prov-pass">Temporary Password</label>
@@ -223,6 +232,9 @@ export default function ReviewOnboarding({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <div className="muted" style={{ fontSize: 11.5, marginTop: 3 }}>
+                Share this password + email with the Cleanse Pro so they can sign in to the Pro Portal.
+              </div>
             </div>
             <label className="field-label">Zones</label>
             <div className="chip-row" style={{ marginBottom: 10 }}>

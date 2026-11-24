@@ -145,7 +145,7 @@ export default async function AdminJobDetailPage({ params }: { params: { id: str
             <strong>{nairaAmount(job.invoice_total_naira)}</strong>
           </div>
           <div className="kv">
-            <span className="k">Price per Cleanse</span>
+            <span className="k">Price per clean</span>
             <strong>{nairaAmount(job.price_per_clean_naira)}</strong>
           </div>
           <div className="kv">

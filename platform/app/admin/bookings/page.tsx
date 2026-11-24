@@ -40,10 +40,6 @@ export default async function AdminBoard({
     search: searchParams.q,
   });
 
-  const paidUnassigned = rows.filter(
-    (r) => r.payment_status === "SUCCESS" && r.fulfilment_status === "UNASSIGNED"
-  ).length;
-
   return (
     <AdminShell
       who={`${admin.fullName} · ${admin.role}`}
@@ -72,7 +68,7 @@ export default async function AdminBoard({
           <select name="payment_status" defaultValue={searchParams.payment_status ?? ""}>
             {PAYMENT_STATES.map((s) => (
               <option key={s} value={s}>
-                {s === "" ? "Paid & active (default)" : s === "PENDING" ? "Unpaid / abandoned" : s}
+                {s === "" ? "All payment statuses" : s === "PENDING" ? "Unpaid / abandoned" : s}
               </option>
             ))}
           </select>

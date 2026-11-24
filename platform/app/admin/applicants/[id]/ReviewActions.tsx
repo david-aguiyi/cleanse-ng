@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { humanApplicantStatus } from "../../format";
 
 const STATUSES = ["NEW", "REVIEWING", "SHORTLISTED", "REJECTED", "HIRED"];
 
@@ -20,11 +21,13 @@ export default function ReviewActions({
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function save(body: { status?: string; note?: string }) {
     setSaving(true);
     setError(null);
+    setSavedMsg(null);
     try {
       const res = await fetch(`/api/v1/admin/applicants/${applicationId}`, {
         method: "PATCH",
@@ -36,6 +39,8 @@ export default function ReviewActions({
       setStatus(json.data.status);
       setNotes(json.data.admin_notes ?? "");
       if (body.note) setDraft("");
+      setSavedMsg("Saved ✓");
+      router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save.");
     } finally {
@@ -64,6 +69,7 @@ export default function ReviewActions({
   return (
     <div>
       {error && <div className="notice error">{error}</div>}
+      {savedMsg && <div className="notice info">{savedMsg}</div>}
       <div className="kv">
         <span className="k">Status</span>
         <select
@@ -73,7 +79,7 @@ export default function ReviewActions({
         >
           {STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {humanApplicantStatus(s).label}
             </option>
           ))}
         </select>

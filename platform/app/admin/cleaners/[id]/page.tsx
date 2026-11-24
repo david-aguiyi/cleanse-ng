@@ -14,10 +14,6 @@ import PayoutActions from "../../payouts/PayoutActions";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function pct(v: number | null): string {
-  return v === null || v === undefined ? "—" : `${Number(v)}%`;
-}
-
 export default async function CleanerDetail({ params }: { params: { id: string } }) {
   const admin = await getAdminContext();
   if (!admin) redirect(`/admin/login?next=/admin/cleaners/${params.id}`);
@@ -101,7 +97,35 @@ export default async function CleanerDetail({ params }: { params: { id: string }
             </div>
             <div className="kv">
               <span className="k">WhatsApp</span>
-              <span>{c.whatsapp_e164 ?? "—"}</span>
+              {c.whatsapp_e164 ? (
+                <a
+                  href={`https://wa.me/${String(c.whatsapp_e164).replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "#047857",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                  }}
+                  title="Chat on WhatsApp"
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.49 0 .15 5.34.15 11.91c0 2.1.55 4.15 1.59 5.96L0 24l6.29-1.65a11.87 11.87 0 0 0 5.77 1.47h.01c6.57 0 11.91-5.34 11.91-11.91 0-3.18-1.24-6.17-3.46-8.43Zm-8.46 18.33h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.73.98 1-3.64-.24-.37a9.85 9.85 0 0 1-1.51-5.28C2.18 6.45 6.61 2.02 12.06 2.02c2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.9 6.99c0 5.45-4.44 9.9-9.89 9.9Zm5.43-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.21 5.09 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z" />
+                  </svg>
+                  <span>{c.whatsapp_e164} ↗</span>
+                </a>
+              ) : (
+                <span>—</span>
+              )}
             </div>
             <div className="kv">
               <span className="k">Availability</span>
@@ -126,7 +150,7 @@ export default async function CleanerDetail({ params }: { params: { id: string }
             <h3>Payout Bank Account &amp; 70% Earnings</h3>
             {!earnings.schemaReady ? (
               <p className="muted" style={{ fontSize: 13 }}>
-                Run migration <code>0015_jobs_and_payouts.sql</code> to enable bank &amp; payout tracking.
+                Payout tracking is not enabled in this environment yet. Ask the technical owner to enable it.
               </p>
             ) : (
               <div style={{ display: "grid", gap: 10 }}>
@@ -143,6 +167,7 @@ export default async function CleanerDetail({ params }: { params: { id: string }
                   unpaidTotalNaira={earnings.unpaidTotalNaira}
                   unpaidCount={earnings.unpaidCount}
                   unpaidByMonth={earnings.unpaidByMonth}
+                  unpaidEarnings={earnings.unpaidEarnings}
                   todayIso={earnings.todayIso}
                 />
                 {earnings.payouts.length > 0 && (
@@ -169,24 +194,21 @@ export default async function CleanerDetail({ params }: { params: { id: string }
             <h3>Performance Snapshot</h3>
             <div className="cleaner-stats">
               <div className="stat-box">
-                <div className="num">{c.completed_jobs ?? 0}</div>
-                <div className="cap">Jobs</div>
+                <div className="num">
+                  {Math.max(
+                    c.completed_jobs ?? 0,
+                    earnings.unpaidCount + earnings.payouts.reduce((sum, p) => sum + p.earning_count, 0)
+                  )}
+                </div>
+                <div className="cap">Cleans Served</div>
               </div>
               <div className="stat-box">
-                <div className="num">{c.rating ?? "—"}</div>
-                <div className="cap">Rating</div>
+                <div className="num">{nairaAmount(earnings.unpaidTotalNaira)}</div>
+                <div className="cap">Unpaid Owed</div>
               </div>
               <div className="stat-box">
-                <div className="num">{pct(c.acceptance_rate)}</div>
-                <div className="cap">Accept</div>
-              </div>
-              <div className="stat-box">
-                <div className="num">{pct(c.completion_rate)}</div>
-                <div className="cap">Complete</div>
-              </div>
-              <div className="stat-box">
-                <div className="num">{pct(c.cancellation_rate)}</div>
-                <div className="cap">Cancel</div>
+                <div className="num">{nairaAmount(earnings.paidTotalAllTimeNaira)}</div>
+                <div className="cap">Total Paid</div>
               </div>
             </div>
           </div>

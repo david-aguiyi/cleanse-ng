@@ -211,7 +211,7 @@ export default function CleanerCredentials({
         </div>
 
         {email && password && !editing && (
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 6, flexWrap: "wrap" }}>
             <button
               type="button"
               style={{ ...smallBtnStyle, fontSize: 11 }}
@@ -219,12 +219,22 @@ export default function CleanerCredentials({
             >
               {copied === "both" ? "Copied login message ✓" : "Copy email & password"}
             </button>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                `Hi! Here are your Cleanse Pro Portal login details:\nLogin URL: https://cleanse.ng/pro/login\nEmail: ${email}\nPassword: ${password}`
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ ...smallBtnStyle, fontSize: 11, textDecoration: "none", color: "#047857", borderColor: "#a7f3d0", background: "#ecfdf5" }}
+            >
+              Share on WhatsApp ↗
+            </a>
           </div>
         )}
 
         {!storageReady && (
           <div className="notice info" style={{ margin: 0, fontSize: 12 }}>
-            Run migration <code>0014_cleaner_admin_credentials.sql</code> in Supabase to store &amp; view cleaner passwords here.
+            Password viewing is not enabled in this environment yet. Ask the technical owner to enable it.
           </div>
         )}
 
@@ -263,7 +273,7 @@ export default function CleanerCredentials({
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span className="muted" style={{ fontSize: 11 }}>
-                Updates Supabase Auth login &amp; saves an admin-only copy.
+                Updates their Pro Portal sign-in password immediately.
               </span>
               <div style={{ display: "flex", gap: 6 }}>
                 <button

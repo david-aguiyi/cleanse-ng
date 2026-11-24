@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ZONES, SERVICES } from "@app/book/catalog";
+import { humanCleanerTag } from "../../format";
 
 const PRESET_TAGS = ["TRAINEE", "UNDER_SUPERVISION", "PROBATION", "SENIOR", "RELIABLE"];
 
@@ -35,6 +36,10 @@ export default function NewCleanerForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (zoneCodes.length === 0) {
+      setError("Select at least one service area (zone) this Cleanse Pro can cover.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/v1/admin/cleaners", {
@@ -85,6 +90,7 @@ export default function NewCleanerForm() {
           <label htmlFor="full_name">Full name</label>
           <input
             id="full_name"
+            placeholder="e.g. Adebayo Blessing"
             value={form.full_name}
             onChange={(e) => setForm({ ...form, full_name: e.target.value })}
             required
@@ -95,6 +101,7 @@ export default function NewCleanerForm() {
           <input
             id="email"
             type="email"
+            placeholder="e.g. blessing@cleanse.ng"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
@@ -141,7 +148,7 @@ export default function NewCleanerForm() {
               className={`chip ${tag === t ? "selected" : ""}`}
               onClick={() => setTag(tag === t ? "" : t)}
             >
-              {t === "UNDER_SUPERVISION" ? "UNDER SUPERVISION" : t}
+              {humanCleanerTag(t)}
             </button>
           ))}
         </div>

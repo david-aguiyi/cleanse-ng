@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { requireAdmin } from "@/auth/admin";
-import { getCleanerAdmin, updateCleaner } from "@/domain/cleaner/cleaner-service";
+import { deleteCleanerProfile, getCleanerAdmin, updateCleaner } from "@/domain/cleaner/cleaner-service";
 import { updateCleanerSchema } from "@/validation/schemas";
 import { ok, handleError } from "@/http/response";
 import { newRequestId } from "@/observability/logger";
@@ -28,6 +28,18 @@ export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
     const patch = updateCleanerSchema.parse(await req.json());
     const cleaner = await updateCleaner(ctx.params.id, patch, admin);
     return ok(cleaner, requestId);
+  } catch (err) {
+    return handleError(err, requestId);
+  }
+}
+
+// DELETE /api/v1/admin/cleaners/{id} — permanently remove cleaner profile & auth login.
+export async function DELETE(_req: NextRequest, ctx: { params: { id: string } }) {
+  const requestId = newRequestId();
+  try {
+    const admin = await requireAdmin(["SUPER_ADMIN", "OPERATIONS"]);
+    const deleted = await deleteCleanerProfile(ctx.params.id, admin);
+    return ok(deleted, requestId);
   } catch (err) {
     return handleError(err, requestId);
   }

@@ -116,6 +116,15 @@ export default async function AdminInvoices({
         <button type="submit" className="btn-ghost">
           Search
         </button>
+        {searchParams.q && (
+          <Link
+            href={filter !== "all" ? `/admin/invoices?filter=${filter}` : "/admin/invoices"}
+            className="btn-ghost"
+            style={{ fontSize: 13 }}
+          >
+            Clear
+          </Link>
+        )}
       </form>
 
       <div className="board">

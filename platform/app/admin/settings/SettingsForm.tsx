@@ -145,7 +145,7 @@ export default function SettingsForm({
           </span>
         </div>
 
-        <div style={{ fontSize: 13, color: "var(--mid-gray)", display: "flex", gap: 20 }}>
+        <div style={{ fontSize: 13, color: "var(--mid-gray)", display: "flex", gap: 20, flexWrap: "wrap", wordBreak: "break-word" }}>
           <span>
             Link target:{" "}
             <a

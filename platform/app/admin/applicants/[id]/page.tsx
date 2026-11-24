@@ -5,7 +5,6 @@ import { getApplication, ageFromDob } from "@/domain/applicant/applicant-service
 import { getOnboardingByApplicant } from "@/domain/cleaner/onboarding-service";
 import { AppError } from "@/http/errors";
 import { humanApplicantStatus, humanOnboardingStatus, lagos } from "../../format";
-import { buildApplicantWhatsAppUrl } from "../applicant-message";
 import AdminShell from "../../_components/AdminShell";
 import StatusBadge from "../../_components/StatusBadge";
 import ReviewActions from "./ReviewActions";
@@ -82,29 +81,22 @@ export default async function ApplicantDetail({ params }: { params: { id: string
           </div>
         </div>
         <div className="ops-action-ctas">
-          {onboarding && (
+          {onboarding ? (
             <Link className="ops-quick-btn is-primary" href={`/admin/onboardings/${onboarding.id}`}>
               Open Onboarding Review →
             </Link>
+          ) : (
+            <Link
+              className="ops-quick-btn"
+              href={`/admin/cleaners/new?applicant_id=${a.id}&name=${encodeURIComponent(
+                a.full_name
+              )}&phone=${encodeURIComponent(a.phone_e164 || a.whatsapp_e164 || "")}&whatsapp=${encodeURIComponent(
+                a.whatsapp_e164 || ""
+              )}`}
+            >
+              Convert Manually →
+            </Link>
           )}
-          <a
-            className="ops-quick-btn"
-            href={buildApplicantWhatsAppUrl(a.whatsapp_e164, a.full_name)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Message on WhatsApp ↗
-          </a>
-          <Link
-            className="ops-quick-btn"
-            href={`/admin/cleaners/new?applicant_id=${a.id}&name=${encodeURIComponent(
-              a.full_name
-            )}&phone=${encodeURIComponent(a.phone_e164 || a.whatsapp_e164 || "")}&whatsapp=${encodeURIComponent(
-              a.whatsapp_e164 || ""
-            )}`}
-          >
-            Convert Manually →
-          </Link>
         </div>
       </div>
 

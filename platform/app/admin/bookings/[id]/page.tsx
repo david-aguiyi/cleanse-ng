@@ -64,6 +64,16 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
         </Link>
       }
     >
+        <div className="ops-action-banner tone-amber" style={{ marginBottom: 14 }}>
+          <div>
+            <div className="ops-action-title">Archived Legacy Online Booking</div>
+            <div className="ops-action-desc">
+              New customer plans are managed through <Link href="/admin/invoices">Invoices</Link> and{" "}
+              <Link href="/admin/jobs">Jobs &amp; Visits</Link>. This historical self-checkout record is kept for reference.
+            </div>
+          </div>
+        </div>
+
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "0 0 12px" }}>
           <span className={`pill pay-${String(booking.payment_status).toLowerCase()}`}>
             {booking.payment_status}

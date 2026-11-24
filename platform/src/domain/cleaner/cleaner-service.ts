@@ -368,6 +368,77 @@ export async function updateCleaner(id: string, patch: UpdateCleanerInput, admin
   return getCleanerAdmin(id, admin);
 }
 
+/**
+ * Permanently delete a Cleanse Pro profile and their Supabase Auth login.
+ * Refuses if the Pro already has recorded earnings or payout receipts so
+ * monthly payout totals and audit history stay accurate.
+ */
+export async function deleteCleanerProfile(
+  id: string,
+  admin: AdminContext
+): Promise<{ id: string; full_name: string; cleaner_code: string }> {
+  const db = serviceClient();
+
+  const { data: cleaner, error: lookupErr } = await db
+    .from("cleaners")
+    .select("id, auth_user_id, full_name, cleaner_code")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (lookupErr) throw new AppError("INTERNAL_ERROR", "Could not look up Cleanse Pro.");
+  if (!cleaner) throw new AppError("NOT_FOUND", "Cleanse Pro not found.");
+
+  // Protect financial & payout history (cleaner_payouts & cleaner_visit_earnings use ON DELETE RESTRICT)
+  const [earningsRes, payoutsRes] = await Promise.all([
+    db.from("cleaner_visit_earnings").select("id").eq("cleaner_id", id).limit(1),
+    db.from("cleaner_payouts").select("id").eq("cleaner_id", id).limit(1),
+  ]);
+
+  const hasFinancialHistory =
+    (earningsRes.data && earningsRes.data.length > 0) ||
+    (payoutsRes.data && payoutsRes.data.length > 0);
+
+  if (hasFinancialHistory) {
+    throw new AppError(
+      "VALIDATION_ERROR",
+      "Cannot permanently delete a Cleanse Pro who already has recorded earnings or payout receipts. Use Fire / Deactivate instead so monthly payout totals stay accurate.",
+      400
+    );
+  }
+
+  // Clear non-cascading legacy references before deleting the cleaner row
+  await Promise.all([
+    db.from("bookings").update({ assigned_cleaner_id: null }).eq("assigned_cleaner_id", id),
+    db.from("dispatch_offers").delete().eq("cleaner_id", id),
+    db.from("cleaner_reviews").delete().eq("cleaner_id", id),
+  ]);
+
+  const { error: deleteErr } = await db.from("cleaners").delete().eq("id", id);
+  if (deleteErr) {
+    throw new AppError(
+      "INTERNAL_ERROR",
+      deleteErr.code === "23503"
+        ? "Cannot permanently delete this Cleanse Pro because other records still reference them. Use Fire / Deactivate instead."
+        : "Could not delete Cleanse Pro profile."
+    );
+  }
+
+  if (cleaner.auth_user_id) {
+    await db.auth.admin.deleteUser(cleaner.auth_user_id).catch(() => null);
+  }
+
+  await audit(admin, "cleaner.deleted_permanently", id, {
+    full_name: cleaner.full_name,
+    cleaner_code: cleaner.cleaner_code,
+  });
+
+  return {
+    id: cleaner.id,
+    full_name: cleaner.full_name,
+    cleaner_code: cleaner.cleaner_code,
+  };
+}
+
 // --------------------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------------------

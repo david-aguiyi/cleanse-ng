@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ZONES, SERVICES } from "@app/book/catalog";
+import { ZONES } from "@app/book/catalog";
+import { humanCleanerStatus, humanCleanerTag } from "../../format";
 
 interface CleanerData {
   id: string;
@@ -25,8 +26,9 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
   const [ready, setReady] = useState(cleaner.deployment_ready);
   const [tag, setTag] = useState(cleaner.work_rate_label ?? "");
   const [zoneCodes, setZoneCodes] = useState<string[]>(cleaner.zones.map((z) => z.code));
-  const [serviceCodes, setServiceCodes] = useState<string[]>(cleaner.services.map((s) => s.code));
   const [saving, setSaving] = useState(false);
+  const [confirmMode, setConfirmMode] = useState<null | "fire" | "delete">(null);
+  const [fireReason, setFireReason] = useState("");
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
 
   const toggle = (list: string[], set: (v: string[]) => void, code: string) =>
@@ -57,16 +59,6 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
     }
   }
 
-  async function block() {
-    const reason = window.prompt(
-      "Why are you blocking this cleaner? (shown to them)",
-      "Policy violation"
-    );
-    if (reason === null) return;
-    setStatus("SUSPENDED");
-    await patch({ account_status: "SUSPENDED", block_reason: reason || "Blocked by admin." }, "Cleaner blocked.");
-  }
-
   async function unblock() {
     setStatus("ACTIVE");
     if (tag === "FIRED") setTag("");
@@ -74,21 +66,35 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
   }
 
   async function fireCleaner() {
-    const reason = window.prompt(
-      "Why are you firing this cleaner? (This will immediately suspend their account, drop availability, and mark them as FIRED)",
-      ""
-    );
-    if (reason === null) return;
     setStatus("SUSPENDED");
     setTag("FIRED");
     await patch(
       {
         account_status: "SUSPENDED",
         work_rate_label: "FIRED",
-        block_reason: `FIRED: ${reason.trim() || "Terminated by admin."}`,
+        block_reason: `FIRED: ${fireReason.trim() || "Terminated by admin."}`,
       },
-      "Cleaner fired and removed from dispatch."
+      "Cleanse Pro fired and removed from active assignments."
     );
+    setConfirmMode(null);
+    setFireReason("");
+  }
+
+  async function deleteCleanerPermanently() {
+    setSaving(true);
+    setMsg(null);
+    try {
+      const res = await fetch(`/api/v1/admin/cleaners/${cleaner.id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error?.message ?? "Could not delete Cleanse Pro.");
+      router.push("/admin/cleaners");
+      router.refresh();
+    } catch (e) {
+      setMsg({ kind: "error", text: e instanceof Error ? e.message : "Could not delete Cleanse Pro." });
+      setSaving(false);
+    }
   }
 
   async function toggleSupervision() {
@@ -113,7 +119,6 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
           deployment_ready: ready,
           work_rate_label: tag.trim() ? tag.trim().toUpperCase() : null,
           zone_codes: zoneCodes,
-          service_codes: serviceCodes,
         }),
       });
       const json = await res.json();
@@ -170,7 +175,7 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
               </button>
               <button
                 type="button"
-                onClick={fireCleaner}
+                onClick={() => setConfirmMode(confirmMode === "fire" ? null : "fire")}
                 disabled={saving}
                 style={{
                   background: "#b3261e",
@@ -183,12 +188,57 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
                   cursor: "pointer",
                 }}
               >
-                ⛔ Fire cleaner
+                ⛔ Fire Cleanse Pro
               </button>
             </>
           )}
         </div>
       </div>
+
+      {confirmMode === "fire" && (
+        <div className="notice error" style={{ marginTop: 10 }}>
+          <div style={{ fontWeight: 700, marginBottom: 6 }}>
+            Fire / Deactivate this Cleanse Pro?
+          </div>
+          <p style={{ margin: "0 0 8px", fontSize: 12.5 }}>
+            This blocks their account and keeps their past payout history intact.
+          </p>
+          <input
+            type="text"
+            value={fireReason}
+            onChange={(e) => setFireReason(e.target.value)}
+            placeholder="Reason (e.g. Missed cleans / client complaint)"
+            style={{ marginBottom: 8 }}
+          />
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={fireCleaner}
+              disabled={saving}
+              style={{
+                background: "#b3261e",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                padding: "6px 12px",
+                fontSize: 12.5,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              {saving ? "Firing…" : "Confirm Fire"}
+            </button>
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() => setConfirmMode(null)}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="field" style={{ marginTop: 12 }}>
         <label htmlFor="tag">Status tag / Performance label</label>
@@ -201,7 +251,7 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
               onClick={() => setTag(tag === t ? "" : t)}
               style={{ fontSize: 12, padding: "4px 8px" }}
             >
-              {t === "UNDER_SUPERVISION" ? "⚠️ UNDER SUPERVISION" : t}
+              {t === "UNDER_SUPERVISION" ? "⚠️ Under Supervision" : humanCleanerTag(t)}
             </button>
           ))}
           {tag && (
@@ -228,7 +278,7 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
         <select id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
           {ACCOUNT_STATES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {humanCleanerStatus(s).label}
             </option>
           ))}
         </select>
@@ -236,17 +286,21 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
 
       <label style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
         <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} style={{ width: "auto" }} />
-        Verified (ID / background checked)
+        <span>
+          <strong>Identity verified</strong> — NIN &amp; guarantor checks completed
+        </span>
       </label>
       <label style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 14 }}>
         <input type="checkbox" checked={ready} onChange={(e) => setReady(e.target.checked)} style={{ width: "auto" }} />
-        Deployment ready (trained &amp; equipped)
+        <span>
+          <strong>Deployment ready</strong> — trained, equipped &amp; ready to assign to jobs
+        </span>
       </label>
 
       <div className={`readiness ${wouldBeReady ? "ready" : "blocked"}`}>
         {wouldBeReady
-          ? "This cleaner will be able to go AVAILABLE and enter the dispatch pool."
-          : "Not deployment-ready — cannot go AVAILABLE. Needs ACTIVE + verified + deployment ready."}
+          ? "Ready to assign to jobs and enter the active Cleanse Pro pool."
+          : "Not ready to assign yet — requires Active status + Identity verified + Deployment ready."}
       </div>
 
       <label className="field-label">Zones served</label>
@@ -263,23 +317,70 @@ export default function ManageCleaner({ cleaner }: { cleaner: CleanerData }) {
         ))}
       </div>
 
-      <label className="field-label">Services qualified</label>
-      <div className="chip-row">
-        {SERVICES.map((s) => (
-          <button
-            type="button"
-            key={s.code}
-            className={`chip ${serviceCodes.includes(s.code) ? "selected" : ""}`}
-            onClick={() => toggle(serviceCodes, setServiceCodes, s.code)}
-          >
-            {s.name}
-          </button>
-        ))}
-      </div>
-
       <button type="button" className="btn-primary" style={{ width: "100%", marginTop: 6 }} onClick={save} disabled={saving}>
         {saving ? "Saving…" : "Save changes"}
       </button>
+
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--border, #e5e7eb)" }}>
+        {confirmMode === "delete" ? (
+          <div className="notice error" style={{ margin: 0 }}>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>Delete this Cleanse Pro permanently?</div>
+            <p style={{ margin: "0 0 10px", fontSize: 12.5 }}>
+              Removes their profile, login account, and job assignments from the system completely. (Blocked if they already have recorded earnings or payout receipts.)
+            </p>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button
+                type="button"
+                onClick={deleteCleanerPermanently}
+                disabled={saving}
+                style={{
+                  background: "#b3261e",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                {saving ? "Deleting…" : "Yes, Delete Permanently"}
+              </button>
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={() => setConfirmMode(null)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <span className="muted" style={{ fontSize: 12 }}>
+              Created by mistake or test account?
+            </span>
+            <button
+              type="button"
+              onClick={() => setConfirmMode("delete")}
+              disabled={saving}
+              style={{
+                background: "transparent",
+                color: "#b3261e",
+                border: "1px solid #fecaca",
+                borderRadius: 8,
+                padding: "6px 12px",
+                fontSize: 12.5,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Delete profile permanently
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

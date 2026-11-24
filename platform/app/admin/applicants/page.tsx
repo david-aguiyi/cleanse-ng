@@ -42,7 +42,9 @@ export default async function AdminApplicants({
           <a className="ops-quick-btn" href="/become-a-cleanse-pro" target="_blank" rel="noreferrer">
             Application Form ↗
           </a>
-          <ClearApplicationsButton totalCount={applications.length} />
+          {!statusFilter && !searchParams.q && (
+            <ClearApplicationsButton totalCount={applications.length} />
+          )}
         </>
       }
     >
@@ -69,6 +71,15 @@ export default async function AdminApplicants({
         <button type="submit" className="btn-ghost">
           Search
         </button>
+        {searchParams.q && (
+          <Link
+            href={statusFilter ? `/admin/applicants?status=${statusFilter}` : "/admin/applicants"}
+            className="btn-ghost"
+            style={{ fontSize: 13 }}
+          >
+            Clear
+          </Link>
+        )}
       </form>
 
       <div className="board">

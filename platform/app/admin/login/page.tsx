@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabase } from "@/auth/supabase-browser";
+import { friendlyAuthError } from "../format";
 import PasswordInput from "../../PasswordInput";
 
 function LoginForm() {
@@ -23,7 +24,7 @@ function LoginForm() {
       const supabase = createBrowserSupabase();
       const { error: authErr } = await supabase.auth.signInWithPassword({ email, password });
       if (authErr) {
-        setError(authErr.message);
+        setError(friendlyAuthError(authErr.message));
         setLoading(false);
         return;
       }
@@ -52,6 +53,7 @@ function LoginForm() {
               id="email"
               type="email"
               autoComplete="username"
+              placeholder="e.g. ops@cleanse.ng"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -61,6 +63,9 @@ function LoginForm() {
           <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={loading}>
             {loading ? "Signing in…" : "Sign in"}
           </button>
+          <p className="muted" style={{ fontSize: 12.5, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
+            Locked out or forgot your password? Ask the Cleanse account owner to reset your login.
+          </p>
         </form>
       </div>
     </div>

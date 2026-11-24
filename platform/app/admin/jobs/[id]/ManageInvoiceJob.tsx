@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { JOB_STATUSES, splitCleanerPool, type JobStatus } from "@/domain/job/pricing";
+import { humanCleanerStatus, humanJobStatus, humanVisitStatus } from "../../format";
 
 interface AssignedCleaner {
   cleaner_id: string;
@@ -133,10 +134,19 @@ export default function ManageInvoiceJob({
         return;
       }
     }
+    if (nextStatus === "PAUSED") {
+      if (
+        !window.confirm(
+          "Pause this subscription?\n\nUpcoming unserved visits will be paused and freed from the booking calendar while past Served visits & earnings stay intact."
+        )
+      ) {
+        return;
+      }
+    }
     if (nextStatus === "ENDED") {
       if (
         !window.confirm(
-          "Mark this subscription as Ended?\n\nAny remaining future unserved visits will be closed and freed from the calendar, while all Served history & unpaid cleaner earnings remain intact."
+          "Mark this subscription as Completed?\n\nAny remaining future unserved visits will be closed and freed from the calendar, while all Served history & unpaid cleaner earnings remain intact."
         )
       ) {
         return;
@@ -155,7 +165,7 @@ export default function ManageInvoiceJob({
       const json = await res.json();
       if (!json.ok) throw new Error(json.error?.message ?? "Could not update subscription status.");
       setReason("");
-      setNotice(`Subscription status changed to ${nextStatus}.`);
+      setNotice(`Subscription status changed to ${humanJobStatus(nextStatus).label}.`);
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not update status.");
@@ -165,6 +175,12 @@ export default function ManageInvoiceJob({
   }
 
   async function updateVisit(visitId: string, action: "SERVED" | "UNSERVED" | "CANCELLED" | "SCHEDULED") {
+    if (action === "CANCELLED") {
+      if (!window.confirm("Cancel this scheduled visit and free its calendar slot?")) return;
+    }
+    if (action === "UNSERVED") {
+      if (!window.confirm("Unmark this visit as Served? This will also remove its unpaid 70% earning entry.")) return;
+    }
     setBusy(`visit:${visitId}`);
     setError(null);
     setNotice(null);
@@ -183,7 +199,7 @@ export default function ManageInvoiceJob({
       setNotice(
         action === "SERVED"
           ? "Visit marked Served — 70% earnings added to Cleanse Pro balance."
-          : `Visit updated to ${json.data.status}.`
+          : `Visit updated to ${humanVisitStatus(json.data.status).label}.`
       );
       router.refresh();
     } catch (e) {
@@ -211,38 +227,45 @@ export default function ManageInvoiceJob({
         <div className="card">
           <h3>Subscription Lifecycle Status</h3>
           <p className="muted" style={{ fontSize: 13, marginBottom: 12 }}>
-            Only <strong>ACTIVE</strong> jobs reserve public calendar slots and appear on Cleanse Pro{" "}
-            <code>/pro/home</code> schedules. <strong>PAUSED</strong>, <strong>ENDED</strong>, and{" "}
-            <strong>TERMINATED</strong> free future calendar slots while strictly keeping past{" "}
-            <strong>SERVED</strong> visits &amp; earnings intact.
+            Only <strong>Active</strong> jobs reserve calendar slots and show on Cleanse Pro schedules.{" "}
+            <strong>Paused</strong>, <strong>Completed</strong>, and <strong>Terminated</strong> free future
+            calendar slots while keeping all past <strong>Served</strong> visits &amp; earnings intact.
           </p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-            {JOB_STATUSES.map((st) => (
-              <button
-                key={st}
-                type="button"
-                disabled={busy !== null || st === status}
-                onClick={() => transitionStatus(st)}
-                className={st === status ? "btn-primary" : "btn-ghost"}
-                style={{ padding: "8px 14px", fontSize: 13 }}
-              >
-                {busy === `status:${st}` ? "Updating…" : st === status ? `${st} (Current)` : `Set ${st}`}
-              </button>
-            ))}
+            {JOB_STATUSES.map((st) => {
+              const label = humanJobStatus(st).label;
+              return (
+                <button
+                  key={st}
+                  type="button"
+                  disabled={busy !== null || st === status}
+                  onClick={() => transitionStatus(st)}
+                  className={st === status ? "btn-primary" : "btn-ghost"}
+                  style={{ padding: "8px 14px", fontSize: 13 }}
+                >
+                  {busy === `status:${st}` ? "Updating…" : st === status ? `${label} (Current)` : `Mark ${label}`}
+                </button>
+              );
+            })}
           </div>
-          <input
-            type="text"
-            placeholder="Optional note / termination or pause reason…"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "9px 12px",
-              borderRadius: 8,
-              border: "1px solid var(--border)",
-              fontSize: 13.5,
-            }}
-          />
+          <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+            <span className="muted">
+              Optional reason (type here <em>before</em> clicking Pause, Completed, or Terminate above)
+            </span>
+            <input
+              type="text"
+              placeholder="e.g. Client travelling for 2 weeks / ended early"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "9px 12px",
+                borderRadius: 8,
+                border: "1px solid var(--border)",
+                fontSize: 13.5,
+              }}
+            />
+          </label>
         </div>
 
         <div className="card">
@@ -266,7 +289,7 @@ export default function ManageInvoiceJob({
                 <option value="">Unassigned</option>
                 {selectableCleaners.map((c) => (
                   <option key={c.id} value={c.id} disabled={c.id === cleaner2}>
-                    {c.full_name} · {c.cleaner_code} ({c.account_status})
+                    {c.full_name} · {c.cleaner_code} ({humanCleanerStatus(c.account_status).label})
                   </option>
                 ))}
               </select>
@@ -281,7 +304,7 @@ export default function ManageInvoiceJob({
                 <option value="">None (single cleaner)</option>
                 {selectableCleaners.map((c) => (
                   <option key={c.id} value={c.id} disabled={c.id === cleaner1}>
-                    {c.full_name} · {c.cleaner_code} ({c.account_status})
+                    {c.full_name} · {c.cleaner_code} ({humanCleanerStatus(c.account_status).label})
                   </option>
                 ))}
               </select>
@@ -294,6 +317,12 @@ export default function ManageInvoiceJob({
                   previewSplits[1]?.amountNaira ?? 0
                 )} per clean`}
             </div>
+            {(cleaner1 !== (assignedCleaners.find((c) => c.slot_order === 1)?.cleaner_id ?? "") ||
+              cleaner2 !== (assignedCleaners.find((c) => c.slot_order === 2)?.cleaner_id ?? "")) && (
+              <div className="notice info" style={{ margin: 0, padding: "6px 10px", fontSize: 12 }}>
+                Unsaved team change — click <strong>Save Assigned Team</strong> below to apply.
+              </div>
+            )}
             <button
               type="button"
               className="btn-primary"
@@ -344,7 +373,9 @@ export default function ManageInvoiceJob({
                       </div>
                     </td>
                     <td>
-                      <span className={`pill ${VISIT_PILL[v.status] ?? "neutral"}`}>{v.status}</span>
+                      <span className={`pill ${VISIT_PILL[v.status] ?? "neutral"}`}>
+                        {humanVisitStatus(v.status).label}
+                      </span>
                       {v.locked_paid && (
                         <div style={{ marginTop: 4 }}>
                           <span className="pill pay-success" style={{ fontSize: 10 }}>

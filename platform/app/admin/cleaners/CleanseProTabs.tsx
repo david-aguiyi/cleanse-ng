@@ -16,12 +16,6 @@ export default function CleanseProTabs({
       >
         Leaderboard &amp; Scores
       </Link>
-      <Link
-        href="/admin/cleaners/new"
-        className={`ops-subtab ${active === "new" ? "is-active" : ""}`}
-      >
-        + Add Pro Manually
-      </Link>
     </nav>
   );
 }
