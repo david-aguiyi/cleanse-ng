@@ -155,7 +155,39 @@ export async function listCleaners(filters: CleanerListFilters) {
 
   const { data, error } = await query;
   if (error) throw new AppError("INTERNAL_ERROR", "Could not load cleaners.");
-  return (data ?? []).map((c: any) => ({ ...c, ready: isDeploymentReady(c) }));
+  const rows = (data ?? []) as Array<Record<string, any>>;
+  if (rows.length === 0) return [];
+
+  const cleanerIds = rows.map((c) => c.id as string);
+  const [assignmentsRes, earningsRes] = await Promise.all([
+    db
+      .from("invoice_job_cleaners")
+      .select("cleaner_id, job:invoice_jobs(status)")
+      .in("cleaner_id", cleanerIds),
+    db
+      .from("cleaner_visit_earnings")
+      .select("cleaner_id")
+      .in("cleaner_id", cleanerIds),
+  ]);
+
+  const activeJobsCount = new Map<string, number>();
+  for (const row of (assignmentsRes.data ?? []) as Array<{ cleaner_id: string; job?: { status?: string } | null }>) {
+    if (row.job?.status === "ACTIVE") {
+      activeJobsCount.set(row.cleaner_id, (activeJobsCount.get(row.cleaner_id) ?? 0) + 1);
+    }
+  }
+
+  const servedCount = new Map<string, number>();
+  for (const row of (earningsRes.data ?? []) as Array<{ cleaner_id: string }>) {
+    servedCount.set(row.cleaner_id, (servedCount.get(row.cleaner_id) ?? 0) + 1);
+  }
+
+  return rows.map((c: any) => ({
+    ...c,
+    ready: isDeploymentReady(c),
+    assigned_jobs_count: activeJobsCount.get(c.id) ?? 0,
+    served_cleans_count: Math.max(Number(c.completed_jobs || 0), servedCount.get(c.id) ?? 0),
+  }));
 }
 
 /**
@@ -409,7 +441,8 @@ export async function deleteCleanerProfile(
   // Clear non-cascading legacy references before deleting the cleaner row
   await Promise.all([
     db.from("bookings").update({ assigned_cleaner_id: null }).eq("assigned_cleaner_id", id),
-    db.from("dispatch_offers").delete().eq("cleaner_id", id),
+    db.from("job_assignments").delete().eq("cleaner_id", id),
+    db.from("job_offers").delete().eq("cleaner_id", id),
     db.from("cleaner_reviews").delete().eq("cleaner_id", id),
   ]);
 

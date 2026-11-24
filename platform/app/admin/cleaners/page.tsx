@@ -5,7 +5,7 @@ import { listCleaners } from "@/domain/cleaner/cleaner-service";
 import AdminShell from "../_components/AdminShell";
 import StatusBadge from "../_components/StatusBadge";
 import CleanseProTabs from "./CleanseProTabs";
-import { humanCleanerStatus } from "../format";
+import { humanCleanerStatus, humanCleanerTag } from "../format";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -99,7 +99,7 @@ export default async function AdminCleaners({
               <th>Status</th>
               <th>Readiness</th>
               <th>Availability</th>
-              <th>Jobs Completed</th>
+              <th>Assigned &amp; Served</th>
               <th>Rating</th>
             </tr>
           </thead>
@@ -134,7 +134,7 @@ export default async function AdminCleaners({
                     c.work_rate_label !== "UNDER_SUPERVISION" &&
                     c.work_rate_label !== "FIRED" && (
                       <span className="ops-status tone-purple" style={{ marginTop: 4, fontSize: 11 }}>
-                        {c.work_rate_label}
+                        {humanCleanerTag(c.work_rate_label)}
                       </span>
                     )}
                 </td>
@@ -154,11 +154,14 @@ export default async function AdminCleaners({
                       c.availability === "AVAILABLE" ? "tone-green" : "tone-neutral"
                     }`}
                   >
-                    {c.availability === "AVAILABLE" ? "Available" : c.availability || "Off"}
+                    {c.availability === "AVAILABLE" ? "Available" : "Offline"}
                   </span>
                 </td>
                 <td>
-                  <strong>{c.completed_jobs ?? 0}</strong>
+                  <strong>{c.assigned_jobs_count ?? 0} active</strong>
+                  <div className="muted" style={{ fontSize: 12 }}>
+                    {c.served_cleans_count ?? 0} served
+                  </div>
                 </td>
                 <td>{c.rating ?? "—"}</td>
               </tr>
