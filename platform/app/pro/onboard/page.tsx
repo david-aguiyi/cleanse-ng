@@ -178,6 +178,7 @@ function OnboardingForm() {
   const [submitted, setSubmitted] = useState(false);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const photoFileInputRef = useRef<HTMLInputElement>(null);
   const ninDocInputRef = useRef<HTMLInputElement>(null);
 
   const toggleArray = (list: string[], set: (v: string[]) => void, item: string) => {
@@ -198,6 +199,7 @@ function OnboardingForm() {
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     try {
       const dataUri = await compressImage(file, 800, 0.75);
@@ -209,6 +211,7 @@ function OnboardingForm() {
 
   async function handleNinDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     try {
       const dataUri = await compressImage(file, 1000, 0.75);
@@ -420,16 +423,33 @@ function OnboardingForm() {
                   onChange={handlePhotoUpload}
                   style={{ display: "none" }}
                 />
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => photoInputRef.current?.click()}
-                  style={{ padding: "8px 14px", border: "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}
-                >
-                  {photoUrl ? "Change Photo" : "📷 Take or Upload Photo"}
-                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={photoFileInputRef}
+                  onChange={handlePhotoUpload}
+                  style={{ display: "none" }}
+                />
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => photoInputRef.current?.click()}
+                    style={{ padding: "8px 14px", border: "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}
+                  >
+                    {photoUrl ? "📷 Retake Photo" : "📷 Take Photo"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => photoFileInputRef.current?.click()}
+                    style={{ padding: "8px 14px", border: "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}
+                  >
+                    📁 Upload from Files
+                  </button>
+                </div>
                 <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-                  Ensure your face is well-lit and clearly visible.
+                  Take a selfie or choose an existing photo. Ensure your face is well-lit and clearly visible.
                 </div>
               </div>
             </div>
