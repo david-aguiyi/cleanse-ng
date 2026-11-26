@@ -2665,8 +2665,8 @@ function initHeroSlideshow() {
   if (!track || !container) return;
 
   let currentIndex = 0;
-  const totalSlides = 4; // 2 originals + 2 continuous clones
-  const realCount = 2;
+  const totalSlides = 6; // 3 originals + 3 continuous clones
+  const realCount = 3;
   const intervalMs = 4500;
   let timer = null;
   let isTransitioning = false;
