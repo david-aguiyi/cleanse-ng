@@ -793,16 +793,29 @@ function updateWizardUI() {
 }
 
 function updateVerifyStepDetails() {
-  const nameVal = (document.getElementById('booking-name').value || '').trim() || 'Jane Doe';
-  const emailVal = (document.getElementById('booking-email').value || '').trim() || 'jane@example.com';
+  const nameVal = (document.getElementById('booking-name')?.value || '').trim();
+  const emailVal = (document.getElementById('booking-email')?.value || '').trim();
+  const areaEl = document.getElementById('booking-area');
+  const areaLabel = areaEl && areaEl.selectedIndex > 0
+    ? areaEl.options[areaEl.selectedIndex].text.trim()
+    : '';
+  const locationVal = (document.getElementById('booking-location')?.value || '').trim();
+  const verifyLocText = locationVal && areaLabel && !locationVal.toLowerCase().includes(areaLabel.toLowerCase())
+    ? `${locationVal}, ${areaLabel}`
+    : (locationVal || (areaLabel ? `${areaLabel}, Ibadan` : '-'));
 
-  document.getElementById('verify-customer-name').textContent = nameVal;
-  document.getElementById('verify-customer-email').textContent = emailVal;
-  document.getElementById('verify-location').textContent = 'Ibadan';
+  const nameEl = document.getElementById('verify-customer-name');
+  const emailEl = document.getElementById('verify-customer-email');
+  const locEl = document.getElementById('verify-location');
+  const avatarEl = document.getElementById('verify-avatar');
+
+  if (nameEl) nameEl.textContent = nameVal || '-';
+  if (emailEl) emailEl.textContent = emailVal || '-';
+  if (locEl) locEl.textContent = verifyLocText;
 
   // Avatar initials
-  const initials = nameVal.split(' ').map(n => n[0]).filter(Boolean).join('').substring(0, 2).toUpperCase() || 'JD';
-  document.getElementById('verify-avatar').textContent = initials;
+  const initials = nameVal.split(/\s+/).map(n => n[0]).filter(Boolean).join('').substring(0, 2).toUpperCase();
+  if (avatarEl) avatarEl.textContent = initials || '-';
 
   // Plan details
   const selectedPlan = planInput.value;
